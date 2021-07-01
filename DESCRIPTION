@@ -1,0 +1,17 @@
+Package: signifinder
+Type: Package
+Title: A collection of signatures to analyze high-throughput data.
+Version: 0.1.0
+Authors@R: c(   person("Fabiola", "Pedrini",
+                        role="aut",
+                        email="fabiola.pedrini@studenti.unipd.it"),
+                person("Stefania", "Pirrotta",
+                        role=c("cre", "aut"),
+                        email="stefania.pirrotta@unipd.it"))
+Author: Fabiola Pedrini [aut, cre],
+        Stefania Pirrotta [aut]
+Maintainer: Stefania Pirrotta <stefania.pirrotta@unipd.it>
+Description: A collection of signatures to analyze high-throughput data.
+License: AGPL-3
+Encoding: UTF-8
+LazyData: true
