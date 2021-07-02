@@ -5,7 +5,7 @@ matchArguments <- function(dots, defaults) {
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
-#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at all. (2015).
+#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at al. (2015).
 #'
 #' @param dataset a matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
 #' @param nametype gene name ID of your dataset row names.
@@ -49,7 +49,7 @@ EMTSign <- function(dataset, nametype, ...) {
 
 #' Piroptosis Signature
 #'
-#' Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et all. (2020).
+#' Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et al. (2020).
 #'
 #' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
 #' @param nametype gene name ID of your dataset row names.
@@ -79,7 +79,7 @@ PiroSign <- function(dataset, nametype){
 
 #' FerroptosisSignature
 #'
-#' Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et all. (2021).
+#' Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et al. (2021).
 #'
 #' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
@@ -110,7 +110,7 @@ FerrSign <- function(dataset, nametype){
 
 #' LIpidSignature
 #'
-#' Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et all. (2020).
+#' Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et al. (2020).
 #'
 #' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
@@ -213,7 +213,7 @@ PlatResSign <- function(dataset, nametype,  ...){
 
 #' Prognostic Signature
 #'
-#' Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. all (2020).
+#' Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. al (2020).
 #' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #' @param age vector of patient's age.
@@ -269,7 +269,7 @@ PrognosticSign <- function(dataset, nametype, age, stage){
 
 #' Metabolic Signature
 #'
-#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. all (2018).
+#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. al (2018).
 #'
 #' @param DEdata matrix of differential expression genes where rows correspond to genes, first column correspond to Log2FoldChange and second column to its adjusted pvalue.
 #' @param nametype gene name ID of your DEdata row names.
@@ -309,4 +309,39 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
         pvals[i] <- sum(z>=path_score[i])/10000
     }
     return(cbind(path_score, pvals))
+}
+
+
+#' Immunogenic Signature
+#'
+#' Given a dataset, it returns the ImmunoScore for each sample. This signature is based on Dapeng Hao et. al (2018).
+#'
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
+#'
+#' @return NULL
+#'
+#' @export
+ImmunoSign <- function(dataset, nametype){
+
+    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
+        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
+    }
+
+    if(nametype!="SYMBOL"){
+        ImmunoGenes$genes <- mapIds(org.Hs.eg.db, keys = ImmunoGenes$genes, column = nametype,
+                                    keytype = "SYMBOL", multiVals = "first")
+    }
+
+    g <- intersect(row.names(dataset), ImmunoGenes$genes)
+
+    subdataset <- dataset[g,]
+    ImmunoGenes <- ImmunoGenes[ImmunoGenes$genes %in% g, ]
+
+    SE <- (ImmunoGenes$HR - ImmunoGenes$`95CI_L`)/1.96
+    k <- (1 - ImmunoGenes$HR)/SE
+
+    ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
+
+    return(ImmunoScores)
 }
