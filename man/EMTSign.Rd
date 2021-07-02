@@ -7,10 +7,12 @@
 EMTSign(dataset, nametype, ...)
 }
 \arguments{
-\item{dataset}{A matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}
+\item{dataset}{a matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}
 
-\item{...}{Other arguments passed on to the GSVA function.}
+\item{nametype}{gene name ID of your dataset row names.}
+
+\item{...}{other arguments passed on to the GSVA function.}
 }
 \description{
-Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow (2015).
+Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at all. (2015).
 }

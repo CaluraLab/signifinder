@@ -5,10 +5,11 @@ matchArguments <- function(dots, defaults) {
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
-#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow (2015).
+#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at all. (2015).
 #'
-#' @param dataset A matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
-#' @param ... Other arguments passed on to the GSVA function.
+#' @param dataset a matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param nametype gene name ID of your dataset row names.
+#' @param ... other arguments passed on to the GSVA function.
 #'
 #' @return NULL
 #'
@@ -52,7 +53,8 @@ EMTSign <- function(dataset, nametype, ...) {
 #'
 #' Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et all. (2020).
 #'
-#' @param dataset Matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
 #'
@@ -82,11 +84,13 @@ PiroSign <- function(dataset, nametype){
 #'
 #' Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et all. (2021).
 #'
-#' @param dataset Matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
 #'
 #' @importFrom AnnotationDbi mapIds
+#' @param nametype gene name ID of rownames of dataset.
 #' @import org.Hs.eg.db
 #'
 #' @export
@@ -112,7 +116,8 @@ FerrSign <- function(dataset, nametype){
 #'
 #' Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et all. (2020).
 #'
-#' @param dataset Matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
 #'
@@ -142,8 +147,8 @@ LipidMetSign <- function(dataset, nametype) {
 #'
 #' Given a dataset, it returns the hypoxia score for each sample as in Buffa et al. 2010.
 #'
-#' @param dataset Matrix of expression values where rows correspond to genes and columns correspond to samples.
-#' @param genename One of symbol and ensemble. Default is symbol.
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
 #'
@@ -178,7 +183,8 @@ HypoSign <- function(dataset, nametype){
 #'
 #' Given a dataset, it returns the gsva score for each sample from International Cancer Genome Consortium (ICGC).
 #'
-#' @param dataset Matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
 #'
@@ -215,9 +221,10 @@ PlatResSign <- function(dataset, nametype,  ...){
 #' Prognostic Signature
 #'
 #' Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. all (2020).
-#' @param dataset Matrix of expression values where rows correspond to genes and columns correspond to samples.
-#' @param age Vector of patient's age.
-#' @param stage Vector of patient's tumor stage (FIGO).
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
+#' @param age vector of patient's age.
+#' @param stage vector of patient's tumor stage (FIGO).
 #'
 #' @return NULL
 #'
@@ -268,10 +275,11 @@ PrognosticSign <- function(dataset, nametype, age, stage){
 
 #' Metabolic Signature
 #'
-#' Given a dataset, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. all (2018).
+#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. all (2018).
 #'
-#' @param dataset Matrix of differential expression genes where rows correspond to genes, first column correspond to Log2FoldChange and second column to its adjusted pvalue.
-#' @param nsamples Number of samples in the dataset.
+#' @param DEdata matrix of differential expression genes where rows correspond to genes, first column correspond to Log2FoldChange and second column to its adjusted pvalue.
+#' @param nametype gene name ID of your DEdata row names.
+#' @param nsamples number of samples in the DEdata.
 #'
 #' @return NULL
 #'

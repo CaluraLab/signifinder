@@ -7,9 +7,9 @@
 HypoSign(dataset, nametype)
 }
 \arguments{
-\item{dataset}{Matrix of expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples.}
 
-\item{genename}{One of symbol and ensemble. Default is symbol.}
+\item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
 Given a dataset, it returns the hypoxia score for each sample as in Buffa et al. 2010.

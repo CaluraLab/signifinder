@@ -7,7 +7,9 @@
 PlatResSign(dataset, nametype, ...)
 }
 \arguments{
-\item{dataset}{Matrix of expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples.}
+
+\item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
 Given a dataset, it returns the gsva score for each sample from International Cancer Genome Consortium (ICGC).

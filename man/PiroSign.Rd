@@ -7,7 +7,9 @@
 PiroSign(dataset, nametype)
 }
 \arguments{
-\item{dataset}{Matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}
+\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}
+
+\item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
 Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et all. (2020).

@@ -7,11 +7,13 @@
 PrognosticSign(dataset, nametype, age, stage)
 }
 \arguments{
-\item{dataset}{Matrix of expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples.}
 
-\item{age}{Vector of patient's age.}
+\item{nametype}{gene name ID of your dataset row names.}
 
-\item{stage}{Vector of patient's tumor stage (FIGO).}
+\item{age}{vector of patient's age.}
+
+\item{stage}{vector of patient's tumor stage (FIGO).}
 }
 \description{
 Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. all (2020).

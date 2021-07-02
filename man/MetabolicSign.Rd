@@ -7,10 +7,12 @@
 MetabolicSign(DEdata, nametype, nsamples)
 }
 \arguments{
-\item{nsamples}{Number of samples in the dataset.}
+\item{DEdata}{matrix of differential expression genes where rows correspond to genes, first column correspond to Log2FoldChange and second column to its adjusted pvalue.}
 
-\item{dataset}{Matrix of differential expression genes where rows correspond to genes, first column correspond to Log2FoldChange and second column to its adjusted pvalue.}
+\item{nametype}{gene name ID of your DEdata row names.}
+
+\item{nsamples}{number of samples in the DEdata.}
 }
 \description{
-Given a dataset, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. all (2018).
+Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. all (2018).
 }
