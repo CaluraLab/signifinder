@@ -24,14 +24,12 @@ EMTSign <- function(dataset, nametype, ...) {
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
-    signature <- read.csv("/Users/Fabiola/Desktop/TESI/R file/VIOlets analysis/EMT/EMTsign.txt", header= T, sep = " ", row.names = 1)
-
     if(nametype!="SYMBOL"){
-        signature$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= signature$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
+        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys=EMTdata$Gene_Symbol, column=nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    Signature_EL <- signature[grep('Epithelial-like', signature$Category),]
-    Signature_ML <- signature[-grep('Epithelial-like', signature$Category),]
+    Signature_EL <- EMTdata[grep('Epithelial-like', EMTdata$Category),]
+    Signature_ML <- EMTdata[-grep('Epithelial-like', EMTdata$Category),]
 
     cat(paste0("The function is using ", sum(Signature_EL$Gene_Symbol %in% row.names(dataset)),
                " epithelial-like genes\nThe function is using ",
@@ -68,14 +66,13 @@ PiroSign <- function(dataset, nametype){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
-    pirosign <- read.csv("/Users/Fabiola/Desktop/TESI/R file/VIOlets analysis/piroptosi/pirosign.txt", header= T, sep = " ")
     if(nametype!="SYMBOL"){
-        pirosign$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= pirosign$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
+        Pirodata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Pirodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(pirosign$Gene_Symbol %in% row.names(dataset))," genes"))
-    pirosign <- pirosign[pirosign$Gene_Symbol %in% row.names(dataset), ]
-    Piroscore <- colSums(dataset[pirosign$Gene_Symbol, ]*pirosign$Coefficient)
+    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(dataset))," genes"))
+    Pirodata <- Pirodata[Pirodata$Gene_Symbol %in% row.names(dataset), ]
+    Piroscore <- colSums(dataset[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
     return(Piroscore)
 }
 
@@ -100,14 +97,13 @@ FerrSign <- function(dataset, nametype){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
-    fersign <- read.csv("/Users/Fabiola/Desktop/TESI/R file/VIOlets analysis/Ferroptosis/Ferrsign.txt", header = T, sep = " ")
     if(nametype!="SYMBOL"){
-        fersign$Gene_symbol <- mapIds(org.Hs.eg.db,keys= fersign$Gene_symbol, column= nametype, keytype="SYMBOL", multiVals="first")
+        Ferrdata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Ferrdata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(fersign$Gene_symbol %in% row.names(dataset))," genes"))
-    fersign <- fersign[fersign$Gene_symbol %in% row.names(dataset), ]
-    ferrscore <- colSums(dataset[fersign$Gene_symbol, ]*fersign$score)
+    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(dataset))," genes"))
+    Ferrdata <- Ferrdata[Ferrdata$Gene_Symbol %in% row.names(dataset), ]
+    ferrscore <- colSums(dataset[Ferrdata$Gene_Symbol, ]*Ferrdata$Coefficient)
     return(ferrscore)
 }
 
@@ -131,14 +127,13 @@ LipidMetSign <- function(dataset, nametype) {
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
-    lipsign <- read.csv("/Users/Fabiola/Desktop/TESI/R file/VIOlets analysis/Lipid metabolism/LipSign.txt", sep = " ")
     if(nametype!="SYMBOL"){
-        lipsign$Gene_symbol <- mapIds(org.Hs.eg.db,keys= lipsign$Gene_symbol, column= nametype, keytype="SYMBOL", multiVals="first")
+        Lipidata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Lipidata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(lipsign$Gene_Symb %in% row.names(dataset))," genes"))
-    lipsign <- lipsign[lipsign$Gene_Symb %in% row.names(dataset), ]
-    lipidscore <- colSums(dataset[lipsign$Gene_Symb, ] * lipsign$Coeff)
+    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(dataset))," genes"))
+    Lipidata <- Lipidata[Lipidata$Gene_Symbol %in% row.names(dataset), ]
+    lipidscore <- colSums(dataset[Lipidata$Gene_Symbol, ] * Lipidata$Coefficient)
     return(lipidscore)
 }
 
@@ -154,6 +149,8 @@ LipidMetSign <- function(dataset, nametype) {
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @importFrom matrixStats colMedians
+#' @importFrom stats setNames
+#'
 #' @import org.Hs.eg.db
 #'
 #' @export
@@ -163,11 +160,9 @@ HypoSign <- function(dataset, nametype){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
-    Hyp_signature <- read.csv("/Users/Fabiola/Desktop/TESI/R file/VIOlets analysis/ipossia/Hyp_signature.txt", sep = " ")
-
-    if(nametype=="SYMBOL") { genetouse <- signature$genes
-    } else if(nametype=="ENSEMBL") { genetouse <- signature$ensemble
-    } else (Hyp_signature$Symbol <- mapIds(org.Hs.eg.db,keys= Hyp_signature$Symbol, column= nametype, keytype="SYMBOL", multiVals="first"))
+    if(nametype=="SYMBOL") { genetouse <- Hypodata$Gene_Symbol
+    } else if(nametype=="ENSEMBL") { genetouse <- Hypodata$Gene_Ensembl
+    } else (genetouse <- mapIds(org.Hs.eg.db,keys= Hypodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first"))
 
     cat(paste0("The function is using ", sum(genetouse %in% rownames(dataset)), " genes out of 50"))
     dataset <- dataset[rownames(dataset) %in% genetouse, ]
@@ -185,6 +180,7 @@ HypoSign <- function(dataset, nametype){
 #'
 #' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
+#' @param ... other arguments passed on to the GSVA function.
 #'
 #' @return NULL
 #'
@@ -199,18 +195,16 @@ PlatResSign <- function(dataset, nametype,  ...){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
-    load("/Users/Fabiola/Downloads/platinumres.RData")
-
     if(nametype!= "SYMBOL"){
-        signature <- lapply(signature, function(x)
+        Platdata <- lapply(Platdata, function(x)
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
 
 
-    cat(paste("The function is using", sum(signature$up %in% row.names(dataset)),
-              "up-genes\nThe function is using", sum(signature$down %in% row.names(dataset)), "down-genes\n"))
+    cat(paste("The function is using", sum(Platdata$up %in% row.names(dataset)),
+              "up-genes\nThe function is using", sum(Platdata$down %in% row.names(dataset)), "down-genes\n"))
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = dataset, gset.idx.list = signature,
+    args <- matchArguments(dots, list(expr = dataset, gset.idx.list = Platdata,
                                       method = "ssgsea", kcdf = "Poisson", min.sz=5))
     gsva_count <- do.call(gsva, args)
 
@@ -244,23 +238,21 @@ PrognosticSign <- function(dataset, nametype, age, stage){
         stop("The stage parameter must be a character vector")
     }
 
-    load("/Users/Fabiola/Downloads/platinumres.RData")
-
     if(nametype!="SYMBOL"){
-        signature <- lapply(signature, function(x)
+        Progdata <- lapply(Progdata, function(x)
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
 
-    intergene <- intersect(row.names(dataset), names(prognosticsign$Genes))
+    intergene <- intersect(row.names(dataset), names(Progdata$Genes))
     dataset <- dataset[intergene,]
-    gene_coeff <- colSums(dataset*prognosticsign$Genes[intergene])
+    gene_coeff <- colSums(dataset*Progdata$Genes[intergene])
 
     age_coef <- sapply(age, function(p)
-        if(p<=53){0} else if(p>53 & p<=60){prognosticsign$Age[1]
-        } else if(p>60 & p<=67){prognosticsign$Age[2]} else {prognosticsign$Age[3]})
+        if(p<=53){0} else if(p>53 & p<=60){Progdata$Age[1]
+        } else if(p>60 & p<=67){Progdata$Age[2]} else {Progdata$Age[3]})
 
     stage_coef <- sapply(stage, function(p)
-        if(p=="NA"){prognosticsign$Stage[2]} else if(p=="I"|p=="II"){prognosticsign$Stage[1]} else {0})
+        if(p=="NA"){Progdata$Stage[2]} else if(p=="I"|p=="II"){Progdata$Stage[1]} else {0})
 
     prog_sign <- gene_coeff+age_coef+stage_coef
 
@@ -299,14 +291,12 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
     gene_score <- abs(DEdata[,1] -log(DEdata[,2]))
     names(gene_score) <- row.names(DEdata)
 
-    load("/Users/Fabiola/Desktop/TESI/R file/VIOlets analysis/metabolic dysregulation/MetabolicPathways.RData")
-
     if(nametype!="SYMBOL"){
-        metabolicpath <- lapply(metabolicpath, function(x)
+        Metadata <- lapply(Metadata, function(x)
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
 
-    gene_pathway <- lapply(metabolicpath, intersect, row.names(DEdata))
+    gene_pathway <- lapply(Metadata, intersect, row.names(DEdata))
     path_score <- sapply(gene_pathway, function(x) sum(gene_score[x]))/sqrt(nsamples)
     pvals <- c()
     for(i in 1:length(path_score)){

@@ -13,7 +13,7 @@ Author: Fabiola Pedrini [aut, cre],
 Maintainer: Stefania Pirrotta <stefania.pirrotta@unipd.it>
 Description: A collection of signatures to analyze high-throughput data.
 License: AGPL-3
-Imports: GSVA, AnnotationDbi, matrixStats, org.Hs.eg.db
+Imports: GSVA, AnnotationDbi, matrixStats, org.Hs.eg.db, stats
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
