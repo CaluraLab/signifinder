@@ -32,8 +32,8 @@ EMTSign <- function(dataset, nametype, ...) {
     Signature_ML <- EMTdata[-grep('Epithelial-like', EMTdata$Category),]
 
     cat(paste0("The function is using ", sum(Signature_EL$Gene_Symbol %in% row.names(dataset)),
-               " epithelial-like genes\nThe function is using ",
-               sum(Signature_ML$Gene_Symbol %in% row.names(dataset)), " mesenchymal-like genes\n"))
+               " epithelial-like genes out of ", length(Signature_EL), "\nThe function is using ",
+               sum(Signature_ML$Gene_Symbol %in% row.names(dataset)), " mesenchymal-like genes out of", length(Signature_ML),"\n"))
 
     gene_sets <- list(Epithelial=Signature_EL$Gene_Symbol, Mesenchimal=Signature_ML$Gene_Symbol)
 
@@ -70,7 +70,7 @@ PiroSign <- function(dataset, nametype){
         Pirodata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Pirodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(dataset))," genes"))
+    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(dataset))," genes out of", length(Pirodata$Gene_Symbol)))
     Pirodata <- Pirodata[Pirodata$Gene_Symbol %in% row.names(dataset), ]
     Piroscore <- colSums(dataset[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
     return(Piroscore)
@@ -101,7 +101,7 @@ FerrSign <- function(dataset, nametype){
         Ferrdata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Ferrdata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(dataset))," genes"))
+    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(dataset))," genes out of", length(Ferrdata$Gene_Symbol)))
     Ferrdata <- Ferrdata[Ferrdata$Gene_Symbol %in% row.names(dataset), ]
     ferrscore <- colSums(dataset[Ferrdata$Gene_Symbol, ]*Ferrdata$Coefficient)
     return(ferrscore)
@@ -131,7 +131,7 @@ LipidMetSign <- function(dataset, nametype) {
         Lipidata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Lipidata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(dataset))," genes"))
+    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(dataset))," genes out of", length(Lipidata$Gene_Symbol)))
     Lipidata <- Lipidata[Lipidata$Gene_Symbol %in% row.names(dataset), ]
     lipidscore <- colSums(dataset[Lipidata$Gene_Symbol, ] * Lipidata$Coefficient)
     return(lipidscore)
@@ -164,7 +164,7 @@ HypoSign <- function(dataset, nametype){
     } else if(nametype=="ENSEMBL") { genetouse <- Hypodata$Gene_Ensembl
     } else (genetouse <- mapIds(org.Hs.eg.db,keys= Hypodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first"))
 
-    cat(paste0("The function is using ", sum(genetouse %in% rownames(dataset)), " genes out of 50"))
+    cat(paste0("The function is using ", sum(genetouse %in% rownames(dataset)), " genes out of", length(Hypodata$Gene_Symbol)))
     dataset <- dataset[rownames(dataset) %in% genetouse, ]
 
     med_counts <- sort(setNames(colMedians(as.matrix(dataset)), colnames(dataset)))
@@ -200,9 +200,8 @@ PlatResSign <- function(dataset, nametype,  ...){
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
 
-
     cat(paste("The function is using", sum(Platdata$up %in% row.names(dataset)),
-              "up-genes\nThe function is using", sum(Platdata$down %in% row.names(dataset)), "down-genes\n"))
+              "up-genes out of", length(Platdata$up), "\nThe function is using", sum(Platdata$down %in% row.names(dataset)), "down-genes out of",length(Platdata$down),"\n"))
     dots <- list(...)
     args <- matchArguments(dots, list(expr = dataset, gset.idx.list = Platdata,
                                       method = "ssgsea", kcdf = "Poisson", min.sz=5))
@@ -242,6 +241,9 @@ PrognosticSign <- function(dataset, nametype, age, stage){
         Progdata <- lapply(Progdata, function(x)
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
+
+    cat(paste("The function is using", sum(Progdata$Genes %in% row.names(dataset)),
+              "genes out of", length(Progdata$Genes), "\n"))
 
     intergene <- intersect(row.names(dataset), names(Progdata$Genes))
     dataset <- dataset[intergene,]
