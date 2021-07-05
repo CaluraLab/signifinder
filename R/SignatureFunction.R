@@ -3,6 +3,28 @@ matchArguments <- function(dots, defaults) {
     defaults[names(defaults) %in% names(dots)] <- NULL
     c(defaults, dots)}
 
+getMatrix <- function(userdata){
+    if(!is.matrix(userdata)) {
+        if(class(userdata)=="Seurat"){
+            if(length(userdata@assays)==1){userdata <- as.matrix(userdata@assays$RNA@data)
+            } else {userdata <- as.matrix(userdata@assays$SCT@data)}
+        } else if(class(userdata)%in%c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
+            userdata <- as.matrix(SummarizedExperiment::assay(userdata))
+        } else if(class(userdata)=="data.frame"){userdata <- as.matrix(userdata)
+        } else {stop("Dataset is not supported")}}
+    return(userdata)}
+
+returnAsInput <- function(userdata, result, SignName){
+    if(!is.matrix(userdata) & !is.data.frame(userdata)) {
+        if(class(userdata)=="Seurat"){
+            if(is.vector(result)){userdata@meta.data <- cbind(userdata@meta.data, SignName=result)
+            } else {userdata@meta.data <- cbind(userdata@meta.data, t(result))}
+        } else if(class(userdata)%in%c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
+            if(is.vector(result)){userdata@colData <- cbind(userdata@colData, SignName=result)
+            } else {userdata@colData <- cbind(userdata@colData, t(result))}}
+        return(userdata)
+    } else {return(result)}}
+
 #' Endothelial-Mesenchymal Transition Signature
 #'
 #' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at al. (2015).
@@ -28,22 +50,25 @@ EMTSign <- function(dataset, nametype, ...) {
         EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys=EMTdata$Gene_Symbol, column=nametype, keytype="SYMBOL", multiVals="first")
     }
 
+    datasetm <- getMatrix(dataset)
+
     Signature_EL <- EMTdata[grep('Epithelial-like', EMTdata$Category),]
     Signature_ML <- EMTdata[-grep('Epithelial-like', EMTdata$Category),]
 
-    cat(paste0("The function is using ", sum(Signature_EL$Gene_Symbol %in% row.names(dataset)),
+    cat(paste0("The function is using ", sum(Signature_EL$Gene_Symbol %in% row.names(datasetm)),
                " epithelial-like genes out of ", length(Signature_EL), "\nThe function is using ",
-               sum(Signature_ML$Gene_Symbol %in% row.names(dataset)), " mesenchymal-like genes out of", length(Signature_ML),"\n"))
+               sum(Signature_ML$Gene_Symbol %in% row.names(datasetm)), " mesenchymal-like genes out of",
+               length(Signature_ML),"\n"))
 
     gene_sets <- list(Epithelial=Signature_EL$Gene_Symbol, Mesenchimal=Signature_ML$Gene_Symbol)
 
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = as.matrix(dataset), gset.idx.list = gene_sets, method = "ssgsea",
+    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
                                       kcdf = "Poisson", abs.ranking = F, min.sz = 5, max.sz = Inf,
                                       parallel.sz = 1L, mx.diff = TRUE, ssgsea.norm = TRUE))
     gsva_matrix <- do.call(gsva, args)
 
-    return(gsva_matrix)
+    return(returnAsInput(userdata = dataset, result = gsva_matrix, SignName = ""))
 }
 
 
@@ -70,10 +95,12 @@ PiroSign <- function(dataset, nametype){
         Pirodata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Pirodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(dataset))," genes out of", length(Pirodata$Gene_Symbol)))
-    Pirodata <- Pirodata[Pirodata$Gene_Symbol %in% row.names(dataset), ]
-    Piroscore <- colSums(dataset[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
-    return(Piroscore)
+    datasetm <- getMatrix(dataset)
+
+    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(datasetm))," genes out of", length(Pirodata$Gene_Symbol)))
+    Pirodata <- Pirodata[Pirodata$Gene_Symbol %in% row.names(datasetm), ]
+    Piroscore <- colSums(datasetm[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
+    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "PiroptosisScore"))
 }
 
 
@@ -101,10 +128,12 @@ FerrSign <- function(dataset, nametype){
         Ferrdata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Ferrdata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(dataset))," genes out of", length(Ferrdata$Gene_Symbol)))
-    Ferrdata <- Ferrdata[Ferrdata$Gene_Symbol %in% row.names(dataset), ]
-    ferrscore <- colSums(dataset[Ferrdata$Gene_Symbol, ]*Ferrdata$Coefficient)
-    return(ferrscore)
+    datasetm <- getMatrix(dataset)
+
+    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(datasetm))," genes out of", length(Ferrdata$Gene_Symbol)))
+    Ferrdata <- Ferrdata[Ferrdata$Gene_Symbol %in% row.names(datasetm), ]
+    ferrscore <- colSums(datasetm[Ferrdata$Gene_Symbol, ]*Ferrdata$Coefficient)
+    return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "FerroptosisScore"))
 }
 
 
@@ -131,10 +160,12 @@ LipidMetSign <- function(dataset, nametype) {
         Lipidata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Lipidata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
     }
 
-    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(dataset))," genes out of", length(Lipidata$Gene_Symbol)))
-    Lipidata <- Lipidata[Lipidata$Gene_Symbol %in% row.names(dataset), ]
-    lipidscore <- colSums(dataset[Lipidata$Gene_Symbol, ] * Lipidata$Coefficient)
-    return(lipidscore)
+    datasetm <- getMatrix(dataset)
+
+    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(datasetm))," genes out of", length(Lipidata$Gene_Symbol)))
+    Lipidata <- Lipidata[Lipidata$Gene_Symbol %in% row.names(datasetm), ]
+    lipidscore <- colSums(datasetm[Lipidata$Gene_Symbol, ] * Lipidata$Coefficient)
+    return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidScore"))
 }
 
 
@@ -164,13 +195,16 @@ HypoSign <- function(dataset, nametype){
     } else if(nametype=="ENSEMBL") { genetouse <- Hypodata$Gene_Ensembl
     } else (genetouse <- mapIds(org.Hs.eg.db,keys= Hypodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first"))
 
-    cat(paste0("The function is using ", sum(genetouse %in% rownames(dataset)), " genes out of", length(Hypodata$Gene_Symbol)))
-    dataset <- dataset[rownames(dataset) %in% genetouse, ]
+    datasetm <- getMatrix(dataset)
 
-    med_counts <- sort(setNames(colMedians(as.matrix(dataset)), colnames(dataset)))
+    cat(paste0("The function is using ", sum(genetouse %in% rownames(datasetm)),
+               " genes out of", length(Hypodata$Gene_Symbol)))
+    datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
+
+    med_counts <- sort(setNames(colMedians(as.matrix(datasetm)), colnames(datasetm)))
     scores <- data.frame(E = med_counts, HS = scale(med_counts))
 
-    return(scores)
+    return(returnAsInput(userdata = dataset, result = scores, SignName = ""))
 }
 
 
@@ -200,14 +234,18 @@ PlatResSign <- function(dataset, nametype,  ...){
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
 
-    cat(paste("The function is using", sum(Platdata$up %in% row.names(dataset)),
-              "up-genes out of", length(Platdata$up), "\nThe function is using", sum(Platdata$down %in% row.names(dataset)), "down-genes out of",length(Platdata$down),"\n"))
+    datasetm <- getMatrix(dataset)
+
+    cat(paste("The function is using", sum(Platdata$up %in% row.names(datasetm)),
+              "up-genes out of", length(Platdata$up), "\nThe function is using",
+              sum(Platdata$down %in% row.names(datasetm)), "down-genes out of", length(Platdata$down),"\n"))
+
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = dataset, gset.idx.list = Platdata,
+    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = Platdata,
                                       method = "ssgsea", kcdf = "Poisson", min.sz=5))
     gsva_count <- do.call(gsva, args)
 
-    return(gsva_count)
+    return(returnAsInput(userdata = dataset, result = gsva_count, SignName = ""))
 }
 
 
@@ -242,12 +280,14 @@ PrognosticSign <- function(dataset, nametype, age, stage){
             suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
     }
 
-    cat(paste("The function is using", sum(Progdata$Genes %in% row.names(dataset)),
+    datasetm <- getMatrix(dataset)
+
+    cat(paste("The function is using", sum(Progdata$Genes %in% row.names(datasetm)),
               "genes out of", length(Progdata$Genes), "\n"))
 
-    intergene <- intersect(row.names(dataset), names(Progdata$Genes))
-    dataset <- dataset[intergene,]
-    gene_coeff <- colSums(dataset*Progdata$Genes[intergene])
+    intergene <- intersect(row.names(datasetm), names(Progdata$Genes))
+    datasetm <- datasetm[intergene,]
+    gene_coeff <- colSums(datasetm*Progdata$Genes[intergene])
 
     age_coef <- sapply(age, function(p)
         if(p<=53){0} else if(p>53 & p<=60){Progdata$Age[1]
@@ -263,15 +303,16 @@ PrognosticSign <- function(dataset, nametype, age, stage){
         } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
         } else {"Q5"})
 
-    return(quantile_prog)
+    return(returnAsInput(userdata = dataset, result = quantile_prog, SignName = "PrognosticScore"))
 }
 
 
 #' Metabolic Signature
 #'
-#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping. This signature is based on Rosario et. al (2018).
+#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping.
+#' This signature is based on Rosario et. al (2018).
 #'
-#' @param DEdata matrix of differential expression genes where rows correspond to genes, first column correspond to Log2FoldChange and second column to its adjusted pvalue.
+#' @param DEdata matrix of differentially expressed genes where rows correspond to genes, first column to Log2FoldChange and second column to its adjusted pvalue.
 #' @param nametype gene name ID of your DEdata row names.
 #' @param nsamples number of samples in the DEdata.
 #'
@@ -308,7 +349,7 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
             z[j] <- sum(bootscore)/sqrt(nsamples)}
         pvals[i] <- sum(z>=path_score[i])/10000
     }
-    return(cbind(path_score, pvals))
+    return(returnAsInput(userdata = dataset, result = rbind(path_score, pvals), SignName = ""))
 }
 
 
@@ -336,9 +377,11 @@ ImmunoSign <- function(dataset, nametype){
                                     keytype = "SYMBOL", multiVals = "first")
     }
 
-    g <- intersect(row.names(dataset), ImmunoGenes$genes)
+    datasetm <- getMatrix(dataset)
 
-    subdataset <- dataset[g,]
+    g <- intersect(row.names(datasetm), ImmunoGenes$genes)
+
+    subdataset <- datasetm[g,]
     ImmunoGenes <- ImmunoGenes[ImmunoGenes$genes %in% g, ]
 
     SE <- (ImmunoGenes$HR - ImmunoGenes$`95CI_L`)/1.96
@@ -346,7 +389,7 @@ ImmunoSign <- function(dataset, nametype){
 
     ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
 
-    return(ImmunoScores)
+    return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = "ImmunoScore"))
 }
 
 
@@ -372,16 +415,18 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
     }
 
+    datasetm <- getMatrix(dataset)
+
     if(nametype!="ENTREZID"){
-        genename <- mapIds(org.Hs.eg.db, keys = row.names(dataset), column = "ENTREZID",
+        genename <- mapIds(org.Hs.eg.db, keys = row.names(datasetm), column = "ENTREZID",
                            keytype = nametype, multiVals = "first")
-        dataset <- dataset[!is.na(genename),]
+        datasetm <- datasetm[!is.na(genename),]
         genename <- genename[!is.na(genename)]
-        dataset <- dataset[!duplicated(genename),]
+        datasetm <- datasetm[!duplicated(genename),]
         genename <- genename[!duplicated(genename)]
-    } else {genename <- row.names(dataset)}
+    } else {genename <- row.names(datasetm)}
 
-    consensus_subtypes <- get.subtypes(expression.dataset = dataset, entrez.ids = genename, method = method, ...)
+    consensus_subtypes <- get.subtypes(expression.dataset = datasetm, entrez.ids = genename, method = method, ...)
 
-    return(consensus_subtypes)
+    return(returnAsInput(userdata = dataset, result = consensus_subtypes, SignName = ""))
 }
