@@ -321,6 +321,9 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
 #'
 #' @return NULL
 #'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
 #' @export
 ImmunoSign <- function(dataset, nametype){
 
@@ -344,4 +347,41 @@ ImmunoSign <- function(dataset, nametype){
     ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
 
     return(ImmunoScores)
+}
+
+
+#' ConsensusOV Signature
+#'
+#' Given a dataset, it returns ovarian cancer subtypes. This signature is based on Chen et. al (2018).
+#'
+#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
+#' @param method the subtyping method to use. Default is "consensusOV".
+#' @param ... optional parameters to be passed to the low level function.
+#'
+#' @return NULL
+#'
+#' @importFrom consensusOV get.subtypes
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
+
+    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
+        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
+    }
+
+    if(nametype!="ENTREZID"){
+        genename <- mapIds(org.Hs.eg.db, keys = row.names(dataset), column = "ENTREZID",
+                           keytype = nametype, multiVals = "first")
+        dataset <- dataset[!is.na(genename),]
+        genename <- genename[!is.na(genename)]
+        dataset <- dataset[!duplicated(genename),]
+        genename <- genename[!duplicated(genename)]
+    } else {genename <- row.names(dataset)}
+
+    consensus_subtypes <- get.subtypes(expression.dataset = dataset, entrez.ids = genename, method = method, ...)
+
+    return(consensus_subtypes)
 }
