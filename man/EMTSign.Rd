@@ -14,5 +14,5 @@ EMTSign(dataset, nametype, ...)
 \item{...}{other arguments passed on to the GSVA function.}
 }
 \description{
-Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at all. (2015).
+Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at al. (2015).
 }

@@ -12,5 +12,5 @@ PiroSign(dataset, nametype)
 \item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
-Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et all. (2020).
+Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et al. (2020).
 }
