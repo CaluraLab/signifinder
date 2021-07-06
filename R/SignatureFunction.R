@@ -17,10 +17,14 @@ getMatrix <- function(userdata){
 returnAsInput <- function(userdata, result, SignName){
     if(!is.matrix(userdata) & !is.data.frame(userdata)) {
         if(class(userdata)=="Seurat"){
-            if(is.vector(result)){userdata@meta.data <- cbind(userdata@meta.data, SignName=result)
+            if(is.vector(result)){names <- c(colnames(userdata@meta.data), SignName)
+                userdata@meta.data <- cbind(userdata@meta.data, name=result)
+                colnames(userdata@meta.data) <- names
             } else {userdata@meta.data <- cbind(userdata@meta.data, t(result))}
         } else if(class(userdata)%in%c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
-            if(is.vector(result)){userdata@colData <- cbind(userdata@colData, SignName=result)
+            names <- c(colnames(userdata@colData), SignName)
+            if(is.vector(result)){userdata@colData <- cbind(userdata@colData, name=result)
+            colnames(userdata@colData) <- names
             } else {userdata@colData <- cbind(userdata@colData, t(result))}}
         return(userdata)
     } else {return(result)}}
@@ -29,7 +33,7 @@ returnAsInput <- function(userdata, result, SignName){
 #'
 #' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at al. (2015).
 #'
-#' @param dataset a matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #' @param ... other arguments passed on to the GSVA function.
 #'
@@ -76,7 +80,7 @@ EMTSign <- function(dataset, nametype, ...) {
 #'
 #' Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et al. (2020).
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -92,12 +96,14 @@ PiroSign <- function(dataset, nametype){
     }
 
     if(nametype!="SYMBOL"){
-        Pirodata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Pirodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
+        Pirodata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pirodata$Gene_Symbol,
+                                       column = nametype, keytype = "SYMBOL", multiVals = "first")
     }
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(datasetm))," genes out of", length(Pirodata$Gene_Symbol)))
+    cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(datasetm)),
+               " genes out of ", length(Pirodata$Gene_Symbol), "\n"))
     Pirodata <- Pirodata[Pirodata$Gene_Symbol %in% row.names(datasetm), ]
     Piroscore <- colSums(datasetm[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
     return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "PiroptosisScore"))
@@ -108,7 +114,7 @@ PiroSign <- function(dataset, nametype){
 #'
 #' Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et al. (2021).
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -137,11 +143,11 @@ FerrSign <- function(dataset, nametype){
 }
 
 
-#' LIpidSignature
+#' LipidSignature
 #'
 #' Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et al. (2020).
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -173,7 +179,7 @@ LipidMetSign <- function(dataset, nametype) {
 #'
 #' Given a dataset, it returns the hypoxia score for each sample as in Buffa et al. 2010.
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -193,12 +199,13 @@ HypoSign <- function(dataset, nametype){
 
     if(nametype=="SYMBOL") { genetouse <- Hypodata$Gene_Symbol
     } else if(nametype=="ENSEMBL") { genetouse <- Hypodata$Gene_Ensembl
-    } else (genetouse <- mapIds(org.Hs.eg.db,keys= Hypodata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first"))
+    } else (genetouse <- mapIds(org.Hs.eg.db,keys= Hypodata$Gene_Symbol,
+                                column= nametype, keytype="SYMBOL", multiVals="first"))
 
     datasetm <- getMatrix(dataset)
 
     cat(paste0("The function is using ", sum(genetouse %in% rownames(datasetm)),
-               " genes out of", length(Hypodata$Gene_Symbol)))
+               " genes out of ", length(Hypodata$Gene_Symbol), "\n"))
     datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
 
     med_counts <- sort(setNames(colMedians(as.matrix(datasetm)), colnames(datasetm)))
@@ -212,7 +219,7 @@ HypoSign <- function(dataset, nametype){
 #'
 #' Given a dataset, it returns the gsva score for each sample from International Cancer Genome Consortium (ICGC).
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #' @param ... other arguments passed on to the GSVA function.
 #'
@@ -252,7 +259,7 @@ PlatResSign <- function(dataset, nametype,  ...){
 #' Prognostic Signature
 #'
 #' Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. al (2020).
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #' @param age vector of patient's age.
 #' @param stage vector of patient's tumor stage (FIGO).
@@ -349,7 +356,7 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
             z[j] <- sum(bootscore)/sqrt(nsamples)}
         pvals[i] <- sum(z>=path_score[i])/10000
     }
-    return(returnAsInput(userdata = dataset, result = rbind(path_score, pvals), SignName = ""))
+    return(cbind(MetabolicScore=path_score, Pvalue=pvals))
 }
 
 
@@ -357,7 +364,7 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
 #'
 #' Given a dataset, it returns the ImmunoScore for each sample. This signature is based on Dapeng Hao et. al (2018).
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -373,19 +380,19 @@ ImmunoSign <- function(dataset, nametype){
     }
 
     if(nametype!="SYMBOL"){
-        ImmunoGenes$genes <- mapIds(org.Hs.eg.db, keys = ImmunoGenes$genes, column = nametype,
+        Immudata$genes <- mapIds(org.Hs.eg.db, keys = Immudata$genes, column = nametype,
                                     keytype = "SYMBOL", multiVals = "first")
     }
 
     datasetm <- getMatrix(dataset)
 
-    g <- intersect(row.names(datasetm), ImmunoGenes$genes)
+    g <- intersect(row.names(datasetm), Immudata$genes)
 
     subdataset <- datasetm[g,]
-    ImmunoGenes <- ImmunoGenes[ImmunoGenes$genes %in% g, ]
+    Immudata <- Immudata[Immudata$genes %in% g, ]
 
-    SE <- (ImmunoGenes$HR - ImmunoGenes$`95CI_L`)/1.96
-    k <- (1 - ImmunoGenes$HR)/SE
+    SE <- (Immudata$HR - Immudata$`95CI_L`)/1.96
+    k <- (1 - Immudata$HR)/SE
 
     ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
 
@@ -397,7 +404,7 @@ ImmunoSign <- function(dataset, nametype){
 #'
 #' Given a dataset, it returns ovarian cancer subtypes. This signature is based on Chen et. al (2018).
 #'
-#' @param dataset matrix of expression values where rows correspond to genes and columns correspond to samples.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
 #' @param method the subtyping method to use. Default is "consensusOV".
 #' @param ... optional parameters to be passed to the low level function.
