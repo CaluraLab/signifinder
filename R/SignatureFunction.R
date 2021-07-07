@@ -238,7 +238,7 @@ PlatResSign <- function(dataset, nametype,  ...){
 
     if(nametype!= "SYMBOL"){
         Platdata <- lapply(Platdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
+            suppressMessages(mapIds(org.Hs.eg.db, keys = x, column = nametype, keytype = "SYMBOL", multiVals = "first")))
     }
 
     datasetm <- getMatrix(dataset)
@@ -283,13 +283,12 @@ PrognosticSign <- function(dataset, nametype, age, stage){
     }
 
     if(nametype!="SYMBOL"){
-        Progdata <- lapply(Progdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
+        names(Progdata$Genes) <- mapIds(org.Hs.eg.db, keys = x, column = nametype, keytype = "SYMBOL", multiVals = "first")
     }
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste("The function is using", sum(Progdata$Genes %in% row.names(datasetm)),
+    cat(paste("The function is using", sum(names(Progdata$Genes) %in% row.names(datasetm)),
               "genes out of", length(Progdata$Genes), "\n"))
 
     intergene <- intersect(row.names(datasetm), names(Progdata$Genes))
@@ -310,7 +309,7 @@ PrognosticSign <- function(dataset, nametype, age, stage){
         } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
         } else {"Q5"})
 
-    return(returnAsInput(userdata = dataset, result = quantile_prog, SignName = "PrognosticScore"))
+    return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "PrognosticScore"))
 }
 
 
