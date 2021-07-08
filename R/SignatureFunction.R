@@ -310,3 +310,11 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
     }
     return(cbind(path_score, pvals))
 }
+
+
+
+
+
+
+
+
