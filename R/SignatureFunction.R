@@ -602,9 +602,67 @@ IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
 }
 
 
+#' Core Matrisome Gene signature
+#'
+#' Given a dataset, it returns the median genes expression based on Yuzhalin et all. (2018).
+#'
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param nametype gene name ID of your dataset row names.
+#'
+#' @return NULL
+#'
+#' @importFrom matrixStats colMedians
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+MatriSign <- function(dataset, nametype) {
 
+    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
+        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
+    }
 
+    if(nametype!="SYMBOL"){
+        Matridata <- mapIds(org.Hs.eg.db, keys = Matridata, column = nametype, keytype = "SYMBOL", multiVals = "first")
+    }
 
+    datasetm <- getMatrix(dataset)
 
+    cat(paste0("The function is using ", sum(Matridata %in% row.names(dataset)), " matrisome's genes out of 9\n"))
 
+    median_cm <- colMedians(datasetm[row.names(datasetm) %in% Matridata, ])
 
+    return(returnAsInput(userdata = dataset, result = median_cm, SignName = "MatrisomeScore"))
+}
+
+#' Mitotic Index
+#'
+#' Given a dataset, it returns the means genes expression based on Yang et all. (2016).
+#'
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param nametype gene name ID of your dataset row names.
+#'
+#' @return NULL
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+MitoticIndexSign <- function(dataset, nametype) {
+
+    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
+        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
+    }
+
+    if(nametype!="SYMBOL"){
+        MIdata <- mapIds(org.Hs.eg.db,keys= MIdata, column= nametype, keytype="SYMBOL", multiVals="first")
+    }
+
+    datasetm <- getMatrix(dataset)
+
+    cat(paste0("The function is using ", sum(MIdata %in% row.names(datasetm)), " mititotic index genes out of 9\n"))
+
+    MI_means <- colMeans(datasetm[row.names(datasetm) %in% MIdata, ])
+
+    return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex"))
+}
