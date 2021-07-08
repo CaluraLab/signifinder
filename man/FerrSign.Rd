@@ -7,7 +7,7 @@
 FerrSign(dataset, nametype)
 }
 \arguments{
-\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of rownames of dataset.}
 }

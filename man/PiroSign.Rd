@@ -7,7 +7,7 @@
 PiroSign(dataset, nametype)
 }
 \arguments{
-\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}
+\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset row names.}
 }

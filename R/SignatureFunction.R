@@ -29,6 +29,24 @@ returnAsInput <- function(userdata, result, SignName){
         return(userdata)
     } else {return(result)}}
 
+ipsmap <- function(x){
+    if (x<=0) {ips <- 0} else if (x>=3) {ips <- 10} else {ips <- round(x*10/3, digits=0)}
+    return(ips)}
+
+my_palette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
+my_palette2 <- colorRampPalette(c("black", "white"))(n = 1000)
+
+mapcolors <- function(x){
+    za <- NULL
+    if (x>=3) {za = 1000} else if (x<=-3) {za = 1} else {za = round(166.5*x+500.5, digits = 0)}
+    return(my_palette[za])}
+
+mapbw <- function(x){
+    za <- NULL
+    if (x>=2) {za = 1000} else if (x<=-2) {za = 1} else {za = round(249.75*x+500.5, digits = 0)}
+    return(my_palette2[za])}
+
+
 #' Endothelial-Mesenchymal Transition Signature
 #'
 #' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at al. (2015).
@@ -435,4 +453,147 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
     consensus_subtypes <- get.subtypes(expression.dataset = datasetm, entrez.ids = genename, method = method, ...)
 
     return(returnAsInput(userdata = dataset, result = consensus_subtypes, SignName = ""))
+}
+
+
+#' ImmunoPhenoScore Signature
+#'
+#' Given a dataset, it returns IPS for each sample. This signature is based on .. et. al (..).
+#'
+#' @param dataset TPM expression values where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
+#' @param makeplot whether to make or not IPS plots. These will be one for each sample. Default is "no".
+#' @param plotpath directory path to save plots.
+#'
+#' @return NULL
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#' @import ggplot2
+#' @importFrom gridExtra grid.arrange
+#'
+#' @export
+IPSfunction <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
+
+    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
+        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
+    }
+
+    if(makeplot=="yes"){if(is.null(plotpath)){
+        message("Plots will be saved in the working directory because no path has been specified.")}
+    }
+
+    if(nametype!="SYMBOL"){
+        IPSGdata[,c(1,2)] <- data.frame(lapply(IPSGdata[,c(1,2)], function(x)
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first"))))
+    }
+
+    datasetm <- getMatrix(dataset)
+    sample_names <- colnames(datasetm)
+
+    cat(paste("The function is using", sum(IPSGdata$GENE %in% row.names(datasetm)),
+              "genes out of ", nrow(IPSGdata), "\n"))
+
+    ind <- which(is.na(match(IPSGdata$GENE, row.names(datasetm))))
+    MISSING_GENES <- IPSGdata$GENE[ind]
+    if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
+
+    IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
+    for (i in 1:length(sample_names)) {
+        GE <- datasetm[,i]
+        Z1 <- (datasetm[IPSGdata$GENE,i]-mean(GE))/sd(GE)
+        WEIGHT <- NULL; MIG <- NULL; k <- 1
+        for (gen in unique(IPSGdata$NAME)) {
+            MIG[k] <- mean(Z1[which(IPSGdata$NAME==gen)], na.rm=TRUE)
+            WEIGHT[k] <- mean(IPSGdata$WEIGHT[which(IPSGdata$NAME==gen)])
+            k<-k+1}
+        WG <- MIG*WEIGHT
+        MHC[i]<-mean(WG[1:10], na.rm = T)
+        CP[i]<-mean(WG[11:20], na.rm = T)
+        EC[i]<-mean(WG[21:24], na.rm = T)
+        SC[i]<-mean(WG[25:26], na.rm = T)
+        AZ[i]<-sum(MHC[i],CP[i],EC[i],SC[i])
+        IPS[i]<-ipsmap(AZ[i])
+
+        if(makeplot=="yes"){
+
+            data_a <- data.frame (start = c(0, 2.5, 5, 7.5, 10, 15, seq(20, 39), 0, 10, 20, 30),
+                                  end = c(2.5, 5, 7.5, 10, 15, seq(20, 40), 10, 20, 30, 40),
+                                  y1 = c(rep(2.6, 26), rep(0.4, 4)), y2 = c(rep(5.6, 26), rep(2.2, 4)),
+                                  z = c(MIG[c(21:26, 11:20, 1:10)], EC[i], SC[i], CP[i], MHC[i]),
+                                  vcol = c(unlist(lapply(MIG[c(21:26, 11:20, 1:10)], mapcolors)),
+                                           unlist(lapply(c(EC[i], SC[i], CP[i], MHC[i]),mapbw))),
+                                  label = c(unique_ips_genes[c(21:26,11:20,1:10)],"EC","SC","CP","MHC"))
+            data_a$label <- factor(data_a$label, levels = unique(data_a$label))
+            plot_a1 <- ggplot() +
+                geom_rect(data_a, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
+                          size = 0.5, color = "black", alpha = 1) +
+                coord_polar() + scale_y_continuous(limits = c(0, 6)) +
+                scale_fill_manual(values = as.vector(data_a$vcol), guide = F) + theme_bw() +
+                theme(panel.margin = unit(0, 'mm'), panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(), panel.border = element_blank(),
+                      panel.background = element_blank(), axis.line = element_line(colour = "white"),
+                      axis.text = element_blank(), axis.ticks = element_blank()) +
+                geom_text(aes(x = 5, y = 1.3, label = "EC"), size = 4) +
+                geom_text(aes(x = 15, y = 1.3, label = "SC"), size = 4) +
+                geom_text(aes(x = 25, y = 1.3, label = "CP"), size = 4) +
+                geom_text(aes(x = 35, y = 1.3, label = "MHC"), size = 4)
+            plot_a <- plot_a1 +
+                geom_text(aes(x = c(1.25, 3.75, 6.25, 8.75, 17.5, 12.5), y = 4.1,
+                              label = c("+ Act CD4", "+ Act CD8", "+ Tem CD4", "+ Tem CD8", "- MDSC", "- Treg")),
+                          angle = c(78.75, 56.25, 33.75, 11.25, -67.5, -22.5), size = 4) +
+                geom_text(aes(x = seq(20.5, 39.5, 1), y = 4.1,
+                              label = c("PD-1 -","CTLA4 -","LAG3 -","TIGIT -","TIM3 -",
+                                        "PD-L1 -","PD-L2 -","CD27 +","ICOS +","IDO1 -",
+                                        "B2M +","TAP1 +","TAP2 +","HLA-A +","HLA-B +",
+                                        "HLA-C +","HLA-DPA1 +","HLA-DPB1 +","HLA-E +","HLA-F +")),
+                          angle = c(seq(85.5, 4.5, -9), seq(-4.5, -85.5, -9)), size = 4) +
+                geom_text(aes(x = 0, y = 6, label = paste0("Immunophenoscore: ", IPS[i])),
+                          angle = 0, size = 6, vjust = -0.5)+
+                theme(axis.title = element_blank()) +
+                theme(plot.margin = unit(c(0,0,0,0), "mm")) +
+                geom_text(vjust = 1.15, hjust = 0, size = 4,
+                          aes(x = 25.5, y = 6, hjust = 0,
+                              label = "\n\n\n\n   MHC: Antigen Processing                                 EC: Effector Cells\n   CP: Checkpoints | Immunomodulators              SC: Suppressor Cells\n\n"))
+
+            legendtheme <- theme(plot.margin = unit(c(2,0,2,0),"inch"),
+                                 panel.margin = unit(0,"null"), panel.grid.major = element_blank(),
+                                 panel.grid.minor = element_blank(),panel.border = element_blank(),
+                                 panel.background = element_blank(), axis.text = element_blank(),
+                                 axis.ticks = element_blank(), axis.title.x = element_blank(),
+                                 axis.line = element_line(colour = "white"))
+            data_bc <- data.frame(start = rep(0,23), end = rep(0.7,23), y1 = seq(0,22), y2 = seq(1,23),
+                                  vcolb = c(unlist(lapply(seq(-3, 3, by = 6/22), mapcolors))),
+                                  vcolc = c(unlist(lapply(seq(-2, 2, by = 4/22), mapbw))),
+                                  label = LETTERS[1:23])
+            ## Legend sample-wise (averaged) z-scores
+            data_b_ticks <- data.frame(x = rep(1.2, 7), value = seq(-3, 3), y = seq(0, 6)*(22/6)+0.5)
+            plot_b <- ggplot(hjust = 0) +
+                geom_rect(data_bc, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
+                          size = 0.5, color = "black", alpha = 1) +
+                scale_x_continuous(limits = c(0, 1.5), expand = c(0,0)) +
+                scale_fill_manual(values = as.vector(data_bc$vcolb), guide = FALSE) +
+                geom_text(data_b_ticks, mapping = aes(x = x, y = y, label = value), hjust = "inward", size = 4) +
+                theme_bw() + legendtheme + ylab("Sample-wise (averaged) z-score")
+            ## Legend weighted z-scores
+            data_c_ticks <- data.frame(x = rep(1.2, 5), value = seq(-2, 2), y = seq(0, 4)*(22/4)+0.5)
+            plot_c <- ggplot() +
+                geom_rect(data_bc, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
+                          size = 0.5, color = "black", alpha = 1) +
+                scale_x_continuous(limits = c(0, 1.5), expand = c(0,0)) +
+                scale_fill_manual(values = as.vector(data_bc$vcolc), guide = FALSE) +
+                geom_text(data_c_ticks, mapping = aes(x=x, y=y, label=value), hjust = "inward", size = 4) +
+                theme_bw() + legendtheme + ylab("Weighted z-score")
+
+            ## Save plot to file (1 pdf file for each sample)
+            if(is.null(plotpath)){file_name <- paste0("IPS_", sample_names[i], ".pdf")
+            } else {file_name <- paste0(plotpath, "/IPS_", sample_names[i], ".pdf")}
+            pdf(file_name, width = 10, height = 8)
+            grid.arrange(plot_a, plot_b, plot_c, ncol = 3, widths = c(0.8, 0.1, 0.1))
+            dev.off()
+        }
+    }
+
+    names(IPS) <- sample_names
+    return(returnAsInput(userdata = dataset, result = IPS, SignName = "IPS"))
 }
