@@ -301,7 +301,8 @@ PrognosticSign <- function(dataset, nametype, age, stage){
     }
 
     if(nametype!="SYMBOL"){
-        names(Progdata$Genes) <- mapIds(org.Hs.eg.db, keys = x, column = nametype, keytype = "SYMBOL", multiVals = "first")
+        names(Progdata$Genes) <- mapIds(org.Hs.eg.db, keys = names(Progdata$Genes),
+                                        column = nametype, keytype = "SYMBOL", multiVals = "first")
     }
 
     datasetm <- getMatrix(dataset)
@@ -471,6 +472,8 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
 #' @import org.Hs.eg.db
 #' @import ggplot2
 #' @importFrom gridExtra grid.arrange
+#' @importFrom grDevices pdf dev.off
+#' @importFrom stats sd
 #'
 #' @export
 IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
@@ -523,7 +526,7 @@ IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
                                   z = c(MIG[c(21:26, 11:20, 1:10)], EC[i], SC[i], CP[i], MHC[i]),
                                   vcol = c(unlist(lapply(MIG[c(21:26, 11:20, 1:10)], mapcolors)),
                                            unlist(lapply(c(EC[i], SC[i], CP[i], MHC[i]),mapbw))),
-                                  label = c(unique_ips_genes[c(21:26,11:20,1:10)],"EC","SC","CP","MHC"))
+                                  label = c(unique(IPSGdata$NAME)[c(21:26,11:20,1:10)],"EC","SC","CP","MHC"))
             data_a$label <- factor(data_a$label, levels = unique(data_a$label))
             plot_a1 <- ggplot() +
                 geom_rect(data_a, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
