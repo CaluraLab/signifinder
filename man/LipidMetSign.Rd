@@ -2,15 +2,15 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{LipidMetSign}
 \alias{LipidMetSign}
-\title{LIpidSignature}
+\title{LipidSignature}
 \usage{
 LipidMetSign(dataset, nametype)
 }
 \arguments{
-\item{dataset}{matrix of expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
-Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et all. (2020).
+Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et al. (2020).
 }
