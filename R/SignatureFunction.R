@@ -473,7 +473,7 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
 #' @importFrom gridExtra grid.arrange
 #'
 #' @export
-IPSfunction <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
+IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
 
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
@@ -501,7 +501,7 @@ IPSfunction <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
         GE <- datasetm[,i]
-        Z1 <- (datasetm[IPSGdata$GENE,i]-mean(GE))/sd(GE)
+        Z1 <- (datasetm[match(IPSGdata$GENE, row.names(datasetm)),i]-mean(GE))/sd(GE)
         WEIGHT <- NULL; MIG <- NULL; k <- 1
         for (gen in unique(IPSGdata$NAME)) {
             MIG[k] <- mean(Z1[which(IPSGdata$NAME==gen)], na.rm=TRUE)
