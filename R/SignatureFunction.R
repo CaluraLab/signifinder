@@ -46,6 +46,63 @@ mapbw <- function(x){
     if (x>=2) {za = 1000} else if (x<=-2) {za = 1} else {za = round(249.75*x+500.5, digits = 0)}
     return(my_palette2[za])}
 
+GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
+    datasetGenes <- rownames(expr)
+    filteredGeneSets <- lapply(gset.idx.list, y = datasetGenes, intersect)
+    permutedResults <- lapply(seq_len(nperm), function(x){
+        permlist <- lapply(seq_len(length(gset.idx.list)), function(i)
+            sample(datasetGenes, size = lengths(filteredGeneSets)[i], replace = F))
+        gsva_matrix <- suppressWarnings(do.call(gsva, args))
+        data.frame(t(gsva_matrix))})
+    permutedResByGeneSet <- split.default(x = Reduce(cbind, permutedResults), seq_len(length(gset.idx.list)))
+    permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x)data.frame(t(x)))
+    finalRes <- do.call(rbind, lapply(seq_len(length(gset.idx.list)), function(i){
+        gspvalues <- sapply(1:ncol(expr), function(j){
+            (min(c(sum(permutedResByGeneSet[[i]][,j]<=gsvaResult[i,j]),
+                   sum(permutedResByGeneSet[[i]][,j]>=gsvaResult[i,j])))+1)/(nperm+1)})
+        gspvalues}))
+    colnames(finalRes) <- colnames(expr)
+    rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
+    return(finalRes)}
+
+
+#' 7 spots
+#'
+#' Given a 10X Visium dataset, it reassigns to each spot the aggregation of it with the nearest.
+#'
+#' @param dataset Seurat object of a 10X Visium dataset
+#'
+#' @return NULL
+#'
+#' @importFrom GSVA gsva
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+GetAggregatedSpot <- function(dataset){
+    spotcoords <- data.frame(row = as.vector(sapply(seq(0,76,2), function(i) rep(c(i,i+1),64) )),
+                             col = rep(seq(0,127),39))
+    overlappingspots <- lapply(1:4992, function(x){
+        a <- unlist(spotcoords[x,1]) ##row
+        b <- unlist(spotcoords[x,2]) ##col
+        data.frame(row = c(a, a-1, a-1, a, a+1, a+1, a),
+                   col = c(b, b-1, b+1, b+2, b+1, b-1, b-2))})
+    counts <- as.matrix(dataset@assays$SCT@data)
+    myrows <- dataset@images$slice1@coordinates$row
+    mycols <- dataset@images$slice1@coordinates$col
+    for(x in seq_len(length(overlappingspots))){
+        ovspots <- overlappingspots[[x]]
+        if(sum(myrows==ovspots[1,"row"] & mycols==ovspots[1,"col"])){
+            ind <- unlist(sapply(1:7, function(i)
+                which(myrows==ovspots[i,"row"] & mycols==ovspots[i,"col"])))
+            if(length(ind)!=1){
+                kcount <- counts[,ind[1]]
+                for(i in 2:length(ind)){kcount <- kcount + counts[,ind[i]]}
+                counts[,ind[1]] <- kcount}}}
+    ## now how to add counts to the seurat object??
+    return(dataset)
+}
+
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
@@ -53,6 +110,8 @@ mapbw <- function(x){
 #'
 #' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
+#' @param pvalues whether to compute pvalues by permutations.
+#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the GSVA function.
 #'
 #' @return NULL
@@ -62,7 +121,7 @@ mapbw <- function(x){
 #' @import org.Hs.eg.db
 #'
 #' @export
-EMTSign <- function(dataset, nametype, ...) {
+EMTSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...) {
 
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
@@ -78,17 +137,21 @@ EMTSign <- function(dataset, nametype, ...) {
     Signature_ML <- EMTdata[-grep('Epithelial-like', EMTdata$Category),]
 
     cat(paste0("The function is using ", sum(Signature_EL$Gene_Symbol %in% row.names(datasetm)),
-               " epithelial-like genes out of ", length(Signature_EL), "\nThe function is using ",
-               sum(Signature_ML$Gene_Symbol %in% row.names(datasetm)), " mesenchymal-like genes out of",
-               length(Signature_ML),"\n"))
+               " epithelial-like genes out of ", nrow(Signature_EL), "\nThe function is using ",
+               sum(Signature_ML$Gene_Symbol %in% row.names(datasetm)), " mesenchymal-like genes out of ",
+               nrow(Signature_ML),"\n"))
 
-    gene_sets <- list(Epithelial=Signature_EL$Gene_Symbol, Mesenchimal=Signature_ML$Gene_Symbol)
+    gene_sets <- list(Epithelial=Signature_EL$Gene_Symbol, Mesenchymal=Signature_ML$Gene_Symbol)
 
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-                                      kcdf = "Poisson", abs.ranking = F, min.sz = 5, max.sz = Inf,
-                                      parallel.sz = 1L, mx.diff = TRUE, ssgsea.norm = TRUE))
+    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = gene_sets, method = "gsva",
+                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE))
     gsva_matrix <- do.call(gsva, args)
+
+    if(pvalues){
+        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets, gsvaResult = gsva_matrix,
+                                 nperm = nperm, args = args)
+        gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
     return(returnAsInput(userdata = dataset, result = gsva_matrix, SignName = ""))
 }
@@ -120,10 +183,14 @@ PiroSign <- function(dataset, nametype){
 
     datasetm <- getMatrix(dataset)
 
+    nSigGenes <- length(Pirodata$Gene_Symbol)
     cat(paste0("The function is using ", sum(Pirodata$Gene_Symbol %in% row.names(datasetm)),
-               " genes out of ", length(Pirodata$Gene_Symbol), "\n"))
+               " genes out of ", nSigGenes, "\n"))
     Pirodata <- Pirodata[Pirodata$Gene_Symbol %in% row.names(datasetm), ]
-    Piroscore <- colSums(datasetm[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
+    Piroscore <- sapply(colnames(datasetm), function(x){
+        ssgenes <- datasetm[Pirodata$Gene_Symbol, x]
+        if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pirodata$Coefficient)}})
+    # Piroscore <- colSums(datasetm[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
     return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "PiroptosisScore"))
 }
 
@@ -154,7 +221,8 @@ FerrSign <- function(dataset, nametype){
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(datasetm))," genes out of", length(Ferrdata$Gene_Symbol)))
+    cat(paste0("The function is using ", sum(Ferrdata$Gene_Symbol %in% row.names(datasetm)),
+               " genes out of ", length(Ferrdata$Gene_Symbol), "\n"))
     Ferrdata <- Ferrdata[Ferrdata$Gene_Symbol %in% row.names(datasetm), ]
     ferrscore <- colSums(datasetm[Ferrdata$Gene_Symbol, ]*Ferrdata$Coefficient)
     return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "FerroptosisScore"))
@@ -186,7 +254,8 @@ LipidMetSign <- function(dataset, nametype) {
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(datasetm))," genes out of", length(Lipidata$Gene_Symbol)))
+    cat(paste0("The function is using ", sum(Lipidata$Gene_Symbol %in% row.names(datasetm)),
+               " genes out of ", length(Lipidata$Gene_Symbol), "\n"))
     Lipidata <- Lipidata[Lipidata$Gene_Symbol %in% row.names(datasetm), ]
     lipidscore <- colSums(datasetm[Lipidata$Gene_Symbol, ] * Lipidata$Coefficient)
     return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidScore"))
@@ -226,10 +295,10 @@ HypoSign <- function(dataset, nametype){
                " genes out of ", length(Hypodata$Gene_Symbol), "\n"))
     datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
 
-    med_counts <- sort(setNames(colMedians(as.matrix(datasetm)), colnames(datasetm)))
+    med_counts <- setNames(colMedians(as.matrix(datasetm)), colnames(datasetm))
     scores <- data.frame(E = med_counts, HS = scale(med_counts))
 
-    return(returnAsInput(userdata = dataset, result = scores, SignName = ""))
+    return(returnAsInput(userdata = dataset, result = t(scores), SignName = ""))
 }
 
 
@@ -239,6 +308,8 @@ HypoSign <- function(dataset, nametype){
 #'
 #' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
+#' @param pvalues whether to compute pvalues by permutations.
+#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the GSVA function.
 #'
 #' @return NULL
@@ -248,7 +319,7 @@ HypoSign <- function(dataset, nametype){
 #' @import org.Hs.eg.db
 #'
 #' @export
-PlatResSign <- function(dataset, nametype,  ...){
+PlatResSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...){
 
     if (!nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS")){
         stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
@@ -266,9 +337,14 @@ PlatResSign <- function(dataset, nametype,  ...){
               sum(Platdata$down %in% row.names(datasetm)), "down-genes out of", length(Platdata$down),"\n"))
 
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = Platdata,
-                                      method = "ssgsea", kcdf = "Poisson", min.sz=5))
+    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = Platdata, method = "gsva",
+                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE))
     gsva_count <- do.call(gsva, args)
+
+    if(pvalues){
+        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets, gsvaResult = gsva_matrix,
+                                 nperm = nperm, args = args)
+        gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
     return(returnAsInput(userdata = dataset, result = gsva_count, SignName = ""))
 }

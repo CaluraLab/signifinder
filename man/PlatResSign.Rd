@@ -4,12 +4,16 @@
 \alias{PlatResSign}
 \title{Platinum Resistance Signature}
 \usage{
-PlatResSign(dataset, nametype, ...)
+PlatResSign(dataset, nametype, pvalues = FALSE, nperm = 100, ...)
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset row names.}
+
+\item{pvalues}{whether to compute pvalues by permutations.}
+
+\item{nperm}{number of permutations.}
 
 \item{...}{other arguments passed on to the GSVA function.}
 }

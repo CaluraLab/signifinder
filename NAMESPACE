@@ -3,6 +3,7 @@
 export(ConsensusOVSign)
 export(EMTSign)
 export(FerrSign)
+export(GetAggregatedSpot)
 export(HypoSign)
 export(IPSSign)
 export(ImmunoSign)
