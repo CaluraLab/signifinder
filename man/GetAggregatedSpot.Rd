@@ -2,7 +2,7 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{GetAggregatedSpot}
 \alias{GetAggregatedSpot}
-\title{7 spots}
+\title{7 spots resolution}
 \usage{
 GetAggregatedSpot(dataset)
 }

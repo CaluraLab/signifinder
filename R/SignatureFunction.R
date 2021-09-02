@@ -11,7 +11,7 @@ getMatrix <- function(userdata){
         } else if(class(userdata)%in%c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
             userdata <- as.matrix(SummarizedExperiment::assay(userdata))
         } else if(class(userdata)=="data.frame"){userdata <- as.matrix(userdata)
-        } else {stop("Dataset is not supported")}}
+        } else {stop("This dataset type is not supported")}}
     return(userdata)}
 
 returnAsInput <- function(userdata, result, SignName){
@@ -33,27 +33,16 @@ ipsmap <- function(x){
     if (x<=0) {ips <- 0} else if (x>=3) {ips <- 10} else {ips <- round(x*10/3, digits=0)}
     return(ips)}
 
-my_palette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
-my_palette2 <- colorRampPalette(c("black", "white"))(n = 1000)
-
-mapcolors <- function(x){
-    za <- NULL
-    if (x>=3) {za = 1000} else if (x<=-3) {za = 1} else {za = round(166.5*x+500.5, digits = 0)}
-    return(my_palette[za])}
-
-mapbw <- function(x){
-    za <- NULL
-    if (x>=2) {za = 1000} else if (x<=-2) {za = 1} else {za = round(249.75*x+500.5, digits = 0)}
-    return(my_palette2[za])}
-
 GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     datasetGenes <- rownames(expr)
     filteredGeneSets <- lapply(gset.idx.list, y = datasetGenes, intersect)
-    permutedResults <- lapply(seq_len(nperm), function(x){
+    permutedResults <- parallel::mclapply(seq_len(nperm), function(x){
+        cat("Performing permutation number", x, "\n")
         permlist <- lapply(seq_len(length(gset.idx.list)), function(i)
             sample(datasetGenes, size = lengths(filteredGeneSets)[i], replace = F))
+        args$gset.idx.list <- permlist
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
-        data.frame(t(gsva_matrix))})
+        data.frame(t(gsva_matrix))}, mc.cores = 1)
     permutedResByGeneSet <- split.default(x = Reduce(cbind, permutedResults), seq_len(length(gset.idx.list)))
     permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x)data.frame(t(x)))
     finalRes <- do.call(rbind, lapply(seq_len(length(gset.idx.list)), function(i){
@@ -65,8 +54,12 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
 
+firstCheck <- function(nametype){
+    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL"))){
+        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}}
 
-#' 7 spots
+
+#' 7 spots resolution
 #'
 #' Given a 10X Visium dataset, it reassigns to each spot the aggregation of it with the nearest.
 #'
@@ -99,6 +92,8 @@ GetAggregatedSpot <- function(dataset){
                 kcount <- counts[,ind[1]]
                 for(i in 2:length(ind)){kcount <- kcount + counts[,ind[i]]}
                 counts[,ind[1]] <- kcount}}}
+    spcounts <- Matrix::Matrix(data = counts, sparse = TRUE)
+    dataset@assays$Aggregated
     ## now how to add counts to the seurat object??
     return(dataset)
 }
@@ -121,15 +116,13 @@ GetAggregatedSpot <- function(dataset){
 #' @import org.Hs.eg.db
 #'
 #' @export
-EMTSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...) {
+EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...) {
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys=EMTdata$Gene_Symbol, column=nametype, keytype="SYMBOL", multiVals="first")
-    }
+        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = EMTdata$Gene_Symbol, column = nametype,
+                                      keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -145,8 +138,8 @@ EMTSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...) {
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = gene_sets, method = "gsva",
-                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE))
-    gsva_matrix <- do.call(gsva, args)
+                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = F))
+    gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
     if(pvalues){
         gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets, gsvaResult = gsva_matrix,
@@ -170,16 +163,13 @@ EMTSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...) {
 #' @import org.Hs.eg.db
 #'
 #' @export
-PiroSign <- function(dataset, nametype){
+PiroSign <- function(dataset, nametype = "SYMBOL"){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
         Pirodata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pirodata$Gene_Symbol,
-                                       column = nametype, keytype = "SYMBOL", multiVals = "first")
-    }
+                                       column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -205,19 +195,16 @@ PiroSign <- function(dataset, nametype){
 #' @return NULL
 #'
 #' @importFrom AnnotationDbi mapIds
-#' @param nametype gene name ID of rownames of dataset.
 #' @import org.Hs.eg.db
 #'
 #' @export
-FerrSign <- function(dataset, nametype){
+FerrSign <- function(dataset, nametype = "SYMBOL"){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        Ferrdata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Ferrdata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
-    }
+        Ferrdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Ferrdata$Gene_Symbol, column = nametype,
+                                       keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -242,15 +229,13 @@ FerrSign <- function(dataset, nametype){
 #' @import org.Hs.eg.db
 #'
 #' @export
-LipidMetSign <- function(dataset, nametype) {
+LipidMetSign <- function(dataset, nametype = "SYMBOL") {
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        Lipidata$Gene_Symbol <- mapIds(org.Hs.eg.db,keys= Lipidata$Gene_Symbol, column= nametype, keytype="SYMBOL", multiVals="first")
-    }
+        Lipidata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Lipidata$Gene_Symbol, column = nametype,
+                                       keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -278,11 +263,9 @@ LipidMetSign <- function(dataset, nametype) {
 #' @import org.Hs.eg.db
 #'
 #' @export
-HypoSign <- function(dataset, nametype){
+HypoSign <- function(dataset, nametype = "SYMBOL"){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype=="SYMBOL") { genetouse <- Hypodata$Gene_Symbol
     } else if(nametype=="ENSEMBL") { genetouse <- Hypodata$Gene_Ensembl
@@ -295,10 +278,9 @@ HypoSign <- function(dataset, nametype){
                " genes out of ", length(Hypodata$Gene_Symbol), "\n"))
     datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
 
-    med_counts <- setNames(colMedians(as.matrix(datasetm)), colnames(datasetm))
-    scores <- data.frame(E = med_counts, HS = scale(med_counts))
+    med_counts <- colMedians(as.matrix(datasetm))
 
-    return(returnAsInput(userdata = dataset, result = t(scores), SignName = ""))
+    return(returnAsInput(userdata = dataset, result = as.vector(scale(med_counts)), SignName = "HypoxiaScore"))
 }
 
 
@@ -319,16 +301,13 @@ HypoSign <- function(dataset, nametype){
 #' @import org.Hs.eg.db
 #'
 #' @export
-PlatResSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...){
+PlatResSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...){
 
-    if (!nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS")){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!= "SYMBOL"){
         Platdata <- lapply(Platdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys = x, column = nametype, keytype = "SYMBOL", multiVals = "first")))
-    }
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first")))}
 
     datasetm <- getMatrix(dataset)
 
@@ -338,11 +317,12 @@ PlatResSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...){
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = Platdata, method = "gsva",
-                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE))
-    gsva_count <- do.call(gsva, args)
+                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = F))
+    gsva_count <- suppressWarnings(do.call(gsva, args))
+    rownames(gsva_count) <- c("PlatResUp", "PlatResDown")
 
     if(pvalues){
-        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets, gsvaResult = gsva_matrix,
+        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = Platdata, gsvaResult = gsva_matrix,
                                  nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
@@ -364,22 +344,16 @@ PlatResSign <- function(dataset, nametype, pvalues = FALSE, nperm = 100, ...){
 #' @import org.Hs.eg.db
 #'
 #' @export
-PrognosticSign <- function(dataset, nametype, age, stage){
+PrognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
-    if(class(age)!="numeric"){
-        stop("The age parameter must be a numeric vector")
-    }
-    if(class(stage) != "character"){
-        stop("The stage parameter must be a character vector")
-    }
+    firstCheck(nametype)
+
+    if(class(age)!="numeric"){stop("The age parameter must be a numeric vector")}
+    if(class(stage) != "character"){stop("The stage parameter must be a character vector")}
 
     if(nametype!="SYMBOL"){
         names(Progdata$Genes) <- mapIds(org.Hs.eg.db, keys = names(Progdata$Genes),
-                                        column = nametype, keytype = "SYMBOL", multiVals = "first")
-    }
+                                        column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -423,22 +397,18 @@ PrognosticSign <- function(dataset, nametype, age, stage){
 #' @import org.Hs.eg.db
 #'
 #' @export
-MetabolicSign <- function(DEdata, nametype, nsamples){
+MetabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
-    if(class(nsamples)!="numeric"){
-        stop("The nsample parameter must be a numeric vector")
-    }
+    firstCheck(nametype)
+
+    if(class(nsamples)!="numeric"){stop("The nsample parameter must be a numeric vector")}
 
     gene_score <- abs(DEdata[,1] -log(DEdata[,2]))
     names(gene_score) <- row.names(DEdata)
 
     if(nametype!="SYMBOL"){
         Metadata <- lapply(Metadata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db,keys= x, column= nametype, keytype="SYMBOL", multiVals="first")))
-    }
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first")))}
 
     gene_pathway <- lapply(Metadata, intersect, row.names(DEdata))
     path_score <- sapply(gene_pathway, function(x) sum(gene_score[x]))/sqrt(nsamples)
@@ -467,16 +437,13 @@ MetabolicSign <- function(DEdata, nametype, nsamples){
 #' @import org.Hs.eg.db
 #'
 #' @export
-ImmunoSign <- function(dataset, nametype){
+ImmunoSign <- function(dataset, nametype = "SYMBOL"){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
         Immudata$genes <- mapIds(org.Hs.eg.db, keys = Immudata$genes, column = nametype,
-                                    keytype = "SYMBOL", multiVals = "first")
-    }
+                                    keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -510,11 +477,9 @@ ImmunoSign <- function(dataset, nametype){
 #' @import org.Hs.eg.db
 #'
 #' @export
-ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
+ConsensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV", ...){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     datasetm <- getMatrix(dataset)
 
@@ -529,7 +494,7 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
 
     consensus_subtypes <- get.subtypes(expression.dataset = datasetm, entrez.ids = genename, method = method, ...)
 
-    return(returnAsInput(userdata = dataset, result = consensus_subtypes, SignName = ""))
+    return(returnAsInput(userdata = dataset, result = t(consensus_subtypes$rf.probs), SignName = ""))
 }
 
 
@@ -539,8 +504,6 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
 #'
 #' @param dataset TPM expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
-#' @param makeplot whether to make or not IPS plots. These will be one for each sample. Default is "no".
-#' @param plotpath directory path to save plots.
 #'
 #' @return NULL
 #'
@@ -552,20 +515,13 @@ ConsensusOVSign <- function(dataset, nametype, method = "consensusOV", ...){
 #' @importFrom stats sd
 #'
 #' @export
-IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
+IPSSign <- function(dataset, nametype = "SYMBOL"){
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
-
-    if(makeplot=="yes"){if(is.null(plotpath)){
-        message("Plots will be saved in the working directory because no path has been specified.")}
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
         IPSGdata[,c(1,2)] <- data.frame(lapply(IPSGdata[,c(1,2)], function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first"))))
-    }
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first"))))}
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
@@ -592,89 +548,11 @@ IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
         EC[i]<-mean(WG[21:24], na.rm = T)
         SC[i]<-mean(WG[25:26], na.rm = T)
         AZ[i]<-sum(MHC[i],CP[i],EC[i],SC[i])
-        IPS[i]<-ipsmap(AZ[i])
+        IPS[i]<-ipsmap(AZ[i])}
 
-        if(makeplot=="yes"){
-
-            data_a <- data.frame (start = c(0, 2.5, 5, 7.5, 10, 15, seq(20, 39), 0, 10, 20, 30),
-                                  end = c(2.5, 5, 7.5, 10, 15, seq(20, 40), 10, 20, 30, 40),
-                                  y1 = c(rep(2.6, 26), rep(0.4, 4)), y2 = c(rep(5.6, 26), rep(2.2, 4)),
-                                  z = c(MIG[c(21:26, 11:20, 1:10)], EC[i], SC[i], CP[i], MHC[i]),
-                                  vcol = c(unlist(lapply(MIG[c(21:26, 11:20, 1:10)], mapcolors)),
-                                           unlist(lapply(c(EC[i], SC[i], CP[i], MHC[i]),mapbw))),
-                                  label = c(unique(IPSGdata$NAME)[c(21:26,11:20,1:10)],"EC","SC","CP","MHC"))
-            data_a$label <- factor(data_a$label, levels = unique(data_a$label))
-            plot_a1 <- ggplot() +
-                geom_rect(data_a, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
-                          size = 0.5, color = "black", alpha = 1) +
-                coord_polar() + scale_y_continuous(limits = c(0, 6)) +
-                scale_fill_manual(values = as.vector(data_a$vcol), guide = F) + theme_bw() +
-                theme(panel.margin = unit(0, 'mm'), panel.grid.major = element_blank(),
-                      panel.grid.minor = element_blank(), panel.border = element_blank(),
-                      panel.background = element_blank(), axis.line = element_line(colour = "white"),
-                      axis.text = element_blank(), axis.ticks = element_blank()) +
-                geom_text(aes(x = 5, y = 1.3, label = "EC"), size = 4) +
-                geom_text(aes(x = 15, y = 1.3, label = "SC"), size = 4) +
-                geom_text(aes(x = 25, y = 1.3, label = "CP"), size = 4) +
-                geom_text(aes(x = 35, y = 1.3, label = "MHC"), size = 4)
-            plot_a <- plot_a1 +
-                geom_text(aes(x = c(1.25, 3.75, 6.25, 8.75, 17.5, 12.5), y = 4.1,
-                              label = c("+ Act CD4", "+ Act CD8", "+ Tem CD4", "+ Tem CD8", "- MDSC", "- Treg")),
-                          angle = c(78.75, 56.25, 33.75, 11.25, -67.5, -22.5), size = 4) +
-                geom_text(aes(x = seq(20.5, 39.5, 1), y = 4.1,
-                              label = c("PD-1 -","CTLA4 -","LAG3 -","TIGIT -","TIM3 -",
-                                        "PD-L1 -","PD-L2 -","CD27 +","ICOS +","IDO1 -",
-                                        "B2M +","TAP1 +","TAP2 +","HLA-A +","HLA-B +",
-                                        "HLA-C +","HLA-DPA1 +","HLA-DPB1 +","HLA-E +","HLA-F +")),
-                          angle = c(seq(85.5, 4.5, -9), seq(-4.5, -85.5, -9)), size = 4) +
-                geom_text(aes(x = 0, y = 6, label = paste0("Immunophenoscore: ", IPS[i])),
-                          angle = 0, size = 6, vjust = -0.5)+
-                theme(axis.title = element_blank()) +
-                theme(plot.margin = unit(c(0,0,0,0), "mm")) +
-                geom_text(vjust = 1.15, hjust = 0, size = 4,
-                          aes(x = 25.5, y = 6, hjust = 0,
-                              label = "\n\n\n\n   MHC: Antigen Processing                                 EC: Effector Cells\n   CP: Checkpoints | Immunomodulators              SC: Suppressor Cells\n\n"))
-
-            legendtheme <- theme(plot.margin = unit(c(2,0,2,0),"inch"),
-                                 panel.margin = unit(0,"null"), panel.grid.major = element_blank(),
-                                 panel.grid.minor = element_blank(),panel.border = element_blank(),
-                                 panel.background = element_blank(), axis.text = element_blank(),
-                                 axis.ticks = element_blank(), axis.title.x = element_blank(),
-                                 axis.line = element_line(colour = "white"))
-            data_bc <- data.frame(start = rep(0,23), end = rep(0.7,23), y1 = seq(0,22), y2 = seq(1,23),
-                                  vcolb = c(unlist(lapply(seq(-3, 3, by = 6/22), mapcolors))),
-                                  vcolc = c(unlist(lapply(seq(-2, 2, by = 4/22), mapbw))),
-                                  label = LETTERS[1:23])
-            ## Legend sample-wise (averaged) z-scores
-            data_b_ticks <- data.frame(x = rep(1.2, 7), value = seq(-3, 3), y = seq(0, 6)*(22/6)+0.5)
-            plot_b <- ggplot(hjust = 0) +
-                geom_rect(data_bc, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
-                          size = 0.5, color = "black", alpha = 1) +
-                scale_x_continuous(limits = c(0, 1.5), expand = c(0,0)) +
-                scale_fill_manual(values = as.vector(data_bc$vcolb), guide = FALSE) +
-                geom_text(data_b_ticks, mapping = aes(x = x, y = y, label = value), hjust = "inward", size = 4) +
-                theme_bw() + legendtheme + ylab("Sample-wise (averaged) z-score")
-            ## Legend weighted z-scores
-            data_c_ticks <- data.frame(x = rep(1.2, 5), value = seq(-2, 2), y = seq(0, 4)*(22/4)+0.5)
-            plot_c <- ggplot() +
-                geom_rect(data_bc, mapping = aes(xmin = start, xmax = end, ymin = y1, ymax = y2, fill = label),
-                          size = 0.5, color = "black", alpha = 1) +
-                scale_x_continuous(limits = c(0, 1.5), expand = c(0,0)) +
-                scale_fill_manual(values = as.vector(data_bc$vcolc), guide = FALSE) +
-                geom_text(data_c_ticks, mapping = aes(x=x, y=y, label=value), hjust = "inward", size = 4) +
-                theme_bw() + legendtheme + ylab("Weighted z-score")
-
-            ## Save plot to file (1 pdf file for each sample)
-            if(is.null(plotpath)){file_name <- paste0("IPS_", sample_names[i], ".pdf")
-            } else {file_name <- paste0(plotpath, "/IPS_", sample_names[i], ".pdf")}
-            pdf(file_name, width = 10, height = 8)
-            grid.arrange(plot_a, plot_b, plot_c, ncol = 3, widths = c(0.8, 0.1, 0.1))
-            dev.off()
-        }
-    }
-
-    names(IPS) <- sample_names
-    return(returnAsInput(userdata = dataset, result = IPS, SignName = "IPS"))
+    ipsres <- data.frame(IPS, MHC, CP, EC, SC)
+    row.names(ipsres) <- sample_names
+    return(returnAsInput(userdata = dataset, result = t(ipsres), SignName = ""))
 }
 
 
@@ -692,15 +570,12 @@ IPSSign <- function(dataset, nametype, makeplot = "no", plotpath=NULL){
 #' @import org.Hs.eg.db
 #'
 #' @export
-MatriSign <- function(dataset, nametype) {
+MatriSign <- function(dataset, nametype = "SYMBOL") {
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        Matridata <- mapIds(org.Hs.eg.db, keys = Matridata, column = nametype, keytype = "SYMBOL", multiVals = "first")
-    }
+        Matridata <- mapIds(org.Hs.eg.db, keys=Matridata, column=nametype, keytype="SYMBOL", multiVals="first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -724,15 +599,12 @@ MatriSign <- function(dataset, nametype) {
 #' @import org.Hs.eg.db
 #'
 #' @export
-MitoticIndexSign <- function(dataset, nametype) {
+MitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 
-    if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL","ENSEMBLTRANS"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID, ENSEMBL or ENSEMBLTRANS")
-    }
+    firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        MIdata <- mapIds(org.Hs.eg.db,keys= MIdata, column= nametype, keytype="SYMBOL", multiVals="first")
-    }
+        MIdata <- mapIds(org.Hs.eg.db, keys=MIdata, column=nametype, keytype="SYMBOL", multiVals="first")}
 
     datasetm <- getMatrix(dataset)
 
