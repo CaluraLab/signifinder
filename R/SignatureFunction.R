@@ -27,7 +27,10 @@ returnAsInput <- function(userdata, result, SignName){
             colnames(userdata@colData) <- names
             } else {userdata@colData <- cbind(userdata@colData, t(result))}}
         return(userdata)
-    } else {return(result)}}
+    } else {
+        if(is.vector(result)){attr(result, "Signature Name") <- SignName}
+        return(result)}
+    }
 
 ipsmap <- function(x){
     if (x<=0) {ips <- 0} else if (x>=3) {ips <- 10} else {ips <- round(x*10/3, digits=0)}
@@ -181,7 +184,7 @@ PiroSign <- function(dataset, nametype = "SYMBOL"){
         ssgenes <- datasetm[Pirodata$Gene_Symbol, x]
         if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pirodata$Coefficient)}})
     # Piroscore <- colSums(datasetm[Pirodata$Gene_Symbol, ]*Pirodata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "PiroptosisScore"))
+    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "Piroptosis"))
 }
 
 
@@ -212,7 +215,7 @@ FerrSign <- function(dataset, nametype = "SYMBOL"){
                " genes out of ", length(Ferrdata$Gene_Symbol), "\n"))
     Ferrdata <- Ferrdata[Ferrdata$Gene_Symbol %in% row.names(datasetm), ]
     ferrscore <- colSums(datasetm[Ferrdata$Gene_Symbol, ]*Ferrdata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "FerroptosisScore"))
+    return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "Ferroptosis"))
 }
 
 
@@ -243,7 +246,7 @@ LipidMetSign <- function(dataset, nametype = "SYMBOL") {
                " genes out of ", length(Lipidata$Gene_Symbol), "\n"))
     Lipidata <- Lipidata[Lipidata$Gene_Symbol %in% row.names(datasetm), ]
     lipidscore <- colSums(datasetm[Lipidata$Gene_Symbol, ] * Lipidata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidScore"))
+    return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidMetabolism"))
 }
 
 
@@ -263,7 +266,7 @@ LipidMetSign <- function(dataset, nametype = "SYMBOL") {
 #' @import org.Hs.eg.db
 #'
 #' @export
-HypoSign <- function(dataset, nametype = "SYMBOL"){
+HypoxiaSign <- function(dataset, nametype = "SYMBOL"){
 
     firstCheck(nametype)
 
@@ -280,7 +283,7 @@ HypoSign <- function(dataset, nametype = "SYMBOL"){
 
     med_counts <- colMedians(as.matrix(datasetm))
 
-    return(returnAsInput(userdata = dataset, result = as.vector(scale(med_counts)), SignName = "HypoxiaScore"))
+    return(returnAsInput(userdata = dataset, result = as.vector(scale(med_counts)), SignName = "Hypoxia"))
 }
 
 
@@ -319,7 +322,7 @@ PlatResSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 1
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = Platdata, method = "gsva",
                                       kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = F))
     gsva_count <- suppressWarnings(do.call(gsva, args))
-    rownames(gsva_count) <- c("PlatResUp", "PlatResDown")
+    rownames(gsva_count) <- c("PlatinumResistanceUp", "PlatinumResistanceDown")
 
     if(pvalues){
         gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = Platdata, gsvaResult = gsva_matrix,
@@ -378,7 +381,7 @@ PrognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
         } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
         } else {"Q5"})
 
-    return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "PrognosticScore"))
+    return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "Prognostic"))
 }
 
 
@@ -520,27 +523,27 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        IPSGdata[,c(1,2)] <- data.frame(lapply(IPSGdata[,c(1,2)], function(x)
+        IPSdata[,c(1,2)] <- data.frame(lapply(IPSdata[,c(1,2)], function(x)
             suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first"))))}
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
 
-    cat(paste("The function is using", sum(IPSGdata$GENE %in% row.names(datasetm)),
-              "genes out of ", nrow(IPSGdata), "\n"))
+    cat(paste("The function is using", sum(IPSdata$GENE %in% row.names(datasetm)),
+              "genes out of ", nrow(IPSdata), "\n"))
 
-    ind <- which(is.na(match(IPSGdata$GENE, row.names(datasetm))))
-    MISSING_GENES <- IPSGdata$GENE[ind]
+    ind <- which(is.na(match(IPSdata$GENE, row.names(datasetm))))
+    MISSING_GENES <- IPSdata$GENE[ind]
     if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
 
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
         GE <- datasetm[,i]
-        Z1 <- (datasetm[match(IPSGdata$GENE, row.names(datasetm)),i]-mean(GE))/sd(GE)
+        Z1 <- (datasetm[match(IPSdata$GENE, row.names(datasetm)),i]-mean(GE))/sd(GE)
         WEIGHT <- NULL; MIG <- NULL; k <- 1
-        for (gen in unique(IPSGdata$NAME)) {
-            MIG[k] <- mean(Z1[which(IPSGdata$NAME==gen)], na.rm=TRUE)
-            WEIGHT[k] <- mean(IPSGdata$WEIGHT[which(IPSGdata$NAME==gen)])
+        for (gen in unique(IPSdata$NAME)) {
+            MIG[k] <- mean(Z1[which(IPSdata$NAME==gen)], na.rm=TRUE)
+            WEIGHT[k] <- mean(IPSdata$WEIGHT[which(IPSdata$NAME==gen)])
             k<-k+1}
         WG <- MIG*WEIGHT
         MHC[i]<-mean(WG[1:10], na.rm = T)
@@ -575,15 +578,15 @@ MatriSign <- function(dataset, nametype = "SYMBOL") {
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        Matridata <- mapIds(org.Hs.eg.db, keys=Matridata, column=nametype, keytype="SYMBOL", multiVals="first")}
+        Matrdata <- mapIds(org.Hs.eg.db, keys=Matrdata, column=nametype, keytype="SYMBOL", multiVals="first")}
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(Matridata %in% row.names(dataset)), " matrisome's genes out of 9\n"))
+    cat(paste0("The function is using ", sum(Matrdata %in% row.names(dataset)), " matrisome's genes out of 9\n"))
 
-    median_cm <- colMedians(datasetm[row.names(datasetm) %in% Matridata, ])
+    median_cm <- colMedians(datasetm[row.names(datasetm) %in% Matrdata, ])
 
-    return(returnAsInput(userdata = dataset, result = median_cm, SignName = "MatrisomeScore"))
+    return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome"))
 }
 
 #' Mitotic Index
@@ -604,13 +607,13 @@ MitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        MIdata <- mapIds(org.Hs.eg.db, keys=MIdata, column=nametype, keytype="SYMBOL", multiVals="first")}
+        Mitodata <- mapIds(org.Hs.eg.db, keys=Mitodata, column=nametype, keytype="SYMBOL", multiVals="first")}
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(MIdata %in% row.names(datasetm)), " mititotic index genes out of 9\n"))
+    cat(paste0("The function is using ", sum(Mitodata %in% row.names(datasetm)), " mititotic index genes out of 9\n"))
 
-    MI_means <- colMeans(datasetm[row.names(datasetm) %in% MIdata, ])
+    MI_means <- colMeans(datasetm[row.names(datasetm) %in% Mitodata, ])
 
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex"))
 }
