@@ -9,15 +9,24 @@ my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
 my_colors <- RColorBrewer::colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
-    name <- substring(name,1,4)
-    datavar <- eval(parse(text = paste0(name, "data")))
-    if(name %in% c("Ferr", "Hypo", "Immu", "IPS", "Lipi", "Piro")){datavar[,1]
-    } else if (name %in% c("Plat")){
-        # da fare
-    } else if (name %in% c("EMT")){
-        # da fare
-    } else if (name %in% c("Prog")){names(datavar$Genes)
-    } else if (name %in% c("Matr", "Mito")){datavar}
+    if(name %in% c("Epithelial", "Mesenchymal")){
+        g <- EMTdata$Gene_Symbol[EMTdata$Category==name]
+    } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
+        g <- Platdata[[name]]
+    } else if (name %in% c("IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
+        stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and MES_consensus are not available")
+    } else if(name %in% c("MHC", "CP", "EC", "SC")){
+        g <- IPSdata$GENE[IPSdata$CLASS==name]
+    } else {
+        sname <- substring(name,1,4)
+        datavar <- eval(parse(text = paste0(sname, "data")))
+        if(sname %in% c("Ferr", "Hypo", "Immu", "IPS", "Lipi", "Piro")){g <- datavar[,1]
+        } else if (sname %in% c("Prog")){g <- names(datavar$Genes)
+        } else if (sname %in% c("Matr", "Mito")){g <- datavar}
+    }
+    res <- cbind(g, rep(name, length(g)))
+    colnames(res) <- c("Gene", "Signature")
+    return(res)
 }
 
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
@@ -107,14 +116,46 @@ SingleSignatureInformation <- function(data, signatureName, statistics = NULL){
 #' @import ComplexHeatmap
 #'
 #' @export
-GeneExpressionHeatmap <- function(signValue, signName, exprDataset = NULL){
+GeneExpressionHeatmap <- function(data, signatureName, dataset){
 
-    if(!(signName %in% SignatureNames)){
-        stop(paste("The name of the signature must be one of:\n", SignatureNames, sep = ", ", collapse = T))}
+    if(!all(signatureName%in%SignatureNames)){
+        stop(paste("The name of the signature must be one of:", paste(SignatureNames, collapse = ", ")))}
 
-    signgenes <- GetGenes(signName)
-    filtdataset <- exprDataset[row.names(exprDataset) %in% signgenes, ]
-    g <- Heatmap(filtdataset, show_column_names = F)
+    if(is.vector(data)){
+        if(!(is.null(attr(data, "Signature Name")))){
+            if(attr(data, "Signature Name")!=signatureName){
+                stop(paste("data and signatureName do not match:",attr(data, "Signature Name"),"&",signatureName))}
+        } else {
+            stop("You are not providing a signature result vector")}
+    } else if (is.data.frame(data)){
+        if(!all(signatureName%in%rownames(data))){
+            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
+    } else {
+        if(!all(signatureName%in%colnames(colData(data)))){
+            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
+    }
+
+    if(is.vector(data)){
+        signval <- matrix(data, nrow = 1, dimnames = list(attr(data, "Signature Name"), colnames(dataset)))
+    } else if(is.data.frame(data)){
+        signval <- data[signatureName,]
+        signval <- sapply(t(signval), range01)
+        signval <- as.matrix(t(signval))
+    } else {
+        signval <- colData(data)[,signatureName]
+        signval <- sapply(signval, range01)
+        signval <- as.matrix(t(signval))}
+
+    geneTable <- as.data.frame(do.call(rbind, lapply(signatureName, GetGenes))) %>%
+        group_by(Gene) %>% summarise_all(paste, collapse=",")
+    signatureGenes <- geneTable$Gene
+
+    filtdataset <- dataset[row.names(dataset) %in% signatureGenes, ]
+
+    ha <- rowAnnotation(signature = geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)])
+    g <- Heatmap(signval, name = "Signature", col = mycol) %v%
+        Heatmap(log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
+                right_annotation = ha, row_names_gp = gpar(fontsize = 5))
 
     return(g)
 }
@@ -202,15 +243,14 @@ CorrelationPlot <- function(data){
 #'
 #'
 #'
-#' @param dataset matrice di valori delle signatures
+#' @param data matrice di valori delle signatures
 #'
 #' @return
 #'
 #' @importfrom
 #'
 #' @export
-SurvivalPlot <- function(dataset){
-
+SurvivalPlot <- function(data){
     return(g)
 }
 

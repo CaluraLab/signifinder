@@ -129,8 +129,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, 
 
     datasetm <- getMatrix(dataset)
 
-    Signature_EL <- EMTdata[grep('Epithelial-like', EMTdata$Category),]
-    Signature_ML <- EMTdata[-grep('Epithelial-like', EMTdata$Category),]
+    Signature_EL <- EMTdata[grep('Epithelial', EMTdata$Category),]
+    Signature_ML <- EMTdata[-grep('Epithelial', EMTdata$Category),]
 
     cat(paste0("The function is using ", sum(Signature_EL$Gene_Symbol %in% row.names(datasetm)),
                " epithelial-like genes out of ", nrow(Signature_EL), "\nThe function is using ",
