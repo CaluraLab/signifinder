@@ -4,7 +4,7 @@
 \alias{PrognosticSign}
 \title{Prognostic Signature}
 \usage{
-PrognosticSign(dataset, nametype, age, stage)
+PrognosticSign(dataset, nametype = "SYMBOL", age, stage)
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}

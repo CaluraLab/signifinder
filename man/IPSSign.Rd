@@ -4,16 +4,12 @@
 \alias{IPSSign}
 \title{ImmunoPhenoScore Signature}
 \usage{
-IPSSign(dataset, nametype, makeplot = "no", plotpath = NULL)
+IPSSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{TPM expression values where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset row names.}
-
-\item{makeplot}{whether to make or not IPS plots. These will be one for each sample. Default is "no".}
-
-\item{plotpath}{directory path to save plots.}
 }
 \description{
 Given a dataset, it returns IPS for each sample. This signature is based on .. et. al (..).

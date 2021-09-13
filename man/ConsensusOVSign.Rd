@@ -4,7 +4,7 @@
 \alias{ConsensusOVSign}
 \title{ConsensusOV Signature}
 \usage{
-ConsensusOVSign(dataset, nametype, method = "consensusOV", ...)
+ConsensusOVSign(dataset, nametype = "SYMBOL", method = "consensusOV", ...)
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}

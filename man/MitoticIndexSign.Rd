@@ -4,7 +4,7 @@
 \alias{MitoticIndexSign}
 \title{Mitotic Index}
 \usage{
-MitoticIndexSign(dataset, nametype)
+MitoticIndexSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}

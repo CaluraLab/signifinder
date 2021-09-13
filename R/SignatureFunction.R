@@ -28,7 +28,8 @@ returnAsInput <- function(userdata, result, SignName){
             } else {userdata@colData <- cbind(userdata@colData, t(result))}}
         return(userdata)
     } else {
-        if(is.vector(result)){attr(result, "Signature Name") <- SignName}
+        if(is.vector(result)){attr(result, "Signature Name") <- SignName
+        names(result) <- colnames(userdata)}
         return(result)}
     }
 
@@ -73,6 +74,7 @@ firstCheck <- function(nametype){
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
+#' @importFrom Matrix Matrix
 #'
 #' @export
 GetAggregatedSpot <- function(dataset){
@@ -95,7 +97,7 @@ GetAggregatedSpot <- function(dataset){
                 kcount <- counts[,ind[1]]
                 for(i in 2:length(ind)){kcount <- kcount + counts[,ind[i]]}
                 counts[,ind[1]] <- kcount}}}
-    spcounts <- Matrix::Matrix(data = counts, sparse = TRUE)
+    spcounts <- Matrix(data = counts, sparse = TRUE)
     dataset@assays$Aggregated
     ## now how to add counts to the seurat object??
     return(dataset)
@@ -314,9 +316,10 @@ PlatResSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 1
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste("The function is using", sum(Platdata$up %in% row.names(datasetm)),
-              "up-genes out of", length(Platdata$up), "\nThe function is using",
-              sum(Platdata$down %in% row.names(datasetm)), "down-genes out of", length(Platdata$down),"\n"))
+    cat(paste("The function is using", sum(Platdata$PlatinumResistanceUp %in% row.names(datasetm)),
+              "up-genes out of", length(Platdata$PlatinumResistanceUp), "\nThe function is using",
+              sum(Platdata$PlatinumResistanceDown %in% row.names(datasetm)),
+              "down-genes out of", length(Platdata$PlatinumResistanceDown),"\n"))
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = Platdata, method = "gsva",
@@ -530,7 +533,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
     sample_names <- colnames(datasetm)
 
     cat(paste("The function is using", sum(IPSdata$GENE %in% row.names(datasetm)),
-              "genes out of ", nrow(IPSdata), "\n"))
+              "genes out of", nrow(IPSdata), "\n"))
 
     ind <- which(is.na(match(IPSdata$GENE, row.names(datasetm))))
     MISSING_GENES <- IPSdata$GENE[ind]

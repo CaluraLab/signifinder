@@ -4,12 +4,12 @@
 \alias{FerrSign}
 \title{FerroptosisSignature}
 \usage{
-FerrSign(dataset, nametype)
+FerrSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
 
-\item{nametype}{gene name ID of rownames of dataset.}
+\item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
 Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et al. (2021).

@@ -4,7 +4,7 @@
 \alias{MetabolicSign}
 \title{Metabolic Signature}
 \usage{
-MetabolicSign(DEdata, nametype, nsamples)
+MetabolicSign(DEdata, nametype = "SYMBOL", nsamples)
 }
 \arguments{
 \item{DEdata}{matrix of differentially expressed genes where rows correspond to genes, first column to Log2FoldChange and second column to its adjusted pvalue.}

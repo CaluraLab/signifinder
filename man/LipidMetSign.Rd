@@ -4,7 +4,7 @@
 \alias{LipidMetSign}
 \title{LipidSignature}
 \usage{
-LipidMetSign(dataset, nametype)
+LipidMetSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}

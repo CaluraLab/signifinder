@@ -4,7 +4,7 @@
 \alias{MatriSign}
 \title{Core Matrisome Gene signature}
 \usage{
-MatriSign(dataset, nametype)
+MatriSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}

@@ -4,7 +4,7 @@
 \alias{PiroSign}
 \title{Piroptosis Signature}
 \usage{
-PiroSign(dataset, nametype)
+PiroSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}

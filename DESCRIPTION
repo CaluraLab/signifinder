@@ -13,8 +13,10 @@ Author: Fabiola Pedrini [aut, cre],
 Maintainer: Stefania Pirrotta <stefania.pirrotta@unipd.it>
 Description: A collection of signatures to analyze high-throughput data.
 License: AGPL-3
-Imports: AnnotationDbi, consensusOV, ggplot2, grDevices, gridExtra, GSVA, matrixStats, org.Hs.eg.db, stats, SummarizedExperiment
+Imports: AnnotationDbi, consensusOV, ggplot2, grDevices, gridExtra, GSVA, matrixStats, org.Hs.eg.db, 
+         stats, SummarizedExperiment, ComplexHeatmap, viridis, Matrix, ellipse, dplyr, magrittr, grid,
+         survminer, survival, maxstat
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends: R (>= 3.5.0)

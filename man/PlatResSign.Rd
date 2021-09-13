@@ -4,7 +4,7 @@
 \alias{PlatResSign}
 \title{Platinum Resistance Signature}
 \usage{
-PlatResSign(dataset, nametype, pvalues = FALSE, nperm = 100, ...)
+PlatResSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}

@@ -6,7 +6,7 @@ SignatureNames <- c("Epithelial", "Mesenchymal", "Piroptosis", "Ferroptosis", "L
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
-my_colors <- RColorBrewer::colorRampPalette(my_colors)(100)
+my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
     if(name %in% c("Epithelial", "Mesenchymal")){
@@ -42,7 +42,8 @@ range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 #'
 #' @return A ggplot object
 #'
-#' @import ggplot
+#' @import ggplot2
+#' @import patchwork
 #'
 #' @export
 SingleSignatureInformation <- function(data, signatureName, statistics = NULL){
@@ -113,7 +114,9 @@ SingleSignatureInformation <- function(data, signatureName, statistics = NULL){
 #'
 #' @return A ComplexHeatmap object
 #'
-#' @import ComplexHeatmap
+#' @importFrom ComplexHeatmap Heatmap rowAnnotation '%v%'
+#' @importFrom magrittr '%>%'
+#' @importFrom dplyr group_by summarise_all
 #'
 #' @export
 GeneExpressionHeatmap <- function(data, signatureName, dataset){
@@ -139,12 +142,19 @@ GeneExpressionHeatmap <- function(data, signatureName, dataset){
         signval <- matrix(data, nrow = 1, dimnames = list(attr(data, "Signature Name"), colnames(dataset)))
     } else if(is.data.frame(data)){
         signval <- data[signatureName,]
+        if(is.vector(signval)){
+            signval <- matrix(data, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
+        } else {
         signval <- sapply(t(signval), range01)
-        signval <- as.matrix(t(signval))
+        signval <- as.matrix(t(signval))}
     } else {
         signval <- colData(data)[,signatureName]
-        signval <- sapply(signval, range01)
-        signval <- as.matrix(t(signval))}
+        if(is.vector(signval)){
+            signval <- matrix(data, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
+        } else {
+            signval <- sapply(signval, range01)
+            signval <- as.matrix(t(signval))}
+        }
 
     geneTable <- as.data.frame(do.call(rbind, lapply(signatureName, GetGenes))) %>%
         group_by(Gene) %>% summarise_all(paste, collapse=",")
@@ -155,7 +165,7 @@ GeneExpressionHeatmap <- function(data, signatureName, dataset){
     ha <- rowAnnotation(signature = geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)])
     g <- Heatmap(signval, name = "Signature", col = mycol) %v%
         Heatmap(log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
-                right_annotation = ha, row_names_gp = gpar(fontsize = 5))
+                right_annotation = ha, row_names_gp = grid::gpar(fontsize = 5))
 
     return(g)
 }
@@ -214,8 +224,6 @@ AllSignaturesHeatmap <- function(data, signatureName = NULL){
 #'
 #' @return A correlation ellipse graph
 #'
-#' @importfrom ellipse plotcorr
-#'
 #' @export
 CorrelationPlot <- function(data){
 
@@ -234,7 +242,7 @@ CorrelationPlot <- function(data){
     ord <- order(corsign[1, ])
     corsign_ord <- corsign[ord, ord]
 
-    g <- plotcorr(corsign_ord, col = my_colors[corsign_ord*50+50], mar = c(1,1,1,1))
+    g <- ellipse::plotcorr(corsign_ord, col = my_colors[corsign_ord*50+50], mar = c(1,1,1,1))
     return(g)
 }
 
@@ -247,10 +255,62 @@ CorrelationPlot <- function(data){
 #'
 #' @return
 #'
-#' @importfrom
 #'
 #' @export
-SurvivalPlot <- function(data){
+SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
+
+    if(!(signatureName%in%SignatureNames)){
+        stop(paste("The name of the signature must be one of:", paste(SignatureNames, collapse = ", ")))
+    }
+
+    if(is.vector(data)){
+        if(!(is.null(attr(data, "Signature Name")))){
+            if(attr(data, "Signature Name")!=signatureName){
+                stop(paste("data and signatureName do not match:", attr(data, "Signature Name"),"&",signatureName))}
+        } else {
+            stop("You are not providing a signature result vector")}
+    } else if (is.data.frame(data)){
+        if(!(signatureName%in%rownames(data))){
+            stop(paste("data and signatureName are not combined:", paste(rownames(data), collapse = ", "),"&",signatureName))}
+    } else {
+        if(!(signatureName%in%colnames(colData(data)))){
+            stop(paste("data and signatureName are not combined:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
+    }
+
+    if(!(is.numeric(cutpoint))){
+        if(!(cutpoint %in% c("mean", "median", "optimal"))){
+            stop("Cutpoint must be either a number or one of: mean, median and optimal")}}
+
+    if(is.vector(data)){
+        tmp <- intersect(names(data), rownames(survData))
+        tmp <- as.data.frame(cbind(data[tmp], survData[tmp,]))
+    } else if(is.data.frame(data)){
+        tmp <- intersect(rownames(data), rownames(survData))
+        tmp <- as.data.frame(cbind(data[tmp,], survData[tmp,]))
+    } else {
+        tmp <- intersect(rownames(colData(data)), rownames(survData))
+        tmp <- as.data.frame(cbind(colData(data)[tmp,], survData[tmp,]))}
+
+    grp  <- rep("high", nrow(tmp))
+    names(grp) <- rownames(tmp)
+    if(cutpoint=="mean"){
+        grp[which(tmp[,signatureName] < mean(tmp[,signatureName]))] <- "low"
+    } else if(cutpoint=="median"){
+        grp[which(tmp[,signatureName] < median(tmp[,signatureName]))] <- "low"
+    } else if(cutpoint=="optimal"){
+        optval <- maxstat::maxstat.test(survival::Surv(os, status) ~ tmp[,signatureName],
+                                        data = tmp, smethod="LogRank", pmethod="Lau94")
+        grp[which(tmp[,signatureName] < optval$estimate)] <- "Low"
+    } else {grp[which(tmp[,signatureName] < cutpoint)] <- "low"}
+    tmp <- cbind(tmp, grp)
+
+    fit <- survival::survfit(survival::Surv(os, status) ~ grp, data = tmp)
+
+    g <- survminer::ggsurvplot(fit, data = tmp, risk.table = T, legend.title = signatureName,
+                               palette = c("red", "blue"), ggtheme = ggplot2::theme_gray(15),
+                               font.legend = 15, font.tickslab = 15, font.x = 15, font.y = 15,
+                               risk.table.fontsize = 5, pval = T, surv.median.line = "hv",
+                               risk.table.col = "strata")
     return(g)
 }
 

@@ -4,7 +4,7 @@
 \alias{ImmunoSign}
 \title{Immunogenic Signature}
 \usage{
-ImmunoSign(dataset, nametype)
+ImmunoSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}

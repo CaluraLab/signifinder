@@ -4,7 +4,7 @@
 \alias{EMTSign}
 \title{Endothelial-Mesenchymal Transition Signature}
 \usage{
-EMTSign(dataset, nametype, pvalues = FALSE, nperm = 100, ...)
+EMTSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
 }
 \arguments{
 \item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
