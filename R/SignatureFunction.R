@@ -455,6 +455,8 @@ ImmunoSign <- function(dataset, nametype = "SYMBOL"){
 
     g <- intersect(row.names(datasetm), Immudata$genes)
 
+    cat(paste("The function is using", length(g), "genes out of", length(Immudata$genes), "\n"))
+
     subdataset <- datasetm[g,]
     Immudata <- Immudata[Immudata$genes %in% g, ]
 

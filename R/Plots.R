@@ -142,14 +142,14 @@ GeneExpressionHeatmap <- function(data, signatureName, dataset){
         signval <- matrix(data, nrow = 1, dimnames = list(attr(data, "Signature Name"), colnames(dataset)))
     } else if(is.data.frame(data)){
         signval <- data[signatureName,]
-        if(is.vector(signval)){
+        if(length(signatureName)==1){
             signval <- matrix(data, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
         } else {
-        signval <- sapply(t(signval), range01)
-        signval <- as.matrix(t(signval))}
+            signval <- sapply(t(signval), range01)
+            signval <- as.matrix(t(signval))}
     } else {
         signval <- colData(data)[,signatureName]
-        if(is.vector(signval)){
+        if(length(signatureName)==1){
             signval <- matrix(data, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
         } else {
             signval <- sapply(signval, range01)
@@ -271,10 +271,10 @@ SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
             stop("You are not providing a signature result vector")}
     } else if (is.data.frame(data)){
         if(!(signatureName%in%rownames(data))){
-            stop(paste("data and signatureName are not combined:", paste(rownames(data), collapse = ", "),"&",signatureName))}
+            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
     } else {
         if(!(signatureName%in%colnames(colData(data)))){
-            stop(paste("data and signatureName are not combined:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
+            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
     }
 
     if(!(is.numeric(cutpoint))){
@@ -314,3 +314,49 @@ SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
     return(g)
 }
 
+
+#' Survival Plot
+#'
+#'
+#'
+#' @param data matrice di valori delle signatures
+#'
+#' @return
+#'
+#'
+#' @export
+RidgelinePlot <- function(data, signatureName = NULL, group = NULL){
+
+    if(!all(signatureName%in%SignatureNames)){
+        stop(paste("The name of the signature must be among:", paste(SignatureNames, collapse = ", ")))}
+
+    if(is.data.frame(data)){
+        if(!all(signatureName %in% colnames(data))){
+            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
+    } else {
+        if(!all(signatureName %in% colnames(colData(data)))){
+            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
+    }
+
+    if(is.data.frame(data)){tmp <- data} else {tmp <- colData(data)}
+
+    if(is.null(signatureName)){
+        signs <- intersect(SignatureNames, colnames(tmp))
+    } else {
+        signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
+
+    tmp <- tmp[,signs]
+    tmp <- data.frame(sapply(tmp, signifinder:::range01))
+
+    if(is.null(signatureName)){n <- ncol(tmp)} else {n <- length(signatureName)}
+
+    tmp1 <- do.call(rbind, lapply(seq_len(ncol(tmp)), function(x){
+        data.frame(signvalue=tmp[,x], signature=colnames(tmp[x]), row.names = NULL)}))
+
+    g <- ggplot(tmp1, aes(x=signvalue, y=signature))
+    if(is.null(group)){
+        g <- g + geom_density_ridges(alpha=0.5)
+    } else {
+        g <- g + ggridges::geom_density_ridges(aes(fill = rep(group, n)), alpha=0.5)}
+    return(g)
+}
