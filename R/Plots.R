@@ -5,6 +5,7 @@ SignatureNames <- c("Epithelial", "Mesenchymal", "Piroptosis", "Ferroptosis", "L
                     "IPS", "MHC", "CP", "EC", "SC", "Matrisome", "MitoticIndex")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
+mycol1 <- rev(viridis::viridis(10))
 my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
 my_colors <- colorRampPalette(my_colors)(100)
 
@@ -31,6 +32,11 @@ GetGenes <- function(name){
 
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 
+plotFirstCheck <- function(sname){
+    if(!all(sname %in% SignatureNames)){
+        stop(paste("signatures must be among:", paste(SignatureNames, collapse = ", ")))}
+}
+
 #' Scatterplot for a single signature
 #'
 #' Given a signatures it returns a scatterplot.
@@ -46,11 +52,9 @@ range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 #' @import patchwork
 #'
 #' @export
-SingleSignatureInformation <- function(data, signatureName, statistics = NULL){
+oneSignPlot <- function(data, signatureName, statistics = NULL){
 
-    if(!(signatureName%in%SignatureNames)){
-        stop(paste("The name of the signature must be one of:", paste(SignatureNames, collapse = ", ")))
-    }
+    plotFirstCheck(signatureName)
 
     if(is.vector(data)){
         if(!(is.null(attr(data, "Signature Name")))){
@@ -60,10 +64,10 @@ SingleSignatureInformation <- function(data, signatureName, statistics = NULL){
             stop("You are not providing a signature result vector")}
     } else if (is.data.frame(data)){
         if(!(signatureName%in%rownames(data))){
-            stop(paste("data and signatureName are not combined:", paste(rownames(data), collapse = ", "),"&",signatureName))}
+            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
     } else {
         if(!(signatureName%in%colnames(colData(data)))){
-            stop(paste("data and signatureName are not combined:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
+            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
     }
 
     if(!(is.null(statistics))){
@@ -119,10 +123,9 @@ SingleSignatureInformation <- function(data, signatureName, statistics = NULL){
 #' @importFrom dplyr group_by summarise_all
 #'
 #' @export
-GeneExpressionHeatmap <- function(data, signatureName, dataset){
+geneHeatmapSignPlot <- function(data, signatureName, dataset){
 
-    if(!all(signatureName%in%SignatureNames)){
-        stop(paste("The name of the signature must be one of:", paste(SignatureNames, collapse = ", ")))}
+    plotFirstCheck(signatureName)
 
     if(is.vector(data)){
         if(!(is.null(attr(data, "Signature Name")))){
@@ -163,7 +166,7 @@ GeneExpressionHeatmap <- function(data, signatureName, dataset){
     filtdataset <- dataset[row.names(dataset) %in% signatureGenes, ]
 
     ha <- rowAnnotation(signature = geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)])
-    g <- Heatmap(signval, name = "Signature", col = mycol) %v%
+    g <- Heatmap(signval, name = "Signature", col = mycol1) %v%
         Heatmap(log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
                 right_annotation = ha, row_names_gp = grid::gpar(fontsize = 5))
 
@@ -183,10 +186,9 @@ GeneExpressionHeatmap <- function(data, signatureName, dataset){
 #' @importfrom ComplexHeatmap Heatmap '%v%'
 #'
 #' @export
-AllSignaturesHeatmap <- function(data, signatureName = NULL){
+heatmapSignPlot <- function(data, signatureName = NULL){
 
-    if(!all(signatureName%in%SignatureNames)){
-        stop(paste("The name of the signature must be one of:", paste(SignatureNames, collapse = ", ")))}
+    plotFirstCheck(signatureName)
 
     if(is.data.frame(data)){
         if(sum(colnames(data)%in%SignatureNames)>0){
@@ -209,7 +211,7 @@ AllSignaturesHeatmap <- function(data, signatureName = NULL){
         n <- which(rownames(data) %in% signatureName)
         fm <- as.matrix(data.frame(data)[n,])
         sm <- as.matrix(data.frame(data)[-n,])
-        g <- Heatmap(fm, name = "Guiding Signatures", col = mycol) %v%
+        g <- Heatmap(fm, name = "Guiding Signatures", col = mycol1) %v%
             Heatmap(sm, name = "Signatures", show_column_names = F, col = mycol)
     }
     return(g)
@@ -225,18 +227,22 @@ AllSignaturesHeatmap <- function(data, signatureName = NULL){
 #' @return A correlation ellipse graph
 #'
 #' @export
-CorrelationPlot <- function(data){
+correlationSignPlot <- function(data, signatureName, group = NULL, groupToUse = NULL){
 
-    if(is.data.frame(data)){
-        if(sum(colnames(data)%in%SignatureNames)>0){
-            data <- data[, colnames(data)%in%SignatureNames]
-        } else {stop("There are no signatures in data")}
+    if(!is.null(signatureName)){plotFirstCheck(signatureName)}
+
+    if(is.data.frame(data)){tmp <- data} else {tmp <- colData(data)}
+
+    if(is.null(signatureName)){
+        signs <- intersect(SignatureNames, colnames(tmp))
     } else {
-        if(sum(colnames(colData(data))%in%SignatureNames)>0){
-            data <- colData(data)[, colnames(colData(data))%in%SignatureNames]
-        } else {stop("There are no signatures in data")}}
+        signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
 
-    SignMatrix <- sapply(data, range01)
+    tmp <- tmp[,signs]
+
+    if(!is.null(group)){if(!is.null(groupToUse)){tmp <- tmp[group==groupToUse,]}}
+
+    SignMatrix <- sapply(tmp, range01)
 
     corsign <- cor(as.matrix(SignMatrix))
     ord <- order(corsign[1, ])
@@ -257,11 +263,9 @@ CorrelationPlot <- function(data){
 #'
 #'
 #' @export
-SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
+survivalSignPlot <- function(data, survData, signatureName, cutpoint = "mean", group = NULL, groupToUse = NULL){
 
-    if(!(signatureName%in%SignatureNames)){
-        stop(paste("The name of the signature must be one of:", paste(SignatureNames, collapse = ", ")))
-    }
+    plotFirstCheck(signatureName)
 
     if(is.vector(data)){
         if(!(is.null(attr(data, "Signature Name")))){
@@ -302,7 +306,12 @@ SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
                                         data = tmp, smethod="LogRank", pmethod="Lau94")
         grp[which(tmp[,signatureName] < optval$estimate)] <- "Low"
     } else {grp[which(tmp[,signatureName] < cutpoint)] <- "low"}
+
+    if((sum(grp=="low")<length(grp)/10) | (sum(grp=="low")>length(grp)*9/10)){
+        warning(paste("groups size is non homogeneous:", sum(grp=="low"), "low and", sum(grp=="high"), "high"))}
+
     tmp <- cbind(tmp, grp)
+    if(!is.null(group)){if(!is.null(groupToUse)){tmp <- tmp[group==groupToUse,]}}
 
     fit <- survival::survfit(survival::Surv(os, status) ~ grp, data = tmp)
 
@@ -315,7 +324,7 @@ SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
 }
 
 
-#' Survival Plot
+#' Ridgeline Plot
 #'
 #'
 #'
@@ -325,10 +334,9 @@ SurvivalPlot <- function(data, survData, signatureName, cutpoint = "mean"){
 #'
 #'
 #' @export
-RidgelinePlot <- function(data, signatureName = NULL, group = NULL){
+ridgelineSignPlot <- function(data, signatureName = NULL, group = NULL){
 
-    if(!all(signatureName%in%SignatureNames)){
-        stop(paste("The name of the signature must be among:", paste(SignatureNames, collapse = ", ")))}
+    if(!is.null(signatureName)){plotFirstCheck(signatureName)}
 
     if(is.data.frame(data)){
         if(!all(signatureName %in% colnames(data))){
@@ -346,7 +354,7 @@ RidgelinePlot <- function(data, signatureName = NULL, group = NULL){
         signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
 
     tmp <- tmp[,signs]
-    tmp <- data.frame(sapply(tmp, signifinder:::range01))
+    tmp <- data.frame(sapply(tmp, range01))
 
     if(is.null(signatureName)){n <- ncol(tmp)} else {n <- length(signatureName)}
 

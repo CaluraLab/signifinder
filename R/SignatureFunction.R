@@ -168,7 +168,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, 
 #' @import org.Hs.eg.db
 #'
 #' @export
-PiroSign <- function(dataset, nametype = "SYMBOL"){
+piroptosisSign <- function(dataset, nametype = "SYMBOL"){
 
     firstCheck(nametype)
 
@@ -203,7 +203,7 @@ PiroSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-FerrSign <- function(dataset, nametype = "SYMBOL"){
+ferroptosisSign <- function(dataset, nametype = "SYMBOL"){
 
     firstCheck(nametype)
 
@@ -234,7 +234,7 @@ FerrSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-LipidMetSign <- function(dataset, nametype = "SYMBOL") {
+lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 
     firstCheck(nametype)
 
@@ -274,8 +274,8 @@ HypoxiaSign <- function(dataset, nametype = "SYMBOL"){
 
     if(nametype=="SYMBOL") { genetouse <- Hypodata$Gene_Symbol
     } else if(nametype=="ENSEMBL") { genetouse <- Hypodata$Gene_Ensembl
-    } else (genetouse <- mapIds(org.Hs.eg.db,keys= Hypodata$Gene_Symbol,
-                                column= nametype, keytype="SYMBOL", multiVals="first"))
+    } else (genetouse <- mapIds(org.Hs.eg.db, keys = Hypodata$Gene_Symbol,
+                                column = nametype, keytype = "SYMBOL", multiVals = "first"))
 
     datasetm <- getMatrix(dataset)
 
@@ -306,7 +306,7 @@ HypoxiaSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-PlatResSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...){
+platinumResistanceSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...){
 
     firstCheck(nametype)
 
@@ -350,7 +350,7 @@ PlatResSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 1
 #' @import org.Hs.eg.db
 #'
 #' @export
-PrognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
+prognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
 
     firstCheck(nametype)
 
@@ -403,7 +403,7 @@ PrognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
 #' @import org.Hs.eg.db
 #'
 #' @export
-MetabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
+metabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
 
     firstCheck(nametype)
 
@@ -443,7 +443,7 @@ MetabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
 #' @import org.Hs.eg.db
 #'
 #' @export
-ImmunoSign <- function(dataset, nametype = "SYMBOL"){
+immunoScoreSign <- function(dataset, nametype = "SYMBOL"){
 
     firstCheck(nametype)
 
@@ -485,7 +485,7 @@ ImmunoSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-ConsensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV", ...){
+consensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV", ...){
 
     firstCheck(nametype)
 
@@ -578,7 +578,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-MatriSign <- function(dataset, nametype = "SYMBOL") {
+matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 
     firstCheck(nametype)
 
@@ -607,7 +607,7 @@ MatriSign <- function(dataset, nametype = "SYMBOL") {
 #' @import org.Hs.eg.db
 #'
 #' @export
-MitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
+mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 
     firstCheck(nametype)
 
