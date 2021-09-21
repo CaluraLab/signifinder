@@ -13,17 +13,16 @@ GetGenes <- function(name){
     if(name %in% c("Epithelial", "Mesenchymal")){
         g <- EMTdata$Gene_Symbol[EMTdata$Category==name]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
-        g <- Platdata[[name]]
+        g <- PlatinumResistancedata[[name]]
     } else if (name %in% c("IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
         stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and MES_consensus are not available")
     } else if(name %in% c("MHC", "CP", "EC", "SC")){
         g <- IPSdata$GENE[IPSdata$CLASS==name]
     } else {
-        sname <- substring(name,1,4)
-        datavar <- eval(parse(text = paste0(sname, "data")))
-        if(sname %in% c("Ferr", "Hypo", "Immu", "IPS", "Lipi", "Piro")){g <- datavar[,1]
-        } else if (sname %in% c("Prog")){g <- names(datavar$Genes)
-        } else if (sname %in% c("Matr", "Mito")){g <- datavar}
+        datavar <- eval(parse(text = paste0(name, "data")))
+        if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScore", "IPS", "LipidMetabolism", "Piroptosis")){g <- datavar[,1]
+        } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
+        } else if (name %in% c("Matrisome", "MitoticIndex")){g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
@@ -223,11 +222,16 @@ heatmapSignPlot <- function(data, signatureName = NULL){
 #'
 #'
 #' @param data dataframe con le signature sulle colonne oppure oggetto con i colData
+#' @param signatureName ..
+#' @param group ..
+#' @param groupToUse ..
 #'
 #' @return A correlation ellipse graph
 #'
+#' @importFrom openair corPlot
+#'
 #' @export
-correlationSignPlot <- function(data, signatureName, group = NULL, groupToUse = NULL){
+correlationSignPlot <- function(data, signatureName = NULL, group = NULL, groupToUse = NULL){
 
     if(!is.null(signatureName)){plotFirstCheck(signatureName)}
 
@@ -244,11 +248,13 @@ correlationSignPlot <- function(data, signatureName, group = NULL, groupToUse = 
 
     SignMatrix <- sapply(tmp, range01)
 
-    corsign <- cor(as.matrix(SignMatrix))
-    ord <- order(corsign[1, ])
-    corsign_ord <- corsign[ord, ord]
+    # corsign <- cor(as.matrix(SignMatrix))
+    # ord <- order(corsign[1, ])
+    # corsign_ord <- corsign[ord, ord]
+    # g <- ellipse::plotcorr(corsign_ord, col = my_colors[corsign_ord*50+50], mar = c(1,1,1,1))
 
-    g <- ellipse::plotcorr(corsign_ord, col = my_colors[corsign_ord*50+50], mar = c(1,1,1,1))
+    g <- corPlot(as.data.frame(SignMatrix), cluster = T, dendrogram = T, lower = T)
+
     return(g)
 }
 

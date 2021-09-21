@@ -4,10 +4,21 @@
 \alias{correlationSignPlot}
 \title{Correlation Plot}
 \usage{
-correlationSignPlot(data, signatureName, group = NULL, groupToUse = NULL)
+correlationSignPlot(
+  data,
+  signatureName = NULL,
+  group = NULL,
+  groupToUse = NULL
+)
 }
 \arguments{
 \item{data}{dataframe con le signature sulle colonne oppure oggetto con i colData}
+
+\item{signatureName}{..}
+
+\item{group}{..}
+
+\item{groupToUse}{..}
 }
 \value{
 A correlation ellipse graph
