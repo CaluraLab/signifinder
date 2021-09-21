@@ -622,8 +622,3 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex"))
 }
-
-
-
-
-
