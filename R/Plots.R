@@ -117,7 +117,7 @@ oneSignPlot <- function(data, signatureName, statistics = NULL){
 #'
 #' @return A ComplexHeatmap object
 #'
-#' @importFrom ComplexHeatmap Heatmap rowAnnotation '%v%'
+#' @importFrom ComplexHeatmap Heatmap rowAnnotation '%v%' HeatmapAnnotation
 #' @importFrom magrittr '%>%'
 #' @importFrom dplyr group_by summarise_all
 #'
@@ -163,26 +163,27 @@ geneHeatmapSignPlot <- function(data, signatureName, dataset, splitGenes = FALSE
         group_by(Gene) %>% summarise_all(paste, collapse=",")
     signatureGenes <- geneTable$Gene
 
-    filtdataset <- dataset[row.names(dataset) %in% signatureGenes, ]
+    filtdataset <- as.matrix(dataset[row.names(dataset) %in% signatureGenes, ])
 
-    ht <- Heatmap(signval, name = "Signature", col = mycol1)
     htargs <- list(matrix = log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
                    row_names_gp = grid::gpar(fontsize = 5))
 
     if(length(signatureName)!=1){
         signAnnot <- geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)]
         if(splitGenes){
-            htargs <- list(htargs, row_split = signAnnot)
+            htargs$row_split = signAnnot
         } else {
             ha <- rowAnnotation(signature = signAnnot)
-            htargs <- list(htargs, row_split = signAnnot)}}
+            htargs$right_annotation = ha}}
 
-    if(!is.null(group)){
-        if(splitGroups){
-            htargs <- list(htargs, column_split = group)
+    if(splitGroups){
+            htargs$column_split = group
+            ht <- Heatmap(signval, name = "Signature", col = mycol1, column_split = group)
         } else {
-            hatop = HeatmapAnnotation(group = group)
-            htargs <- list(htargs, top_annotation = hatop)}}
+            if(!is.null(group)){
+                hatop = HeatmapAnnotation(group = group)
+                htargs$top_annotation = hatop}
+            ht <- Heatmap(signval, name = "Signature", col = mycol1)}
 
     ht2 <- do.call(Heatmap, htargs)
     g <- ht %v% ht2
@@ -226,18 +227,24 @@ heatmapSignPlot <- function(data, signatureName = NULL, group = NULL, splitGroup
 
     if(!is.null(group)){
         if(splitGroups){
-            htargs <- list(htargs, column_split = group)
+            htargs$column_split = group
         } else {
             hatop = HeatmapAnnotation(group = group)
-            htargs <- list(htargs, top_annotation = hatop)}}
+            htargs$top_annotation = hatop}}
 
     if(is.null(signatureName)){
-        g <- do.call(Heatmap, list(matrix = data, htargs))
+        htargs$matrix = data
+        g <- do.call(Heatmap, htargs)
     } else {
         n <- which(rownames(data) %in% signatureName)
         fm <- as.matrix(data.frame(data)[n,])
         sm <- as.matrix(data.frame(data)[-n,])
-        g <- Heatmap(fm, name = "Guiding Signatures", col = mycol1) %v% do.call(Heatmap, list(matrix = sm, htargs))
+        htargs$matrix = sm
+        if(splitGroups){
+            ht <- Heatmap(fm, name = "Guiding Signatures", col = mycol1, column_split = group)
+        } else {
+            ht <- Heatmap(fm, name = "Guiding Signatures", col = mycol1)}
+        g <- ht %v% do.call(Heatmap, htargs)
     }
     return(g)
 }
@@ -364,6 +371,8 @@ survivalSignPlot <- function(data, survData, signatureName, cutpoint = "mean", g
 #'
 #' @return
 #'
+#' @import ggplot2
+#' @importFrom ggridges geom_density_ridges
 #'
 #' @export
 ridgelineSignPlot <- function(data, signatureName = NULL, group = NULL){
@@ -397,6 +406,6 @@ ridgelineSignPlot <- function(data, signatureName = NULL, group = NULL){
     if(is.null(group)){
         g <- g + geom_density_ridges(alpha=0.5)
     } else {
-        g <- g + ggridges::geom_density_ridges(aes(fill = rep(group, n)), alpha=0.5)}
+        g <- g + geom_density_ridges(aes(fill = rep(group, n)), alpha=0.5)}
     return(g)
 }
