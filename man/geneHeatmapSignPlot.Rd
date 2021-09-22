@@ -4,7 +4,14 @@
 \alias{geneHeatmapSignPlot}
 \title{Scatterplot for a single signature}
 \usage{
-geneHeatmapSignPlot(data, signatureName, dataset)
+geneHeatmapSignPlot(
+  data,
+  signatureName,
+  dataset,
+  splitGenes = FALSE,
+  group = NULL,
+  splitGroups = FALSE
+)
 }
 \arguments{
 \item{data}{either a data frame or a SummarizedExperiment.}

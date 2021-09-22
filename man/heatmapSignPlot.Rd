@@ -4,7 +4,7 @@
 \alias{heatmapSignPlot}
 \title{Heatmap globale o con una signature che guida il clustering}
 \usage{
-heatmapSignPlot(data, signatureName = NULL)
+heatmapSignPlot(data, signatureName = NULL, group = NULL, splitGroups = FALSE)
 }
 \arguments{
 \item{data}{dataframe con le signature sulle colonne oppure oggetto con i colData}

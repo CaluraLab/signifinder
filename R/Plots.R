@@ -122,7 +122,8 @@ oneSignPlot <- function(data, signatureName, statistics = NULL){
 #' @importFrom dplyr group_by summarise_all
 #'
 #' @export
-geneHeatmapSignPlot <- function(data, signatureName, dataset){
+geneHeatmapSignPlot <- function(data, signatureName, dataset, splitGenes = FALSE,
+                                group = NULL, splitGroups = FALSE){
 
     plotFirstCheck(signatureName)
 
@@ -145,14 +146,14 @@ geneHeatmapSignPlot <- function(data, signatureName, dataset){
     } else if(is.data.frame(data)){
         signval <- data[signatureName,]
         if(length(signatureName)==1){
-            signval <- matrix(data, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
+            signval <- matrix(signval, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
         } else {
             signval <- sapply(t(signval), range01)
             signval <- as.matrix(t(signval))}
     } else {
         signval <- colData(data)[,signatureName]
         if(length(signatureName)==1){
-            signval <- matrix(data, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
+            signval <- matrix(signval, nrow = 1, dimnames = list(signatureName, colnames(dataset)))
         } else {
             signval <- sapply(signval, range01)
             signval <- as.matrix(t(signval))}
@@ -164,10 +165,27 @@ geneHeatmapSignPlot <- function(data, signatureName, dataset){
 
     filtdataset <- dataset[row.names(dataset) %in% signatureGenes, ]
 
-    ha <- rowAnnotation(signature = geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)])
-    g <- Heatmap(signval, name = "Signature", col = mycol1) %v%
-        Heatmap(log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
-                right_annotation = ha, row_names_gp = grid::gpar(fontsize = 5))
+    ht <- Heatmap(signval, name = "Signature", col = mycol1)
+    htargs <- list(matrix = log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
+                   row_names_gp = grid::gpar(fontsize = 5))
+
+    if(length(signatureName)!=1){
+        signAnnot <- geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)]
+        if(splitGenes){
+            htargs <- list(htargs, row_split = signAnnot)
+        } else {
+            ha <- rowAnnotation(signature = signAnnot)
+            htargs <- list(htargs, row_split = signAnnot)}}
+
+    if(!is.null(group)){
+        if(splitGroups){
+            htargs <- list(htargs, column_split = group)
+        } else {
+            hatop = HeatmapAnnotation(group = group)
+            htargs <- list(htargs, top_annotation = hatop)}}
+
+    ht2 <- do.call(Heatmap, htargs)
+    g <- ht %v% ht2
 
     return(g)
 }
@@ -185,7 +203,7 @@ geneHeatmapSignPlot <- function(data, signatureName, dataset){
 #' @importfrom ComplexHeatmap Heatmap '%v%'
 #'
 #' @export
-heatmapSignPlot <- function(data, signatureName = NULL){
+heatmapSignPlot <- function(data, signatureName = NULL, group = NULL, splitGroups = FALSE){
 
     plotFirstCheck(signatureName)
 
@@ -204,14 +222,22 @@ heatmapSignPlot <- function(data, signatureName = NULL){
     data <- sapply(data, range01)
     data <- as.matrix(t(data))
 
+    htargs <- list(name = "Signatures", show_column_names = F, col = mycol)
+
+    if(!is.null(group)){
+        if(splitGroups){
+            htargs <- list(htargs, column_split = group)
+        } else {
+            hatop = HeatmapAnnotation(group = group)
+            htargs <- list(htargs, top_annotation = hatop)}}
+
     if(is.null(signatureName)){
-        g <- Heatmap(data, name = "Signatures", show_column_names = F, col = mycol)
+        g <- do.call(Heatmap, list(matrix = data, htargs))
     } else {
         n <- which(rownames(data) %in% signatureName)
         fm <- as.matrix(data.frame(data)[n,])
         sm <- as.matrix(data.frame(data)[-n,])
-        g <- Heatmap(fm, name = "Guiding Signatures", col = mycol1) %v%
-            Heatmap(sm, name = "Signatures", show_column_names = F, col = mycol)
+        g <- Heatmap(fm, name = "Guiding Signatures", col = mycol1) %v% do.call(Heatmap, list(matrix = sm, htargs))
     }
     return(g)
 }
