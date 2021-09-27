@@ -15,6 +15,11 @@ survivalSignPlot(
 }
 \arguments{
 \item{data}{matrice di valori delle signatures}
+
+\item{survData}{dataframe che deve avere due colonne, la prima con i dati di survival e la seconda con lo
+status, inoltre le righe devono essere nominate con i nomi dei sample}
+
+\item{group}{deve essere della stessa lunghezza dei sample di cui abbiamo i dati di survival passati con survData}
 }
 \value{
 

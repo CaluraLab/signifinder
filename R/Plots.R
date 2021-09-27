@@ -31,9 +31,23 @@ GetGenes <- function(name){
 
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 
-plotFirstCheck <- function(sname){
-    if(!all(sname %in% SignatureNames)){
+signatureNameCheck <- function(data, signatureName){
+
+    if(!all(signatureName %in% SignatureNames)){
         stop(paste("signatures must be among:", paste(SignatureNames, collapse = ", ")))}
+
+    if(is.vector(data)){
+        if(!(is.null(attr(data, "Signature Name")))){
+            if(attr(data, "Signature Name")!=signatureName){
+                stop(paste("data and signatureName do not match:",
+                           attr(data, "Signature Name"), "&", signatureName))}
+        } else {stop("You are not providing a signature result vector")}
+    } else if (is.data.frame(data)){
+        if(!all(signatureName %in% colnames(data))){
+            stop("signature in signatureName must be in the data")}
+    } else {
+        if(!all(signatureName %in% colnames(colData(data)))){
+            stop("signature in signatureName must be in the data")}}
 }
 
 #' Scatterplot for a single signature
@@ -53,24 +67,12 @@ plotFirstCheck <- function(sname){
 #' @export
 oneSignPlot <- function(data, signatureName, statistics = NULL){
 
-    plotFirstCheck(signatureName)
+    if(length(signatureName)>1){stop("you must provide only one signature for this plot")}
 
-    if(is.vector(data)){
-        if(!(is.null(attr(data, "Signature Name")))){
-            if(attr(data, "Signature Name")!=signatureName){
-                stop(paste("data and signatureName do not match:",attr(data, "Signature Name"),"&",signatureName))}
-        } else {
-            stop("You are not providing a signature result vector")}
-    } else if (is.data.frame(data)){
-        if(!(signatureName%in%rownames(data))){
-            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
-    } else {
-        if(!(signatureName%in%colnames(colData(data)))){
-            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
-    }
+    signatureNameCheck(data, signatureName)
 
     if(!(is.null(statistics))){
-        if(!(statistics%in%c("mean", "median", "quantiles"))){
+        if(!(statistics %in% c("mean", "median", "quantiles"))){
             stop("Statistics to be shown in the graphs must be one of: mean, median and quantiles.")}}
 
     if(is.vector(data)){signval <- sort(data)
@@ -125,21 +127,11 @@ oneSignPlot <- function(data, signatureName, statistics = NULL){
 geneHeatmapSignPlot <- function(data, signatureName, dataset, splitGenes = FALSE,
                                 group = NULL, splitGroups = FALSE){
 
-    plotFirstCheck(signatureName)
+    signatureNameCheck(data, signatureName)
 
-    if(is.vector(data)){
-        if(!(is.null(attr(data, "Signature Name")))){
-            if(attr(data, "Signature Name")!=signatureName){
-                stop(paste("data and signatureName do not match:",attr(data, "Signature Name"),"&",signatureName))}
-        } else {
-            stop("You are not providing a signature result vector")}
-    } else if (is.data.frame(data)){
-        if(!all(signatureName%in%rownames(data))){
-            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
-    } else {
-        if(!all(signatureName%in%colnames(colData(data)))){
-            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
-    }
+    if(!is.null(group)){
+        if(length(group)!=ncol(dataset)){stop("Group length is different than samples dimension")}
+    } else {if(splitGroups){stop("splitGroups can be TRUE only if group is provided")}}
 
     if(is.vector(data)){
         signval <- matrix(data, nrow = 1, dimnames = list(attr(data, "Signature Name"), colnames(dataset)))
@@ -206,19 +198,20 @@ geneHeatmapSignPlot <- function(data, signatureName, dataset, splitGenes = FALSE
 #' @export
 heatmapSignPlot <- function(data, signatureName = NULL, group = NULL, splitGroups = FALSE){
 
-    plotFirstCheck(signatureName)
+    if(!is.null(signatureName)){signatureNameCheck(data, signatureName)}
 
     if(is.data.frame(data)){
-        if(sum(colnames(data)%in%SignatureNames)>0){
-            data <- data[, colnames(data)%in%SignatureNames]
+        if(sum(colnames(data) %in% SignatureNames)>0){
+            data <- data[, colnames(data) %in% SignatureNames]
         } else {stop("There are no signatures in data")}
     } else {
-        if(sum(colnames(colData(data))%in%SignatureNames)>0){
-            data <- colData(data)[, colnames(colData(data))%in%SignatureNames]
+        if(sum(colnames(colData(data)) %in% SignatureNames)>0){
+            data <- colData(data)[, colnames(colData(data)) %in% SignatureNames]
         } else {stop("There are no signatures in data")}}
 
-    if(!all(signatureName %in% colnames(data))){
-        stop("Signature(s) in signatureName must be in the data.")}
+    if(!is.null(group)){
+        if(length(group)!=nrow(data)){stop("Group length is different than samples dimension")}
+    } else {if(splitGroups){stop("splitGroups can be TRUE only if group is provided")}}
 
     data <- sapply(data, range01)
     data <- as.matrix(t(data))
@@ -266,16 +259,25 @@ heatmapSignPlot <- function(data, signatureName = NULL, group = NULL, splitGroup
 #' @export
 correlationSignPlot <- function(data, signatureName = NULL, group = NULL, groupToUse = NULL){
 
-    if(!is.null(signatureName)){plotFirstCheck(signatureName)}
+    if(!is.null(signatureName)){signatureNameCheck(data, signatureName)}
 
     if(is.data.frame(data)){tmp <- data} else {tmp <- colData(data)}
 
-    if(is.null(signatureName)){
-        signs <- intersect(SignatureNames, colnames(tmp))
-    } else {
-        signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
+    if(sum(colnames(tmp) %in% SignatureNames)>0){
+        if(is.null(signatureName)){
+            signs <- intersect(SignatureNames, colnames(tmp))
+        } else {
+            signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
+    } else {stop("There are no signatures in data")}
 
     tmp <- tmp[,signs]
+
+    if(!is.null(group)){
+        if(length(group)!=nrow(tmp)){stop("group length is different than samples dimension")}
+        if(!is.null(groupToUse)){
+            if(!(groupToUse %in% group)){stop("groupToUse is not present in group")}
+        } else {stop("group can be used only if groupToUse is also provided")}
+    } else {if(!is.null(groupToUse)){stop("groupToUse can be used only if group is also provided")}}
 
     if(!is.null(group)){if(!is.null(groupToUse)){tmp <- tmp[group==groupToUse,]}}
 
@@ -297,6 +299,9 @@ correlationSignPlot <- function(data, signatureName = NULL, group = NULL, groupT
 #'
 #'
 #' @param data matrice di valori delle signatures
+#' @param survData dataframe che deve avere due colonne, la prima con i dati di survival e la seconda con lo
+#' status, inoltre le righe devono essere nominate con i nomi dei sample
+#' @param group deve essere della stessa lunghezza dei sample di cui abbiamo i dati di survival passati con survData
 #'
 #' @return
 #'
@@ -304,21 +309,10 @@ correlationSignPlot <- function(data, signatureName = NULL, group = NULL, groupT
 #' @export
 survivalSignPlot <- function(data, survData, signatureName, cutpoint = "mean", group = NULL, groupToUse = NULL){
 
-    plotFirstCheck(signatureName)
+    if(length(signatureName)>1){stop("you must provide only one signature for this plot")}
+    signatureNameCheck(data, signatureName)
 
-    if(is.vector(data)){
-        if(!(is.null(attr(data, "Signature Name")))){
-            if(attr(data, "Signature Name")!=signatureName){
-                stop(paste("data and signatureName do not match:", attr(data, "Signature Name"),"&",signatureName))}
-        } else {
-            stop("You are not providing a signature result vector")}
-    } else if (is.data.frame(data)){
-        if(!(signatureName%in%rownames(data))){
-            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
-    } else {
-        if(!(signatureName%in%colnames(colData(data)))){
-            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
-    }
+    if(ncol(survData)>2){stop("survData should contain only two columns with survival data and status information")}
 
     if(!(is.numeric(cutpoint))){
         if(!(cutpoint %in% c("mean", "median", "optimal"))){
@@ -336,12 +330,14 @@ survivalSignPlot <- function(data, survData, signatureName, cutpoint = "mean", g
 
     grp  <- rep("high", nrow(tmp))
     names(grp) <- rownames(tmp)
+    n <- ncol(tmp)
+    colnames(tmp)[c(n-1,n)] <- c("survival", "status")
     if(cutpoint=="mean"){
         grp[which(tmp[,signatureName] < mean(tmp[,signatureName]))] <- "low"
     } else if(cutpoint=="median"){
         grp[which(tmp[,signatureName] < median(tmp[,signatureName]))] <- "low"
     } else if(cutpoint=="optimal"){
-        optval <- maxstat::maxstat.test(survival::Surv(os, status) ~ tmp[,signatureName],
+        optval <- maxstat::maxstat.test(survival::Surv(survival, status) ~ tmp[,signatureName],
                                         data = tmp, smethod="LogRank", pmethod="Lau94")
         grp[which(tmp[,signatureName] < optval$estimate)] <- "Low"
     } else {grp[which(tmp[,signatureName] < cutpoint)] <- "low"}
@@ -349,10 +345,17 @@ survivalSignPlot <- function(data, survData, signatureName, cutpoint = "mean", g
     if((sum(grp=="low")<length(grp)/10) | (sum(grp=="low")>length(grp)*9/10)){
         warning(paste("groups size is non homogeneous:", sum(grp=="low"), "low and", sum(grp=="high"), "high"))}
 
+    if(!is.null(group)){
+        if(length(group)!=nrow(tmp)){stop("group length is different than samples dimension")}
+        if(!is.null(groupToUse)){
+            if(!(groupToUse %in% group)){stop("groupToUse is not present in group")}
+        } else {stop("group can be used only if groupToUse is also provided")}
+    } else {if(!is.null(groupToUse)){stop("groupToUse can be used only if group is also provided")}}
+
     tmp <- cbind(tmp, grp)
     if(!is.null(group)){if(!is.null(groupToUse)){tmp <- tmp[group==groupToUse,]}}
 
-    fit <- survival::survfit(survival::Surv(os, status) ~ grp, data = tmp)
+    fit <- survival::survfit(survival::Surv(survival, status) ~ grp, data = tmp)
 
     g <- survminer::ggsurvplot(fit, data = tmp, risk.table = T, legend.title = signatureName,
                                palette = c("red", "blue"), ggtheme = ggplot2::theme_gray(15),
@@ -377,25 +380,21 @@ survivalSignPlot <- function(data, survData, signatureName, cutpoint = "mean", g
 #' @export
 ridgelineSignPlot <- function(data, signatureName = NULL, group = NULL){
 
-    if(!is.null(signatureName)){plotFirstCheck(signatureName)}
-
-    if(is.data.frame(data)){
-        if(!all(signatureName %in% colnames(data))){
-            stop(paste("data and signatureName do not match:", paste(rownames(data), collapse = ", "),"&",signatureName))}
-    } else {
-        if(!all(signatureName %in% colnames(colData(data)))){
-            stop(paste("data and signatureName do not match:", paste(colnames(colData(data)), collapse = ", "),"&",signatureName))}
-    }
+    if(!is.null(signatureName)){signatureNameCheck(data, signatureName)}
 
     if(is.data.frame(data)){tmp <- data} else {tmp <- colData(data)}
 
-    if(is.null(signatureName)){
-        signs <- intersect(SignatureNames, colnames(tmp))
-    } else {
-        signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
+    if(sum(colnames(tmp) %in% SignatureNames)>0){
+        if(is.null(signatureName)){
+            signs <- intersect(SignatureNames, colnames(tmp))
+        } else {
+            signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), signatureName))}
+    } else {stop("There are no signatures in data")}
 
     tmp <- tmp[,signs]
     tmp <- data.frame(sapply(tmp, range01))
+
+    if(!is.null(group)){if(length(group)!=nrow(tmp)){stop("group length is different than samples dimension")}}
 
     if(is.null(signatureName)){n <- ncol(tmp)} else {n <- length(signatureName)}
 
