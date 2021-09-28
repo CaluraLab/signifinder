@@ -1,7 +1,8 @@
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
-#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for each sample, based on QH Miow at al. (2015).
+#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for
+#' each sample, based on QH Miow at al. (2015).
 #'
 #' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
@@ -46,7 +47,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, 
                                  nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
-    return(returnAsInput(userdata = dataset, result = gsva_matrix, SignName = ""))
+    return(returnAsInput(userdata = dataset, result = gsva_matrix, SignName = "", datasetm))
 }
 
 
@@ -81,7 +82,7 @@ piroptosisSign <- function(dataset, nametype = "SYMBOL"){
         ssgenes <- datasetm[Piroptosisdata$Gene_Symbol, x]
         if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Piroptosisdata$Coefficient)}})
     # Piroscore <- colSums(datasetm[Piroptosisdata$Gene_Symbol, ]*Piroptosisdata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "Piroptosis"))
+    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "Piroptosis", datasetm))
 }
 
 
@@ -103,8 +104,8 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL"){
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        Ferroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Ferroptosisdata$Gene_Symbol, column = nametype,
-                                       keytype = "SYMBOL", multiVals = "first")}
+        Ferroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Ferroptosisdata$Gene_Symbol,
+                                              column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -112,7 +113,7 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL"){
                " genes out of ", length(Ferroptosisdata$Gene_Symbol), "\n"))
     Ferroptosisdata <- Ferroptosisdata[Ferroptosisdata$Gene_Symbol %in% row.names(datasetm), ]
     ferrscore <- colSums(datasetm[Ferroptosisdata$Gene_Symbol, ]*Ferroptosisdata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "Ferroptosis"))
+    return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "Ferroptosis", datasetm))
 }
 
 
@@ -134,8 +135,8 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        LipidMetabolismdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = LipidMetabolismdata$Gene_Symbol, column = nametype,
-                                       keytype = "SYMBOL", multiVals = "first")}
+        LipidMetabolismdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = LipidMetabolismdata$Gene_Symbol,
+                                                  column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -143,7 +144,7 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
                " genes out of ", length(LipidMetabolismdata$Gene_Symbol), "\n"))
     LipidMetabolismdata <- LipidMetabolismdata[LipidMetabolismdata$Gene_Symbol %in% row.names(datasetm), ]
     lipidscore <- colSums(datasetm[LipidMetabolismdata$Gene_Symbol, ] * LipidMetabolismdata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidMetabolism"))
+    return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidMetabolism", datasetm))
 }
 
 
@@ -180,7 +181,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL"){
 
     med_counts <- colMedians(as.matrix(datasetm))
 
-    return(returnAsInput(userdata = dataset, result = as.vector(scale(med_counts)), SignName = "Hypoxia"))
+    return(returnAsInput(userdata = dataset, result = as.vector(scale(med_counts)), SignName = "Hypoxia", datasetm))
 }
 
 
@@ -223,11 +224,11 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE
     rownames(gsva_count) <- c("PlatinumResistanceUp", "PlatinumResistanceDown")
 
     if(pvalues){
-        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = PlatinumResistancedata, gsvaResult = gsva_matrix,
-                                 nperm = nperm, args = args)
+        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = PlatinumResistancedata,
+                                 gsvaResult = gsva_matrix, nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
-    return(returnAsInput(userdata = dataset, result = gsva_count, SignName = ""))
+    return(returnAsInput(userdata = dataset, result = gsva_count, SignName = "", datasetm))
 }
 
 
@@ -279,16 +280,18 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
         } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
         } else {"Q5"})
 
-    return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "Prognostic"))
+    return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "Prognostic", datasetm))
 }
 
 
 #' Metabolic Signature
 #'
-#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue calculated with Bootstrapping.
+#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue
+#' calculated with Bootstrapping.
 #' This signature is based on Rosario et. al (2018).
 #'
-#' @param DEdata matrix of differentially expressed genes where rows correspond to genes, first column to Log2FoldChange and second column to its adjusted pvalue.
+#' @param DEdata matrix of differentially expressed genes where rows correspond to genes,
+#' first column to Log2FoldChange and second column to its adjusted pvalue.
 #' @param nametype gene name ID of your DEdata row names.
 #' @param nsamples number of samples in the DEdata.
 #'
@@ -327,7 +330,8 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
 
 #' Immunogenic Signature
 #'
-#' Given a dataset, it returns the ImmunoScore for each sample. This signature is based on Dapeng Hao et. al (2018).
+#' Given a dataset, it returns the ImmunoScore for each sample. This signature is
+#' based on Dapeng Hao et. al (2018).
 #'
 #' @param dataset expression values where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset row names.
@@ -360,7 +364,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL"){
 
     ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
 
-    return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = "ImmunoScore"))
+    return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = "ImmunoScore", datasetm))
 }
 
 
@@ -395,9 +399,9 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV"
         genename <- genename[!duplicated(genename)]
     } else {genename <- row.names(datasetm)}
 
-    consensus_subtypes <- get.subtypes(expression.dataset = datasetm, entrez.ids = genename, method = method, ...)
+    consensus_subtypes <- get.subtypes(expression.dataset=datasetm, entrez.ids=genename, method=method, ...)
 
-    return(returnAsInput(userdata = dataset, result = t(consensus_subtypes$rf.probs), SignName = ""))
+    return(returnAsInput(userdata = dataset, result = t(consensus_subtypes$rf.probs), SignName = "", datasetm))
 }
 
 
@@ -455,7 +459,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
 
     ipsres <- data.frame(IPS, MHC, CP, EC, SC)
     row.names(ipsres) <- sample_names
-    return(returnAsInput(userdata = dataset, result = t(ipsres), SignName = ""))
+    return(returnAsInput(userdata = dataset, result = t(ipsres), SignName = "", datasetm))
 }
 
 
@@ -463,7 +467,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
 #'
 #' Given a dataset, it returns the median genes expression based on Yuzhalin et all. (2018).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
+#' Row names must be Official Symbol.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -478,22 +483,24 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        Matrisomedata <- mapIds(org.Hs.eg.db, keys=Matrisomedata, column=nametype, keytype="SYMBOL", multiVals="first")}
+        Matrisomedata <- mapIds(org.Hs.eg.db, keys=Matrisomedata, column=nametype,
+                                keytype="SYMBOL", multiVals="first")}
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(Matrisomedata %in% row.names(dataset)), " matrisome's genes out of 9\n"))
+    cat(paste("The function is using", sum(Matrisomedata %in% row.names(dataset)), "matrisome's genes out of 9\n"))
 
     median_cm <- colMedians(datasetm[row.names(datasetm) %in% Matrisomedata, ])
 
-    return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome"))
+    return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome", datasetm))
 }
 
 #' Mitotic Index
 #'
 #' Given a dataset, it returns the means genes expression based on Yang et all. (2016).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.
+#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
+#' Row names must be Official Symbol.
 #' @param nametype gene name ID of your dataset row names.
 #'
 #' @return NULL
@@ -507,13 +514,15 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
     firstCheck(nametype)
 
     if(nametype!="SYMBOL"){
-        MitoticIndexdata <- mapIds(org.Hs.eg.db, keys=MitoticIndexdata, column=nametype, keytype="SYMBOL", multiVals="first")}
+        MitoticIndexdata <- mapIds(org.Hs.eg.db, keys=MitoticIndexdata, column=nametype,
+                                   keytype="SYMBOL", multiVals="first")}
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(MitoticIndexdata %in% row.names(datasetm)), " mititotic index genes out of 9\n"))
+    cat(paste("The function is using", sum(MitoticIndexdata %in% row.names(datasetm)),
+              "mititotic index genes out of 9\n"))
 
     MI_means <- colMeans(datasetm[row.names(datasetm) %in% MitoticIndexdata, ])
 
-    return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex"))
+    return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
 }

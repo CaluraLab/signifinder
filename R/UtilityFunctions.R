@@ -13,7 +13,7 @@ getMatrix <- function(userdata){
         } else {stop("This dataset type is not supported")}}
     return(userdata)}
 
-returnAsInput <- function(userdata, result, SignName){
+returnAsInput <- function(userdata, result, SignName, datasetm){
     if(!is.matrix(userdata) & !is.data.frame(userdata)) {
         if(class(userdata)=="Seurat"){
             if(is.vector(result)){names <- c(colnames(userdata@meta.data), SignName)
@@ -26,10 +26,14 @@ returnAsInput <- function(userdata, result, SignName){
             colnames(userdata@colData) <- names
             } else {userdata@colData <- cbind(userdata@colData, t(result))}}
         return(userdata)
-    } else {
-        if(is.vector(result)){attr(result, "Signature Name") <- SignName
-        names(result) <- colnames(userdata)}
-        return(result)}
+    } else if(is.matrix(userdata) | is.data.frame(userdata)){
+        if(is.vector(result)){
+            result <- SummarizedExperiment::SummarizedExperiment(assays=datasetm, colData=data.frame(name=result))
+            colnames(SummarizedExperiment::colData(result)) <- SignName
+        } else {
+            result <- SummarizedExperiment::SummarizedExperiment(assays = datasetm, colData = t(result))
+        }
+    return(result)}
 }
 
 ipsmap <- function(x){
