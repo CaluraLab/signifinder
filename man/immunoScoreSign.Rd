@@ -12,5 +12,6 @@ immunoScoreSign(dataset, nametype = "SYMBOL")
 \item{nametype}{gene name ID of your dataset row names.}
 }
 \description{
-Given a dataset, it returns the ImmunoScore for each sample. This signature is based on Dapeng Hao et. al (2018).
+Given a dataset, it returns the ImmunoScore for each sample. This signature is
+based on Dapeng Hao et. al (2018).
 }

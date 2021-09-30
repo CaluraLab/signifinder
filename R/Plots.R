@@ -42,10 +42,9 @@ signatureNameCheck <- function(data, sName){
 #'
 #' Given a signatures it returns a scatterplot.
 #'
-#' @param signature If data is NULL, signature must be a numeric vector. When data is provided,
-#' signature must be the character string of the column name in data.
-#' @param data either a data frame or a SummarizedExperiment.
-#' @param statistics It should be "mean", "median" or "quantiles" to be plot on the graph.
+#' @param data output from a signature function
+#' @param whichSign the signature to plot. It has to be only one
+#' @param statistics It should be "mean", "median" or "quantiles" to be plot in the graph.
 #'
 #' @return A ggplot object
 #'
@@ -101,9 +100,12 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #'
 #' Given a signatures...
 #'
-#' @param signature If data is NULL, signature must be a numeric vector. When data is provided,
-#' signature must be the character string of the column name in data.
-#' @param data either a data frame or a SummarizedExperiment.
+#' @param data output from a signature function
+#' @param whichSign indicare quali signature usare, di cui verranno presi i geni
+#' @param splitBySign se splittare o no le righe dell'heatmap in base alla signature di provenienza dei geni
+#' @param sampleAnnot un vettore di annotazione dei sample
+#' @param splitByAnnot se splittare o no le colonne in base all'annotazione dei sample, in
+#' questo caso sampleAnnot deve essere una variabile categorica
 #'
 #' @return A ComplexHeatmap object
 #'
@@ -156,14 +158,14 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
             ha <- rowAnnotation(signature = signAnnot)
             htargs$right_annotation = ha}}
 
-    if(splitByAnnot){
-            htargs$column_split = sampleAnnot
-            ht <- Heatmap(signval, name = "Signature", col = mycol1, column_split = sampleAnnot)
-        } else {
-            if(!is.null(sampleAnnot)){
-                hatop = HeatmapAnnotation(sampleAnnot = sampleAnnot)
-                htargs$top_annotation = hatop}
-            ht <- Heatmap(signval, name = "Signature", col = mycol1)}
+    if(splitByAnnot & is.character(sampleAnnot)){
+        htargs$column_split = sampleAnnot
+        ht <- Heatmap(signval, name = "Signature", col = mycol1, column_split = sampleAnnot)
+    } else {
+        if(!is.null(sampleAnnot)){
+            hatop = HeatmapAnnotation(sampleAnnot = sampleAnnot)
+            htargs$top_annotation = hatop}
+        ht <- Heatmap(signval, name = "Signature", col = mycol1)}
 
     ht2 <- do.call(Heatmap, htargs)
     g <- ht %v% ht2
@@ -176,8 +178,12 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
 #'
 #' prende in input una matrice di valori che ha le signatures sulle righe e i pazienti sulle colonne.
 #'
-#' @param data dataframe con le signature sulle colonne oppure oggetto con i colData
-#' @param whichSign una signature (o più) che guidi il clustering
+#' @param data output from a signature function
+#' @param whichSign le signature che si vuole far vedere nell'heatmap
+#' @param clusterBySign una signature (o più) che guidi il clustering delle colonne dell'heatmap
+#' @param sampleAnnot un vettore di annotazione dei sample
+#' @param splitByAnnot se splittare o no le colonne in base all'annotazione dei sample, in
+#' questo caso sampleAnnot deve essere una variabile categorica
 #'
 #' @return A ComplexHeatmap object
 #'
@@ -197,6 +203,8 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
     if(!is.null(sampleAnnot)){
         if(length(sampleAnnot)!=nrow(data)){stop("sampleAnnot length is different than samples dimension")}
     } else {if(splitByAnnot){stop("splitByAnnot can be TRUE only if sampleAnnot is provided")}}
+
+    if(!is.null(whichSign)){data <- data[, intersect(colnames(data), c(whichSign, clusterBySign))]}
 
     data <- sapply(data, range01)
     data <- as.matrix(t(data))
@@ -232,10 +240,10 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 #'
 #'
 #'
-#' @param data dataframe con le signature sulle colonne oppure oggetto con i colData
-#' @param whichSign ..
-#' @param sampleAnnot ..
-#' @param selectByAnnot ..
+#' @param data output from a signature function
+#' @param whichSign le signature che si vuole far vedere nel correlation plot
+#' @param sampleAnnot un vettore di annotazione dei sample, deve essere categorico
+#' @param selectByAnnot a group from sampleAnnot to use to construct the correlation plot
 #'
 #' @return A correlation ellipse graph
 #'
@@ -283,17 +291,20 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL, sele
 #'
 #'
 #'
-#' @param data matrice di valori delle signatures
+#' @param data output from a signature function
 #' @param survData dataframe che deve avere due colonne, la prima con i dati di survival (tempo) e la seconda con lo
 #' status, inoltre le righe devono essere nominate con i nomi dei sample, prenderlo dalla documentazione della KM
-#' @param sampleAnnot deve essere un vettore con i nomi dei sample, come le righe
+#' @param whichSign la signatura di cui si vuol testare la survival
 #' @param cutpoint documentazione originale KM
+#' @param sampleAnnot deve essere un vettore nominato con i nomi dei sample, come le righe, deve essere categorico
+#' @param selectByAnnot a group from sampleAnnot to use to compute the survival
 #'
 #' @return
 #'
 #'
 #' @export
-survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean", sampleAnnot = NULL, selectByAnnot = NULL){
+survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
+                             sampleAnnot = NULL, selectByAnnot = NULL){
 
     if(length(whichSign)>1){stop("you must provide only one signature for this plot")}
     signatureNameCheck(data, whichSign)
@@ -356,7 +367,9 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean", sampl
 #'
 #'
 #'
-#' @param data matrice di valori delle signatures
+#' @param data output from a signature function
+#' @param whichSign le signature che si vuole far vedere nel ridgeline plot
+#' @param groupByAnnot un vettore di annotazione dei sample, deve essere categorico
 #'
 #' @return
 #'

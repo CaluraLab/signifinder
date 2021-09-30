@@ -4,10 +4,14 @@
 \alias{ridgelineSignPlot}
 \title{Ridgeline Plot}
 \usage{
-ridgelineSignPlot(data, signatureName = NULL, group = NULL)
+ridgelineSignPlot(data, whichSign = NULL, groupByAnnot = NULL)
 }
 \arguments{
-\item{data}{matrice di valori delle signatures}
+\item{data}{output from a signature function}
+
+\item{whichSign}{le signature che si vuole far vedere nel ridgeline plot}
+
+\item{groupByAnnot}{un vettore di annotazione dei sample, deve essere categorico}
 }
 \value{
 

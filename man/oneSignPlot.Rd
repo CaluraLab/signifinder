@@ -4,15 +4,14 @@
 \alias{oneSignPlot}
 \title{Scatterplot for a single signature}
 \usage{
-oneSignPlot(data, signatureName, statistics = NULL)
+oneSignPlot(data, whichSign, statistics = NULL)
 }
 \arguments{
-\item{data}{either a data frame or a SummarizedExperiment.}
+\item{data}{output from a signature function}
 
-\item{statistics}{It should be "mean", "median" or "quantiles" to be plot on the graph.}
+\item{whichSign}{the signature to plot. It has to be only one}
 
-\item{signature}{If data is NULL, signature must be a numeric vector. When data is provided,
-signature must be the character string of the column name in data.}
+\item{statistics}{It should be "mean", "median" or "quantiles" to be plot in the graph.}
 }
 \value{
 A ggplot object

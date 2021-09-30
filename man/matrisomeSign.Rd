@@ -7,7 +7,8 @@
 matrisomeSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples. Row names must be Official Symbol.}
+\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.
+Row names must be Official Symbol.}
 
 \item{nametype}{gene name ID of your dataset row names.}
 }

@@ -6,18 +6,23 @@
 \usage{
 geneHeatmapSignPlot(
   data,
-  signatureName,
-  dataset,
-  splitGenes = FALSE,
-  group = NULL,
-  splitGroups = FALSE
+  whichSign,
+  splitBySign = FALSE,
+  sampleAnnot = NULL,
+  splitByAnnot = FALSE
 )
 }
 \arguments{
-\item{data}{either a data frame or a SummarizedExperiment.}
+\item{data}{output from a signature function}
 
-\item{signature}{If data is NULL, signature must be a numeric vector. When data is provided,
-signature must be the character string of the column name in data.}
+\item{whichSign}{indicare quali signature usare, di cui verranno presi i geni}
+
+\item{splitBySign}{se splittare o no le righe dell'heatmap in base alla signature di provenienza dei geni}
+
+\item{sampleAnnot}{un vettore di annotazione dei sample}
+
+\item{splitByAnnot}{se splittare o no le colonne in base all'annotazione dei sample, in
+questo caso sampleAnnot deve essere una variabile categorica}
 }
 \value{
 A ComplexHeatmap object

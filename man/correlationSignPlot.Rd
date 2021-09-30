@@ -6,19 +6,19 @@
 \usage{
 correlationSignPlot(
   data,
-  signatureName = NULL,
-  group = NULL,
-  groupToUse = NULL
+  whichSign = NULL,
+  sampleAnnot = NULL,
+  selectByAnnot = NULL
 )
 }
 \arguments{
-\item{data}{dataframe con le signature sulle colonne oppure oggetto con i colData}
+\item{data}{output from a signature function}
 
-\item{signatureName}{..}
+\item{whichSign}{le signature che si vuole far vedere nel correlation plot}
 
-\item{group}{..}
+\item{sampleAnnot}{un vettore di annotazione dei sample, deve essere categorico}
 
-\item{groupToUse}{..}
+\item{selectByAnnot}{a group from sampleAnnot to use to construct the correlation plot}
 }
 \value{
 A correlation ellipse graph

@@ -4,12 +4,25 @@
 \alias{heatmapSignPlot}
 \title{Heatmap globale o con una signature che guida il clustering}
 \usage{
-heatmapSignPlot(data, signatureName = NULL, group = NULL, splitGroups = FALSE)
+heatmapSignPlot(
+  data,
+  whichSign = NULL,
+  clusterBySign = NULL,
+  sampleAnnot = NULL,
+  splitByAnnot = FALSE
+)
 }
 \arguments{
-\item{data}{dataframe con le signature sulle colonne oppure oggetto con i colData}
+\item{data}{output from a signature function}
 
-\item{signatureName}{una signature (o più) che guidi il clustering}
+\item{whichSign}{le signature che si vuole far vedere nell'heatmap}
+
+\item{clusterBySign}{una signature (o più) che guidi il clustering delle colonne dell'heatmap}
+
+\item{sampleAnnot}{un vettore di annotazione dei sample}
+
+\item{splitByAnnot}{se splittare o no le colonne in base all'annotazione dei sample, in
+questo caso sampleAnnot deve essere una variabile categorica}
 }
 \value{
 A ComplexHeatmap object

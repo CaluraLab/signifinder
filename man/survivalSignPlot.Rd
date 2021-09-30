@@ -7,19 +7,25 @@
 survivalSignPlot(
   data,
   survData,
-  signatureName,
+  whichSign,
   cutpoint = "mean",
-  group = NULL,
-  groupToUse = NULL
+  sampleAnnot = NULL,
+  selectByAnnot = NULL
 )
 }
 \arguments{
-\item{data}{matrice di valori delle signatures}
+\item{data}{output from a signature function}
 
-\item{survData}{dataframe che deve avere due colonne, la prima con i dati di survival e la seconda con lo
-status, inoltre le righe devono essere nominate con i nomi dei sample}
+\item{survData}{dataframe che deve avere due colonne, la prima con i dati di survival (tempo) e la seconda con lo
+status, inoltre le righe devono essere nominate con i nomi dei sample, prenderlo dalla documentazione della KM}
 
-\item{group}{deve essere della stessa lunghezza dei sample di cui abbiamo i dati di survival passati con survData}
+\item{whichSign}{la signatura di cui si vuol testare la survival}
+
+\item{cutpoint}{documentazione originale KM}
+
+\item{sampleAnnot}{deve essere un vettore nominato con i nomi dei sample, come le righe, deve essere categorico}
+
+\item{selectByAnnot}{a group from sampleAnnot to use to compute the survival}
 }
 \value{
 
