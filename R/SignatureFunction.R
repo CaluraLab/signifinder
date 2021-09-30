@@ -1,16 +1,21 @@
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
-#' Given a dataset, it returns the Endothelial score and the Mesenchymal score for
-#' each sample, based on QH Miow at al. (2015).
+#' Given a dataset, `EMTSign` returns the Endothelial score and the Mesenchymal score for
+#' each sample, based on the work of QH Miow at al. (2015).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
-#' @param pvalues whether to compute pvalues by permutations.
+#' @param dataset Expression matrix. A data.frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
 #' @param ... other arguments passed on to the GSVA function.
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references \url{https://www.nature.com/articles/onc2014136}
 #'
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
