@@ -1,7 +1,7 @@
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
-#' Given a dataset, `EMTSign` returns the Endothelial score and the Mesenchymal score for
+#' Given a dataset, EMTSign returns the Endothelial score and the Mesenchymal score for
 #' each sample, based on the work of QH Miow at al. (2015).
 #'
 #' @param dataset Expression matrix. A data.frame or a matrix where rows correspond to genes and columns correspond to samples.
@@ -15,7 +15,8 @@
 #' @return A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
 #' in the `colData` section which contains sample meta-data describing the samples.
 #'
-#' @references \url{https://www.nature.com/articles/onc2014136}
+#' @references Miow, Q., Tan, T., Ye, J. et al. Epithelial–mesenchymal status renders differential responses to cisplatin in ovarian cancer.
+#' Oncogene 34, 1899–1907 (2015). \url{https://doi.org/10.1038/onc.2014.136}
 #'
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
