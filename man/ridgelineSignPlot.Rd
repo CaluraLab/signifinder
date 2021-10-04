@@ -14,7 +14,7 @@ ridgelineSignPlot(data, whichSign = NULL, groupByAnnot = NULL)
 \item{groupByAnnot}{un vettore di annotazione dei sample, deve essere categorico}
 }
 \value{
-
+A ggplot object
 }
 \description{
 Ridgeline Plot
