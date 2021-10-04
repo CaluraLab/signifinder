@@ -34,7 +34,7 @@ range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 signatureNameCheck <- function(data, sName){
     if(!all(sName %in% SignatureNames)){
         stop(paste("signatures must be among:", paste(SignatureNames, collapse = ", ")))}
-    if(!all(sName %in% colnames(colData(data)))){
+    if(!all(sName %in% colnames(SummarizedExperiment::colData(data)))){
         stop("signature names must be in data")}
 }
 
@@ -50,6 +50,8 @@ signatureNameCheck <- function(data, sName){
 #'
 #' @import ggplot2
 #' @import patchwork
+#' @importFrom SummarizedExperiment colData
+#' @importFrom stats median quantile
 #'
 #' @export
 oneSignPlot <- function(data, whichSign, statistics = NULL){
@@ -112,12 +114,15 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #' @importFrom ComplexHeatmap Heatmap rowAnnotation '%v%' HeatmapAnnotation
 #' @importFrom magrittr '%>%'
 #' @importFrom dplyr group_by summarise_all
+#' @importFrom SummarizedExperiment colData
 #'
 #' @export
 geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
                                 sampleAnnot = NULL, splitByAnnot = FALSE){
 
     signatureNameCheck(data, whichSign)
+
+    dataset <- getMatrix(data)
 
     if(!is.null(sampleAnnot)){
         if(length(sampleAnnot)!=ncol(dataset)){stop("sampleAnnot length is different than samples dimension")}
@@ -188,6 +193,7 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
 #' @return A ComplexHeatmap object
 #'
 #' @importfrom ComplexHeatmap Heatmap '%v%'
+#' @importFrom SummarizedExperiment colData
 #'
 #' @export
 heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
@@ -248,6 +254,7 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 #' @return A correlation ellipse graph
 #'
 #' @importFrom openair corPlot
+#' @importFrom SummarizedExperiment colData
 #'
 #' @export
 correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL, selectByAnnot = NULL){
@@ -299,8 +306,10 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL, sele
 #' @param sampleAnnot deve essere un vettore nominato con i nomi dei sample, come le righe, deve essere categorico
 #' @param selectByAnnot a group from sampleAnnot to use to compute the survival
 #'
-#' @return
+#' @return al momento ritorna sia il plot che delle statistiche sui dati
 #'
+#' @importFrom SummarizedExperiment colData
+#' @importFrom stats median
 #'
 #' @export
 survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
@@ -371,10 +380,11 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 #' @param whichSign le signature che si vuole far vedere nel ridgeline plot
 #' @param groupByAnnot un vettore di annotazione dei sample, deve essere categorico
 #'
-#' @return
+#' @return A ggplot object
 #'
 #' @import ggplot2
 #' @importFrom ggridges geom_density_ridges
+#' @importFrom SummarizedExperiment colData
 #'
 #' @export
 ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
@@ -384,7 +394,7 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
     if(is.data.frame(data)){tmp <- data} else {tmp <- colData(data)}
 
     if(sum(colnames(tmp) %in% SignatureNames)>0){
-        if(is.null(signatureName)){
+        if(is.null(whichSign)){
             signs <- intersect(SignatureNames, colnames(tmp))
         } else {
             signs <- Reduce(intersect, list(SignatureNames, colnames(tmp), whichSign))}

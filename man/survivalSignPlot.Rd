@@ -28,7 +28,7 @@ status, inoltre le righe devono essere nominate con i nomi dei sample, prenderlo
 \item{selectByAnnot}{a group from sampleAnnot to use to compute the survival}
 }
 \value{
-
+al momento ritorna sia il plot che delle statistiche sui dati
 }
 \description{
 Survival Plot
