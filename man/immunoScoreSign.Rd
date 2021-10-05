@@ -7,11 +7,21 @@
 immunoScoreSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the Immunogenic scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the ImmunoScore for each sample. This signature is
+Given a dataset, immunoScoreSign returns the ImmunoScore for each sample. This signature is
 based on Dapeng Hao et. al (2018).
+}
+\references{
+Hao D, Liu J, Chen M, Li J, Wang L, Li X, Zhao Q, Di LJ. Immunogenomic Analyses of Advanced Serous Ovarian Cancer Reveal Immune Score is a Strong Prognostic Factor and an Indicator of Chemosensitivity.
+Clin Cancer Res. 2018 Aug 1;24(15):3560-3571. \url{https://doi.org/10.1158/1078-0432.CCR-17-3862}
 }

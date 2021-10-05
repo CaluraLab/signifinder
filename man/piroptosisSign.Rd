@@ -2,15 +2,25 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{piroptosisSign}
 \alias{piroptosisSign}
-\title{Piroptosis Signature}
+\title{Pyroptosis Signature}
 \usage{
 piroptosisSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the Pyroptosis scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et al. (2020).
+Given a dataset, pyroptosisSign returns the pyroptosis score for each sample, based on Ying Ye et al. (2021).
+}
+\references{
+Ye Y, Dai Q. & Qi H. A novel defined pyroptosis-related gene signature for predicting the prognosis of ovarian cancer.
+Cell Death Discov. 7, 71 (2021). \url{https://doi.org/10.1038/s41420-021-00451-x}
 }

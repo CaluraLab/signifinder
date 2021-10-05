@@ -7,11 +7,20 @@
 mitoticIndexSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.
-Row names must be Official Symbol.}
+\item{dataset}{Expression matrix in which row names must be Official Symbol. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the means gene expression based on the mitotix index will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the means genes expression based on Yang et all. (2016).
+Given a dataset, mitoticIndexSign returns the means genes expression based on Yang et all. (2016).
+}
+\references{
+Yang, Z., Wong, A., Kuh, D. et al. Correlation of an epigenetic mitotic clock with cancer risk.
+Genome Biol 17, 205 (2016). \url{https://doi.org/10.1186/s13059-016-1064-3}
 }

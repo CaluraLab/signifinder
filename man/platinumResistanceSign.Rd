@@ -13,16 +13,22 @@ platinumResistanceSign(
 )
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
 
-\item{pvalues}{whether to compute pvalues by permutations.}
+\item{pvalues}{logical. It allows to compute p-values by permutations.}
 
 \item{nperm}{number of permutations.}
 
 \item{...}{other arguments passed on to the GSVA function.}
 }
+\value{
+A SummarizedExperiment object in which the Platinum Resistance scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
+}
 \description{
-Given a dataset, it returns the gsva score for each sample from International Cancer Genome Consortium (ICGC).
+Given a dataset, it returns the gsva scores for each sample from International Cancer Genome Consortium (ICGC).
 }

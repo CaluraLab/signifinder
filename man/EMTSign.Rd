@@ -7,7 +7,7 @@
 EMTSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
 }
 \arguments{
-\item{dataset}{Expression matrix. A data.frame or a matrix where rows correspond to genes and columns correspond to samples.
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
 A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
 genomic ranges of interest and the columns represent samples.}
 

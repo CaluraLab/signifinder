@@ -2,15 +2,25 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{ferroptosisSign}
 \alias{ferroptosisSign}
-\title{FerroptosisSignature}
+\title{Ferroptosis Signature}
 \usage{
 ferroptosisSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the Ferroptosis score will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et al. (2021).
+Given a dataset, ferroptosisSign returns the Ferroptosis score for each sample Ying Ye et al. (2021).
+}
+\references{
+Ye Y, Dai Q, Li S, He J and Qi H (2021) A Novel Defined Risk Signature of the Ferroptosis-Related Genes for Predicting the Prognosis of Ovarian Cancer.
+Front. Mol. Biosci. 8:645845. \url{https://doi.org/10.3389/fmolb.2021.645845}
 }

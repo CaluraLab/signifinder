@@ -2,19 +2,30 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{prognosticSign}
 \alias{prognosticSign}
-\title{Prognostic Signature}
+\title{Prognostic high-grade serous ovarian cancer Signature}
 \usage{
 prognosticSign(dataset, nametype = "SYMBOL", age, stage)
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
 
-\item{age}{vector of patient's age.}
+\item{age}{a vector of patient's age.}
 
-\item{stage}{vector of patient's tumor stage (FIGO).}
+\item{stage}{a vector of patient's tumor stage (FIGO).}
+}
+\value{
+A SummarizedExperiment object in which the Prognostic scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. al (2020).
+Given a dataset, based on a 101-gene expression signature by J. Millstein et. al (2020), prognosticSign returns the Quantile assignation for each sample
+allowing to improve risk stratification in clinical trials by identifying patients who are least likely to achieve 5-year survival.
+}
+\references{
+Millstein J, Budden T, Goode EL, Anglesio MS, Talhouk A, Intermaggio MP, et al. Prognostic gene expression signature for high-grade serous ovarian cancer.
+Ann Oncol. 2020;31(9):1240–50. \url{https://doi.org/10.1016/j.annonc.2020.05.019}
 }

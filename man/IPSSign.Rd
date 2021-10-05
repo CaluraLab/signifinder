@@ -7,10 +7,21 @@
 IPSSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{TPM expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix of TPM values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the IPS, MHC, CP, EC and SC scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns IPS for each sample. This signature is based on .. et. al (..).
+Given a dataset, IPSSign returns fro each sample, the IPSs (ImmunoPhenoScores) and scores for the four groups of immune biomarkers: MHC (Antigen processing molecules),
+CP (Checkpoints immunomodulators), EC (Immune effector cells) and SC (Suppressor cells) identified by P Charoentong et. al (2017).
+}
+\references{
+Charoentong P, Finotello F, Angelova M, Mayer C, Efremova M, Rieder D, Hackl H, Trajanoski Z. Pan-cancer Immunogenomic Analyses Reveal Genotype-Immunophenotype Relationships and Predictors of Response to Checkpoint Blockade.
+Cell Rep. 2017 Jan 3;18(1):248-262. \url{https://doi.org/10.1016/j.celrep.2016.12.019}
 }
