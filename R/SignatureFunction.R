@@ -272,8 +272,10 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
     gene_coeff <- colSums(datasetm*Prognosticdata$Genes[intergene])
 
     age_coef <- sapply(age, function(p)
-        if(p<=53){0} else if(p>53 & p<=60){Prognosticdata$Age[1]
-        } else if(p>60 & p<=67){Prognosticdata$Age[2]} else {Prognosticdata$Age[3]})
+        if(is.na(p)){NA
+        } else {
+            if(p<=53){0} else if(p>53 & p<=60){Prognosticdata$Age[1]
+            } else if(p>60 & p<=67){Prognosticdata$Age[2]} else {Prognosticdata$Age[3]}})
 
     stage_coef <- sapply(stage, function(p)
         if(p=="NA"){Prognosticdata$Stage[2]} else if(p=="I"|p=="II"){Prognosticdata$Stage[1]} else {0})
