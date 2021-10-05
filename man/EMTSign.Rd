@@ -7,7 +7,7 @@
 EMTSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
 }
 \arguments{
-\item{dataset}{Expression matrix. A data.frame or a matrix where rows correspond to genes and columns correspond to samples.
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
 A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
 genomic ranges of interest and the columns represent samples.}
 
@@ -24,9 +24,10 @@ A SummarizedExperiment object in which the results of the Endothelial score and 
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, `EMTSign` returns the Endothelial score and the Mesenchymal score for
+Given a dataset, EMTSign returns the Endothelial score and the Mesenchymal score for
 each sample, based on the work of QH Miow at al. (2015).
 }
 \references{
-\url{https://www.nature.com/articles/onc2014136}
+Miow, Q., Tan, T., Ye, J. et al. Epithelial–mesenchymal status renders differential responses to cisplatin in ovarian cancer.
+Oncogene 34, 1899–1907 (2015). \url{https://doi.org/10.1038/onc.2014.136}
 }

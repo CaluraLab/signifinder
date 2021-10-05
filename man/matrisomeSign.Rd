@@ -7,11 +7,20 @@
 matrisomeSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.
-Row names must be Official Symbol.}
+\item{dataset}{Expression matrix in which row names must be Official Symbol. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the median gene expression based on the core matrisome signature will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the median genes expression based on Yuzhalin et all. (2018).
+Given a dataset, matrisomeSign returns the median genes expression based on Yuzhalin et all. (2018).
+}
+\references{
+Yuzhalin A, Urbonas T, Silva M. et al. A core matrisome gene signature predicts cancer outcome.
+British Journal of Cancer volume 118, 435–440 (2018). \url{https://doi.org/10.1038/bjc.2017.458}
 }

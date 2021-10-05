@@ -7,15 +7,24 @@
 metabolicSign(DEdata, nametype = "SYMBOL", nsamples)
 }
 \arguments{
-\item{DEdata}{matrix of differentially expressed genes where rows correspond to genes,
-first column to Log2FoldChange and second column to its adjusted pvalue.}
+\item{DEdata}{A matrix of differentially expressed genes where rows correspond to genes,
+the first column to Log2FoldChange and second column to its adjusted p-value,
+or a SummarizedExperiment which contains an assay represented by a matrix-like object of differentially expressed genes
+where rows correspond to genes, the first column to Log2FoldChange and second column to its adjusted p-value.}
 
-\item{nametype}{gene name ID of your DEdata row names.}
+\item{nametype}{gene name ID of your DEdata (row names).}
 
 \item{nsamples}{number of samples in the DEdata.}
 }
+\value{
+A SummarizedExperiment object in which the Metabolic scores and their respective p-values will be added
+in the `colData` section which contains sample meta-data describing the samples.
+}
 \description{
-Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue
-calculated with Bootstrapping.
-This signature is based on Rosario et. al (2018).
+Given a list of DEG, metabolicSign returns a matrix with pathways score and a correspondent p-value calculated with Bootstrapping.
+The signature is based on the work of Rosario et. al (2018).
+}
+\references{
+Rosario SR, Long MD, Affronti H.C. et al. Pan-cancer analysis of transcriptional metabolic dysregulation using The Cancer Genome Atlas.
+Nat Commun 9, 5330 (2018). \url{https://doi.org/10.1038/s41467-018-07232-8}
 }

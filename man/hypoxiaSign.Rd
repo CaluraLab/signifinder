@@ -7,10 +7,20 @@
 hypoxiaSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the Hypoxia scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the hypoxia score for each sample as in Buffa et al. 2010.
+Given a dataset, Hypoxia returns the hypoxia score for each sample as in Francesca M. Buffa et al. 2010.
+}
+\references{
+Buffa F, Harris A, West C. et al. Large meta-analysis of multiple cancers reveals a common, compact and highly prognostic hypoxia metagene.
+Br J Cancer 102, 428–435 (2010). \url{https://doi.org/10.1038/sj.bjc.6605450}
 }

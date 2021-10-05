@@ -2,15 +2,25 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{lipidMetabolismSign}
 \alias{lipidMetabolismSign}
-\title{LipidSignature}
+\title{Lipid Metabolism Signature}
 \usage{
 lipidMetabolismSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
-\item{dataset}{expression values where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+genomic ranges of interest and the columns represent samples.}
 
-\item{nametype}{gene name ID of your dataset row names.}
+\item{nametype}{gene name ID of your dataset (row names).}
+}
+\value{
+A SummarizedExperiment object in which the Lipid scores will be added
+in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et al. (2020).
+Given a dataset, lipidMetabolismSign returns the Lipid score for each sample Mingjun Zheng et al. (2020).
+}
+\references{
+Zheng M, Mullikin H, Hester A, Czogalla B, Heidegger H, Vilsmaier T, Vattai A, Chelariu-Raicu A, Jeschke U, Trillsch F, Mahner S, Kaltofen T. Development and Validation of a Novel 11-Gene Prognostic Model for Serous Ovarian Carcinomas Based on Lipid Metabolism Expression Profile.
+International Journal of Molecular Sciences. 2020; 21(23):9169. \url{https://doi.org/10.3390/ijms21239169}
 }

@@ -1,10 +1,10 @@
 
 #' Endothelial-Mesenchymal Transition Signature
 #'
-#' Given a dataset, `EMTSign` returns the Endothelial score and the Mesenchymal score for
+#' Given a dataset, EMTSign returns the Endothelial score and the Mesenchymal score for
 #' each sample, based on the work of QH Miow at al. (2015).
 #'
-#' @param dataset Expression matrix. A data.frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
 #' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
 #' genomic ranges of interest and the columns represent samples.
 #' @param nametype gene name ID of your dataset (row names).
@@ -15,7 +15,8 @@
 #' @return A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
 #' in the `colData` section which contains sample meta-data describing the samples.
 #'
-#' @references \url{https://www.nature.com/articles/onc2014136}
+#' @references Miow, Q., Tan, T., Ye, J. et al. Epithelial–mesenchymal status renders differential responses to cisplatin in ovarian cancer.
+#' Oncogene 34, 1899–1907 (2015). \url{https://doi.org/10.1038/onc.2014.136}
 #'
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
@@ -56,14 +57,20 @@ EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, 
 }
 
 
-#' Piroptosis Signature
+#' Pyroptosis Signature
 #'
-#' Given a dataset, it returns the piroptosis score for each sample, based on Mingjun Zheng et al. (2020).
+#' Given a dataset, pyroptosisSign returns the pyroptosis score for each sample, based on Ying Ye et al. (2021).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Pyroptosis scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Ye Y, Dai Q. & Qi H. A novel defined pyroptosis-related gene signature for predicting the prognosis of ovarian cancer.
+#' Cell Death Discov. 7, 71 (2021). \url{https://doi.org/10.1038/s41420-021-00451-x}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -91,14 +98,20 @@ piroptosisSign <- function(dataset, nametype = "SYMBOL"){
 }
 
 
-#' FerroptosisSignature
+#' Ferroptosis Signature
 #'
-#' Given a dataset, it returns the Ferroptosis score for each sample Ying Ye et al. (2021).
+#' Given a dataset, ferroptosisSign returns the Ferroptosis score for each sample Ying Ye et al. (2021).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Ferroptosis score will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Ye Y, Dai Q, Li S, He J and Qi H (2021) A Novel Defined Risk Signature of the Ferroptosis-Related Genes for Predicting the Prognosis of Ovarian Cancer.
+#' Front. Mol. Biosci. 8:645845. \url{https://doi.org/10.3389/fmolb.2021.645845}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -122,14 +135,20 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL"){
 }
 
 
-#' LipidSignature
+#' Lipid Metabolism Signature
 #'
-#' Given a dataset, it returns the Lipid score for each sample Mingjun Zheng et al. (2020).
+#' Given a dataset, lipidMetabolismSign returns the Lipid score for each sample Mingjun Zheng et al. (2020).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Lipid scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Zheng M, Mullikin H, Hester A, Czogalla B, Heidegger H, Vilsmaier T, Vattai A, Chelariu-Raicu A, Jeschke U, Trillsch F, Mahner S, Kaltofen T. Development and Validation of a Novel 11-Gene Prognostic Model for Serous Ovarian Carcinomas Based on Lipid Metabolism Expression Profile.
+#' International Journal of Molecular Sciences. 2020; 21(23):9169. \url{https://doi.org/10.3390/ijms21239169}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -155,12 +174,18 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 
 #' Hypoxia Signature
 #'
-#' Given a dataset, it returns the hypoxia score for each sample as in Buffa et al. 2010.
+#' Given a dataset, Hypoxia returns the hypoxia score for each sample as in Francesca M. Buffa et al. 2010.
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Hypoxia scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Buffa F, Harris A, West C. et al. Large meta-analysis of multiple cancers reveals a common, compact and highly prognostic hypoxia metagene.
+#' Br J Cancer 102, 428–435 (2010). \url{https://doi.org/10.1038/sj.bjc.6605450}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @importFrom matrixStats colMedians
@@ -192,15 +217,18 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL"){
 
 #' Platinum Resistance Signature
 #'
-#' Given a dataset, it returns the gsva score for each sample from International Cancer Genome Consortium (ICGC).
+#' Given a dataset, it returns the gsva scores for each sample from International Cancer Genome Consortium (ICGC).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
-#' @param pvalues whether to compute pvalues by permutations.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
 #' @param ... other arguments passed on to the GSVA function.
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Platinum Resistance scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
 #'
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
@@ -237,15 +265,23 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE
 }
 
 
-#' Prognostic Signature
+#' Prognostic high-grade serous ovarian cancer Signature
 #'
-#' Given a dataset, it returns the Quantile assignation for each sample from J. Millstein et. al (2020).
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
-#' @param age vector of patient's age.
-#' @param stage vector of patient's tumor stage (FIGO).
+#' Given a dataset, based on a 101-gene expression signature by J. Millstein et. al (2020), prognosticSign returns the Quantile assignation for each sample
+#' allowing to improve risk stratification in clinical trials by identifying patients who are least likely to achieve 5-year survival.
 #'
-#' @return NULL
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param age a vector of patient's age.
+#' @param stage a vector of patient's tumor stage (FIGO).
+#'
+#' @return A SummarizedExperiment object in which the Prognostic scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Millstein J, Budden T, Goode EL, Anglesio MS, Talhouk A, Intermaggio MP, et al. Prognostic gene expression signature for high-grade serous ovarian cancer.
+#' Ann Oncol. 2020;31(9):1240–50. \url{https://doi.org/10.1016/j.annonc.2020.05.019}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -293,16 +329,21 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
 
 #' Metabolic Signature
 #'
-#' Given a list of DEG, it returns a matrix with pathways score and a correspondent pvalue
-#' calculated with Bootstrapping.
-#' This signature is based on Rosario et. al (2018).
+#' Given a list of DEG, metabolicSign returns a matrix with pathways score and a correspondent p-value calculated with Bootstrapping.
+#' The signature is based on the work of Rosario et. al (2018).
 #'
-#' @param DEdata matrix of differentially expressed genes where rows correspond to genes,
-#' first column to Log2FoldChange and second column to its adjusted pvalue.
-#' @param nametype gene name ID of your DEdata row names.
+#' @param DEdata A matrix of differentially expressed genes where rows correspond to genes,
+#' the first column to Log2FoldChange and second column to its adjusted p-value,
+#' or a SummarizedExperiment which contains an assay represented by a matrix-like object of differentially expressed genes
+#' where rows correspond to genes, the first column to Log2FoldChange and second column to its adjusted p-value.
+#' @param nametype gene name ID of your DEdata (row names).
 #' @param nsamples number of samples in the DEdata.
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Metabolic scores and their respective p-values will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Rosario SR, Long MD, Affronti H.C. et al. Pan-cancer analysis of transcriptional metabolic dysregulation using The Cancer Genome Atlas.
+#' Nat Commun 9, 5330 (2018). \url{https://doi.org/10.1038/s41467-018-07232-8}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -337,13 +378,19 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
 
 #' Immunogenic Signature
 #'
-#' Given a dataset, it returns the ImmunoScore for each sample. This signature is
+#' Given a dataset, immunoScoreSign returns the ImmunoScore for each sample. This signature is
 #' based on Dapeng Hao et. al (2018).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the Immunogenic scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Hao D, Liu J, Chen M, Li J, Wang L, Li X, Zhao Q, Di LJ. Immunogenomic Analyses of Advanced Serous Ovarian Cancer Reveal Immune Score is a Strong Prognostic Factor and an Indicator of Chemosensitivity.
+#' Clin Cancer Res. 2018 Aug 1;24(15):3560-3571. \url{https://doi.org/10.1158/1078-0432.CCR-17-3862}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -377,14 +424,20 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL"){
 
 #' ConsensusOV Signature
 #'
-#' Given a dataset, it returns ovarian cancer subtypes. This signature is based on Chen et. al (2018).
+#' Given a dataset, consensusOVSign returns ovarian cancer subtypes. This signature is based on Chen et. al (2018).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #' @param method the subtyping method to use. Default is "consensusOV".
 #' @param ... optional parameters to be passed to the low level function.
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the COnsensusOV scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Gregory M. Chen, Lavanya Kannan, Ludwig Geistlinger, Victor Kofia et al. Consensus on Molecular Subtypes of High-Grade Serous Ovarian Carcinoma
+#' Clin Cancer Res October 15 2018 (24) (20) 5037-5047. \url{https://doi.org/10.1158/1078-0432.CCR-18-0784}
 #'
 #' @importFrom consensusOV get.subtypes
 #' @importFrom AnnotationDbi mapIds
@@ -414,12 +467,19 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV"
 
 #' ImmunoPhenoScore Signature
 #'
-#' Given a dataset, it returns IPS for each sample. This signature is based on .. et. al (..).
+#' Given a dataset, IPSSign returns fro each sample, the IPSs (ImmunoPhenoScores) and scores for the four groups of immune biomarkers: MHC (Antigen processing molecules),
+#' CP (Checkpoints immunomodulators), EC (Immune effector cells) and SC (Suppressor cells) identified by P Charoentong et. al (2017).
 #'
-#' @param dataset TPM expression values where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix of TPM values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the IPS, MHC, CP, EC and SC scores will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Charoentong P, Finotello F, Angelova M, Mayer C, Efremova M, Rieder D, Hackl H, Trajanoski Z. Pan-cancer Immunogenomic Analyses Reveal Genotype-Immunophenotype Relationships and Predictors of Response to Checkpoint Blockade.
+#' Cell Rep. 2017 Jan 3;18(1):248-262. \url{https://doi.org/10.1016/j.celrep.2016.12.019}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -472,13 +532,18 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
 
 #' Core Matrisome Gene signature
 #'
-#' Given a dataset, it returns the median genes expression based on Yuzhalin et all. (2018).
+#' Given a dataset, matrisomeSign returns the median genes expression based on Yuzhalin et all. (2018).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' Row names must be Official Symbol.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix in which row names must be Official Symbol. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the median gene expression based on the core matrisome signature will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Yuzhalin A, Urbonas T, Silva M. et al. A core matrisome gene signature predicts cancer outcome.
+#' British Journal of Cancer volume 118, 435–440 (2018). \url{https://doi.org/10.1038/bjc.2017.458}
 #'
 #' @importFrom matrixStats colMedians
 #' @importFrom AnnotationDbi mapIds
@@ -504,13 +569,18 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 
 #' Mitotic Index
 #'
-#' Given a dataset, it returns the means genes expression based on Yang et all. (2016).
+#' Given a dataset, mitoticIndexSign returns the means genes expression based on Yang et all. (2016).
 #'
-#' @param dataset expression values where rows correspond to genes and columns correspond to samples.
-#' Row names must be Official Symbol.
-#' @param nametype gene name ID of your dataset row names.
+#' @param dataset Expression matrix in which row names must be Official Symbol. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
+#' genomic ranges of interest and the columns represent samples.
+#' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return NULL
+#' @return A SummarizedExperiment object in which the means gene expression based on the mitotix index will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @references Yang, Z., Wong, A., Kuh, D. et al. Correlation of an epigenetic mitotic clock with cancer risk.
+#' Genome Biol 17, 205 (2016). \url{https://doi.org/10.1186/s13059-016-1064-3}
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
