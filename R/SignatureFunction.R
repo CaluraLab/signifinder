@@ -23,9 +23,9 @@
 #' @import org.Hs.eg.db
 #'
 #' @export
-EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...) {
+EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...) {
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "EMTSign")
 
     if(nametype!="SYMBOL"){
         EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = EMTdata$Gene_Symbol, column = nametype,
@@ -76,25 +76,25 @@ EMTSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, 
 #' @import org.Hs.eg.db
 #'
 #' @export
-piroptosisSign <- function(dataset, nametype = "SYMBOL"){
+pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "pyroptosisSign")
 
     if(nametype!="SYMBOL"){
-        Piroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Piroptosisdata$Gene_Symbol,
+        Pyroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pyroptosisdata$Gene_Symbol,
                                        column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
-    nSigGenes <- length(Piroptosisdata$Gene_Symbol)
-    cat(paste0("The function is using ", sum(Piroptosisdata$Gene_Symbol %in% row.names(datasetm)),
+    nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
+    cat(paste0("The function is using ", sum(Pyroptosisdata$Gene_Symbol %in% row.names(datasetm)),
                " genes out of ", nSigGenes, "\n"))
-    Piroptosisdata <- Piroptosisdata[Piroptosisdata$Gene_Symbol %in% row.names(datasetm), ]
+    Pyroptosisdata <- Pyroptosisdata[Pyroptosisdata$Gene_Symbol %in% row.names(datasetm), ]
     Piroscore <- sapply(colnames(datasetm), function(x){
-        ssgenes <- datasetm[Piroptosisdata$Gene_Symbol, x]
-        if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Piroptosisdata$Coefficient)}})
-    # Piroscore <- colSums(datasetm[Piroptosisdata$Gene_Symbol, ]*Piroptosisdata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "Piroptosis", datasetm))
+        ssgenes <- datasetm[Pyroptosisdata$Gene_Symbol, x]
+        if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pyroptosisdata$Coefficient)}})
+    # Piroscore <- colSums(datasetm[Pyroptosisdata$Gene_Symbol, ]*Pyroptosisdata$Coefficient)
+    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "Pyroptosis", datasetm))
 }
 
 
@@ -117,9 +117,9 @@ piroptosisSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-ferroptosisSign <- function(dataset, nametype = "SYMBOL"){
+ferroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "ferroptosisSign")
 
     if(nametype!="SYMBOL"){
         Ferroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Ferroptosisdata$Gene_Symbol,
@@ -154,9 +154,9 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
+lipidMetabolismSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "lipidMetabolismSign")
 
     if(nametype!="SYMBOL"){
         LipidMetabolismdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = LipidMetabolismdata$Gene_Symbol,
@@ -194,9 +194,9 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' @import org.Hs.eg.db
 #'
 #' @export
-hypoxiaSign <- function(dataset, nametype = "SYMBOL"){
+hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "hypoxiaSign")
 
     if(nametype=="SYMBOL") { genetouse <- Hypoxiadata$Gene_Symbol
     } else if(nametype=="ENSEMBL") { genetouse <- Hypoxiadata$Gene_Ensembl
@@ -235,9 +235,9 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-platinumResistanceSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...){
+platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "platinumResistanceSign")
 
     if(nametype!= "SYMBOL"){
         PlatinumResistancedata <- lapply(PlatinumResistancedata, function(x)
@@ -287,9 +287,9 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE
 #' @import org.Hs.eg.db
 #'
 #' @export
-prognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
+prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", age, stage){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "prognosticSign")
 
     if(class(age)!="numeric"){stop("The age parameter must be a numeric vector")}
     if(class(stage) != "character"){stop("The stage parameter must be a character vector")}
@@ -349,9 +349,9 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", age, stage){
 #' @import org.Hs.eg.db
 #'
 #' @export
-metabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
+metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "ovary", nsamples){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "metabolicSign")
 
     if(class(nsamples)!="numeric"){stop("The nsample parameter must be a numeric vector")}
 
@@ -396,9 +396,9 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", nsamples){
 #' @import org.Hs.eg.db
 #'
 #' @export
-immunoScoreSign <- function(dataset, nametype = "SYMBOL"){
+immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "immunoScoreSign")
 
     if(nametype!="SYMBOL"){
         ImmunoScoredata$genes <- mapIds(org.Hs.eg.db, keys = ImmunoScoredata$genes, column = nametype,
@@ -444,9 +444,9 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-consensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV", ...){
+consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", method = "consensusOV", ...){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "consensusOVSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -489,9 +489,9 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", method = "consensusOV"
 #' @importFrom stats sd
 #'
 #' @export
-IPSSign <- function(dataset, nametype = "SYMBOL"){
+IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "IPSSign")
 
     if(nametype!="SYMBOL"){
         IPSdata[,c(1,2)] <- data.frame(lapply(IPSdata[,c(1,2)], function(x)
@@ -550,9 +550,9 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-matrisomeSign <- function(dataset, nametype = "SYMBOL") {
+matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "matrisomeSign")
 
     if(nametype!="SYMBOL"){
         Matrisomedata <- mapIds(org.Hs.eg.db, keys=Matrisomedata, column=nametype,
@@ -586,9 +586,9 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 #' @import org.Hs.eg.db
 #'
 #' @export
-mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
+mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
 
-    firstCheck(nametype)
+    firstCheck(nametype, tumorTissue, "mitoticIndexSign")
 
     if(nametype!="SYMBOL"){
         MitoticIndexdata <- mapIds(org.Hs.eg.db, keys=MitoticIndexdata, column=nametype,

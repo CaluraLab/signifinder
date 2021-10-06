@@ -61,9 +61,12 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
 
-firstCheck <- function(nametype){
+firstCheck <- function(nametype, tumorTissue, functionName){
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL"))){
-        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}}
+        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
+    if (!(tumorTissue %in% signatureTable$tumorTissue[signatureTable$functionName==functionName])){
+        stop("tumorTissue is not available, check availableSignatures() to see which tissues are included")}
+    }
 
 
 #' 7 spots resolution
@@ -104,5 +107,21 @@ GetAggregatedSpot <- function(dataset){
     dataset@assays$Aggregated
     ## now how to add counts to the seurat object??
     return(dataset)
+}
+
+
+#' Show available signatures
+#'
+#' It shows a table containing all the information of the signatures collected in the package.
+#'
+#' @param tissue filter for tissue
+#' @param signatureType filter for kind of signature
+#' @param description whether to show or not the signature description
+#'
+#' @return a data frame
+#'
+#' @export
+availableSignatures <- function(tumorTissue, signatureType, description){
+    # signatureTable
 }
 
