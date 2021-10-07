@@ -20,17 +20,12 @@ genomic ranges of interest and the columns represent samples.}
 \item{nametype}{gene name ID of your dataset (row names).}
 
 \item{method}{the subtyping method to use. Default is "consensusOV".}
-
-\item{...}{optional parameters to be passed to the low level function.}
 }
 \value{
 A SummarizedExperiment object in which the COnsensusOV scores will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, consensusOVSign returns ovarian cancer subtypes. This signature is based on Chen et. al (2018).
-}
-\references{
-Gregory M. Chen, Lavanya Kannan, Ludwig Geistlinger, Victor Kofia et al. Consensus on Molecular Subtypes of High-Grade Serous Ovarian Carcinoma
-Clin Cancer Res October 15 2018 (24) (20) 5037-5047. \url{https://doi.org/10.1158/1078-0432.CCR-18-0784}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

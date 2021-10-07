@@ -18,9 +18,6 @@ A SummarizedExperiment object in which the means gene expression based on the mi
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, mitoticIndexSign returns the means genes expression based on Yang et all. (2016).
-}
-\references{
-Yang, Z., Wong, A., Kuh, D. et al. Correlation of an epigenetic mitotic clock with cancer risk.
-Genome Biol 17, 205 (2016). \url{https://doi.org/10.1186/s13059-016-1064-3}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

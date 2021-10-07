@@ -31,5 +31,6 @@ A SummarizedExperiment object in which the Platinum Resistance scores will be ad
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, it returns the gsva scores for each sample from International Cancer Genome Consortium (ICGC).
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

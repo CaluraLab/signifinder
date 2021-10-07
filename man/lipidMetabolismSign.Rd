@@ -18,9 +18,6 @@ A SummarizedExperiment object in which the Lipid scores will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, lipidMetabolismSign returns the Lipid score for each sample Mingjun Zheng et al. (2020).
-}
-\references{
-Zheng M, Mullikin H, Hester A, Czogalla B, Heidegger H, Vilsmaier T, Vattai A, Chelariu-Raicu A, Jeschke U, Trillsch F, Mahner S, Kaltofen T. Development and Validation of a Novel 11-Gene Prognostic Model for Serous Ovarian Carcinomas Based on Lipid Metabolism Expression Profile.
-International Journal of Molecular Sciences. 2020; 21(23):9169. \url{https://doi.org/10.3390/ijms21239169}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

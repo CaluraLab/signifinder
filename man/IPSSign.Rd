@@ -18,10 +18,6 @@ A SummarizedExperiment object in which the IPS, MHC, CP, EC and SC scores will b
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, IPSSign returns fro each sample, the IPSs (ImmunoPhenoScores) and scores for the four groups of immune biomarkers: MHC (Antigen processing molecules),
-CP (Checkpoints immunomodulators), EC (Immune effector cells) and SC (Suppressor cells) identified by P Charoentong et. al (2017).
-}
-\references{
-Charoentong P, Finotello F, Angelova M, Mayer C, Efremova M, Rieder D, Hackl H, Trajanoski Z. Pan-cancer Immunogenomic Analyses Reveal Genotype-Immunophenotype Relationships and Predictors of Response to Checkpoint Blockade.
-Cell Rep. 2017 Jan 3;18(1):248-262. \url{https://doi.org/10.1016/j.celrep.2016.12.019}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

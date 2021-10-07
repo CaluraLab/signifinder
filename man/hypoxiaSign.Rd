@@ -18,9 +18,6 @@ A SummarizedExperiment object in which the Hypoxia scores will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, Hypoxia returns the hypoxia score for each sample as in Francesca M. Buffa et al. 2010.
-}
-\references{
-Buffa F, Harris A, West C. et al. Large meta-analysis of multiple cancers reveals a common, compact and highly prognostic hypoxia metagene.
-Br J Cancer 102, 428–435 (2010). \url{https://doi.org/10.1038/sj.bjc.6605450}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

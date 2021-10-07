@@ -18,9 +18,6 @@ A SummarizedExperiment object in which the Pyroptosis scores will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, pyroptosisSign returns the pyroptosis score for each sample, based on Ying Ye et al. (2021).
-}
-\references{
-Ye Y, Dai Q. & Qi H. A novel defined pyroptosis-related gene signature for predicting the prognosis of ovarian cancer.
-Cell Death Discov. 7, 71 (2021). \url{https://doi.org/10.1038/s41420-021-00451-x}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

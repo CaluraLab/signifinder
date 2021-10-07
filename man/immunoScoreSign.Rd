@@ -18,10 +18,6 @@ A SummarizedExperiment object in which the Immunogenic scores will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, immunoScoreSign returns the ImmunoScore for each sample. This signature is
-based on Dapeng Hao et. al (2018).
-}
-\references{
-Hao D, Liu J, Chen M, Li J, Wang L, Li X, Zhao Q, Di LJ. Immunogenomic Analyses of Advanced Serous Ovarian Cancer Reveal Immune Score is a Strong Prognostic Factor and an Indicator of Chemosensitivity.
-Clin Cancer Res. 2018 Aug 1;24(15):3560-3571. \url{https://doi.org/10.1158/1078-0432.CCR-17-3862}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

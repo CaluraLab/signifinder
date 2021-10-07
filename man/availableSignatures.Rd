@@ -7,11 +7,11 @@
 availableSignatures(tumorTissue, signatureType, description)
 }
 \arguments{
+\item{tumorTissue}{filter for tissue}
+
 \item{signatureType}{filter for kind of signature}
 
 \item{description}{whether to show or not the signature description}
-
-\item{tissue}{filter for tissue}
 }
 \value{
 a data frame

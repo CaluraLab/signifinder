@@ -18,9 +18,6 @@ A SummarizedExperiment object in which the median gene expression based on the c
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, matrisomeSign returns the median genes expression based on Yuzhalin et all. (2018).
-}
-\references{
-Yuzhalin A, Urbonas T, Silva M. et al. A core matrisome gene signature predicts cancer outcome.
-British Journal of Cancer volume 118, 435–440 (2018). \url{https://doi.org/10.1038/bjc.2017.458}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

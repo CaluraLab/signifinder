@@ -20,10 +20,6 @@ where rows correspond to genes, the first column to Log2FoldChange and second co
 A data frame with a Metabolic score for each pathway and the respective p-values.
 }
 \description{
-Given a list of DEG, metabolicSign returns a matrix with pathways score and a correspondent p-value calculated with Bootstrapping.
-The signature is based on the work of Rosario et. al (2018).
-}
-\references{
-Rosario SR, Long MD, Affronti H.C. et al. Pan-cancer analysis of transcriptional metabolic dysregulation using The Cancer Genome Atlas.
-Nat Commun 9, 5330 (2018). \url{https://doi.org/10.1038/s41467-018-07232-8}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

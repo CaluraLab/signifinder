@@ -18,9 +18,6 @@ A SummarizedExperiment object in which the Ferroptosis score will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, ferroptosisSign returns the Ferroptosis score for each sample Ying Ye et al. (2021).
-}
-\references{
-Ye Y, Dai Q, Li S, He J and Qi H (2021) A Novel Defined Risk Signature of the Ferroptosis-Related Genes for Predicting the Prognosis of Ovarian Cancer.
-Front. Mol. Biosci. 8:645845. \url{https://doi.org/10.3389/fmolb.2021.645845}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

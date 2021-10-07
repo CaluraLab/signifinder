@@ -22,10 +22,6 @@ A SummarizedExperiment object in which the Prognostic scores will be added
 in the `colData` section which contains sample meta-data describing the samples.
 }
 \description{
-Given a dataset, based on a 101-gene expression signature by J. Millstein et. al (2020), prognosticSign returns the Quantile assignation for each sample
-allowing to improve risk stratification in clinical trials by identifying patients who are least likely to achieve 5-year survival.
-}
-\references{
-Millstein J, Budden T, Goode EL, Anglesio MS, Talhouk A, Intermaggio MP, et al. Prognostic gene expression signature for high-grade serous ovarian cancer.
-Ann Oncol. 2020;31(9):1240–50. \url{https://doi.org/10.1016/j.annonc.2020.05.019}
+This signature is computed accordingly to the reference paper,
+to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 }
