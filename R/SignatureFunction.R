@@ -10,7 +10,7 @@
 #' @param nametype gene name ID of your dataset (row names).
 #' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
-#' @param ... other arguments passed on to the GSVA function.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
 #' @return A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
 #' in the `colData` section which contains sample meta-data describing the samples.
@@ -215,7 +215,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' @param nametype gene name ID of your dataset (row names).
 #' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
-#' @param ... other arguments passed on to the GSVA function.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
 #' @return A SummarizedExperiment object in which the Platinum Resistance scores will be added
 #' in the `colData` section which contains sample meta-data describing the samples.
@@ -412,7 +412,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
 #' genomic ranges of interest and the columns represent samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param method the subtyping method to use. Default is "consensusOV".
-#' @param ... optional parameters to be passed to \code{\link[consensusOV].
+#' @param ... optional parameters to be passed to \code{\link[consensusOV]{get.subtypes}}.
 #'
 #' @return A SummarizedExperiment object in which the COnsensusOV scores will be added
 #' in the `colData` section which contains sample meta-data describing the samples.

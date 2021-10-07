@@ -24,7 +24,7 @@ genomic ranges of interest and the columns represent samples.}
 
 \item{nperm}{number of permutations.}
 
-\item{...}{other arguments passed on to the GSVA function.}
+\item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}} function.}
 }
 \value{
 A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added

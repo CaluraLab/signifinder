@@ -20,6 +20,8 @@ genomic ranges of interest and the columns represent samples.}
 \item{nametype}{gene name ID of your dataset (row names).}
 
 \item{method}{the subtyping method to use. Default is "consensusOV".}
+
+\item{...}{optional parameters to be passed to \code{\link[consensusOV]{get.subtypes}}.}
 }
 \value{
 A SummarizedExperiment object in which the COnsensusOV scores will be added
