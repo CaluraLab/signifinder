@@ -4,7 +4,7 @@
 \alias{prognosticSign}
 \title{Prognostic high-grade serous ovarian cancer Signature}
 \usage{
-prognosticSign(dataset, nametype = "SYMBOL", age, stage)
+prognosticSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary", age, stage)
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

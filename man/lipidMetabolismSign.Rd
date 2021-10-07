@@ -4,7 +4,7 @@
 \alias{lipidMetabolismSign}
 \title{Lipid Metabolism Signature}
 \usage{
-lipidMetabolismSign(dataset, nametype = "SYMBOL")
+lipidMetabolismSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

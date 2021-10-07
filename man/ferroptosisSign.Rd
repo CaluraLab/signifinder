@@ -4,7 +4,7 @@
 \alias{ferroptosisSign}
 \title{Ferroptosis Signature}
 \usage{
-ferroptosisSign(dataset, nametype = "SYMBOL")
+ferroptosisSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

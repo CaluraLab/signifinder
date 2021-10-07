@@ -339,8 +339,7 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 #' @param nametype gene name ID of your DEdata (row names).
 #' @param nsamples number of samples in the DEdata.
 #'
-#' @return A SummarizedExperiment object in which the Metabolic scores and their respective p-values will be added
-#' in the `colData` section which contains sample meta-data describing the samples.
+#' @return A data frame with a Metabolic score for each pathway and the respective p-values.
 #'
 #' @references Rosario SR, Long MD, Affronti H.C. et al. Pan-cancer analysis of transcriptional metabolic dysregulation using The Cancer Genome Atlas.
 #' Nat Commun 9, 5330 (2018). \url{https://doi.org/10.1038/s41467-018-07232-8}

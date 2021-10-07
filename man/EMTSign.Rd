@@ -4,7 +4,14 @@
 \alias{EMTSign}
 \title{Endothelial-Mesenchymal Transition Signature}
 \usage{
-EMTSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
+EMTSign(
+  dataset,
+  nametype = "SYMBOL",
+  tumorTissue = "ovary",
+  pvalues = FALSE,
+  nperm = 100,
+  ...
+)
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
