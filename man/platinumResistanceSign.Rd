@@ -7,6 +7,7 @@
 platinumResistanceSign(
   dataset,
   nametype = "SYMBOL",
+  tumorTissue = "ovary",
   pvalues = FALSE,
   nperm = 100,
   ...

@@ -114,7 +114,7 @@ GetAggregatedSpot <- function(dataset){
 #'
 #' It shows a table containing all the information of the signatures collected in the package.
 #'
-#' @param tissue filter for tissue
+#' @param tumorTissue filter for tissue
 #' @param signatureType filter for kind of signature
 #' @param description whether to show or not the signature description
 #'

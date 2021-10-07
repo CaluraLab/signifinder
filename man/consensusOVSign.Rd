@@ -4,7 +4,13 @@
 \alias{consensusOVSign}
 \title{ConsensusOV Signature}
 \usage{
-consensusOVSign(dataset, nametype = "SYMBOL", method = "consensusOV", ...)
+consensusOVSign(
+  dataset,
+  nametype = "SYMBOL",
+  tumorTissue = "ovary",
+  method = "consensusOV",
+  ...
+)
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
