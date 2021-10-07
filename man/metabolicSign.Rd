@@ -17,8 +17,7 @@ where rows correspond to genes, the first column to Log2FoldChange and second co
 \item{nsamples}{number of samples in the DEdata.}
 }
 \value{
-A SummarizedExperiment object in which the Metabolic scores and their respective p-values will be added
-in the `colData` section which contains sample meta-data describing the samples.
+A data frame with a Metabolic score for each pathway and the respective p-values.
 }
 \description{
 Given a list of DEG, metabolicSign returns a matrix with pathways score and a correspondent p-value calculated with Bootstrapping.
