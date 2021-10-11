@@ -75,7 +75,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     firstCheck(nametype, tumorTissue, "pyroptosisSign")
 
-    Pyroptosisdata <- get(paste0("Pyroptosis",tumorTissue))
+    Pyroptosisdata <- get(paste0("Pyroptosis", tumorTissue))
 
     if(nametype!="SYMBOL"){
         Pyroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pyroptosisdata$Gene_Symbol,
@@ -91,7 +91,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
         ssgenes <- datasetm[Pyroptosisdata$Gene_Symbol, x]
         if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pyroptosisdata$Coefficient)}})
     # Piroscore <- colSums(datasetm[Pyroptosisdata$Gene_Symbol, ]*Pyroptosisdata$Coefficient)
-    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = "Pyroptosis", datasetm))
+    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis",tumorTissue), datasetm))
 }
 
 

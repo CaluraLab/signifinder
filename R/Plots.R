@@ -1,43 +1,4 @@
 
-SignatureNames <- c("Epithelial", "Mesenchymal", "Piroptosis", "Ferroptosis", "LipidMetabolism",
-                    "Hypoxia", "PlatinumResistanceUp", "PlatinumResistanceDown", "Prognostic",
-                    "ImmunoScore", "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus",
-                    "IPS", "MHC", "CP", "EC", "SC", "Matrisome", "MitoticIndex")
-
-mycol <- c("#FCFDD4", rev(viridis::magma(10)))
-mycol1 <- rev(viridis::viridis(10))
-my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
-my_colors <- colorRampPalette(my_colors)(100)
-
-GetGenes <- function(name){
-    if(name %in% c("Epithelial", "Mesenchymal")){
-        g <- EMTdata$Gene_Symbol[EMTdata$Category==name]
-    } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
-        g <- PlatinumResistancedata[[name]]
-    } else if (name %in% c("IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
-        stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and MES_consensus are not available")
-    } else if(name %in% c("MHC", "CP", "EC", "SC")){
-        g <- IPSdata$GENE[IPSdata$CLASS==name]
-    } else {
-        datavar <- eval(parse(text = paste0(name, "data")))
-        if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScore", "IPS", "LipidMetabolism", "Piroptosis")){g <- datavar[,1]
-        } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
-        } else if (name %in% c("Matrisome", "MitoticIndex")){g <- datavar}
-    }
-    res <- cbind(g, rep(name, length(g)))
-    colnames(res) <- c("Gene", "Signature")
-    return(res)
-}
-
-range01 <- function(x){(x-min(x))/(max(x)-min(x))}
-
-signatureNameCheck <- function(data, sName){
-    if(!all(sName %in% SignatureNames)){
-        stop(paste("signatures must be among:", paste(SignatureNames, collapse = ", ")))}
-    if(!all(sName %in% colnames(SummarizedExperiment::colData(data)))){
-        stop("signature names must be in data")}
-}
-
 #' Scatterplot for a single signature
 #'
 #' Given a signatures it returns a scatterplot.
