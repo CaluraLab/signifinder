@@ -75,6 +75,8 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     firstCheck(nametype, tumorTissue, "pyroptosisSign")
 
+    Pyroptosisdata <- get(paste0("Pyroptosis",tumorTissue))
+
     if(nametype!="SYMBOL"){
         Pyroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pyroptosisdata$Gene_Symbol,
                                        column = nametype, keytype = "SYMBOL", multiVals = "first")}
