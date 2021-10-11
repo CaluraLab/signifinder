@@ -9,7 +9,8 @@ heatmapSignPlot(
   whichSign = NULL,
   clusterBySign = NULL,
   sampleAnnot = NULL,
-  splitByAnnot = FALSE
+  splitByAnnot = FALSE,
+  ...
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ heatmapSignPlot(
 
 \item{splitByAnnot}{se splittare o no le colonne in base all'annotazione dei sample, in
 questo caso sampleAnnot deve essere una variabile categorica}
+
+\item{...}{Heatmap params}
 }
 \value{
 A ComplexHeatmap object
