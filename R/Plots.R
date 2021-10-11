@@ -108,6 +108,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #' @param sampleAnnot un vettore di annotazione dei sample
 #' @param splitByAnnot se splittare o no le colonne in base all'annotazione dei sample, in
 #' questo caso sampleAnnot deve essere una variabile categorica
+#' @param ... Heatmap params
 #'
 #' @return A ComplexHeatmap object
 #'
@@ -118,7 +119,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #'
 #' @export
 geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
-                                sampleAnnot = NULL, splitByAnnot = FALSE){
+                                sampleAnnot = NULL, splitByAnnot = FALSE, ...){
 
     signatureNameCheck(data, whichSign)
 
@@ -152,8 +153,10 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
 
     filtdataset <- as.matrix(dataset[row.names(dataset) %in% signatureGenes, ])
 
-    htargs <- list(matrix = log2(filtdataset+1), name = "Genes", show_column_names = F, col = mycol,
-                   row_names_gp = grid::gpar(fontsize = 5))
+    dots <- list(...)
+    htargs <- matchArguments(dots, list(name = "Genes", show_column_names = F, col = mycol,
+                                        row_names_gp = grid::gpar(fontsize = 6)))
+    htargs$matrix = log2(filtdataset+1)
 
     if(length(whichSign)!=1){
         signAnnot <- geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)]
