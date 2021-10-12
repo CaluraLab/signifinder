@@ -4,7 +4,12 @@
 \alias{metabolicSign}
 \title{Metabolic Signature}
 \usage{
-metabolicSign(DEdata, nametype = "SYMBOL", tumorTissue = "ovary", nsamples)
+metabolicSign(
+  DEdata,
+  nametype = "SYMBOL",
+  tumorTissue = "pan-tissue",
+  nsamples
+)
 }
 \arguments{
 \item{DEdata}{A matrix of differentially expressed genes where rows correspond to genes,

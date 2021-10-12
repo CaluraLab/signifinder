@@ -4,7 +4,7 @@
 \alias{hypoxiaSign}
 \title{Hypoxia Signature}
 \usage{
-hypoxiaSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+hypoxiaSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

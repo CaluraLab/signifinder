@@ -4,7 +4,7 @@
 \alias{IPSSign}
 \title{ImmunoPhenoScore Signature}
 \usage{
-IPSSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+IPSSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression matrix of TPM values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

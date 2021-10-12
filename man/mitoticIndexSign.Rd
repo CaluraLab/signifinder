@@ -4,7 +4,7 @@
 \alias{mitoticIndexSign}
 \title{Mitotic Index}
 \usage{
-mitoticIndexSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+mitoticIndexSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression matrix in which row names must be Official Symbol. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

@@ -4,7 +4,7 @@
 \alias{matrisomeSign}
 \title{Core Matrisome Gene signature}
 \usage{
-matrisomeSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+matrisomeSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression matrix in which row names must be Official Symbol. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

@@ -90,7 +90,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
     Piroscore <- sapply(colnames(datasetm), function(x){
         ssgenes <- datasetm[Pyroptosisdata$Gene_Symbol, x]
         if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pyroptosisdata$Coefficient)}})
-    # Piroscore <- colSums(datasetm[Pyroptosisdata$Gene_Symbol, ]*Pyroptosisdata$Coefficient)
+
     return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis",tumorTissue), datasetm))
 }
 
@@ -185,7 +185,7 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ova
 #' @import org.Hs.eg.db
 #'
 #' @export
-hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "hypoxiaSign")
 
@@ -334,7 +334,7 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 #' @import org.Hs.eg.db
 #'
 #' @export
-metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "ovary", nsamples){
+metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue", nsamples){
 
     firstCheck(nametype, tumorTissue, "metabolicSign")
 
@@ -466,7 +466,7 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 #' @importFrom stats sd
 #'
 #' @export
-IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "IPSSign")
 
@@ -525,7 +525,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
+matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue") {
 
     firstCheck(nametype, tumorTissue, "matrisomeSign")
 
@@ -559,7 +559,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
 #' @import org.Hs.eg.db
 #'
 #' @export
-mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
+mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue") {
 
     firstCheck(nametype, tumorTissue, "mitoticIndexSign")
 
