@@ -176,8 +176,10 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
     } else {if(splitByAnnot){stop("splitByAnnot can be TRUE only if sampleAnnot is provided")}}
 
     if(!is.null(whichSign)){data <- data[, intersect(colnames(data), c(whichSign, clusterBySign))]}
+    keepnames <- rownames(data)
 
     data <- sapply(data, range01)
+    row.names(data) <- keepnames
     data <- as.matrix(t(data))
 
     dots <- list(...)

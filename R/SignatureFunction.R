@@ -303,7 +303,7 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
             } else if(p>60 & p<=67){Prognosticdata$Age[2]} else {Prognosticdata$Age[3]}})
 
     stage_coef <- sapply(stage, function(p)
-        if(p=="NA"){Prognosticdata$Stage[2]} else if(p=="I"|p=="II"){Prognosticdata$Stage[1]} else {0})
+        if(is.na(p)){Prognosticdata$Stage[2]} else if(p=="I"|p=="II"){Prognosticdata$Stage[1]} else {0})
 
     prog_sign <- gene_coeff+age_coef+stage_coef
 
@@ -575,4 +575,40 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
     MI_means <- colMeans(datasetm[row.names(datasetm) %in% MitoticIndexdata, ])
 
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
+}
+
+#' Local Immune Cytolytic Activity (LICA) Signature
+#'
+#' This signature is computed accordingly to the reference paper,
+#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset expression values in TPM where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset row names.
+#' @param tumorTissue tissue of the tumor.
+#'
+#' @return A SummarizedExperiment object in which the means gene expression based on the mitotix index will be added
+#' in the `colData` section which contains sample meta-data describing the samples.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @importFrom labstatR meang
+#' @import org.Hs.eg.db
+#'
+#' @export
+LICASign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+
+    firstCheck(nametype, tumorTissue, "LICASign")
+
+    if(nametype!="SYMBOL"){
+        LICAdata <- mapIds(org.Hs.eg.db, keys = LICAdata, column = nametype,
+                           keytype = "SYMBOL", multiVals = "first")}
+
+    datasetm <- getMatrix(dataset)
+
+    cat(paste("The function is using", sum(LICAdata %in% row.names(datasetm)),
+              "genes out of", length(LICAdata), "\n"))
+
+    LICAdata <- LICAdata[LICAdata %in% row.names(datasetm)]
+    LICAScore <- apply(datasetm[LICAdata,], 2, meang)
+
+    return(returnAsInput(userdata = dataset, result = LICAScore, SignName = "LICA", datasetm))
 }
