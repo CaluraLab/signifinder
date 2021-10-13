@@ -14,9 +14,9 @@ EMTSign(
 )
 }
 \arguments{
-\item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-A SummarizedExperiment which contains an assay represented by a matrix-like object of numeric. The rows typically represent
-genomic ranges of interest and the columns represent samples.}
+\item{dataset}{Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+Alternatively an object of type \linkS4class{SummarizedExperiment}, \linkS4class{SingleCellExperiment}, \linkS4class{SpatialExperiment} or \linkS4class{Seurat}
+containing an assay where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
 
@@ -28,7 +28,7 @@ genomic ranges of interest and the columns represent samples.}
 }
 \value{
 A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
-in the `colData` section which contains sample meta-data describing the samples.
+in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,
