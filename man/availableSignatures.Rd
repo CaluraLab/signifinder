@@ -4,12 +4,19 @@
 \alias{availableSignatures}
 \title{Show available signatures}
 \usage{
-availableSignatures(tumorTissue, signatureType, description)
+availableSignatures(
+  tumorTissue = NULL,
+  signatureType = NULL,
+  datasetInput = NULL,
+  description = TRUE
+)
 }
 \arguments{
-\item{tumorTissue}{filter for tissue}
+\item{tumorTissue}{filter for tissue type}
 
-\item{signatureType}{filter for kind of signature}
+\item{signatureType}{filter for signature type}
+
+\item{datasetInput}{filter for input type}
 
 \item{description}{whether to show or not the signature description}
 }

@@ -377,7 +377,7 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue
 #' @import org.Hs.eg.db
 #'
 #' @export
-immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", author = "Hao"){
 
     firstCheck(nametype, tumorTissue, "immunoScoreSign")
 
@@ -576,7 +576,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
 }
 
-#' Local Immune Cytolytic Activity (LICA) Signature
+#' Local Immune Cytolytic Activity (CYT) Signature
 #'
 #' This signature is computed accordingly to the reference paper,
 #' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
@@ -595,21 +595,21 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
 #' @import org.Hs.eg.db
 #'
 #' @export
-LICASign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype, tumorTissue, "LICASign")
+    firstCheck(nametype, tumorTissue, "CYTSign")
 
     if(nametype!="SYMBOL"){
-        LICAdata <- mapIds(org.Hs.eg.db, keys = LICAdata, column = nametype,
+        CYTdata <- mapIds(org.Hs.eg.db, keys = CYTdata, column = nametype,
                            keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste("The function is using", sum(LICAdata %in% row.names(datasetm)),
-              "genes out of", length(LICAdata), "\n"))
+    cat(paste("The function is using", sum(CYTdata %in% row.names(datasetm)),
+              "genes out of", length(CYTdata), "\n"))
 
-    LICAdata <- LICAdata[LICAdata %in% row.names(datasetm)]
-    LICAScore <- apply(datasetm[LICAdata,], 2, meang)
+    CYTdata <- CYTdata[CYTdata %in% row.names(datasetm)]
+    CYTScore <- apply(datasetm[CYTdata,], 2, meang)
 
-    return(returnAsInput(userdata = dataset, result = LICAScore, SignName = "LICA", datasetm))
+    return(returnAsInput(userdata = dataset, result = CYTScore, SignName = "CYT", datasetm))
 }

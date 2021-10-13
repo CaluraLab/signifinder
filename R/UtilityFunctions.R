@@ -20,7 +20,7 @@ SignatureNames <- c("Epithelial",
                     "SC",
                     "Matrisome",
                     "MitoticIndex",
-                    "LICA")
+                    "CYT")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -40,7 +40,7 @@ GetGenes <- function(name){
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScore", "IPS", "LipidMetabolism", "Pyroptosisovary", "Pyroptosisstomach")){g <- datavar[,1]
         } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
-        } else if (name %in% c("Matrisome", "MitoticIndex", "LICA")){g <- datavar}
+        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT")){g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
@@ -119,11 +119,14 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
 
-firstCheck <- function(nametype, tumorTissue, functionName){
+firstCheck <- function(nametype, tumorTissue, functionName, ...){
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL"))){
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
     if (!(tumorTissue %in% signatureTable$tumorTissue[signatureTable$functionName==functionName])){
         stop("tumorTissue is not available, check availableSignatures() to see which tissues are included")}
+    if(exists(author)){
+        if(!(author %in% signatureTable$author[signatureTable$functionName==functionName & signatureTable$tumorTissue==tumorTissue])){
+            stop("tumorTissue and author do not match")}}
     }
 
 
@@ -172,14 +175,20 @@ GetAggregatedSpot <- function(dataset){
 #'
 #' It shows a table containing all the information of the signatures collected in the package.
 #'
-#' @param tumorTissue filter for tissue
-#' @param signatureType filter for kind of signature
+#' @param tumorTissue filter for tissue type
+#' @param signatureType filter for signature type
+#' @param datasetInput filter for input type
 #' @param description whether to show or not the signature description
 #'
 #' @return a data frame
 #'
 #' @export
-availableSignatures <- function(tumorTissue, signatureType, description){
-    # signatureTable
+availableSignatures <- function(tumorTissue = NULL, signatureType = NULL, datasetInput = NULL, description = TRUE){
+    signTable <- signatureTable
+    if(!is.null(tumorTissue)){signTable <- signTable[signTable$tumorTissue==tumorTissue,]}
+    if(!is.null(signatureType)){signTable <- signTable[signTable$signatureType==signatureType,]}
+    if(!is.null(datasetInput)){signTable <- signTable[signTable$datasetInput==datasetInput,]}
+    if(!description){signTable <- signTable[,1:6]}
+    return(signTable)
 }
 
