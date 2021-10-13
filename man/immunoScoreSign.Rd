@@ -4,7 +4,12 @@
 \alias{immunoScoreSign}
 \title{Immunogenic Signature}
 \usage{
-immunoScoreSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+immunoScoreSign(
+  dataset,
+  nametype = "SYMBOL",
+  tumorTissue = "ovary",
+  author = "Hao"
+)
 }
 \arguments{
 \item{dataset}{Expression matrix. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
