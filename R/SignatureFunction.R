@@ -535,7 +535,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissu
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste("The function is using", sum(Matrisomedata %in% row.names(dataset)), "matrisome's genes out of 9\n"))
+    cat(paste("The function is using", sum(Matrisomedata %in% row.names(datasetm)), "matrisome's genes out of 9\n"))
 
     median_cm <- colMedians(datasetm[row.names(datasetm) %in% Matrisomedata, ])
 
