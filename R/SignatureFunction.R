@@ -322,8 +322,7 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 #' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
 #' @param DEdata A matrix of differentially expressed genes where rows correspond to genes,
-#' the first column to Log2FoldChange and second column to its adjusted p-value,
-#' or a \linkS4class{SummarizedExperiment} containing an assay in which rows correspond to genes, the first column to Log2FoldChange and second column to its adjusted p-value.
+#' the first column to Log2FoldChange and second column to its adjusted p-value.
 #' @param nametype gene name ID of your DEdata (row names).
 #' @param nsamples number of samples in the DEdata.
 #'

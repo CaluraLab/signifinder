@@ -13,8 +13,7 @@ metabolicSign(
 }
 \arguments{
 \item{DEdata}{A matrix of differentially expressed genes where rows correspond to genes,
-the first column to Log2FoldChange and second column to its adjusted p-value,
-or a \linkS4class{SummarizedExperiment} containing an assay in which rows correspond to genes, the first column to Log2FoldChange and second column to its adjusted p-value.}
+the first column to Log2FoldChange and second column to its adjusted p-value.}
 
 \item{nametype}{gene name ID of your DEdata (row names).}
 
