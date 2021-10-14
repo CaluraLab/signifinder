@@ -71,11 +71,11 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues
 #' @import org.Hs.eg.db
 #'
 #' @export
-pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", author = "Ye"){
 
-    firstCheck(nametype, tumorTissue, "pyroptosisSign")
+    firstCheck(nametype, tumorTissue, "pyroptosisSign", author)
 
-    Pyroptosisdata <- get(paste0("Pyroptosis", tumorTissue))
+    Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
     if(nametype!="SYMBOL"){
         Pyroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pyroptosisdata$Gene_Symbol,
@@ -91,7 +91,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
         ssgenes <- datasetm[Pyroptosisdata$Gene_Symbol, x]
         if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pyroptosisdata$Coefficient)}})
 
-    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis",tumorTissue), datasetm))
+    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis", author), datasetm))
 }
 
 
@@ -378,27 +378,35 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue
 #' @export
 immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", author = "Hao"){
 
-    firstCheck(nametype, tumorTissue, "immunoScoreSign")
-
-    if(nametype!="SYMBOL"){
-        ImmunoScoredata$genes <- mapIds(org.Hs.eg.db, keys = ImmunoScoredata$genes, column = nametype,
-                                    keytype = "SYMBOL", multiVals = "first")}
+    firstCheck(nametype, tumorTissue, "immunoScoreSign", author)
 
     datasetm <- getMatrix(dataset)
 
-    g <- intersect(row.names(datasetm), ImmunoScoredata$genes)
+    if(tumorTissue=="ovary"){
+        if(nametype!="SYMBOL"){
+            ImmunoScoreHaodata$genes <- mapIds(org.Hs.eg.db, keys = ImmunoScoreHaodata$genes,
+                                                 column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
-    cat(paste("The function is using", length(g), "genes out of", length(ImmunoScoredata$genes), "\n"))
+        g <- intersect(row.names(datasetm), ImmunoScoreHaodata$genes)
+        cat(paste("The function is using", length(g), "genes out of", length(ImmunoScoreHaodata$genes), "\n"))
 
-    subdataset <- datasetm[g,]
-    ImmunoScoredata <- ImmunoScoredata[ImmunoScoredata$genes %in% g, ]
+        subdataset <- datasetm[g,]
+        ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes %in% g,]
 
-    SE <- (ImmunoScoredata$HR - ImmunoScoredata$`95CI_L`)/1.96
-    k <- (1 - ImmunoScoredata$HR)/SE
+        SE <- (ImmunoScoreHaodata$HR - ImmunoScoreHaodata$`95CI_L`)/1.96
+        k <- (1 - ImmunoScoreHaodata$HR)/SE
+        ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
+    } else if(tumorTissue=="pan-tissue"){
+        if(nametype!="SYMBOL"){
+            ImmunoScoreRohdata<- mapIds(org.Hs.eg.db, keys = ImmunoScoreRohdata, column = nametype,
+                                        keytype = "SYMBOL", multiVals = "first")}
 
-    ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
+        cat(paste("The function is using", sum(ImmunoScoreRohdata %in% row.names(datasetm)),
+                  " genes out of", length(ImmunoScoreRohdata), "\n"))
 
-    return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = "ImmunoScore", datasetm))
+        ImmunoScores <- apply(datasetm[intersect(row.names(datasetm), ImmunoScoreRohdata), ], 2, meang)}
+
+    return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = paste0("ImmunoScore", author), datasetm))
 }
 
 

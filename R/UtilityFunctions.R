@@ -1,14 +1,17 @@
 SignatureNames <- c("Epithelial",
                     "Mesenchymal",
-                    "Pyroptosisovary",
-                    "Pyroptosisstomach",
+                    "PyroptosisYe",
+                    "PyroptosisShao",
+                    "PyroptosisLin",
+                    "PyroptosisLi",
                     "Ferroptosis",
                     "LipidMetabolism",
                     "Hypoxia",
                     "PlatinumResistanceUp",
                     "PlatinumResistanceDown",
                     "Prognostic",
-                    "ImmunoScore",
+                    "ImmunoScoreHao",
+                    "ImmunoScoreRoh",
                     "IMR_consensus",
                     "DIF_consensus",
                     "PRO_consensus",
@@ -38,9 +41,10 @@ GetGenes <- function(name){
         g <- IPSdata$GENE[IPSdata$CLASS==name]
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
-        if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScore", "IPS", "LipidMetabolism", "Pyroptosisovary", "Pyroptosisstomach")){g <- datavar[,1]
+        if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS", "LipidMetabolism",
+                       "PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")){g <- datavar[,1]
         } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
-        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT")){g <- datavar}
+        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "ImmunoScoreRoh")){g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
