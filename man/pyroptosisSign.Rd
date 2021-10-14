@@ -4,7 +4,12 @@
 \alias{pyroptosisSign}
 \title{Pyroptosis Signature}
 \usage{
-pyroptosisSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+pyroptosisSign(
+  dataset,
+  nametype = "SYMBOL",
+  tumorTissue = "ovary",
+  author = "Ye"
+)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
