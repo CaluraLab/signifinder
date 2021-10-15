@@ -3,6 +3,7 @@
 export(CYTSign)
 export(EMTSign)
 export(GetAggregatedSpot)
+export(IFNSign)
 export(IPSSign)
 export(availableSignatures)
 export(consensusOVSign)

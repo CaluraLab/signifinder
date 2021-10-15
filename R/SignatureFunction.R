@@ -550,6 +550,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissu
     return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome", datasetm))
 }
 
+
 #' Mitotic Index
 #'
 #' This signature is computed accordingly to the reference paper,
@@ -584,6 +585,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
 
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
 }
+
 
 #' Local Immune Cytolytic Activity (CYT) Signature
 #'
@@ -621,4 +623,37 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
     CYTScore <- apply(datasetm[CYTdata,], 2, meang)
 
     return(returnAsInput(userdata = dataset, result = CYTScore, SignName = "CYT", datasetm))
+}
+
+
+#' IFN-γ Signature
+#'
+#' This signature is computed accordingly to the reference paper,
+#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \linkS4class{SingleCellExperiment}, \linkS4class{SpatialExperiment} or \linkS4class{Seurat}
+#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param tumorTissue tissue of the tumor.
+#'
+#' @return A SummarizedExperiment object in which the score will be added in the
+#' \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+
+    firstCheck(nametype, tumorTissue, "IFNSign")
+
+    if(nametype!="SYMBOL"){IFNdata <- mapIds(org.Hs.eg.db, keys = IFNdata, column = nametype,
+                                             keytype = "SYMBOL", multiVals = "first")}
+    datasetm <- getMatrix(dataset)
+    cat(paste("The function is using", sum(IFNdata %in% row.names(datasetm)),
+              "genes out of", length(IFNdata), "\n"))
+
+    IFNscore <- apply(datasetm[intersect(row.names(datasetm), IFNdata),], 2, mean)
+    return(returnAsInput(userdata = dataset, result = IFNscore, SignName = "IFN", datasetm))
 }

@@ -23,7 +23,8 @@ SignatureNames <- c("Epithelial",
                     "SC",
                     "Matrisome",
                     "MitoticIndex",
-                    "CYT")
+                    "CYT",
+                    "IFN")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -44,7 +45,7 @@ GetGenes <- function(name){
         if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS", "LipidMetabolism",
                        "PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")){g <- datavar[,1]
         } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
-        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "ImmunoScoreRoh")){g <- datavar}
+        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "ImmunoScoreRoh", "IFN")){g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
