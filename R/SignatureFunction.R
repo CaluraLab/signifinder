@@ -308,9 +308,11 @@ prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
     prog_sign <- gene_coeff+age_coef+stage_coef
 
     quantile_prog <- sapply(prog_sign, function(p)
-        if(p<=-0.732) {"Q1"} else if(p>-0.732 & p<=-0.3126) {"Q2"
-        } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
-        } else {"Q5"})
+        if(is.na(p)){NA
+        } else {
+            if(p<=-0.732) {"Q1"} else if(p>-0.732 & p<=-0.3126) {"Q2"
+            } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
+            } else {"Q5"}})
 
     return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "Prognostic", datasetm))
 }

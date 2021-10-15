@@ -128,7 +128,7 @@ firstCheck <- function(nametype, tumorTissue, functionName, ...){
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
     if (!(tumorTissue %in% signatureTable$tumorTissue[signatureTable$functionName==functionName])){
         stop("tumorTissue is not available, check availableSignatures() to see which tissues are included")}
-    if(exists(author)){
+    if(exists("author")){
         if(!(author %in% signatureTable$author[signatureTable$functionName==functionName & signatureTable$tumorTissue==tumorTissue])){
             stop("tumorTissue and author do not match")}}
     }
