@@ -24,7 +24,8 @@ SignatureNames <- c("Epithelial",
                     "Matrisome",
                     "MitoticIndex",
                     "CYT",
-                    "IFN")
+                    "IFN",
+                    "ExpandedImmune")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -45,7 +46,8 @@ GetGenes <- function(name){
         if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS", "LipidMetabolism",
                        "PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")){g <- datavar[,1]
         } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
-        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "ImmunoScoreRoh", "IFN")){g <- datavar}
+        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "ImmunoScoreRoh",
+                               "IFN", "ExpandedImmune")){g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
@@ -188,7 +190,8 @@ GetAggregatedSpot <- function(dataset){
 #' @return a data frame
 #'
 #' @export
-availableSignatures <- function(tumorTissue = NULL, signatureType = NULL, datasetInput = NULL, description = TRUE){
+availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
+                                datasetInput = NULL, description = TRUE){
     signTable <- signatureTable
     if(!is.null(tumorTissue)){signTable <- signTable[signTable$tumorTissue==tumorTissue,]}
     if(!is.null(signatureType)){signTable <- signTable[signTable$signatureType==signatureType,]}

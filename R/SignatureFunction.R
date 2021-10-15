@@ -644,7 +644,7 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "IFNSign")
 
@@ -656,4 +656,38 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     IFNscore <- apply(datasetm[intersect(row.names(datasetm), IFNdata),], 2, mean)
     return(returnAsInput(userdata = dataset, result = IFNscore, SignName = "IFN", datasetm))
+}
+
+
+#' ExpandedImmune Signature
+#'
+#' This signature is computed accordingly to the reference paper,
+#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \linkS4class{SingleCellExperiment}, \linkS4class{SpatialExperiment} or \linkS4class{Seurat}
+#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param tumorTissue tissue of the tumor.
+#'
+#' @return A SummarizedExperiment object in which the score will be added in the
+#' \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+
+    firstCheck(nametype, tumorTissue, "ExpandedImmuneSign")
+
+    if(nametype!="SYMBOL"){
+        ExpandedImmunedata <- mapIds(org.Hs.eg.db, keys = ExpandedImmunedata, column = nametype,
+                                     keytype = "SYMBOL", multiVals = "first")}
+    datasetm <- getMatrix(dataset)
+    cat(paste("The function is using", sum(ExpandedImmunedata %in% row.names(datasetm)),
+              "genes out of", length(ExpandedImmunedata), "\n"))
+
+    ExpandedImmunescore <- apply(datasetm[intersect(row.names(datasetm), ExpandedImmunedata), ], 2, mean)
+    return(returnAsInput(userdata = dataset, result = ExpandedImmunescore, SignName = "ExpandedImmune", datasetm))
 }
