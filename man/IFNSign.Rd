@@ -4,7 +4,7 @@
 \alias{IFNSign}
 \title{IFN-γ Signature}
 \usage{
-IFNSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+IFNSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.

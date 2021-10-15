@@ -257,67 +257,6 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "
 }
 
 
-#' Prognostic high-grade serous ovarian cancer Signature
-#'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \linkS4class{SingleCellExperiment}, \linkS4class{SpatialExperiment} or \linkS4class{Seurat}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param age a vector of patient's age.
-#' @param stage a vector of patient's tumor stage (FIGO).
-#'
-#' @return A SummarizedExperiment object in which the Prognostic scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
-#' @export
-prognosticSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", age, stage){
-
-    firstCheck(nametype, tumorTissue, "prognosticSign")
-
-    if(class(age)!="numeric"){stop("The age parameter must be a numeric vector")}
-    if(class(stage) != "character"){stop("The stage parameter must be a character vector")}
-
-    if(nametype!="SYMBOL"){
-        names(Prognosticdata$Genes) <- mapIds(org.Hs.eg.db, keys = names(Prognosticdata$Genes),
-                                        column = nametype, keytype = "SYMBOL", multiVals = "first")}
-
-    datasetm <- getMatrix(dataset)
-
-    cat(paste("The function is using", sum(names(Prognosticdata$Genes) %in% row.names(datasetm)),
-              "genes out of", length(Prognosticdata$Genes), "\n"))
-
-    intergene <- intersect(row.names(datasetm), names(Prognosticdata$Genes))
-    datasetm <- datasetm[intergene,]
-    gene_coeff <- colSums(datasetm*Prognosticdata$Genes[intergene])
-
-    age_coef <- sapply(age, function(p)
-        if(is.na(p)){NA
-        } else {
-            if(p<=53){0} else if(p>53 & p<=60){Prognosticdata$Age[1]
-            } else if(p>60 & p<=67){Prognosticdata$Age[2]} else {Prognosticdata$Age[3]}})
-
-    stage_coef <- sapply(stage, function(p)
-        if(is.na(p)){Prognosticdata$Stage[2]} else if(p=="I"|p=="II"){Prognosticdata$Stage[1]} else {0})
-
-    prog_sign <- gene_coeff+age_coef+stage_coef
-
-    quantile_prog <- sapply(prog_sign, function(p)
-        if(is.na(p)){NA
-        } else {
-            if(p<=-0.732) {"Q1"} else if(p>-0.732 & p<=-0.3126) {"Q2"
-            } else if(p>-0.3126 & p<=0.0255) {"Q3"} else if(p>0.0255 & p<=0.2658) {"Q4"
-            } else {"Q5"}})
-
-    return(returnAsInput(userdata = dataset, result = prog_sign, SignName = "Prognostic", datasetm))
-}
-
-
 #' Metabolic Signature
 #'
 #' This signature is computed accordingly to the reference paper,

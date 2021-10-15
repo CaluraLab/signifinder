@@ -9,7 +9,6 @@ SignatureNames <- c("Epithelial",
                     "Hypoxia",
                     "PlatinumResistanceUp",
                     "PlatinumResistanceDown",
-                    "Prognostic",
                     "ImmunoScoreHao",
                     "ImmunoScoreRoh",
                     "IMR_consensus",
@@ -45,7 +44,6 @@ GetGenes <- function(name){
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS", "LipidMetabolism",
                        "PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")){g <- datavar[,1]
-        } else if (name %in% c("Prognostic")){g <- names(datavar$Genes)
         } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "ImmunoScoreRoh",
                                "IFN", "ExpandedImmune")){g <- datavar}
     }
