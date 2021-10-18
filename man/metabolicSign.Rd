@@ -17,6 +17,8 @@ the first column to Log2FoldChange and second column to its adjusted p-value.}
 
 \item{nametype}{gene name ID of your DEdata (row names).}
 
+\item{tumorTissue}{type of tissue for which the signature is developed.}
+
 \item{nsamples}{number of samples in the DEdata.}
 }
 \value{

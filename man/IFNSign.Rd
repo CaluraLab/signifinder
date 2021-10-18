@@ -8,12 +8,12 @@ IFNSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment}, \linkS4class{SingleCellExperiment}, \linkS4class{SpatialExperiment} or \linkS4class{Seurat}
+Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
 containing an assay where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
 
-\item{tumorTissue}{tissue of the tumor.}
+\item{tumorTissue}{type of tissue for which the signature is developed.}
 }
 \value{
 A SummarizedExperiment object in which the score will be added in the
