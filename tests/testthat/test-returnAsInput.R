@@ -1,4 +1,3 @@
-context("Output of signature functions")
 library(signifinder)
 
 test_that("returnAsInput returns a S4 object", {

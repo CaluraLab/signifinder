@@ -1,4 +1,3 @@
-context("Input of signature functions")
 library(signifinder)
 
 test_that("getMatrix returns a matrix", {
