@@ -559,7 +559,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
 #' @import org.Hs.eg.db
 #'
 #' @export
-CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "CYTSign")
 
@@ -632,7 +632,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' @export
 expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "ExpandedImmuneSign")
+    firstCheck(nametype, tumorTissue, "expandedImmuneSign")
 
     if(nametype!="SYMBOL"){
         ExpandedImmunedata <- mapIds(org.Hs.eg.db, keys = ExpandedImmunedata, column = nametype,
