@@ -644,3 +644,37 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-
     ExpandedImmunescore <- apply(datasetm[intersect(row.names(datasetm), ExpandedImmunedata), ], 2, mean)
     return(returnAsInput(userdata = dataset, result = ExpandedImmunescore, SignName = "ExpandedImmune", datasetm))
 }
+
+
+#' Tertiary Lymphoid Structures (TLS) Signature
+#'
+#' This signature is computed accordingly to the reference paper,
+#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
+#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param tumorTissue type of tissue for which the signature is developed.
+#'
+#' @return A SummarizedExperiment object in which the score will be added in the
+#' \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @importFrom labstatR meang
+#' @import org.Hs.eg.db
+#'
+#' @export
+TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
+
+    firstCheck(nametype, tumorTissue, "TLSsign")
+
+    if(nametype!="SYMBOL"){
+        TLSdata <- mapIds(org.Hs.eg.db, keys = TLSdata, column = nametype,
+                         keytype = "SYMBOL", multiVals = "first")}
+    datasetm <- getMatrix(dataset)
+    cat(paste("The function is using", sum(TLSdata %in% row.names(datasetm)),
+              "genes out of", length(TLSdata), "\n"))
+    TLSScore <- apply(datasetm[intersect(row.names(datasetm), TLSdata), ], 2, meang)
+    return(returnAsInput(userdata = dataset, result = TLSScore, SignName = "TLS", datasetm))
+}
