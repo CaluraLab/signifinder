@@ -678,3 +678,38 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
     TLSScore <- apply(datasetm[intersect(row.names(datasetm), TLSdata), ], 2, meang)
     return(returnAsInput(userdata = dataset, result = TLSScore, SignName = "TLS", datasetm))
 }
+
+
+#' CD49fHi Basal Stem Cell Signature
+#'
+#' This signature is computed accordingly to the reference paper,
+#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
+#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param tumorTissue type of tissue for which the signature is developed.
+#'
+#' @return A SummarizedExperiment object in which the score will be added in the
+#' \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
+
+    firstCheck(nametype, tumorTissue, "CD49BSCSign")
+
+    if(nametype!="SYMBOL"){
+        CD49BSCdata$Gene <- mapIds(org.Hs.eg.db, keys = CD49BSCdata$Gene,
+                                   column = nametype, keytype = "SYMBOL", multiVals = "first")}
+    datasetm <- getMatrix(dataset)
+
+    cat(paste("The function is using", sum(CD49BSCdata$Gene %in% row.names(datasetm)),
+              "genes out of", length(CD49BSCdata$Gene), "\n"))
+    CD49BSCdata <- CD49BSCdata[CD49BSCdata$Gene %in% row.names(datasetm), ]
+    CD49BSCScore <- colSums(datasetm[CD49BSCdata$Gene, ]*CD49BSCdata$Coeff)
+    return(returnAsInput(userdata = dataset, result = CD49BSCScore, SignName = "CD49BSC", datasetm))
+}
