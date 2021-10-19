@@ -52,7 +52,7 @@ GetGenes <- function(name){
     return(res)
 }
 
-range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+range01 <- function(x){(x-min(x, na.rm = T))/(max(x, na.rm = T)-min(x, na.rm = T))}
 
 signatureNameCheck <- function(data, sName){
     if(!all(sName %in% SignatureNames)){
@@ -100,8 +100,7 @@ returnAsInput <- function(userdata, result, SignName, datasetm){
 }
 
 ipsmap <- function(x){
-    if (x<=0) {ips <- 0} else if (x>=3) {ips <- 10} else {ips <- round(x*10/3, digits=0)}
-    return(ips)}
+    if(is.na(x)){NA} else {if(x<=0){0} else if(x>=3){10} else {round(x*10/3, digits=0)}}}
 
 GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     datasetGenes <- rownames(expr)
