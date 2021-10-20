@@ -135,6 +135,27 @@ firstCheck <- function(nametype, tumorTissue, functionName, ...){
             stop("tumorTissue and author do not match")}}
     }
 
+coefficientsScore <- function(ourdata, datasetm, nametype = "SYMBOL"){
+    if(nametype!="SYMBOL"){
+        ourdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = ourdata$Gene_Symbol,
+                                      column = nametype, keytype = "SYMBOL", multiVals = "first")}
+    cat(paste("The function is using", sum(ourdata$Gene_Symbol %in% row.names(datasetm)),
+              "genes out of", nrow(ourdata), "\n"))
+    ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
+    ourscore <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient)
+    return(ourscore)
+}
+
+statScore <- function(ourdata, datasetm, typeofstat = "mean", nametype= "SYMBOL"){
+    if(nametype!="SYMBOL"){
+        ourdata <- mapIds(org.Hs.eg.db, keys = ourdata, column = nametype,
+                          keytype = "SYMBOL", multiVals = "first")}
+    cat(paste("The function is using", sum(ourdata %in% row.names(datasetm)),
+              "genes out of", length(ourdata), "\n"))
+    ourdata <- ourdata[ourdata %in% row.names(datasetm)]
+    ourscore <- apply(datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)
+    return(ourscore)
+}
 
 #' 7 spots resolution
 #'
