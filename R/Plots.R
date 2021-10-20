@@ -115,7 +115,7 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
     filtdataset <- as.matrix(dataset[row.names(dataset) %in% signatureGenes, ])
 
     dots <- list(...)
-    htargs <- matchArguments(dots, list(name = "Genes", show_column_names = F, col = mycol,
+    htargs <- matchArguments(dots, list(name = "Genes", show_column_names = FALSE, col = mycol,
                                         row_names_gp = grid::gpar(fontsize = 6)))
     htargs$matrix = log2(filtdataset+1)
 
@@ -183,7 +183,7 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
     data <- as.matrix(t(data))
 
     dots <- list(...)
-    htargs <- matchArguments(dots, list(name = "Signatures", show_column_names = F, col = mycol))
+    htargs <- matchArguments(dots, list(name = "Signatures", show_column_names = FALSE, col = mycol))
 
     if(!is.null(sampleAnnot)){
         if(splitByAnnot){
@@ -256,7 +256,7 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL, sele
     # corsign_ord <- corsign[ord, ord]
     # g <- ellipse::plotcorr(corsign_ord, col = my_colors[corsign_ord*50+50], mar = c(1,1,1,1))
 
-    g <- corPlot(as.data.frame(SignMatrix), cluster = T, dendrogram = T, lower = T)
+    g <- corPlot(as.data.frame(SignMatrix), cluster = TRUE, dendrogram = TRUE, lower = TRUE)
 
     return(g)
 }
@@ -331,10 +331,10 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 
     fit <- survival::survfit(survival::Surv(survival, status) ~ grp, data = tmp)
 
-    g <- survminer::ggsurvplot(fit, data = tmp, risk.table = T, legend.title = whichSign,
+    g <- survminer::ggsurvplot(fit, data = tmp, risk.table = TRUE, legend.title = whichSign,
                                palette = c("red", "blue"), ggtheme = ggplot2::theme_gray(15),
                                font.legend = 15, font.tickslab = 15, font.x = 15, font.y = 15,
-                               risk.table.fontsize = 5, pval = T, surv.median.line = "hv",
+                               risk.table.fontsize = 5, pval = TRUE, surv.median.line = "hv",
                                risk.table.col = "strata")
     return(g)
 }
