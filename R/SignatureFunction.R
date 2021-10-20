@@ -43,7 +43,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = gene_sets, method = "gsva",
-                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = F))
+                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
     if(pvalues){
@@ -251,7 +251,7 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = PlatinumResistancedata, method = "gsva",
-                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = F))
+                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
     gsva_count <- suppressWarnings(do.call(gsva, args))
     rownames(gsva_count) <- c("PlatinumResistanceUp", "PlatinumResistanceDown")
 
@@ -300,7 +300,7 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue
     for(i in 1:length(path_score)){
         z <- c()
         for(j in 1:10000){
-            bootscore <- sample(gene_score, size=lengths(gene_pathway)[i], replace = T)
+            bootscore <- sample(gene_score, size=lengths(gene_pathway)[i], replace = TRUE)
             z[j] <- sum(bootscore)/sqrt(nsamples)}
         pvals[i] <- sum(z>=path_score[i])/10000
     }
@@ -346,7 +346,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
         SE <- (ImmunoScoreHaodata$HR - ImmunoScoreHaodata$`95CI_L`)/1.96
         k <- (1 - ImmunoScoreHaodata$HR)/SE
-        ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = T)))
+        ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = TRUE)))
     } else if(tumorTissue=="pan-tissue"){
         if(nametype!="SYMBOL"){
             ImmunoScoreRohdata<- mapIds(org.Hs.eg.db, keys = ImmunoScoreRohdata, column = nametype,
@@ -453,10 +453,10 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
             WEIGHT[k] <- mean(IPSdata$WEIGHT[which(IPSdata$NAME==gen)])
             k<-k+1}
         WG <- MIG*WEIGHT
-        MHC[i]<-mean(WG[1:10], na.rm = T)
-        CP[i]<-mean(WG[11:20], na.rm = T)
-        EC[i]<-mean(WG[21:24], na.rm = T)
-        SC[i]<-mean(WG[25:26], na.rm = T)
+        MHC[i]<-mean(WG[1:10], na.rm = TRUE)
+        CP[i]<-mean(WG[11:20], na.rm = TRUE)
+        EC[i]<-mean(WG[21:24], na.rm = TRUE)
+        SC[i]<-mean(WG[25:26], na.rm = TRUE)
         AZ[i]<-sum(MHC[i],CP[i],EC[i],SC[i])
         IPS[i]<-ipsmap(AZ[i])}
 

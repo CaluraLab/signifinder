@@ -54,7 +54,7 @@ GetGenes <- function(name){
     return(res)
 }
 
-range01 <- function(x){(x-min(x, na.rm = T))/(max(x, na.rm = T)-min(x, na.rm = T))}
+range01 <- function(x){(x-min(x, na.rm = TRUE))/(max(x, na.rm = TRUE)-min(x, na.rm = TRUE))}
 
 signatureNameCheck <- function(data, sName){
     if(!all(sName %in% SignatureNames)){
@@ -110,7 +110,7 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     permutedResults <- parallel::mclapply(seq_len(nperm), function(x){
         cat("Performing permutation number", x, "\n")
         permlist <- lapply(seq_len(length(gset.idx.list)), function(i)
-            sample(datasetGenes, size = lengths(filteredGeneSets)[i], replace = F))
+            sample(datasetGenes, size = lengths(filteredGeneSets)[i], replace = FALSE))
         args$gset.idx.list <- permlist
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
         data.frame(t(gsva_matrix))}, mc.cores = 1)
