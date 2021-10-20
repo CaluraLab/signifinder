@@ -285,7 +285,7 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue
 
     firstCheck(nametype, tumorTissue, "metabolicSign")
 
-    if(class(nsamples)!="numeric"){stop("The nsample parameter must be a numeric vector")}
+    if(!is.numeric(nsamples)){stop("The nsample parameter must be a numeric vector")}
 
     gene_score <- abs(DEdata[,1] -log(DEdata[,2]))
     names(gene_score) <- row.names(DEdata)

@@ -69,23 +69,23 @@ matchArguments <- function(dots, defaults) {
 
 getMatrix <- function(userdata){
     if(!is.matrix(userdata)) {
-        if(class(userdata)=="Seurat"){
+        if(is(userdata, "Seurat")){
             if(length(userdata@assays)==1){userdata <- as.matrix(userdata@assays$RNA@data)
             } else {userdata <- as.matrix(userdata@assays$SCT@data)}
-        } else if(class(userdata)%in%c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
+        } else if(class(userdata) %in% c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
             userdata <- as.matrix(SummarizedExperiment::assay(userdata))
-        } else if(class(userdata)=="data.frame"){userdata <- as.matrix(userdata)
+        } else if(is.data.frame(userdata)){userdata <- as.matrix(userdata)
         } else {stop("This dataset type is not supported")}}
     return(userdata)}
 
 returnAsInput <- function(userdata, result, SignName, datasetm){
     if(!is.matrix(userdata) & !is.data.frame(userdata)) {
-        if(class(userdata)=="Seurat"){
+        if(is(userdata, "Seurat")){
             if(is.vector(result)){names <- c(colnames(userdata@meta.data), SignName)
             userdata@meta.data <- cbind(userdata@meta.data, name=result)
             colnames(userdata@meta.data) <- names
             } else {userdata@meta.data <- cbind(userdata@meta.data, t(result))}
-        } else if(class(userdata)%in%c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
+        } else if(class(userdata) %in% c("SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
             names <- c(colnames(userdata@colData), SignName)
             if(is.vector(result)){userdata@colData <- cbind(userdata@colData, name=result)
             colnames(userdata@colData) <- names
