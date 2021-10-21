@@ -157,7 +157,7 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
 #'
 #' @return A ComplexHeatmap object
 #'
-#' @importfrom ComplexHeatmap Heatmap '%v%'
+#' @importFrom ComplexHeatmap Heatmap '%v%'
 #' @importFrom SummarizedExperiment colData
 #'
 #' @export
