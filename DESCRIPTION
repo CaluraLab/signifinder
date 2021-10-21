@@ -8,18 +8,16 @@ Authors@R: c(   person("Fabiola", "Pedrini",
                 person("Stefania", "Pirrotta",
                         role=c("cre", "aut"),
                         email="stefania.pirrotta@unipd.it"))
-Author: Fabiola Pedrini [aut, cre],
-        Stefania Pirrotta [aut]
-Maintainer: Stefania Pirrotta <stefania.pirrotta@unipd.it>
 Description: A collection of signatures to analyze high-throughput data.
 License: AGPL-3
-Imports: AnnotationDbi, consensusOV, ggplot2, grDevices, gridExtra, GSVA, matrixStats, org.Hs.eg.db, 
-         stats, SummarizedExperiment, ComplexHeatmap, viridis, Matrix, ellipse, dplyr, magrittr, grid,
-         survminer, survival, maxstat, patchwork, openair, ggridges, labstatR
+Imports: AnnotationDbi, ComplexHeatmap, consensusOV, dplyr, ellipse, ggplot2, 
+        ggridges, grDevices, grid, gridExtra, GSVA, labstatR, magrittr, Matrix, 
+        matrixStats, maxstat, org.Hs.eg.db, openair, patchwork, stats, 
+        SummarizedExperiment, survminer, survival, viridis
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 7.1.2
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
