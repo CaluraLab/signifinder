@@ -135,7 +135,7 @@ firstCheck <- function(nametype, tumorTissue, functionName, ...){
             stop("tumorTissue and author do not match")}}
     }
 
-coefficientsScore <- function(ourdata, datasetm, nametype = "SYMBOL"){
+coefficientsScore <- function(ourdata, datasetm, nametype){
     if(nametype!="SYMBOL"){
         ourdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = ourdata$Gene_Symbol,
                                       column = nametype, keytype = "SYMBOL", multiVals = "first")}
@@ -146,7 +146,7 @@ coefficientsScore <- function(ourdata, datasetm, nametype = "SYMBOL"){
     return(ourscore)
 }
 
-statScore <- function(ourdata, datasetm, typeofstat = "mean", nametype= "SYMBOL"){
+statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean"){
     if(nametype!="SYMBOL"){
         ourdata <- mapIds(org.Hs.eg.db, keys = ourdata, column = nametype,
                           keytype = "SYMBOL", multiVals = "first")}

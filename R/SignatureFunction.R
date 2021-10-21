@@ -80,19 +80,10 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 
     Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
-    if(nametype!="SYMBOL"){
-        Pyroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Pyroptosisdata$Gene_Symbol,
-                                       column = nametype, keytype = "SYMBOL", multiVals = "first")}
-
     datasetm <- getMatrix(dataset)
 
-    nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
-    cat(paste0("The function is using ", sum(Pyroptosisdata$Gene_Symbol %in% row.names(datasetm)),
-               " genes out of ", nSigGenes, "\n"))
-    Pyroptosisdata <- Pyroptosisdata[Pyroptosisdata$Gene_Symbol %in% row.names(datasetm), ]
-    Piroscore <- sapply(colnames(datasetm), function(x){
-        ssgenes <- datasetm[Pyroptosisdata$Gene_Symbol, x]
-        if(sum(ssgenes==0)>nSigGenes*0.5){NA}else{sum(ssgenes*Pyroptosisdata$Coefficient)}})
+    # nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
+    Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm, nametype = nametype)
 
     return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis", author), datasetm))
 }
@@ -120,16 +111,9 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
 
     firstCheck(nametype, tumorTissue, "ferroptosisSign")
 
-    if(nametype!="SYMBOL"){
-        Ferroptosisdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = Ferroptosisdata$Gene_Symbol,
-                                              column = nametype, keytype = "SYMBOL", multiVals = "first")}
-
     datasetm <- getMatrix(dataset)
+    ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm, nametype = nametype)
 
-    cat(paste0("The function is using ", sum(Ferroptosisdata$Gene_Symbol %in% row.names(datasetm)),
-               " genes out of ", length(Ferroptosisdata$Gene_Symbol), "\n"))
-    Ferroptosisdata <- Ferroptosisdata[Ferroptosisdata$Gene_Symbol %in% row.names(datasetm), ]
-    ferrscore <- colSums(datasetm[Ferroptosisdata$Gene_Symbol, ]*Ferroptosisdata$Coefficient)
     return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "Ferroptosis", datasetm))
 }
 
@@ -156,16 +140,9 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ova
 
     firstCheck(nametype, tumorTissue, "lipidMetabolismSign")
 
-    if(nametype!="SYMBOL"){
-        LipidMetabolismdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = LipidMetabolismdata$Gene_Symbol,
-                                                  column = nametype, keytype = "SYMBOL", multiVals = "first")}
-
     datasetm <- getMatrix(dataset)
+    lipidscore <- coefficientsScore(LipidMetabolismdata, datasetm = datasetm, nametype = nametype)
 
-    cat(paste0("The function is using ", sum(LipidMetabolismdata$Gene_Symbol %in% row.names(datasetm)),
-               " genes out of ", length(LipidMetabolismdata$Gene_Symbol), "\n"))
-    LipidMetabolismdata <- LipidMetabolismdata[LipidMetabolismdata$Gene_Symbol %in% row.names(datasetm), ]
-    lipidscore <- colSums(datasetm[LipidMetabolismdata$Gene_Symbol, ] * LipidMetabolismdata$Coefficient)
     return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidMetabolism", datasetm))
 }
 
@@ -702,14 +679,9 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 
     firstCheck(nametype, tumorTissue, "CD49BSCSign")
 
-    if(nametype!="SYMBOL"){
-        CD49BSCdata$Gene <- mapIds(org.Hs.eg.db, keys = CD49BSCdata$Gene,
-                                   column = nametype, keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
+    CD49BSCScore <- coefficientsScore(CD49BSCdata, datasetm = datasetm, nametype = nametype)
 
-    cat(paste("The function is using", sum(CD49BSCdata$Gene %in% row.names(datasetm)),
-              "genes out of", length(CD49BSCdata$Gene), "\n"))
-    CD49BSCdata <- CD49BSCdata[CD49BSCdata$Gene %in% row.names(datasetm), ]
-    CD49BSCScore <- colSums(datasetm[CD49BSCdata$Gene, ]*CD49BSCdata$Coeff)
     return(returnAsInput(userdata = dataset, result = CD49BSCScore, SignName = "CD49BSC", datasetm))
 }
+
