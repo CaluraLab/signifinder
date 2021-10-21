@@ -325,14 +325,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
         k <- (1 - ImmunoScoreHaodata$HR)/SE
         ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = TRUE)))
     } else if(tumorTissue=="pan-tissue"){
-        if(nametype!="SYMBOL"){
-            ImmunoScoreRohdata<- mapIds(org.Hs.eg.db, keys = ImmunoScoreRohdata, column = nametype,
-                                        keytype = "SYMBOL", multiVals = "first")}
-
-        cat(paste("The function is using", sum(ImmunoScoreRohdata %in% row.names(datasetm)),
-                  " genes out of", length(ImmunoScoreRohdata), "\n"))
-
-        ImmunoScores <- apply(datasetm[intersect(row.names(datasetm), ImmunoScoreRohdata), ], 2, meang)}
+        ImmunoScores <- statScore(ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang")}
 
     return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = paste0("ImmunoScore", author), datasetm))
 }
@@ -466,15 +459,8 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissu
 
     firstCheck(nametype, tumorTissue, "matrisomeSign")
 
-    if(nametype!="SYMBOL"){
-        Matrisomedata <- mapIds(org.Hs.eg.db, keys=Matrisomedata, column=nametype,
-                                keytype="SYMBOL", multiVals="first")}
-
     datasetm <- getMatrix(dataset)
-
-    cat(paste("The function is using", sum(Matrisomedata %in% row.names(datasetm)), "matrisome's genes out of 9\n"))
-
-    median_cm <- colMedians(datasetm[row.names(datasetm) %in% Matrisomedata, ])
+    median_cm <- statScore(Matrisomedata, datasetm = datasetm, nametype = nametype, typeofstat = "median")
 
     return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome", datasetm))
 }
@@ -502,16 +488,8 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
 
     firstCheck(nametype, tumorTissue, "mitoticIndexSign")
 
-    if(nametype!="SYMBOL"){
-        MitoticIndexdata <- mapIds(org.Hs.eg.db, keys=MitoticIndexdata, column=nametype,
-                                   keytype="SYMBOL", multiVals="first")}
-
     datasetm <- getMatrix(dataset)
-
-    cat(paste("The function is using", sum(MitoticIndexdata %in% row.names(datasetm)),
-              "mititotic index genes out of 9\n"))
-
-    MI_means <- colMeans(datasetm[row.names(datasetm) %in% MitoticIndexdata, ])
+    MI_means <- statScore(MitoticIndexdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
 
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
 }
@@ -540,21 +518,11 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "CYTSign")
 
-    if(nametype!="SYMBOL"){
-        CYTdata <- mapIds(org.Hs.eg.db, keys = CYTdata, column = nametype,
-                           keytype = "SYMBOL", multiVals = "first")}
-
     datasetm <- getMatrix(dataset)
-
-    cat(paste("The function is using", sum(CYTdata %in% row.names(datasetm)),
-              "genes out of", length(CYTdata), "\n"))
-
-    CYTdata <- CYTdata[CYTdata %in% row.names(datasetm)]
-    CYTScore <- apply(datasetm[CYTdata,], 2, meang)
+    CYTScore <- statScore(CYTdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang")
 
     return(returnAsInput(userdata = dataset, result = CYTScore, SignName = "CYT", datasetm))
 }
-
 
 #' IFN-γ Signature
 #'
@@ -578,13 +546,9 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "IFNSign")
 
-    if(nametype!="SYMBOL"){IFNdata <- mapIds(org.Hs.eg.db, keys = IFNdata, column = nametype,
-                                             keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
-    cat(paste("The function is using", sum(IFNdata %in% row.names(datasetm)),
-              "genes out of", length(IFNdata), "\n"))
+    IFNscore <- statScore(IFNdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
 
-    IFNscore <- apply(datasetm[intersect(row.names(datasetm), IFNdata),], 2, mean)
     return(returnAsInput(userdata = dataset, result = IFNscore, SignName = "IFN", datasetm))
 }
 
@@ -611,14 +575,9 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-
 
     firstCheck(nametype, tumorTissue, "expandedImmuneSign")
 
-    if(nametype!="SYMBOL"){
-        ExpandedImmunedata <- mapIds(org.Hs.eg.db, keys = ExpandedImmunedata, column = nametype,
-                                     keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
-    cat(paste("The function is using", sum(ExpandedImmunedata %in% row.names(datasetm)),
-              "genes out of", length(ExpandedImmunedata), "\n"))
 
-    ExpandedImmunescore <- apply(datasetm[intersect(row.names(datasetm), ExpandedImmunedata), ], 2, mean)
+    ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
     return(returnAsInput(userdata = dataset, result = ExpandedImmunescore, SignName = "ExpandedImmune", datasetm))
 }
 
@@ -644,15 +603,11 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-
 #' @export
 TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
 
-    firstCheck(nametype, tumorTissue, "TLSsign")
+    firstCheck(nametype, tumorTissue, "TLSSign")
 
-    if(nametype!="SYMBOL"){
-        TLSdata <- mapIds(org.Hs.eg.db, keys = TLSdata, column = nametype,
-                         keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
-    cat(paste("The function is using", sum(TLSdata %in% row.names(datasetm)),
-              "genes out of", length(TLSdata), "\n"))
-    TLSScore <- apply(datasetm[intersect(row.names(datasetm), TLSdata), ], 2, meang)
+    TLSScore <- statScore(TLSdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang")
+
     return(returnAsInput(userdata = dataset, result = TLSScore, SignName = "TLS", datasetm))
 }
 
