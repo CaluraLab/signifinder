@@ -37,7 +37,6 @@ test_that("CYTSign works", {
     expect_length(colData(myres)[,"CYT"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CYT"], "double")
 })
-!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 test_that("MitoticIndexSign works", {
     rmatrix <- fakeData("MitoticIndex")
