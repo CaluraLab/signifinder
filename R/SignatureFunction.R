@@ -81,7 +81,6 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
     Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
-
     # nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
     Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm, nametype = nametype)
 
@@ -524,16 +523,6 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     return(returnAsInput(userdata = dataset, result = CYTScore, SignName = "CYT", datasetm))
 }
 
-statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean"){
-    if(nametype!="SYMBOL"){
-        ourdata <- mapIds(org.Hs.eg.db, keys = ourdata, column = nametype,
-                          keytype = "SYMBOL", multiVals = "first")}
-    cat(paste("The function is using", sum(ourdata %in% row.names(datasetm)),
-              "genes out of", length(ourdata), "\n"))
-    ourdata <- ourdata[ourdata %in% row.names(datasetm)]
-    ourscore <- apply(datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)
-    return(ourscore)
-}
 
 #' IFN-γ Signature
 #'
@@ -587,8 +576,8 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-
     firstCheck(nametype, tumorTissue, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
-
     ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
+
     return(returnAsInput(userdata = dataset, result = ExpandedImmunescore, SignName = "ExpandedImmune", datasetm))
 }
 
