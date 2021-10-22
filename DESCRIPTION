@@ -15,7 +15,7 @@ Imports: AnnotationDbi, ComplexHeatmap, consensusOV, dplyr, ellipse, ggplot2,
         matrixStats, maxstat, org.Hs.eg.db, openair, patchwork, stats, 
         SummarizedExperiment, survminer, survival, viridis
 Encoding: UTF-8
-LazyData: false
+LazyData: true
 RoxygenNote: 7.1.2
 Depends: R (>= 4.1.0)
 Suggests: 
