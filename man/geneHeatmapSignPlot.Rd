@@ -7,6 +7,7 @@
 geneHeatmapSignPlot(
   data,
   whichSign,
+  logCount = FALSE,
   splitBySign = FALSE,
   sampleAnnot = NULL,
   splitByAnnot = FALSE,
@@ -17,6 +18,8 @@ geneHeatmapSignPlot(
 \item{data}{output from a signature function}
 
 \item{whichSign}{indicare quali signature usare, di cui verranno presi i geni}
+
+\item{logCount}{whether or not to compute logarithm for the expression values in the dataset}
 
 \item{splitBySign}{se splittare o no le righe dell'heatmap in base alla signature di provenienza dei geni}
 

@@ -65,6 +65,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #'
 #' @param data output from a signature function
 #' @param whichSign indicare quali signature usare, di cui verranno presi i geni
+#' @param logCount whether or not to compute logarithm for the expression values in the dataset
 #' @param splitBySign se splittare o no le righe dell'heatmap in base alla signature di provenienza dei geni
 #' @param sampleAnnot un vettore di annotazione dei sample
 #' @param splitByAnnot se splittare o no le colonne in base all'annotazione dei sample, in
@@ -79,7 +80,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #' @importFrom SummarizedExperiment colData
 #'
 #' @export
-geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
+geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE, splitBySign = FALSE,
                                 sampleAnnot = NULL, splitByAnnot = FALSE, ...){
 
     signatureNameCheck(data, whichSign)
@@ -90,23 +91,12 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
         if(length(sampleAnnot)!=ncol(dataset)){stop("sampleAnnot length is different than samples dimension")}
     } else {if(splitByAnnot){stop("splitByAnnot can be TRUE only if sampleAnnot is provided")}}
 
-    if(is.vector(data)){
-        signval <- matrix(data, nrow = 1, dimnames = list(attr(data, "Signature Name"), colnames(dataset)))
-    } else if(is.data.frame(data)){
-        signval <- data[whichSign,]
-        if(length(whichSign)==1){
-            signval <- matrix(signval, nrow = 1, dimnames = list(whichSign, colnames(dataset)))
-        } else {
-            signval <- sapply(t(signval), range01)
-            signval <- as.matrix(t(signval))}
+    signval <- colData(data)[,whichSign]
+    if(length(whichSign)==1){
+        signval <- matrix(signval, nrow = 1, dimnames = list(whichSign, colnames(dataset)))
     } else {
-        signval <- colData(data)[,whichSign]
-        if(length(whichSign)==1){
-            signval <- matrix(signval, nrow = 1, dimnames = list(whichSign, colnames(dataset)))
-        } else {
-            signval <- sapply(signval, range01)
-            signval <- as.matrix(t(signval))}
-        }
+        signval <- sapply(signval, range01)
+        signval <- as.matrix(t(signval))}
 
     geneTable <- as.data.frame(do.call(rbind, lapply(whichSign, GetGenes))) %>%
         group_by(Gene) %>% summarise_all(paste, collapse=",")
@@ -117,7 +107,8 @@ geneHeatmapSignPlot <- function(data, whichSign, splitBySign = FALSE,
     dots <- list(...)
     htargs <- matchArguments(dots, list(name = "Genes", show_column_names = FALSE, col = mycol,
                                         row_names_gp = grid::gpar(fontsize = 6)))
-    htargs$matrix = log2(filtdataset+1)
+
+    if(logCount){htargs$matrix = log2(filtdataset+1)} else {htargs$matrix = filtdataset}
 
     if(length(whichSign)!=1){
         signAnnot <- geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)]
