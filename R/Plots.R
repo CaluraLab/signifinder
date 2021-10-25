@@ -53,7 +53,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
             g2 <- g2 + geom_vline(mapping = aes(xintercept = quantile(signval, 0.25)), col = "red", size = 1.2, linetype = 2) +
                 geom_vline(mapping = aes(xintercept = quantile(signval, 0.50)), col = "red", size = 1.2, linetype = 2) +
                 geom_vline(mapping = aes(xintercept = quantile(signval, 0.75)), col = "red", size = 1.2, linetype = 2)}}
-    g1 <- g1  + annotate("text", label = statistics, x = quantile(signval, 0.10), y = length(signval), size = 4, colour = "red")
+    g1 <- g1 + annotate("text", label = statistics, x = quantile(signval, 0.10), y = length(signval), size = 4, colour = "red")
 
     return(g1 + g2)
 }
@@ -350,7 +350,7 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
 
     if(!is.null(whichSign)){signatureNameCheck(data, whichSign)}
 
-    if(is.data.frame(data)){tmp <- data} else {tmp <- colData(data)}
+    tmp <- colData(data)
 
     if(sum(colnames(tmp) %in% SignatureNames)>0){
         if(is.null(whichSign)){
@@ -362,7 +362,8 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
     tmp <- tmp[,signs]
     tmp <- data.frame(sapply(tmp, range01))
 
-    if(!is.null(groupByAnnot)){if(length(groupByAnnot)!=nrow(tmp)){stop("groupByAnnot length is different than samples dimension")}}
+    if(!is.null(groupByAnnot)){if(length(groupByAnnot)!=nrow(tmp)){
+        stop("groupByAnnot length is different than samples dimension")}}
 
     if(is.null(whichSign)){n <- ncol(tmp)} else {n <- length(whichSign)}
 
@@ -371,8 +372,10 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
 
     g <- ggplot(tmp1, aes(x=signvalue, y=signature))
     if(is.null(groupByAnnot)){
-        g <- g + geom_density_ridges(alpha=0.5)
+        g <- g + geom_density_ridges(alpha=0.5,
+                                     bandwidth = 0.05, jittered_points = TRUE)
     } else {
-        g <- g + geom_density_ridges(aes(fill = rep(groupByAnnot, n)), alpha=0.5)}
+        g <- g + geom_density_ridges(aes(fill = rep(groupByAnnot, n)), alpha=0.5,
+                                     bandwidth = 0.05, jittered_points = TRUE)}
     return(g)
 }

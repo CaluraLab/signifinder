@@ -34,7 +34,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues
     Signature_EL <- EMTdata[grep('Epithelial', EMTdata$Category),]
     Signature_ML <- EMTdata[-grep('Epithelial', EMTdata$Category),]
 
-    cat(paste("The function is using", sum(Signature_EL$Gene_Symbol %in% row.names(datasetm)),
+    cat(paste("EMTSign function is using", sum(Signature_EL$Gene_Symbol %in% row.names(datasetm)),
                "epithelial-like genes out of", nrow(Signature_EL), "\nThe function is using",
                sum(Signature_ML$Gene_Symbol %in% row.names(datasetm)), "mesenchymal-like genes out of",
                nrow(Signature_ML),"\n"))
