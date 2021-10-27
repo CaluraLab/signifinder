@@ -4,7 +4,12 @@
 \alias{ridgelineSignPlot}
 \title{Ridgeline Plot}
 \usage{
-ridgelineSignPlot(data, whichSign = NULL, groupByAnnot = NULL)
+ridgelineSignPlot(
+  data,
+  whichSign = NULL,
+  groupByAnnot = NULL,
+  selectByAnnot = NULL
+)
 }
 \arguments{
 \item{data}{output from a signature function}

@@ -346,7 +346,7 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 #' @importFrom SummarizedExperiment colData
 #'
 #' @export
-ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
+ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL, selectByAnnot = NULL){
 
     if(!is.null(whichSign)){signatureNameCheck(data, whichSign)}
 
@@ -362,20 +362,30 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL){
     tmp <- tmp[,signs]
     tmp <- data.frame(sapply(tmp, range01))
 
-    if(!is.null(groupByAnnot)){if(length(groupByAnnot)!=nrow(tmp)){
-        stop("groupByAnnot length is different than samples dimension")}}
+    if(!is.null(groupByAnnot)){
+        if(length(groupByAnnot)!=nrow(tmp)){
+            stop("groupByAnnot length is different than samples dimension")}
+        if(!is.null(selectByAnnot)){
+            if(!all(selectByAnnot %in% groupByAnnot)){
+                stop("selectByAnnot is not present in groupByAnnot")}}
+    } else {if(!is.null(selectByAnnot)){
+        stop("selectByAnnot can be used only if groupByAnnot is also provided")}}
 
     if(is.null(whichSign)){n <- ncol(tmp)} else {n <- length(whichSign)}
+
+    if(!is.null(selectByAnnot)){
+        tmp <- tmp[groupByAnnot %in% selectByAnnot,]
+        groupByAnnot <- groupByAnnot[groupByAnnot %in% selectByAnnot]}
 
     tmp1 <- do.call(rbind, lapply(seq_len(ncol(tmp)), function(x){
         data.frame(signvalue=tmp[,x], signature=colnames(tmp[x]), row.names = NULL)}))
 
     g <- ggplot(tmp1, aes(x=signvalue, y=signature))
     if(is.null(groupByAnnot)){
-        g <- g + geom_density_ridges(alpha=0.5,
-                                     bandwidth = 0.05, jittered_points = TRUE)
+        g <- g + geom_density_ridges(alpha=0.5, bandwidth = 0.05, scale = 1)
     } else {
-        g <- g + geom_density_ridges(aes(fill = rep(groupByAnnot, n)), alpha=0.5,
-                                     bandwidth = 0.05, jittered_points = TRUE)}
+        g <- g + geom_density_ridges(aes(fill = rep(groupByAnnot, n)),
+                                     alpha=0.5, bandwidth = 0.05, scale = 1)}
+    g <- g + scale_fill_discrete(name = "Annotation")
     return(g)
 }
