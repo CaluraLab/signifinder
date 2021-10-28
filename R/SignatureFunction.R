@@ -178,8 +178,9 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste0("The function is using ", sum(genetouse %in% rownames(datasetm)),
-               " genes out of ", length(Hypoxiadata$Gene_Symbol), "\n"))
+    hyper <- (sum(genetouse %in% rownames(datasetm))/nrow(Hypoxiadata))*100
+
+    cat(paste0("hypoxiaSign function is using ", round(hyper), "% of hypoxia genes\n"))
     datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
 
     med_counts <- colMedians(as.matrix(datasetm))
@@ -220,10 +221,11 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "
 
     datasetm <- getMatrix(dataset)
 
-    cat(paste("The function is using", sum(PlatinumResistancedata$PlatinumResistanceUp %in% row.names(datasetm)),
-              "up-genes out of", length(PlatinumResistancedata$PlatinumResistanceUp), "\nThe function is using",
-              sum(PlatinumResistancedata$PlatinumResistanceDown %in% row.names(datasetm)),
-              "down-genes out of", length(PlatinumResistancedata$PlatinumResistanceDown),"\n"))
+    upper <- (sum(PlatinumResistancedata$PlatinumResistanceUp %in% row.names(datasetm))/length(PlatinumResistancedata$PlatinumResistanceUp))*100
+    downper <- (sum(PlatinumResistancedata$PlatinumResistanceDown %in% row.names(datasetm))/length(PlatinumResistancedata$PlatinumResistanceDown))*100
+
+    cat(paste0("platinumResistanceSign function is using ", round(upper), "% of up-genes\n",
+               "The function is using ", round(downper), "% of down-genes\n"))
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = PlatinumResistancedata, method = "gsva",
@@ -315,7 +317,8 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                                                  column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
         g <- intersect(row.names(datasetm), ImmunoScoreHaodata$genes)
-        cat(paste("The function is using", length(g), "genes out of", length(ImmunoScoreHaodata$genes), "\n"))
+        gper <- (length(g)/length(ImmunoScoreHaodata$genes))*100
+        cat(paste0("immunoScoreSign function is using ", round(gper), "% immunegenes\n"))
 
         subdataset <- datasetm[g,]
         ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes %in% g,]
@@ -405,8 +408,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
 
-    cat(paste("The function is using", sum(IPSdata$GENE %in% row.names(datasetm)),
-              "genes out of", nrow(IPSdata), "\n"))
+    ipsper <- (sum(IPSdata$GENE %in% row.names(datasetm))/nrow(IPSdata))*100
+    cat(paste0("IPSSign function is using", round(ipsper), "IPS-genes\n"))
 
     ind <- which(is.na(match(IPSdata$GENE, row.names(datasetm))))
     MISSING_GENES <- IPSdata$GENE[ind]
