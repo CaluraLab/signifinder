@@ -10,7 +10,7 @@ test_that("TLSSign works", {
     expect_length(colData(myres)[,"TLS"], ncol(assay(myres)))
     expect_type(colData(myres)[,"TLS"], "double")
     myoutput <- capture.output(TLSSign(rmatrix, nametype = "SYMBOL", tumorTissue = "skin"))
-    expect_true(as.numeric(substr(myoutput[1],  27, 29))>=0&as.numeric(substr(myoutput[1],  27, 29))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 27, 29))>=0 & as.numeric(substr(myoutput[1], 27, 29))<=100)
 })
 
 test_that("ExpandedImmuneSign works", {
@@ -21,7 +21,7 @@ test_that("ExpandedImmuneSign works", {
     expect_length(colData(myres)[,"ExpandedImmune"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ExpandedImmune"], "double")
     myoutput <- capture.output(expandedImmuneSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    expect_true(as.numeric(substr(myoutput[1],  38, 40))>=0&as.numeric(substr(myoutput[1],  38, 40))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 38, 40))>=0 & as.numeric(substr(myoutput[1], 38, 40))<=100)
 })
 
 test_that("IFNSign works", {
@@ -32,7 +32,7 @@ test_that("IFNSign works", {
     expect_length(colData(myres)[,"IFN"], ncol(assay(myres)))
     expect_type(colData(myres)[,"IFN"], "double")
     myoutput <- capture.output(IFNSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    expect_true(as.numeric(substr(myoutput[1],  27, 29))>=0&as.numeric(substr(myoutput[1],  27, 29))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 27, 29))>=0 & as.numeric(substr(myoutput[1], 27, 29))<=100)
 })
 
 test_that("CYTSign works", {
@@ -43,7 +43,7 @@ test_that("CYTSign works", {
     expect_length(colData(myres)[,"CYT"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CYT"], "double")
     myoutput <- capture.output(CYTSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    expect_true(as.numeric(substr(myoutput[1],  27, 29))>=0&as.numeric(substr(myoutput[1],  27, 29))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 27, 29))>=0&as.numeric(substr(myoutput[1], 27, 29))<=100)
 })
 
 test_that("MitoticIndexSign works", {
@@ -54,7 +54,7 @@ test_that("MitoticIndexSign works", {
     expect_length(colData(myres)[,"MitoticIndex"], ncol(assay(myres)))
     expect_type(colData(myres)[,"MitoticIndex"], "double")
     myoutput <- capture.output(mitoticIndexSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    expect_true(as.numeric(substr(myoutput[1],  36, 38))>=0&as.numeric(substr(myoutput[1],  36, 38))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 36, 38))>=0 & as.numeric(substr(myoutput[1], 36, 38))<=100)
 })
 
 test_that("MatrisomeSign works", {
@@ -65,7 +65,7 @@ test_that("MatrisomeSign works", {
     expect_length(colData(myres)[,"Matrisome"], ncol(assay(myres)))
     expect_type(colData(myres)[,"Matrisome"], "integer")
     myoutput <- capture.output(matrisomeSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    expect_true(as.numeric(substr(myoutput[1],  33, 35))>=0&as.numeric(substr(myoutput[1],  33, 35))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 33, 35))>=0&as.numeric(substr(myoutput[1], 33, 35))<=100)
 })
 
 test_that("immunoScoreSign works", {
@@ -76,7 +76,7 @@ test_that("immunoScoreSign works", {
     expect_length(colData(myres)[,"ImmunoScoreRoh"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmunoScoreRoh"], "double")
     myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL", author = "Roh"))
-    expect_true(as.numeric(substr(myoutput[1],  35, 36))>=0&as.numeric(substr(myoutput[1],  35, 36))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 35, 36))>=0 & as.numeric(substr(myoutput[1], 35, 36))<=100)
 })
 
 

@@ -11,7 +11,7 @@ test_that("PyroptosisSign works", {
     expect_length(colData(myres)[,pname], ncol(assay(myres)))
     expect_type(colData(myres)[,pname], "double")
     myoutput <- capture.output(pyroptosisSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary", author = substring(pname, 11)))
-    expect_true(as.numeric(substr(myoutput[1],  34, 36))>=0&as.numeric(substr(myoutput[1],  34, 36))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 34, 36))>=0 & as.numeric(substr(myoutput[1], 34, 36))<=100)
 })
 
 test_that("FerroptosysSign work", {
@@ -22,7 +22,7 @@ test_that("FerroptosysSign work", {
     expect_length(colData(myres)[,"Ferroptosis"], ncol(assay(myres)))
     expect_type(colData(myres)[,"Ferroptosis"], "double")
     myoutput <- capture.output(ferroptosisSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary"))
-    expect_true(as.numeric(substr(myoutput[1],  35, 37))>=0&as.numeric(substr(myoutput[1],  35, 37))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 35, 37))>=0 & as.numeric(substr(myoutput[1], 35, 37))<=100)
 })
 
 test_that("LipidMetabolism work", {
@@ -33,7 +33,7 @@ test_that("LipidMetabolism work", {
     expect_length(colData(myres)[,"LipidMetabolism"], ncol(assay(myres)))
     expect_type(colData(myres)[,"LipidMetabolism"], "double")
     myoutput <- capture.output(lipidMetabolismSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary"))
-    expect_true(as.numeric(substr(myoutput[1],  39, 41))>=0&as.numeric(substr(myoutput[1],  39, 41))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 39, 41))>=0 & as.numeric(substr(myoutput[1], 39, 41))<=100)
 })
 
 test_that("CD49BSC work", {
@@ -44,5 +44,5 @@ test_that("CD49BSC work", {
     expect_length(colData(myres)[,"CD49BSC"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CD49BSC"], "double")
     myoutput <- capture.output(CD49BSCSign(rmatrix, nametype = "SYMBOL", tumorTissue = "prostate"))
-    expect_true(as.numeric(substr(myoutput[1],  31, 33))>=0&as.numeric(substr(myoutput[1],  31, 33))<=100)
+    expect_true(as.numeric(substr(myoutput[1], 31, 33))>=0 & as.numeric(substr(myoutput[1], 31, 33))<=100)
 })
