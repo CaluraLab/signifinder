@@ -82,7 +82,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 
     datasetm <- getMatrix(dataset)
     # nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
-    Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm, nametype = nametype)
+    Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm, nametype = nametype, namesignature = "pyroptosisSign")
 
     return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis", author), datasetm))
 }
@@ -111,7 +111,7 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
     firstCheck(nametype, tumorTissue, "ferroptosisSign")
 
     datasetm <- getMatrix(dataset)
-    ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm, nametype = nametype)
+    ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm, nametype = nametype, namesignature = "ferroptosisSign")
 
     return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "Ferroptosis", datasetm))
 }
@@ -140,7 +140,7 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ova
     firstCheck(nametype, tumorTissue, "lipidMetabolismSign")
 
     datasetm <- getMatrix(dataset)
-    lipidscore <- coefficientsScore(LipidMetabolismdata, datasetm = datasetm, nametype = nametype)
+    lipidscore <- coefficientsScore(LipidMetabolismdata, datasetm = datasetm, nametype = nametype, namesignature = "lipidMetabolismSign")
 
     return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidMetabolism", datasetm))
 }
@@ -179,8 +179,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"
     datasetm <- getMatrix(dataset)
 
     hyper <- (sum(genetouse %in% rownames(datasetm))/nrow(Hypoxiadata))*100
+    cat(paste0("hypoxiaSign function is using ", round(hyper), "% of genes\n"))
 
-    cat(paste0("hypoxiaSign function is using ", round(hyper), "% of hypoxia genes\n"))
     datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
 
     med_counts <- colMedians(as.matrix(datasetm))
@@ -225,7 +225,7 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "
     downper <- (sum(PlatinumResistancedata$PlatinumResistanceDown %in% row.names(datasetm))/length(PlatinumResistancedata$PlatinumResistanceDown))*100
 
     cat(paste0("platinumResistanceSign function is using ", round(upper), "% of up-genes\n",
-               "The function is using ", round(downper), "% of down-genes\n"))
+               "platinumResistanceSign function is using ", round(downper), "% of down-genes\n"))
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = PlatinumResistancedata, method = "gsva",
@@ -318,7 +318,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
         g <- intersect(row.names(datasetm), ImmunoScoreHaodata$genes)
         gper <- (length(g)/length(ImmunoScoreHaodata$genes))*100
-        cat(paste0("immunoScoreSign function is using ", round(gper), "% immunegenes\n"))
+        cat(paste0("immunoScoreSign function is using ", round(gper), "% of genes\n"))
 
         subdataset <- datasetm[g,]
         ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes %in% g,]
@@ -327,7 +327,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
         k <- (1 - ImmunoScoreHaodata$HR)/SE
         ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = TRUE)))
     } else if(tumorTissue=="pan-tissue"){
-        ImmunoScores <- statScore(ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang")}
+        ImmunoScores <- statScore(ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang", namesignature = "immunoScoreSign")}
 
     return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = paste0("ImmunoScore", author), datasetm))
 }
@@ -409,7 +409,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     sample_names <- colnames(datasetm)
 
     ipsper <- (sum(IPSdata$GENE %in% row.names(datasetm))/nrow(IPSdata))*100
-    cat(paste0("IPSSign function is using", round(ipsper), "IPS-genes\n"))
+    cat(paste0("IPSSign function is using", round(ipsper), "% of genes\n"))
 
     ind <- which(is.na(match(IPSdata$GENE, row.names(datasetm))))
     MISSING_GENES <- IPSdata$GENE[ind]
@@ -462,7 +462,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissu
     firstCheck(nametype, tumorTissue, "matrisomeSign")
 
     datasetm <- getMatrix(dataset)
-    median_cm <- statScore(Matrisomedata, datasetm = datasetm, nametype = nametype, typeofstat = "median")
+    median_cm <- statScore(Matrisomedata, datasetm = datasetm, nametype = nametype, typeofstat = "median", namesignature = "matrisomeSign")
 
     return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome", datasetm))
 }
@@ -491,7 +491,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-ti
     firstCheck(nametype, tumorTissue, "mitoticIndexSign")
 
     datasetm <- getMatrix(dataset)
-    MI_means <- statScore(MitoticIndexdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
+    MI_means <- statScore(MitoticIndexdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean", namesignature = "mitoticIndexSign")
 
     return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
 }
@@ -521,7 +521,7 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "CYTSign")
 
     datasetm <- getMatrix(dataset)
-    CYTScore <- statScore(CYTdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang")
+    CYTScore <- statScore(CYTdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang", namesignature = "CYTSign")
 
     return(returnAsInput(userdata = dataset, result = CYTScore, SignName = "CYT", datasetm))
 }
@@ -550,7 +550,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "IFNSign")
 
     datasetm <- getMatrix(dataset)
-    IFNscore <- statScore(IFNdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
+    IFNscore <- statScore(IFNdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean", namesignature = "IFNSign")
 
     return(returnAsInput(userdata = dataset, result = IFNscore, SignName = "IFN", datasetm))
 }
@@ -579,7 +579,7 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-
     firstCheck(nametype, tumorTissue, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
-    ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm, nametype = nametype, typeofstat = "mean")
+    ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm, nametype = nametype, typeofstat = "mean", namesignature = "expandedImmuneSign")
 
     return(returnAsInput(userdata = dataset, result = ExpandedImmunescore, SignName = "ExpandedImmune", datasetm))
 }
@@ -609,7 +609,7 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
     firstCheck(nametype, tumorTissue, "TLSSign")
 
     datasetm <- getMatrix(dataset)
-    TLSScore <- statScore(TLSdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang")
+    TLSScore <- statScore(TLSdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang", namesignature = "TLSSign")
 
     return(returnAsInput(userdata = dataset, result = TLSScore, SignName = "TLS", datasetm))
 }
@@ -638,7 +638,7 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
     firstCheck(nametype, tumorTissue, "CD49BSCSign")
 
     datasetm <- getMatrix(dataset)
-    CD49BSCScore <- coefficientsScore(CD49BSCdata, datasetm = datasetm, nametype = nametype)
+    CD49BSCScore <- coefficientsScore(CD49BSCdata, datasetm = datasetm, nametype = nametype, namesignature = "CD49BSCSign")
 
     return(returnAsInput(userdata = dataset, result = CD49BSCScore, SignName = "CD49BSC", datasetm))
 }

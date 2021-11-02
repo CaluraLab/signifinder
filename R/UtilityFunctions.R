@@ -141,7 +141,7 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
                                       column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     dataper <- (sum(ourdata$Gene_Symbol %in% row.names(datasetm))/nrow(ourdata))*100
-    cat(paste0(namesignature, " function is using ", round(dataper), "% of ", namesignature, " genes\n"))
+    cat(paste0(namesignature, " function is using ", round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
     ourscore <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient)
@@ -154,7 +154,7 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean", namesign
                           keytype = "SYMBOL", multiVals = "first")}
 
     dataper <- (sum(ourdata %in% row.names(datasetm))/length(ourdata))*100
-    cat(paste0(namesignature, " function is using ", round(dataper), "% of ", namesignature, " genes\n"))
+    cat(paste0(namesignature, " function is using ", round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
     ourscore <- apply(datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)
