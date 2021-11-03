@@ -10,8 +10,8 @@ test_that("PyroptosisSign works", {
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[,pname], ncol(assay(myres)))
     expect_type(colData(myres)[,pname], "double")
-    myoutput <- capture.output(pyroptosisSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary", author = substring(pname, 11)))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(pyroptosisSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary", author = substring(pname, 11)))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -22,8 +22,8 @@ test_that("FerroptosysSign work", {
     expect_true("Ferroptosis" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"Ferroptosis"], ncol(assay(myres)))
     expect_type(colData(myres)[,"Ferroptosis"], "double")
-    myoutput <- capture.output(ferroptosisSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(ferroptosisSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -34,8 +34,8 @@ test_that("LipidMetabolism work", {
     expect_true("LipidMetabolism" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"LipidMetabolism"], ncol(assay(myres)))
     expect_type(colData(myres)[,"LipidMetabolism"], "double")
-    myoutput <- capture.output(lipidMetabolismSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(lipidMetabolismSign(rmatrix, nametype = "SYMBOL", tumorTissue = "ovary"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -46,7 +46,7 @@ test_that("CD49BSC work", {
     expect_true("CD49BSC" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"CD49BSC"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CD49BSC"], "double")
-    myoutput <- capture.output(CD49BSCSign(rmatrix, nametype = "SYMBOL", tumorTissue = "prostate"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(CD49BSCSign(rmatrix, nametype = "SYMBOL", tumorTissue = "prostate"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })

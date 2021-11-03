@@ -9,8 +9,8 @@ test_that("TLSSign works", {
     expect_true("TLS" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"TLS"], ncol(assay(myres)))
     expect_type(colData(myres)[,"TLS"], "double")
-    myoutput <- capture.output(TLSSign(rmatrix, nametype = "SYMBOL", tumorTissue = "skin"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(TLSSign(rmatrix, nametype = "SYMBOL", tumorTissue = "skin"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -21,8 +21,8 @@ test_that("ExpandedImmuneSign works", {
     expect_true("ExpandedImmune" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ExpandedImmune"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ExpandedImmune"], "double")
-    myoutput <- capture.output(expandedImmuneSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(expandedImmuneSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -33,8 +33,8 @@ test_that("IFNSign works", {
     expect_true("IFN" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"IFN"], ncol(assay(myres)))
     expect_type(colData(myres)[,"IFN"], "double")
-    myoutput <- capture.output(IFNSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(IFNSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -45,8 +45,8 @@ test_that("CYTSign works", {
     expect_true("CYT" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"CYT"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CYT"], "double")
-    myoutput <- capture.output(CYTSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(CYTSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -57,8 +57,8 @@ test_that("MitoticIndexSign works", {
     expect_true("MitoticIndex" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"MitoticIndex"], ncol(assay(myres)))
     expect_type(colData(myres)[,"MitoticIndex"], "double")
-    myoutput <- capture.output(mitoticIndexSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(mitoticIndexSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -69,8 +69,8 @@ test_that("MatrisomeSign works", {
     expect_true("Matrisome" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"Matrisome"], ncol(assay(myres)))
     expect_type(colData(myres)[,"Matrisome"], "integer")
-    myoutput <- capture.output(matrisomeSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(matrisomeSign(rmatrix, nametype = "SYMBOL", tumorTissue = "pan-tissue"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
@@ -81,8 +81,8 @@ test_that("immunoScoreSign works", {
     expect_true("ImmunoScoreRoh" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ImmunoScoreRoh"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmunoScoreRoh"], "double")
-    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL", author = "Roh"))
-    myoutput <- substring(myoutput[1], regexpr("g ", myoutput[1])+2, regexpr("of", myoutput[1])-3)
+    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL", author = "Roh"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2, regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
