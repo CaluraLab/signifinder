@@ -10,5 +10,6 @@ GetAggregatedSpot(dataset)
 \item{dataset}{Seurat object of a 10X Visium dataset}
 }
 \description{
-Given a 10X Visium dataset, it reassigns to each spot the aggregation of it with the nearest.
+Given a 10X Visium dataset, it reassigns to each spot the aggregation of it
+with the nearest.
 }

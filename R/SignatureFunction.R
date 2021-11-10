@@ -354,24 +354,29 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 #' @import org.Hs.eg.db
 #'
 #' @export
-consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", method = "consensusOV", ...){
+consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
+                            method = "consensusOV", ...){
 
     firstCheck(nametype, tumorTissue, "consensusOVSign")
 
     datasetm <- getMatrix(dataset)
 
     if(nametype!="ENTREZID"){
-        genename <- mapIds(org.Hs.eg.db, keys = row.names(datasetm), column = "ENTREZID",
-                           keytype = nametype, multiVals = "first")
+        genename <- mapIds(org.Hs.eg.db, keys = row.names(datasetm),
+                            column = "ENTREZID", keytype = nametype,
+                            multiVals = "first")
         datasetm <- datasetm[!is.na(genename),]
         genename <- genename[!is.na(genename)]
         datasetm <- datasetm[!duplicated(genename),]
         genename <- genename[!duplicated(genename)]
     } else {genename <- row.names(datasetm)}
 
-    consensus_subtypes <- get.subtypes(expression.dataset=datasetm, entrez.ids=genename, method=method, ...)
+    consensus_subtypes <- get.subtypes(expression.dataset=datasetm,
+                                    entrez.ids=genename, method=method, ...)
 
-    return(returnAsInput(userdata = dataset, result = t(consensus_subtypes$rf.probs), SignName = "", datasetm))
+    return(returnAsInput(userdata = dataset,
+                        result = t(consensus_subtypes$rf.probs),
+                        SignName = "", datasetm))
 }
 
 
@@ -403,7 +408,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     if(nametype!="SYMBOL"){
         IPSdata[,c(1,2)] <- data.frame(lapply(IPSdata[,c(1,2)], function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first"))))}
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
+                                    keytype="SYMBOL", multiVals="first"))))}
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
@@ -413,7 +419,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     ind <- which(is.na(match(IPSdata$GENE, row.names(datasetm))))
     MISSING_GENES <- IPSdata$GENE[ind]
-    if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
+    if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ",
+                                    MISSING_GENES, "\n")}
 
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
@@ -434,7 +441,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     ipsres <- data.frame(IPS, MHC, CP, EC, SC)
     row.names(ipsres) <- sample_names
-    return(returnAsInput(userdata = dataset, result = t(ipsres), SignName = "", datasetm))
+    return(returnAsInput(userdata = dataset, result = t(ipsres),
+                        SignName = "", datasetm))
 }
 
 
@@ -457,14 +465,18 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue") {
+matrisomeSign <- function(dataset, nametype = "SYMBOL",
+                        tumorTissue = "pan-tissue") {
 
     firstCheck(nametype, tumorTissue, "matrisomeSign")
 
     datasetm <- getMatrix(dataset)
-    median_cm <- statScore(Matrisomedata, datasetm = datasetm, nametype = nametype, typeofstat = "median", namesignature = "matrisomeSign")
+    median_cm <- statScore(Matrisomedata, datasetm = datasetm,
+                        nametype = nametype, typeofstat = "median",
+                        namesignature = "matrisomeSign")
 
-    return(returnAsInput(userdata = dataset, result = median_cm, SignName = "Matrisome", datasetm))
+    return(returnAsInput(userdata = dataset, result = median_cm,
+                        SignName = "Matrisome", datasetm))
 }
 
 
@@ -486,14 +498,18 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissu
 #' @import org.Hs.eg.db
 #'
 #' @export
-mitoticIndexSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue") {
+mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
+                            tumorTissue = "pan-tissue") {
 
     firstCheck(nametype, tumorTissue, "mitoticIndexSign")
 
     datasetm <- getMatrix(dataset)
-    MI_means <- statScore(MitoticIndexdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean", namesignature = "mitoticIndexSign")
+    MI_means <- statScore(MitoticIndexdata, datasetm = datasetm,
+                        nametype = nametype, typeofstat = "mean",
+                        namesignature = "mitoticIndexSign")
 
-    return(returnAsInput(userdata = dataset, result = MI_means, SignName = "MitoticIndex", datasetm))
+    return(returnAsInput(userdata = dataset, result = MI_means,
+                        SignName = "MitoticIndex", datasetm))
 }
 
 
@@ -521,9 +537,11 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "CYTSign")
 
     datasetm <- getMatrix(dataset)
-    CYTScore <- statScore(CYTdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang", namesignature = "CYTSign")
+    CYTScore <- statScore(CYTdata, datasetm = datasetm, nametype = nametype,
+                        typeofstat = "meang", namesignature = "CYTSign")
 
-    return(returnAsInput(userdata = dataset, result = CYTScore, SignName = "CYT", datasetm))
+    return(returnAsInput(userdata = dataset, result = CYTScore,
+                        SignName = "CYT", datasetm))
 }
 
 
@@ -550,9 +568,11 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "IFNSign")
 
     datasetm <- getMatrix(dataset)
-    IFNscore <- statScore(IFNdata, datasetm = datasetm, nametype = nametype, typeofstat = "mean", namesignature = "IFNSign")
+    IFNscore <- statScore(IFNdata, datasetm = datasetm, nametype = nametype,
+                        typeofstat = "mean", namesignature = "IFNSign")
 
-    return(returnAsInput(userdata = dataset, result = IFNscore, SignName = "IFN", datasetm))
+    return(returnAsInput(userdata = dataset, result = IFNscore,
+                        SignName = "IFN", datasetm))
 }
 
 
@@ -574,14 +594,18 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-expandedImmuneSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
+                                tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
-    ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm, nametype = nametype, typeofstat = "mean", namesignature = "expandedImmuneSign")
+    ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm,
+                                    nametype = nametype, typeofstat = "mean",
+                                    namesignature = "expandedImmuneSign")
 
-    return(returnAsInput(userdata = dataset, result = ExpandedImmunescore, SignName = "ExpandedImmune", datasetm))
+    return(returnAsInput(userdata = dataset, result = ExpandedImmunescore,
+                        SignName = "ExpandedImmune", datasetm))
 }
 
 
@@ -609,9 +633,11 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
     firstCheck(nametype, tumorTissue, "TLSSign")
 
     datasetm <- getMatrix(dataset)
-    TLSScore <- statScore(TLSdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang", namesignature = "TLSSign")
+    TLSScore <- statScore(TLSdata, datasetm = datasetm, nametype = nametype,
+                        typeofstat = "meang", namesignature = "TLSSign")
 
-    return(returnAsInput(userdata = dataset, result = TLSScore, SignName = "TLS", datasetm))
+    return(returnAsInput(userdata = dataset, result = TLSScore,
+                        SignName = "TLS", datasetm))
 }
 
 
@@ -638,8 +664,48 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
     firstCheck(nametype, tumorTissue, "CD49BSCSign")
 
     datasetm <- getMatrix(dataset)
-    CD49BSCScore <- coefficientsScore(CD49BSCdata, datasetm = datasetm, nametype = nametype, namesignature = "CD49BSCSign")
+    CD49BSCScore <- coefficientsScore(CD49BSCdata, datasetm = datasetm,
+                    nametype = nametype, namesignature = "CD49BSCSign")
 
-    return(returnAsInput(userdata = dataset, result = CD49BSCScore, SignName = "CD49BSC", datasetm))
+    return(returnAsInput(userdata = dataset, result = CD49BSCScore,
+                        SignName = "CD49BSC", datasetm))
 }
 
+
+#' Chromosomal instability Signature
+#'
+#' This signature is computed accordingly to the reference paper,
+#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
+#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#'
+#' @return A SummarizedExperiment object in which the score will be added in the
+#' \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+CINSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
+                    typeofCIN = 70){
+
+    firstCheck(nametype, tumorTissue, "CINSign")
+    if (!(typeofCIN %in% c(70,25))){stop("typeofCIN must be either 70 or 25")}
+
+    if(nametype!="SYMBOL"){CINdata <- mapIds(org.Hs.eg.db, keys = CINdata,
+                                        column = nametype, keytype = "SYMBOL",
+                                        multiVals = "first")}
+    CINdata <- CINdata[seq_len(typeofCIN)]
+
+    datasetm <- getMatrix(dataset)
+
+    cinper <- (sum(CINdata %in% row.names(datasetm))/length(CINdata))*100
+    cat(paste0("CINSign function is using", round(cinper), "% of genes\n"))
+
+    CINscore <- colSums(datasetm[intersect(row.names(datasetm), CINdata), ])
+    return(returnAsInput(userdata = dataset, result = CINscore,
+                        SignName = "CIN", datasetm))
+}

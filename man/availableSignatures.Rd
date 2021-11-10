@@ -24,5 +24,6 @@ availableSignatures(
 a data frame
 }
 \description{
-It shows a table containing all the information of the signatures collected in the package.
+It shows a table containing all the information of the signatures collected
+in the package.
 }
