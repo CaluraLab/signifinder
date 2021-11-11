@@ -27,7 +27,8 @@ SignatureNames <- c("Epithelial",
                     "ExpandedImmune",
                     "TLS",
                     "CD49BSC",
-                    "CIN")
+                    "CIN",
+                    "CCS")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -39,20 +40,22 @@ GetGenes <- function(name){
         g <- EMTdata$Gene_Symbol[EMTdata$Category==name]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
         g <- PlatinumResistancedata[[name]]
-    } else if (name %in% c("IMR_consensus", "DIF_consensus",
-                            "PRO_consensus", "MES_consensus")){
+    } else if (name %in% c(
+        "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
         stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and
              MES_consensus are not available")
     } else if(name %in% c("MHC", "CP", "EC", "SC")){
         g <- IPSdata$GENE[IPSdata$CLASS==name]
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
-        if(name %in% c("Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS",
-                    "LipidMetabolism", "PyroptosisYe", "PyroptosisShao",
-                    "PyroptosisLin", "PyroptosisLi", "CD49BSC")){
+        if(name %in% c(
+            "Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS",
+            "LipidMetabolism", "PyroptosisYe", "PyroptosisShao",
+            "PyroptosisLin", "PyroptosisLi", "CD49BSC")){
             g <- datavar[,1]
-        } else if (name %in% c("Matrisome", "MitoticIndex", "CYT", "CIN",
-                            "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS")){
+        } else if (name %in% c(
+            "Matrisome", "MitoticIndex", "CYT", "CIN", "CCS", "ImmunoScoreRoh",
+            "IFN", "ExpandedImmune", "TLS")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

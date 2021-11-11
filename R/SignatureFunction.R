@@ -750,17 +750,48 @@ CINSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
     firstCheck(nametype, tumorTissue, "CINSign")
     if (!(typeofCIN %in% c(70,25))){stop("typeofCIN must be either 70 or 25")}
 
-    if(nametype!="SYMBOL"){CINdata <- mapIds(org.Hs.eg.db, keys = CINdata,
-                                        column = nametype, keytype = "SYMBOL",
-                                        multiVals = "first")}
     CINdata <- CINdata[seq_len(typeofCIN)]
 
     datasetm <- getMatrix(dataset)
 
-    cinper <- (sum(CINdata %in% row.names(datasetm))/length(CINdata))*100
-    cat(paste0("CINSign function is using", round(cinper), "% of genes\n"))
+    CINscore <- statScore(
+        CINdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum")
 
-    CINscore <- colSums(datasetm[intersect(row.names(datasetm), CINdata), ])
     return(returnAsInput(userdata = dataset, result = CINscore,
                         SignName = "CIN", datasetm))
+}
+
+
+#' Cell-cycle Signature classifier
+#'
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples. Alternatively an
+#' object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay where rows
+#' correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#'
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom AnnotationDbi mapIds
+#' @import org.Hs.eg.db
+#'
+#' @export
+CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+
+    firstCheck(nametype, tumorTissue, "CCSSign")
+
+    datasetm <- getMatrix(dataset)
+
+    CCSscore <- statScore(
+        CCSdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum")
+
+    return(returnAsInput(
+        userdata = dataset, result = CCSscore, SignName = "CCS", datasetm))
 }
