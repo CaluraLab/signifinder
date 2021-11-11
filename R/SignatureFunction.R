@@ -21,37 +21,48 @@
 #' @import org.Hs.eg.db
 #'
 #' @export
-EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...) {
+EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
+                    pvalues = FALSE, nperm = 100, ...) {
 
     firstCheck(nametype, tumorTissue, "EMTSign")
 
     if(nametype!="SYMBOL"){
-        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = EMTdata$Gene_Symbol, column = nametype,
-                                      keytype = "SYMBOL", multiVals = "first")}
+        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = EMTdata$Gene_Symbol,
+                                    column = nametype, keytype = "SYMBOL",
+                                    multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
     Signature_EL <- EMTdata[grep('Epithelial', EMTdata$Category),]
     Signature_ML <- EMTdata[-grep('Epithelial', EMTdata$Category),]
 
-    eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/nrow(Signature_EL))*100
-    mper <- (sum(Signature_ML$Gene_Symbol %in% row.names(datasetm))/nrow(Signature_ML))*100
-    cat(paste0("EMTSign function is using ", round(eper), "% of epithelial-like genes\n",
-               "EMTSign function is using ", round(mper), "% of mesenchymal-like genes\n"))
+    eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
+                nrow(Signature_EL))*100
+    mper <- (sum(Signature_ML$Gene_Symbol %in% row.names(datasetm))/
+                nrow(Signature_ML))*100
+    cat(paste0("EMTSign function is using ", round(eper),
+                "% of epithelial-like genes\n", "EMTSign function is using ",
+                round(mper), "% of mesenchymal-like genes\n"))
 
-    gene_sets <- list(Epithelial=Signature_EL$Gene_Symbol, Mesenchymal=Signature_ML$Gene_Symbol)
+    gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
+                        Mesenchymal = Signature_ML$Gene_Symbol)
 
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = gene_sets, method = "gsva",
-                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
+    args <- matchArguments(dots, list(expr = datasetm,
+                                        gset.idx.list = gene_sets,
+                                        method = "gsva", kcdf = "Gaussian",
+                                        min.sz = 5, ssgsea.norm = FALSE,
+                                        verbose = FALSE))
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
     if(pvalues){
-        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets, gsvaResult = gsva_matrix,
-                                 nperm = nperm, args = args)
+        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets,
+                                    gsvaResult = gsva_matrix,
+                                    nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
-    return(returnAsInput(userdata = dataset, result = gsva_matrix, SignName = "", datasetm))
+    return(returnAsInput(userdata = dataset, result = gsva_matrix,
+                            SignName = "", datasetm))
 }
 
 
@@ -74,7 +85,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues
 #' @import org.Hs.eg.db
 #'
 #' @export
-pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", author = "Ye"){
+pyroptosisSign <- function(dataset, nametype = "SYMBOL",
+                            tumorTissue = "ovary", author = "Ye"){
 
     firstCheck(nametype, tumorTissue, "pyroptosisSign", author)
 
@@ -82,9 +94,12 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 
     datasetm <- getMatrix(dataset)
     # nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
-    Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm, nametype = nametype, namesignature = "pyroptosisSign")
+    Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm,
+                                    nametype = nametype,
+                                    namesignature = "pyroptosisSign")
 
-    return(returnAsInput(userdata = dataset, result = Piroscore, SignName = paste0("Pyroptosis", author), datasetm))
+    return(returnAsInput(userdata = dataset, result = Piroscore,
+                        SignName = paste0("Pyroptosis", author), datasetm))
 }
 
 
@@ -106,14 +121,18 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", 
 #' @import org.Hs.eg.db
 #'
 #' @export
-ferroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+ferroptosisSign <- function(dataset, nametype = "SYMBOL",
+                            tumorTissue = "ovary"){
 
     firstCheck(nametype, tumorTissue, "ferroptosisSign")
 
     datasetm <- getMatrix(dataset)
-    ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm, nametype = nametype, namesignature = "ferroptosisSign")
+    ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm,
+                                    nametype = nametype,
+                                    namesignature = "ferroptosisSign")
 
-    return(returnAsInput(userdata = dataset, result = ferrscore, SignName = "Ferroptosis", datasetm))
+    return(returnAsInput(userdata = dataset, result = ferrscore,
+                            SignName = "Ferroptosis", datasetm))
 }
 
 
@@ -135,14 +154,18 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
 #' @import org.Hs.eg.db
 #'
 #' @export
-lipidMetabolismSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary") {
+lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
+                                tumorTissue = "ovary") {
 
     firstCheck(nametype, tumorTissue, "lipidMetabolismSign")
 
     datasetm <- getMatrix(dataset)
-    lipidscore <- coefficientsScore(LipidMetabolismdata, datasetm = datasetm, nametype = nametype, namesignature = "lipidMetabolismSign")
+    lipidscore <- coefficientsScore(LipidMetabolismdata, datasetm = datasetm,
+                                    nametype = nametype,
+                                    namesignature = "lipidMetabolismSign")
 
-    return(returnAsInput(userdata = dataset, result = lipidscore, SignName = "LipidMetabolism", datasetm))
+    return(returnAsInput(userdata = dataset, result = lipidscore,
+                            SignName = "LipidMetabolism", datasetm))
 }
 
 
@@ -167,14 +190,16 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ova
 #' @import org.Hs.eg.db
 #'
 #' @export
-hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+hypoxiaSign <- function(dataset, nametype = "SYMBOL",
+                        tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "hypoxiaSign")
 
     if(nametype=="SYMBOL") { genetouse <- Hypoxiadata$Gene_Symbol
     } else if(nametype=="ENSEMBL") { genetouse <- Hypoxiadata$Gene_Ensembl
     } else (genetouse <- mapIds(org.Hs.eg.db, keys = Hypoxiadata$Gene_Symbol,
-                                column = nametype, keytype = "SYMBOL", multiVals = "first"))
+                                column = nametype, keytype = "SYMBOL",
+                                multiVals = "first"))
 
     datasetm <- getMatrix(dataset)
 
@@ -185,7 +210,9 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"
 
     med_counts <- colMedians(as.matrix(datasetm))
 
-    return(returnAsInput(userdata = dataset, result = as.vector(scale(med_counts)), SignName = "Hypoxia", datasetm))
+    return(returnAsInput(userdata = dataset,
+                            result = as.vector(scale(med_counts)),
+                            SignName = "Hypoxia", datasetm))
 }
 
 
@@ -211,34 +238,46 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"
 #' @import org.Hs.eg.db
 #'
 #' @export
-platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...){
+platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
+                                    tumorTissue = "ovary", pvalues = FALSE,
+                                    nperm = 100, ...){
 
     firstCheck(nametype, tumorTissue, "platinumResistanceSign")
 
     if(nametype!= "SYMBOL"){
         PlatinumResistancedata <- lapply(PlatinumResistancedata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first")))}
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
+                                    keytype="SYMBOL", multiVals="first")))}
 
     datasetm <- getMatrix(dataset)
 
-    upper <- (sum(PlatinumResistancedata$PlatinumResistanceUp %in% row.names(datasetm))/length(PlatinumResistancedata$PlatinumResistanceUp))*100
-    downper <- (sum(PlatinumResistancedata$PlatinumResistanceDown %in% row.names(datasetm))/length(PlatinumResistancedata$PlatinumResistanceDown))*100
+    upper <- (sum(
+        PlatinumResistancedata$PlatinumResistanceUp %in% row.names(datasetm)
+        )/length(PlatinumResistancedata$PlatinumResistanceUp))*100
+    downper <- (sum(
+        PlatinumResistancedata$PlatinumResistanceDown %in% row.names(datasetm)
+        )/length(PlatinumResistancedata$PlatinumResistanceDown))*100
 
-    cat(paste0("platinumResistanceSign function is using ", round(upper), "% of up-genes\n",
-               "platinumResistanceSign function is using ", round(downper), "% of down-genes\n"))
+    cat(paste0("platinumResistanceSign function is using ", round(upper),
+                "% of up-genes\n", "platinumResistanceSign function is using ",
+                round(downper), "% of down-genes\n"))
 
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = datasetm, gset.idx.list = PlatinumResistancedata, method = "gsva",
-                                      kcdf = "Gaussian", min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
+    args <- matchArguments(dots, list(
+        expr = datasetm, gset.idx.list = PlatinumResistancedata,
+        method = "gsva", kcdf = "Gaussian", min.sz = 5,
+        ssgsea.norm = FALSE, verbose = FALSE))
     gsva_count <- suppressWarnings(do.call(gsva, args))
     rownames(gsva_count) <- c("PlatinumResistanceUp", "PlatinumResistanceDown")
 
     if(pvalues){
-        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = PlatinumResistancedata,
-                                 gsvaResult = gsva_matrix, nperm = nperm, args = args)
+        gsva_pval <- GSVAPvalues(
+            expr = datasetm, gset.idx.list = PlatinumResistancedata,
+            gsvaResult = gsva_matrix, nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
-    return(returnAsInput(userdata = dataset, result = gsva_count, SignName = "", datasetm))
+    return(returnAsInput(
+        userdata = dataset, result = gsva_count, SignName = "", datasetm))
 }
 
 
@@ -259,30 +298,36 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "
 #' @import org.Hs.eg.db
 #'
 #' @export
-metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue", nsamples){
+metabolicSign <- function(
+    DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue", nsamples){
 
     firstCheck(nametype, tumorTissue, "metabolicSign")
 
-    if(!is.numeric(nsamples)){stop("The nsample parameter must be a numeric vector")}
+    if(!is.numeric(nsamples)){
+        stop("The nsample parameter must be a numeric vector")}
 
     gene_score <- abs(DEdata[,1] -log(DEdata[,2]))
     names(gene_score) <- row.names(DEdata)
 
     if(nametype!="SYMBOL"){
         Metabolismdata <- lapply(Metabolismdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype, keytype="SYMBOL", multiVals="first")))}
+            suppressMessages(mapIds(
+                org.Hs.eg.db, keys=x, column=nametype,
+                keytype="SYMBOL", multiVals="first")))}
 
     gene_pathway <- lapply(Metabolismdata, intersect, row.names(DEdata))
-    path_score <- sapply(gene_pathway, function(x) sum(gene_score[x]))/sqrt(nsamples)
+    path_score <- sapply(
+        gene_pathway, function(x) sum(gene_score[x]))/sqrt(nsamples)
     pvals <- c()
     for(i in 1:length(path_score)){
         z <- c()
         for(j in 1:10000){
-            bootscore <- sample(gene_score, size=lengths(gene_pathway)[i], replace = TRUE)
+            bootscore <- sample(
+                gene_score, size=lengths(gene_pathway)[i], replace = TRUE)
             z[j] <- sum(bootscore)/sqrt(nsamples)}
         pvals[i] <- sum(z>=path_score[i])/10000
     }
-    return(cbind(MetabolicScore=path_score, Pvalue=pvals))
+    return(cbind(MetabolicScore = path_score, Pvalue = pvals))
 }
 
 
@@ -305,7 +350,8 @@ metabolicSign <- function(DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue
 #' @import org.Hs.eg.db
 #'
 #' @export
-immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary", author = "Hao"){
+immunoScoreSign <- function(dataset, nametype = "SYMBOL",
+                            tumorTissue = "ovary", author = "Hao"){
 
     firstCheck(nametype, tumorTissue, "immunoScoreSign", author)
 
@@ -313,23 +359,31 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
     if(tumorTissue=="ovary"){
         if(nametype!="SYMBOL"){
-            ImmunoScoreHaodata$genes <- mapIds(org.Hs.eg.db, keys = ImmunoScoreHaodata$genes,
-                                                 column = nametype, keytype = "SYMBOL", multiVals = "first")}
+            ImmunoScoreHaodata$genes <- mapIds(
+                org.Hs.eg.db, keys = ImmunoScoreHaodata$genes,
+                column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
         g <- intersect(row.names(datasetm), ImmunoScoreHaodata$genes)
         gper <- (length(g)/length(ImmunoScoreHaodata$genes))*100
-        cat(paste0("immunoScoreSign function is using ", round(gper), "% of genes\n"))
+        cat(paste0(
+            "immunoScoreSign function is using ", round(gper), "% of genes\n"))
 
         subdataset <- datasetm[g,]
-        ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes %in% g,]
+        ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes%in%g,]
 
         SE <- (ImmunoScoreHaodata$HR - ImmunoScoreHaodata$`95CI_L`)/1.96
         k <- (1 - ImmunoScoreHaodata$HR)/SE
-        ImmunoScores <- unlist(lapply(seq_len(ncol(subdataset)), function(p) sum(k*subdataset[,p], na.rm = TRUE)))
+        ImmunoScores <- unlist(lapply(
+            seq_len(ncol(subdataset)), function(p){
+                sum(k*subdataset[,p], na.rm = TRUE)}))
     } else if(tumorTissue=="pan-tissue"){
-        ImmunoScores <- statScore(ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype, typeofstat = "meang", namesignature = "immunoScoreSign")}
+        ImmunoScores <- statScore(
+            ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype,
+            typeofstat = "meang", namesignature = "immunoScoreSign")}
 
-    return(returnAsInput(userdata = dataset, result = ImmunoScores, SignName = paste0("ImmunoScore", author), datasetm))
+    return(returnAsInput(
+        userdata = dataset, result = ImmunoScores,
+        SignName = paste0("ImmunoScore", author), datasetm))
 }
 
 
@@ -425,7 +479,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
         GE <- datasetm[,i]
-        Z1 <- (datasetm[match(IPSdata$GENE, row.names(datasetm)),i]-mean(GE))/sd(GE)
+        Z1 <- (datasetm[match(
+            IPSdata$GENE, row.names(datasetm)),i]-mean(GE))/sd(GE)
         WEIGHT <- NULL; MIG <- NULL; k <- 1
         for (gen in unique(IPSdata$NAME)) {
             MIG[k] <- mean(Z1[which(IPSdata$NAME==gen)], na.rm=TRUE)
