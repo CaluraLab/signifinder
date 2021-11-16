@@ -1,20 +1,24 @@
 
-#' Endothelial-Mesenchymal Transition Signature
+#' Epithelial-Mesenchymal Transition Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
-#' @return A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Epithelial and Mesenchymal
+#' scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
@@ -68,18 +72,22 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
 #' Pyroptosis Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param author first author of the specific signature pubblication.
 #'
-#' @return A SummarizedExperiment object in which the Pyroptosis scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Pyroptosis score
+#' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -105,17 +113,21 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
 
 #' Ferroptosis Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the Ferroptosis score will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Ferroptosis score
+#' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -138,17 +150,21 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL",
 
 #' Lipid Metabolism Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the Lipid scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Lipid scores is
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -171,17 +187,21 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
 
 #' Hypoxia Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the Hypoxia scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Hypoxia scores is
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @importFrom matrixStats colMedians
@@ -218,12 +238,16 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL",
 
 #' Platinum Resistance Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param pvalues logical. It allows to compute p-values by permutations.
@@ -283,8 +307,8 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 
 #' Metabolic Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
 #' @param DEdata A matrix of differentially expressed genes where rows correspond to genes,
 #' the first column to Log2FoldChange and second column to its adjusted p-value.
@@ -292,7 +316,8 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param nsamples number of samples in the DEdata.
 #'
-#' @return A data frame with a Metabolic score for each pathway and the respective p-values.
+#' @return A data frame with a Metabolic score
+#' for each pathway and the respective p-values.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -333,12 +358,16 @@ metabolicSign <- function(
 
 #' Immunogenic Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param author first author of the specific signature pubblication.
@@ -389,19 +418,23 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 
 #' ConsensusOV Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param method the subtyping method to use. Default is "consensusOV".
 #' @param ... optional parameters to be passed to \code{\link[consensusOV]{get.subtypes}}.
 #'
-#' @return A SummarizedExperiment object in which the COnsensusOV scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the COnsensusOV scores
+#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom consensusOV get.subtypes
 #' @importFrom AnnotationDbi mapIds
@@ -436,17 +469,22 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
 #' ImmunoPhenoScore Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the IPS, MHC, CP, EC and SC scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the
+#' IPS, MHC, CP, EC and SC scores will be added in the
+#' \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -503,17 +541,21 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
 #' Core Matrisome Gene signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the median gene expression based on the core matrisome signature will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom matrixStats colMedians
 #' @importFrom AnnotationDbi mapIds
@@ -537,17 +579,21 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL",
 
 #' Mitotic Index
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the means gene expression based on the mitotix index will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -570,17 +616,21 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 
 #' Local Immune Cytolytic Activity (CYT) Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the means gene expression based on the mitotix index will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @importFrom labstatR meang
@@ -602,17 +652,21 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
 #' IFN-γ Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the score will be added in the
-#' \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -633,17 +687,21 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
 #' ExpandedImmune Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the score will be added in the
-#' \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -666,17 +724,21 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
 
 #' Tertiary Lymphoid Structures (TLS) Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the score will be added in the
-#' \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @importFrom labstatR meang
@@ -698,17 +760,21 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
 
 #' CD49fHi Basal Stem Cell Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #'
-#' @return A SummarizedExperiment object in which the score will be added in the
-#' \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -729,16 +795,20 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 
 #' Chromosomal instability Signature
 #'
-#' This signature is computed accordingly to the reference paper,
-#' to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' This signature is computed accordingly to the reference paper, to have more
+#' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-#' containing an assay where rows correspond to genes and columns correspond to samples.
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #'
-#' @return A SummarizedExperiment object in which the score will be added in the
-#' \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
