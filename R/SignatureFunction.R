@@ -223,15 +223,11 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm <- getMatrix(dataset)
 
-    hyper <- (sum(genetouse %in% rownames(datasetm))/nrow(Hypoxiadata))*100
-    cat(paste0("hypoxiaSign function is using ", round(hyper), "% of genes\n"))
-
-    datasetm <- datasetm[rownames(datasetm) %in% genetouse, ]
-
-    med_counts <- colMedians(as.matrix(datasetm))
+    Hypoxiascore<-statScore(genetouse, datasetm = datasetm, nametype = "SYMBOL",
+                            typeofstat = "median", namesignature= "hypoxiaSign")
 
     return(returnAsInput(userdata = dataset,
-                            result = as.vector(scale(med_counts)),
+                            result = as.vector(scale(Hypoxiascore)),
                             SignName = "Hypoxia", datasetm))
 }
 
@@ -814,7 +810,8 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-CINSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
+CINSign <- function(dataset, nametype = "SYMBOL",
+                    tumorTissue = "breast, lung, brain, lymphatic system",
                     typeofCIN = 70){
 
     firstCheck(nametype, tumorTissue, "CINSign")
@@ -825,7 +822,8 @@ CINSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
     datasetm <- getMatrix(dataset)
 
     CINscore <- statScore(
-        CINdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum")
+        CINdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum",
+        namesignature = "CINSign")
 
     return(returnAsInput(userdata = dataset, result = CINscore,
                         SignName = "CIN", datasetm))
@@ -860,7 +858,8 @@ CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     datasetm <- getMatrix(dataset)
 
     CCSscore <- statScore(
-        CCSdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum")
+        CCSdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum",
+        namesignature = "CCSSign")
 
     return(returnAsInput(
         userdata = dataset, result = CCSscore, SignName = "CCS", datasetm))
