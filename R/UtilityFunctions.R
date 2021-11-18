@@ -39,7 +39,8 @@ GetGenes <- function(name){
     if(name %in% c("Epithelial", "Mesenchymal")){
         g <- EMTdata$Gene_Symbol[EMTdata$Category==name]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
-        g <- PlatinumResistancedata[[name]]
+        g <- PlatinumResistancedata$Gene_Symbol[
+            PlatinumResistancedata$Category==name]
     } else if (name %in% c(
         "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
         stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and

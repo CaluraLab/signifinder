@@ -250,8 +250,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL",
 #' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
-#' @return A SummarizedExperiment object in which the Platinum Resistance scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Platinum Resistance scores
+#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
 #' @importFrom AnnotationDbi mapIds
@@ -264,35 +264,39 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 
     firstCheck(nametype, tumorTissue, "platinumResistanceSign")
 
-    if(nametype!= "SYMBOL"){
-        PlatinumResistancedata <- lapply(PlatinumResistancedata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
-                                    keytype="SYMBOL", multiVals="first")))}
+    if(nametype!="SYMBOL"){
+        PlatinumResistancedata$Gene_Symbol <- mapIds(
+            org.Hs.eg.db, keys = PlatinumResistancedata$Gene_Symbol,
+            column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
-    upper <- (sum(
-        PlatinumResistancedata$PlatinumResistanceUp %in% row.names(datasetm)
-        )/length(PlatinumResistancedata$PlatinumResistanceUp))*100
-    downper <- (sum(
-        PlatinumResistancedata$PlatinumResistanceDown %in% row.names(datasetm)
-        )/length(PlatinumResistancedata$PlatinumResistanceDown))*100
+    Signature_up <- PlatinumResistancedata[
+        grep('PlatinumResistanceUp', PlatinumResistancedata$Category),]
+    Signature_down <- PlatinumResistancedata[
+        -grep('PlatinumResistanceUp', PlatinumResistancedata$Category),]
 
+    upper <- (sum(Signature_up$Gene_Symbol %in% row.names(datasetm))/
+                 nrow(Signature_up))*100
+    downper <- (sum(Signature_down$Gene_Symbol %in% row.names(datasetm))/
+                 nrow(Signature_down))*100
     cat(paste0("platinumResistanceSign function is using ", round(upper),
                 "% of up-genes\n", "platinumResistanceSign function is using ",
                 round(downper), "% of down-genes\n"))
 
+    gene_sets <- list(PlatinumResistanceUp = Signature_up$Gene_Symbol,
+                      PlatinumResistanceDown = Signature_down$Gene_Symbol)
+
     dots <- list(...)
     args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = PlatinumResistancedata,
+        expr = datasetm, gset.idx.list = gene_sets,
         method = "gsva", kcdf = "Gaussian", min.sz = 5,
         ssgsea.norm = FALSE, verbose = FALSE))
     gsva_count <- suppressWarnings(do.call(gsva, args))
-    rownames(gsva_count) <- c("PlatinumResistanceUp", "PlatinumResistanceDown")
 
     if(pvalues){
         gsva_pval <- GSVAPvalues(
-            expr = datasetm, gset.idx.list = PlatinumResistancedata,
+            expr = datasetm, gset.idx.list = gene_sets,
             gsvaResult = gsva_matrix, nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
@@ -306,8 +310,9 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #' This signature is computed accordingly to the reference paper, to have more
 #' details explore the function \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param DEdata A matrix of differentially expressed genes where rows correspond to genes,
-#' the first column to Log2FoldChange and second column to its adjusted p-value.
+#' @param DEdata A matrix of differentially expressed genes where rows
+#' correspond to genes, the first column to Log2FoldChange and second
+#' column to its adjusted p-value.
 #' @param nametype gene name ID of your DEdata (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param nsamples number of samples in the DEdata.
@@ -368,8 +373,8 @@ metabolicSign <- function(
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param author first author of the specific signature pubblication.
 #'
-#' @return A SummarizedExperiment object in which the Immunogenic scores will be added
-#' in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which the Immunogenic scores will
+#' be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
 #' @import org.Hs.eg.db
@@ -427,7 +432,8 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param method the subtyping method to use. Default is "consensusOV".
-#' @param ... optional parameters to be passed to \code{\link[consensusOV]{get.subtypes}}.
+#' @param ... optional parameters to be passed to
+#' \code{\link[consensusOV]{get.subtypes}}.
 #'
 #' @return A SummarizedExperiment object in which the COnsensusOV scores
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
