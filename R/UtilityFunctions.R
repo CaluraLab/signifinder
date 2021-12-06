@@ -184,9 +184,10 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
        all(datasetm[ourdata$Gene_Symbol, ]==0)){
         warning("The function cannot be used because all the genes of this
         signature are not available (NA) or have expression 0")
-    }
+        ourscore <- rep(NA, length(ourdata$Gene_Symbol))
+    } else {ourscore <- colSums(
+        datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient)}
 
-    ourscore <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient)
     return(ourscore)
 }
 
@@ -205,10 +206,10 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
        all(datasetm[ourdata, ]==0)){
         warning("The function cannot be used because all the genes of this
         signature are not available (NA) or have expression 0")
-    }
+        ourscore <- rep(NA, length(ourdata))
+    } else {ourscore <- apply(
+        datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)}
 
-    ourscore <- apply(datasetm[intersect(row.names(datasetm), ourdata), ],
-                        2, typeofstat)
     return(ourscore)
 }
 
