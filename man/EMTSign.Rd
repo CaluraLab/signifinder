@@ -2,7 +2,7 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{EMTSign}
 \alias{EMTSign}
-\title{Endothelial-Mesenchymal Transition Signature}
+\title{Epithelial-Mesenchymal Transition Signature}
 \usage{
 EMTSign(
   dataset,
@@ -14,9 +14,13 @@ EMTSign(
 )
 }
 \arguments{
-\item{dataset}{Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-containing an assay where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression values. A data frame or a matrix where rows
+correspond to genes and columns correspond to samples.
+Alternatively an object of type \linkS4class{SummarizedExperiment},
+\code{\link[SingleCellExperiment]{SingleCellExperiment}},
+\code{\link[SpatialExperiment]{SpatialExperiment}} or
+\code{\link[SeuratObject]{SeuratObject}} containing an assay
+where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
 
@@ -29,10 +33,10 @@ containing an assay where rows correspond to genes and columns correspond to sam
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}} function.}
 }
 \value{
-A SummarizedExperiment object in which the results of the Endothelial score and Mesenchymal score will be added
-in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which the Epithelial and Mesenchymal
+scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
-This signature is computed accordingly to the reference paper,
-to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper, to have more
+details explore the function \code{\link[signifinder]{availableSignatures}}.
 }
