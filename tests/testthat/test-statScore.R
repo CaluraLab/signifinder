@@ -1,6 +1,6 @@
 library(signifinder)
-library(SummarizedExperiment)
-library(labstatR)
+suppressPackageStartupMessages(library(SummarizedExperiment))
+suppressPackageStartupMessages(library(labstatR))
 
 test_that("TLSSign works", {
     rmatrix <- fakeData("TLS")

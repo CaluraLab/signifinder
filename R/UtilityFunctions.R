@@ -179,6 +179,13 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
                 round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
+
+    if(all(is.na(datasetm[ourdata$Gene_Symbol, ]))|
+       all(datasetm[ourdata$Gene_Symbol, ]==0)){
+        warning("The function cannot be used because all the genes of this
+        signature are not available (NA) or have expression 0")
+    }
+
     ourscore <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient)
     return(ourscore)
 }
@@ -194,6 +201,12 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
                 round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
+    if(all(is.na(datasetm[ourdata, ]))|
+       all(datasetm[ourdata, ]==0)){
+        warning("The function cannot be used because all the genes of this
+        signature are not available (NA) or have expression 0")
+    }
+
     ourscore <- apply(datasetm[intersect(row.names(datasetm), ourdata), ],
                         2, typeofstat)
     return(ourscore)
