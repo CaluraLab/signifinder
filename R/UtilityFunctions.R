@@ -199,6 +199,17 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
     return(ourscore)
 }
 
+dataTransformation <- function(data, trans, inputType){
+    if(inputType=="rnaseq"){
+        g <- rownames(data)
+        glen <- EDASeq::getGeneLengthAndGCContent(id = g, org = "hsa")
+        tdata <- DGEobj.utils::convertCounts(
+            countsMatrix = data, unit = trans, geneLength = glen[,"length"])
+        return(tdata)
+    }
+
+}
+
 #' 7 spots resolution
 #'
 #' Given a 10X Visium dataset, it reassigns to each spot the aggregation of it
