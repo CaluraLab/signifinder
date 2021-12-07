@@ -1,5 +1,5 @@
 library(signifinder)
-library(SummarizedExperiment)
+suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("PyroptosisSign works", {
     pyrnames <- c("PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")

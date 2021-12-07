@@ -38,7 +38,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
     datasetm <- getMatrix(dataset)
 
     Signature_EL <- EMTdata[grep('Epithelial', EMTdata$Category),]
-    Signature_ML <- EMTdata[-grep('Epithelial', EMTdata$Category),]
+    Signature_ML <- EMTdata[grep('Mesenchymal', EMTdata$Category),]
 
     eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
                 nrow(Signature_EL))*100

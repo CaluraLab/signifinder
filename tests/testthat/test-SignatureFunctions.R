@@ -1,5 +1,5 @@
 library(signifinder)
-library(SummarizedExperiment)
+suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("EMTSign work", {
     pyrnames <- c("Epithelial", "Mesenchymal")

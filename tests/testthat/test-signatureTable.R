@@ -1,5 +1,5 @@
 library(signifinder)
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 
 test_that("signatureTable has not double rows", {
     filtTable <- signatureTable[, c("functionName", "tumorTissue", "author")]

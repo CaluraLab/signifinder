@@ -12,8 +12,9 @@ metabolicSign(
 )
 }
 \arguments{
-\item{DEdata}{A matrix of differentially expressed genes where rows correspond to genes,
-the first column to Log2FoldChange and second column to its adjusted p-value.}
+\item{DEdata}{A matrix of differentially expressed genes where rows
+correspond to genes, the first column to Log2FoldChange and second
+column to its adjusted p-value.}
 
 \item{nametype}{gene name ID of your DEdata (row names).}
 
@@ -22,9 +23,10 @@ the first column to Log2FoldChange and second column to its adjusted p-value.}
 \item{nsamples}{number of samples in the DEdata.}
 }
 \value{
-A data frame with a Metabolic score for each pathway and the respective p-values.
+A data frame with a Metabolic score
+for each pathway and the respective p-values.
 }
 \description{
-This signature is computed accordingly to the reference paper,
-to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper, to have more
+details explore the function \code{\link[signifinder]{availableSignatures}}.
 }

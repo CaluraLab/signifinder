@@ -13,9 +13,13 @@ consensusOVSign(
 )
 }
 \arguments{
-\item{dataset}{Expression values. A data frame or a matrix where rows correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment}, \code{\link[SingleCellExperiment]{SingleCellExperiment}}, \code{\link[SpatialExperiment]{SpatialExperiment}} or \code{\link[SeuratObject]{SeuratObject}}
-containing an assay where rows correspond to genes and columns correspond to samples.}
+\item{dataset}{Expression values. A data frame or a matrix where rows
+correspond to genes and columns correspond to samples.
+Alternatively an object of type \linkS4class{SummarizedExperiment},
+\code{\link[SingleCellExperiment]{SingleCellExperiment}},
+\code{\link[SpatialExperiment]{SpatialExperiment}} or
+\code{\link[SeuratObject]{SeuratObject}} containing an assay
+where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
 
@@ -23,13 +27,14 @@ containing an assay where rows correspond to genes and columns correspond to sam
 
 \item{method}{the subtyping method to use. Default is "consensusOV".}
 
-\item{...}{optional parameters to be passed to \code{\link[consensusOV]{get.subtypes}}.}
+\item{...}{optional parameters to be passed to
+\code{\link[consensusOV]{get.subtypes}}.}
 }
 \value{
-A SummarizedExperiment object in which the COnsensusOV scores will be added
-in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which the COnsensusOV scores
+will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
-This signature is computed accordingly to the reference paper,
-to have more details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper, to have more
+details explore the function \code{\link[signifinder]{availableSignatures}}.
 }
