@@ -202,10 +202,10 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
                 round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
-    if(all(is.na(datasetm[ourdata, ]))|
-       all(datasetm[ourdata, ]==0)){
-        warning("The function cannot be used because all the genes of this
-        signature are not available (NA) or have expression 0")
+    ourdataset <- datasetm[ourdata, ]
+    if(sum(is.na(ourdataset))/length(ourdataset) > 0.9){
+        warning("The function cannot be used because more that 90% of the genes
+        of this signature are not available (NA)")
         ourscore <- rep(NA, ncol(datasetm))
     } else {ourscore <- apply(
         datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)}
@@ -282,4 +282,3 @@ availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
         signTable <- signTable[,1:6]}
     return(signTable)
 }
-
