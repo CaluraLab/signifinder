@@ -693,6 +693,9 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
 #'
+#' @param typeofCIN A pre-defined number 25 or 70. It represents the number of
+#' genes on which the score can be calculated. The 25 genes represent a subgroup
+#' derived from the 70.
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'

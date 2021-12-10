@@ -23,6 +23,10 @@ where rows correspond to genes and columns correspond to samples.}
 \item{nametype}{gene name ID of your dataset (row names).}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
+
+\item{typeofCIN}{A pre-defined number 25 or 70. It represents the number of
+genes on which the score can be calculated. The 25 genes represent a subgroup
+derived from the 70.}
 }
 \value{
 A SummarizedExperiment object in which the score will be
