@@ -25,8 +25,6 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
-\item{method}{the subtyping method to use. Default is "consensusOV".}
-
 \item{...}{optional parameters to be passed to
 \code{\link[consensusOV]{get.subtypes}}.}
 }
@@ -35,6 +33,7 @@ A SummarizedExperiment object in which the COnsensusOV scores
 will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
-This signature is computed accordingly to the reference paper, to have more
-details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper,
+to have more details explore the function
+ \code{\link[signifinder]{availableSignatures}}.
 }

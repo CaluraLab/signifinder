@@ -1,8 +1,9 @@
 
 #' Epithelial-Mesenchymal Transition Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @description This signature is computed accordingly to the reference paper,
+#' to have more details explore the function
+#'  \code{\link[signifinder]{availableSignatures}}.
 #'
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
@@ -72,19 +73,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
 #' Pyroptosis Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
-#' @param author first author of the specific signature pubblication.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Pyroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -113,18 +103,8 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
 
 #' Ferroptosis Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Ferroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -419,19 +399,10 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 
 #' ConsensusOV Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
-#' @param method the subtyping method to use. Default is "consensusOV".
+#'
 #' @param ... optional parameters to be passed to
 #' \code{\link[consensusOV]{get.subtypes}}.
 #'
