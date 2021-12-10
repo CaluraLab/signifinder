@@ -27,6 +27,7 @@ A data frame with a Metabolic score
 for each pathway and the respective p-values.
 }
 \description{
-This signature is computed accordingly to the reference paper, to have more
-details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper,
+to have more details explore the function
+ \code{\link[signifinder]{availableSignatures}}.
 }

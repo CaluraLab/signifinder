@@ -27,6 +27,8 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
+\item{author}{first author of the specific signature publication.}
+
 \item{pvalues}{logical. It allows to compute p-values by permutations.}
 
 \item{nperm}{number of permutations.}

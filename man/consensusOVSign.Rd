@@ -25,6 +25,8 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
+\item{method}{the subtyping method to use. Default is "consensusOV".}
+
 \item{...}{optional parameters to be passed to
 \code{\link[consensusOV]{get.subtypes}}.}
 }

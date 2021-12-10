@@ -23,6 +23,8 @@ where rows correspond to genes and columns correspond to samples.}
 \item{nametype}{gene name ID of your dataset (row names).}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
+
+\item{author}{first author of the specific signature publication.}
 }
 \value{
 A SummarizedExperiment object in which the Pyroptosis score
