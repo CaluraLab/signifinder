@@ -26,19 +26,20 @@
 #'
 #' @export
 EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
-                    pvalues = FALSE, nperm = 100, ...) {
+                    author = "Miow", pvalues = FALSE, nperm = 100, ...) {
 
-    firstCheck(nametype, tumorTissue, "EMTSign")
-
-    if(nametype!="SYMBOL"){
-        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = EMTdata$Gene_Symbol,
-                                    column = nametype, keytype = "SYMBOL",
-                                    multiVals = "first")}
+    firstCheck(nametype, tumorTissue, "EMTSign", author = author)
 
     datasetm <- getMatrix(dataset)
 
-    Signature_EL <- EMTdata[grep('Epithelial', EMTdata$Category),]
-    Signature_ML <- EMTdata[grep('Mesenchymal', EMTdata$Category),]
+    if(tumorTissue == "ovary"){
+       if(nametype!="SYMBOL"){
+        EMTMiowdata$Gene_Symbol <- mapIds(
+            org.Hs.eg.db, keys = EMTMiowdata$Gene_Symbol, column = nametype,
+            keytype = "SYMBOL", multiVals = "first")}
+
+    Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
+    Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
 
     eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
                 nrow(Signature_EL))*100
@@ -49,7 +50,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                 round(mper), "% of mesenchymal-like genes\n"))
 
     gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
-                        Mesenchymal = Signature_ML$Gene_Symbol)
+                    Mesenchymal = Signature_ML$Gene_Symbol)
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm,
@@ -66,7 +67,48 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
     return(returnAsInput(userdata = dataset, result = gsva_matrix,
-                            SignName = "", datasetm))
+                         SignName = "", datasetm))
+
+    } else if(tumorTissue=="pan-tissue"){
+        if(nametype!="SYMBOL"){
+            EMTMakdata$Gene_Symbol <- mapIds(
+                org.Hs.eg.db, keys = EMTMakdata$Gene_Symbol, column = nametype,
+                keytype = "SYMBOL", multiVals = "first")}
+
+        Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
+        Sign_M <- EMTMakdata[-grep('E', EMTMakdata$Category),]
+
+        eper <- (sum(Sign_E$Gene_Symbol %in% row.names(datasetm))/
+                     nrow(Sign_E))*100
+        mper <- (sum(Sign_M$Gene_Symbol %in% row.names(datasetm))/
+                     nrow(Sign_M))*100
+        cat(paste0("EMTSign function is using ", round(eper),
+                   "% of epithelial-like genes\n",
+                   "EMTSign function is using ", round(mper),
+                   "% of mesenchymal-like genes\n"))
+
+        EMTscore <- colMeans(datasetm[intersect(
+            Sign_M$Gene_Symbol, row.names(datasetm)),]) - colMeans(datasetm[
+                intersect(Sign_E$Gene_Symbol, row.names(datasetm)), ])
+
+    } else if(tumorTissue=="breast"){
+
+        if(nametype!="SYMBOL") {
+            EMTChengdata <- mapIds(org.Hs.eg.db, keys = EMTChengdata,
+                                   column = nametype, keytype = "SYMBOL",
+                                   multiVals = "first")}
+
+        Ebper <- (sum(EMTChengdata %in% row.names(datasetm))/
+                      length(EMTChengdata))*100
+        cat(paste0("EMTSign function is using ", round(Ebper),
+                   "% of genes\n"))
+
+        datasetm <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
+        EMTscore <- prcomp(t(datasetm))$x[,1]}
+
+
+    return(returnAsInput(userdata = dataset, result = EMTscore,
+                         SignName = paste0("EMT", author), datasetm))
 }
 
 
@@ -101,7 +143,9 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
     Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
-    # nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
+
+    if(author=="Ye"){datasetm <- scale(datasetm)}
+
     Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm,
                                     nametype = nametype,
                                     namesignature = "pyroptosisSign")

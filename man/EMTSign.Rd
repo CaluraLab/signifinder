@@ -8,6 +8,7 @@ EMTSign(
   dataset,
   nametype = "SYMBOL",
   tumorTissue = "ovary",
+  author = "Miow",
   pvalues = FALSE,
   nperm = 100,
   ...
