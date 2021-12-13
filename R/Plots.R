@@ -1,13 +1,16 @@
 
 #' Scatterplot for a single signature
 #'
-#' Given a signatures it returns a scatterplot.
+#' Given signatures'scores it returns a scatterplot of patients scores and a
+#' barplot of the density distributions of patients scores.
 #'
-#' @param data output from a signature function
-#' @param whichSign the signature to plot. It has to be only one
-#' @param statistics It should be "mean", "median" or "quantiles" to be plot in the graph.
+#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
+#' signatures functions.
+#' @param whichSign The signature function to plot.
+#' @param statistics The statistics to be plot in the graph. It should be a
+#' pre-defined character between "mean", "median" or "quantiles".
 #'
-#' @return A ggplot object
+#' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
 #' @import ggplot2
 #' @import patchwork
@@ -59,20 +62,27 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 }
 
 
-#' Scatterplot for a single signature
+#' Gene's Signatures' Heatmap
 #'
-#' Given a signatures...
+#' Given one or multiple signatures, the function gives the opportunity to
+#' observe the trend of the signature's scores based on the expression of the
+#' genes included in each of them.
 #'
-#' @param data output from a signature function
-#' @param whichSign indicare quali signature usare, di cui verranno presi i geni
-#' @param logCount whether or not to compute logarithm for the expression values in the dataset
-#' @param splitBySign se splittare o no le righe dell'heatmap in base alla signature di provenienza dei geni
-#' @param sampleAnnot un vettore di annotazione dei sample
-#' @param splitByAnnot se splittare o no le colonne in base all'annotazione dei sample, in
-#' questo caso sampleAnnot deve essere una variabile categorica
-#' @param ... Heatmap params
+#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
+#' signatures functions.
+#' @param whichSign The signatures to show in the plot. This will automatically
+#' select corresponding genes to show in the plot.
+#' @param logCount Logical. Give the opportunity to compute logarithm for the
+#' expression values in the dataset.
+#' @param splitBySign Logical. Give you the possibility to split heatmap's row
+#' based on the signature's origin of the genes.
+#' @param sampleAnnot A vector containing samples annotations.
+#' @param splitByAnnot A categorical variable. Give you the possibility to split
+#' columns based on samples' annotations.
+#' @param ... Other parameters specific of the function
+#' \code{\link[ComplexHeatmap]{Heatmap}}.
 #'
-#' @return A ComplexHeatmap object
+#' @return A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 #'
 #' @importFrom ComplexHeatmap Heatmap rowAnnotation '%v%' HeatmapAnnotation
 #' @importFrom magrittr '%>%'
@@ -134,19 +144,25 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE, splitBySign =
 }
 
 
-#' Heatmap globale o con una signature che guida il clustering
+#' Global Heatmap of Signatures' scores.
 #'
-#' prende in input una matrice di valori che ha le signatures sulle righe e i pazienti sulle colonne.
+#' Given a matrix of multiple signatures, the function gives the opportunity to
+#' observe the trend of the signature's scores for each samples. Moreover it
+#' gives the possibility to order all the matrix based on a single signature.
 #'
-#' @param data output from a signature function
-#' @param whichSign le signature che si vuole far vedere nell'heatmap
-#' @param clusterBySign una signature (o più) che guidi il clustering delle colonne dell'heatmap
-#' @param sampleAnnot un vettore di annotazione dei sample
-#' @param splitByAnnot se splittare o no le colonne in base all'annotazione dei sample, in
-#' questo caso sampleAnnot deve essere una variabile categorica
-#' @param ... Heatmap params
+#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
+#' signatures functions. Th function takes as input a matrix where each
+#' row represents a signature and each column represent a samples.
+#' @param whichSign The signatures to show in the plot.
+#' @param clusterBySign One ore more signatures that clusterize columns on
+#' Heatmap.
+#' @param sampleAnnot A vector containing samples annotations.
+#' @param splitByAnnot A categorical variable. Give you the possibility to split
+#' columns based on samples' annotations.
+#' @param ... Other parameters specific of the function
+#' \code{\link[ComplexHeatmap]{Heatmap}}.
 #'
-#' @return A ComplexHeatmap object
+#' @return A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 #'
 #' @importFrom ComplexHeatmap Heatmap '%v%'
 #' @importFrom SummarizedExperiment colData
@@ -203,14 +219,17 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 
 #' Correlation Plot
 #'
+#' Given a matrix of multiple signatures, the function gives the opportunity to
+#' observe signatures correlates between each other.
 #'
+#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
+#' signatures functions.
+#' @param whichSign The signatures to show in the plot.
+#' @param sampleAnnot A categorical variable containing samples annotations.
+#' @param selectByAnnot A subgroup from `sampleAnnot` to use to construct the
+#' correlation plot
 #'
-#' @param data output from a signature function
-#' @param whichSign le signature che si vuole far vedere nel correlation plot
-#' @param sampleAnnot un vettore di annotazione dei sample, deve essere categorico
-#' @param selectByAnnot a group from sampleAnnot to use to construct the correlation plot
-#'
-#' @return A correlation ellipse graph
+#' @return A correlation ellipse graph.
 #'
 #' @importFrom openair corPlot
 #' @importFrom SummarizedExperiment colData
@@ -255,17 +274,30 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL, sele
 
 #' Survival Plot
 #'
+#' It creates survival curves from either a formula (e.g. the
+#' Kaplan-Meier), a previously fitted Cox model, or a previously fitted
+#' accelerated failure time model.
 #'
+#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
+#' signatures functions.
+#' @param survData A dataframe where each row represents a samples (equal to
+#' the names in the expression matrix) and two columns: the first holding
+#' survival data of time, indicating the follow up time of the samples; the
+#' second holding data of the survival status, an indicator normally 0=alive and
+#' 1=dead. For interval censored data, the status indicator is 0=right censored,
+#' 1=event at time, 2=left censored, 3=interval censored.
+#' @param whichSign The signatures to test in the plot.
+#' @param cutpoint A character between "median", "mean" and "optimal" or a
+#' numeric value, which divide samples between high values and low values. The
+#' function computes the value with the method indicated or employs the values
+#' directly supplied by the user, and based on that number it divides samples in
+#' higher and lower to compare them as the two groups of the survival plot.
+#' @param sampleAnnot A categorical variable containing samples annotations
+#' named with samples names equal to the row names used in `survData`.
+#' @param selectByAnnot A group from `sampleAnnot` used to compute the
+#' survival analysis.
 #'
-#' @param data output from a signature function
-#' @param survData dataframe che deve avere due colonne, la prima con i dati di survival (tempo) e la seconda con lo
-#' status, inoltre le righe devono essere nominate con i nomi dei sample, prenderlo dalla documentazione della KM
-#' @param whichSign la signatura di cui si vuol testare la survival
-#' @param cutpoint documentazione originale KM
-#' @param sampleAnnot deve essere un vettore nominato con i nomi dei sample, come le righe, deve essere categorico
-#' @param selectByAnnot a group from sampleAnnot to use to compute the survival
-#'
-#' @return al momento ritorna sia il plot che delle statistiche sui dati
+#' @return A Survival plot and the statistics computed on data.
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom stats median
@@ -335,11 +367,14 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 #'
 #'
 #'
-#' @param data output from a signature function
-#' @param whichSign le signature che si vuole far vedere nel ridgeline plot
-#' @param groupByAnnot un vettore di annotazione dei sample, deve essere categorico
+#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
+#' signatures functions.
+#' @param whichSign The signatures to test in the ridgeline plot.
+#' @param groupByAnnot  A categorical variable containing samples annotations.
+#' @param selectByAnnot A character indicating the group/s defined in
+#' `groupByAnnot` to show in the plot.
 #'
-#' @return A ggplot object
+#' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
 #' @import ggplot2
 #' @importFrom ggridges geom_density_ridges

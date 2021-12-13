@@ -2,7 +2,7 @@
 % Please edit documentation in R/Plots.R
 \name{heatmapSignPlot}
 \alias{heatmapSignPlot}
-\title{Heatmap globale o con una signature che guida il clustering}
+\title{Global Heatmap of Signatures' scores.}
 \usage{
 heatmapSignPlot(
   data,
@@ -14,22 +14,28 @@ heatmapSignPlot(
 )
 }
 \arguments{
-\item{data}{output from a signature function}
+\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
+signatures functions. Th function takes as input a matrix where each
+row represents a signature and each column represent a samples.}
 
-\item{whichSign}{le signature che si vuole far vedere nell'heatmap}
+\item{whichSign}{The signatures to show in the plot.}
 
-\item{clusterBySign}{una signature (o più) che guidi il clustering delle colonne dell'heatmap}
+\item{clusterBySign}{One ore more signatures that clusterize columns on
+Heatmap.}
 
-\item{sampleAnnot}{un vettore di annotazione dei sample}
+\item{sampleAnnot}{A vector containing samples annotations.}
 
-\item{splitByAnnot}{se splittare o no le colonne in base all'annotazione dei sample, in
-questo caso sampleAnnot deve essere una variabile categorica}
+\item{splitByAnnot}{A categorical variable. Give you the possibility to split
+columns based on samples' annotations.}
 
-\item{...}{Heatmap params}
+\item{...}{Other parameters specific of the function
+\code{\link[ComplexHeatmap]{Heatmap}}.}
 }
 \value{
-A ComplexHeatmap object
+A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 }
 \description{
-prende in input una matrice di valori che ha le signatures sulle righe e i pazienti sulle colonne.
+Given a matrix of multiple signatures, the function gives the opportunity to
+observe the trend of the signature's scores for each samples. Moreover it
+gives the possibility to order all the matrix based on a single signature.
 }

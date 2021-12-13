@@ -14,22 +14,35 @@ survivalSignPlot(
 )
 }
 \arguments{
-\item{data}{output from a signature function}
+\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
+signatures functions.}
 
-\item{survData}{dataframe che deve avere due colonne, la prima con i dati di survival (tempo) e la seconda con lo
-status, inoltre le righe devono essere nominate con i nomi dei sample, prenderlo dalla documentazione della KM}
+\item{survData}{A dataframe where each row represents a samples (equal to
+the names in the expression matrix) and two columns: the first holding
+survival data of time, indicating the follow up time of the samples; the
+second holding data of the survival status, an indicator normally 0=alive and
+1=dead. For interval censored data, the status indicator is 0=right censored,
+1=event at time, 2=left censored, 3=interval censored.}
 
-\item{whichSign}{la signatura di cui si vuol testare la survival}
+\item{whichSign}{The signatures to test in the plot.}
 
-\item{cutpoint}{documentazione originale KM}
+\item{cutpoint}{A character between "median", "mean" and "optimal" or a
+numeric value, which divide samples between high values and low values. The
+function computes the value with the method indicated or employs the values
+directly supplied by the user, and based on that number it divides samples in
+higher and lower to compare them as the two groups of the survival plot.}
 
-\item{sampleAnnot}{deve essere un vettore nominato con i nomi dei sample, come le righe, deve essere categorico}
+\item{sampleAnnot}{A categorical variable containing samples annotations
+named with samples names equal to the row names used in `survData`.}
 
-\item{selectByAnnot}{a group from sampleAnnot to use to compute the survival}
+\item{selectByAnnot}{A group from `sampleAnnot` used to compute the
+survival analysis.}
 }
 \value{
-al momento ritorna sia il plot che delle statistiche sui dati
+A Survival plot and the statistics computed on data.
 }
 \description{
-Survival Plot
+It creates survival curves from either a formula (e.g. the
+Kaplan-Meier), a previously fitted Cox model, or a previously fitted
+accelerated failure time model.
 }

@@ -7,15 +7,18 @@
 oneSignPlot(data, whichSign, statistics = NULL)
 }
 \arguments{
-\item{data}{output from a signature function}
+\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
+signatures functions.}
 
-\item{whichSign}{the signature to plot. It has to be only one}
+\item{whichSign}{The signature function to plot.}
 
-\item{statistics}{It should be "mean", "median" or "quantiles" to be plot in the graph.}
+\item{statistics}{The statistics to be plot in the graph. It should be a
+pre-defined character between "mean", "median" or "quantiles".}
 }
 \value{
-A ggplot object
+A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Given a signatures it returns a scatterplot.
+Given signatures'scores it returns a scatterplot of patients scores and a
+barplot of the density distributions of patients scores.
 }
