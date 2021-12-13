@@ -19,6 +19,6 @@ pre-defined character between "mean", "median" or "quantiles".}
 A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Given signatures'scores it returns a scatterplot of patients scores and a
+Given signatures' scores it returns a scatterplot of patients scores and a
 barplot of the density distributions of patients scores.
 }

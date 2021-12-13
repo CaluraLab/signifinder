@@ -1,7 +1,7 @@
 
 #' Scatterplot for a single signature
 #'
-#' Given signatures'scores it returns a scatterplot of patients scores and a
+#' Given signatures' scores it returns a scatterplot of patients scores and a
 #' barplot of the density distributions of patients scores.
 #'
 #' @param data An object of type \linkS4class{SummarizedExperiment} coming from
@@ -365,7 +365,8 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 
 #' Ridgeline Plot
 #'
-#'
+#' The function calculates densities from the point data mapped onto the x axis,
+#' arranging multiple density plots of the Signatures' scores.
 #'
 #' @param data An object of type \linkS4class{SummarizedExperiment} coming from
 #' signatures functions.

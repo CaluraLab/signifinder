@@ -26,5 +26,6 @@ signatures functions.}
 A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Ridgeline Plot
+The function calculates densities from the point data mapped onto the x axis,
+arranging multiple density plots of the Signatures' scores.
 }
