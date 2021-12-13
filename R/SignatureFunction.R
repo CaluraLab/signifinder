@@ -159,17 +159,21 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @export
 ferroptosisSign <- function(dataset, nametype = "SYMBOL",
-                            tumorTissue = "ovary"){
+                            tumorTissue = "ovary", author = "Ye"){
 
-    firstCheck(nametype, tumorTissue, "ferroptosisSign")
+    firstCheck(nametype, tumorTissue, "ferroptosisSign", author)
+    Ferroptosisdata <- get(paste0("Ferroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
     ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm,
                                     nametype = nametype,
                                     namesignature = "ferroptosisSign")
+    if(tumorTissue == "liver"){
+        ferrscore <- exp(ferrscore)
+    }
 
     return(returnAsInput(userdata = dataset, result = ferrscore,
-                            SignName = "Ferroptosis", datasetm))
+                            SignName = paste0("Ferroptosis", author), datasetm))
 }
 
 
