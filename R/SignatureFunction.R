@@ -168,9 +168,8 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL",
     ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm,
                                     nametype = nametype,
                                     namesignature = "ferroptosisSign")
-    if(tumorTissue == "liver"){
-        ferrscore <- exp(ferrscore)
-    }
+
+    if(tumorTissue == "liver"){ferrscore <- exp(ferrscore)}
 
     return(returnAsInput(userdata = dataset, result = ferrscore,
                             SignName = paste0("Ferroptosis", author), datasetm))
