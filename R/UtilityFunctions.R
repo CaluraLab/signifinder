@@ -1,5 +1,7 @@
 SignatureNames <- c("Epithelial",
                     "Mesenchymal",
+                    "EMTMak",
+                    "EMTCheng",
                     "PyroptosisYe",
                     "PyroptosisShao",
                     "PyroptosisLin",
@@ -37,7 +39,7 @@ my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
     if(name %in% c("Epithelial", "Mesenchymal")){
-        g <- EMTdata$Gene_Symbol[EMTdata$Category==name]
+        g <- EMTMiowdata$Gene_Symbol[EMTMiowdata$Category==name]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
         g <- PlatinumResistancedata$Gene_Symbol[
             PlatinumResistancedata$Category==name]
@@ -52,11 +54,11 @@ GetGenes <- function(name){
         if(name %in% c(
             "Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS",
             "LipidMetabolism", "PyroptosisYe", "PyroptosisShao",
-            "PyroptosisLin", "PyroptosisLi", "CD49BSC")){
+            "PyroptosisLin", "PyroptosisLi", "CD49BSC", "EMTMak")){
             g <- datavar[,1]
         } else if (name %in% c(
             "Matrisome", "MitoticIndex", "CYT", "CIN", "CCS", "ImmunoScoreRoh",
-            "IFN", "ExpandedImmune", "TLS")){
+            "IFN", "ExpandedImmune", "TLS", "EMTCheng")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
@@ -154,14 +156,14 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
 
-firstCheck <- function(nametype, tumorTissue, functionName, ...){
+firstCheck <- function(nametype, tumorTissue, functionName, author = NULL){
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL"))){
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
     if (!(tumorTissue %in% signatureTable$tumorTissue[
         signatureTable$functionName==functionName])){
         stop("tumorTissue is not available, check availableSignatures() to see
              which tissues are included")}
-    if(exists("author")){
+    if(!is.null(author)){
         if(!(author %in% signatureTable$author[
             signatureTable$functionName==functionName &
             signatureTable$tumorTissue==tumorTissue])){
@@ -202,10 +204,10 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
                 round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
-    if(all(is.na(datasetm[ourdata, ]))|
-       all(datasetm[ourdata, ]==0)){
-        warning("The function cannot be used because all the genes of this
-        signature are not available (NA) or have expression 0")
+    ourdataset <- datasetm[ourdata, ]
+    if(sum(is.na(ourdataset))/length(ourdataset) > 0.9){
+        warning("The function cannot be used because more that 90% of the genes
+        of this signature are not available (NA)")
         ourscore <- rep(NA, ncol(datasetm))
     } else {ourscore <- apply(
         datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)}
@@ -293,4 +295,3 @@ availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
         signTable <- signTable[,1:6]}
     return(signTable)
 }
-

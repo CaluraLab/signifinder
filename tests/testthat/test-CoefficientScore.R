@@ -2,16 +2,21 @@ library(signifinder)
 suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("PyroptosisSign works", {
-    pyrnames <- c("PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")
+    pyrnames <- c(
+        "PyroptosisYe", "PyroptosisShao", "PyroptosisLin", "PyroptosisLi")
     pname <- sample(pyrnames, 1)
     rmatrix <- fakeData(pname)
-    myres <- pyroptosisSign(rmatrix, author = substring(pname, 11))
+    tissue <- signatureTable$tumorTissue[
+        signatureTable$functionName=="pyroptosisSign" &
+        signatureTable$author==substring(pname, 11)]
+    myres <- pyroptosisSign(
+        rmatrix, tumorTissue = tissue, author = substring(pname, 11))
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[,pname], ncol(assay(myres)))
     expect_type(colData(myres)[,pname], "double")
     myoutput <- capture.output(pyroptosisSign(rmatrix, nametype = "SYMBOL",
-                    tumorTissue = "ovary", author = substring(pname, 11)))[1]
+                    tumorTissue = tissue, author = substring(pname, 11)))[1]
     myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
                             regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)

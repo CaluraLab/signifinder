@@ -24,13 +24,14 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
-\item{author}{first author of the specific signature pubblication.}
+\item{author}{first author of the specific signature publication.}
 }
 \value{
 A SummarizedExperiment object in which the Pyroptosis score
 is added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
-This signature is computed accordingly to the reference paper, to have more
-details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper,
+to have more details explore the function
+ \code{\link[signifinder]{availableSignatures}}.
 }

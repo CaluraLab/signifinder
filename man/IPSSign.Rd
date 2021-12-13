@@ -25,6 +25,7 @@ IPS, MHC, CP, EC and SC scores will be added in the
 \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
-This signature is computed accordingly to the reference paper, to have more
-details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper,
+to have more details explore the function
+ \code{\link[signifinder]{availableSignatures}}.
 }

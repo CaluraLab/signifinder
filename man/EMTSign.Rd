@@ -8,6 +8,7 @@ EMTSign(
   dataset,
   nametype = "SYMBOL",
   tumorTissue = "ovary",
+  author = "Miow",
   pvalues = FALSE,
   nperm = 100,
   ...
@@ -26,6 +27,8 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
+\item{author}{first author of the specific signature publication.}
+
 \item{pvalues}{logical. It allows to compute p-values by permutations.}
 
 \item{nperm}{number of permutations.}
@@ -37,6 +40,7 @@ A SummarizedExperiment object in which the Epithelial and Mesenchymal
 scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
-This signature is computed accordingly to the reference paper, to have more
-details explore the function \code{\link[signifinder]{availableSignatures}}.
+This signature is computed accordingly to the reference paper,
+to have more details explore the function
+ \code{\link[signifinder]{availableSignatures}}.
 }

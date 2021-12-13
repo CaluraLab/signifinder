@@ -1,8 +1,9 @@
 
 #' Epithelial-Mesenchymal Transition Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @description This signature is computed accordingly to the reference paper,
+#' to have more details explore the function
+#'  \code{\link[signifinder]{availableSignatures}}.
 #'
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
@@ -13,6 +14,7 @@
 #' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param tumorTissue type of tissue for which the signature is developed.
+#' @param author first author of the specific signature publication.
 #' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
@@ -26,19 +28,20 @@
 #'
 #' @export
 EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
-                    pvalues = FALSE, nperm = 100, ...) {
+                    author = "Miow", pvalues = FALSE, nperm = 100, ...) {
 
-    firstCheck(nametype, tumorTissue, "EMTSign")
-
-    if(nametype!="SYMBOL"){
-        EMTdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = EMTdata$Gene_Symbol,
-                                    column = nametype, keytype = "SYMBOL",
-                                    multiVals = "first")}
+    firstCheck(nametype, tumorTissue, "EMTSign", author = author)
 
     datasetm <- getMatrix(dataset)
 
-    Signature_EL <- EMTdata[grep('Epithelial', EMTdata$Category),]
-    Signature_ML <- EMTdata[grep('Mesenchymal', EMTdata$Category),]
+    if(tumorTissue == "ovary"){
+       if(nametype!="SYMBOL"){
+        EMTMiowdata$Gene_Symbol <- mapIds(
+            org.Hs.eg.db, keys = EMTMiowdata$Gene_Symbol, column = nametype,
+            keytype = "SYMBOL", multiVals = "first")}
+
+    Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
+    Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
 
     eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
                 nrow(Signature_EL))*100
@@ -49,7 +52,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                 round(mper), "% of mesenchymal-like genes\n"))
 
     gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
-                        Mesenchymal = Signature_ML$Gene_Symbol)
+                    Mesenchymal = Signature_ML$Gene_Symbol)
 
     dots <- list(...)
     args <- matchArguments(dots, list(expr = datasetm,
@@ -66,25 +69,55 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
     return(returnAsInput(userdata = dataset, result = gsva_matrix,
-                            SignName = "", datasetm))
+                         SignName = "", datasetm))
+
+    } else if(tumorTissue=="pan-tissue"){
+        if(nametype!="SYMBOL"){
+            EMTMakdata$Gene_Symbol <- mapIds(
+                org.Hs.eg.db, keys = EMTMakdata$Gene_Symbol, column = nametype,
+                keytype = "SYMBOL", multiVals = "first")}
+
+        Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
+        Sign_M <- EMTMakdata[-grep('E', EMTMakdata$Category),]
+
+        eper <- (sum(Sign_E$Gene_Symbol %in% row.names(datasetm))/
+                     nrow(Sign_E))*100
+        mper <- (sum(Sign_M$Gene_Symbol %in% row.names(datasetm))/
+                     nrow(Sign_M))*100
+        cat(paste0("EMTSign function is using ", round(eper),
+                   "% of epithelial-like genes\n",
+                   "EMTSign function is using ", round(mper),
+                   "% of mesenchymal-like genes\n"))
+
+        EMTscore <- colMeans(datasetm[intersect(
+            Sign_M$Gene_Symbol, row.names(datasetm)),]) - colMeans(datasetm[
+                intersect(Sign_E$Gene_Symbol, row.names(datasetm)), ])
+
+    } else if(tumorTissue=="breast"){
+
+        if(nametype!="SYMBOL") {
+            EMTChengdata <- mapIds(org.Hs.eg.db, keys = EMTChengdata,
+                                   column = nametype, keytype = "SYMBOL",
+                                   multiVals = "first")}
+
+        Ebper <- (sum(EMTChengdata %in% row.names(datasetm))/
+                      length(EMTChengdata))*100
+        cat(paste0("EMTSign function is using ", round(Ebper),
+                   "% of genes\n"))
+
+        datasetm <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
+        EMTscore <- prcomp(t(datasetm))$x[,1]}
+
+
+    return(returnAsInput(userdata = dataset, result = EMTscore,
+                         SignName = paste0("EMT", author), datasetm))
 }
 
 
 #' Pyroptosis Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
-#' @param author first author of the specific signature pubblication.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Pyroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -101,7 +134,9 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
     Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
-    # nSigGenes <- length(Pyroptosisdata$Gene_Symbol)
+
+    if(author=="Ye"){datasetm <- scale(datasetm)}
+
     Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm,
                                     nametype = nametype,
                                     namesignature = "pyroptosisSign")
@@ -113,18 +148,8 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
 
 #' Ferroptosis Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Ferroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -150,18 +175,8 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL",
 
 #' Lipid Metabolism Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Lipid scores is
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -187,18 +202,8 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
 
 #' Hypoxia Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Hypoxia scores is
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -234,20 +239,9 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL",
 
 #' Platinum Resistance Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
-#' @param pvalues logical. It allows to compute p-values by permutations.
-#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
 #' @return A SummarizedExperiment object in which the Platinum Resistance scores
@@ -307,8 +301,7 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 
 #' Metabolic Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @inherit EMTSign description
 #'
 #' @param DEdata A matrix of differentially expressed genes where rows
 #' correspond to genes, the first column to Log2FoldChange and second
@@ -359,19 +352,8 @@ metabolicSign <- function(
 
 #' Immunogenic Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
-#' @param author first author of the specific signature pubblication.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the Immunogenic scores will
 #' be added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -419,18 +401,9 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 
 #' ConsensusOV Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
 #' @param method the subtyping method to use. Default is "consensusOV".
 #' @param ... optional parameters to be passed to
 #' \code{\link[consensusOV]{get.subtypes}}.
@@ -471,18 +444,8 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 
 #' ImmunoPhenoScore Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the
 #' IPS, MHC, CP, EC and SC scores will be added in the
@@ -543,18 +506,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
 #' Core Matrisome Gene signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -581,18 +534,8 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL",
 
 #' Mitotic Index
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -618,18 +561,8 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 
 #' Local Immune Cytolytic Activity (CYT) Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -654,18 +587,8 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
 #' IFN-γ Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -689,18 +612,8 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
 #' ExpandedImmune Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -726,18 +639,8 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
 
 #' Tertiary Lymphoid Structures (TLS) Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -762,18 +665,8 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
 
 #' CD49fHi Basal Stem Cell Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -797,18 +690,12 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 
 #' Chromosomal instability Signature
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#'
+#' @param typeofCIN A pre-defined number 25 or 70. It represents the number of
+#' genes on which the score can be calculated. The 25 genes represent a subgroup
+#' derived from the 70.
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
@@ -838,17 +725,8 @@ CINSign <- function(dataset, nametype = "SYMBOL",
 
 #' Cell-cycle Signature classifier
 #'
-#' This signature is computed accordingly to the reference paper, to have more
-#' details explore the function \code{\link[signifinder]{availableSignatures}}.
-#'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples. Alternatively an
-#' object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay where rows
-#' correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
