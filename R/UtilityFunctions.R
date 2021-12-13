@@ -6,7 +6,12 @@ SignatureNames <- c("Epithelial",
                     "PyroptosisShao",
                     "PyroptosisLin",
                     "PyroptosisLi",
-                    "Ferroptosis",
+                    "FerroptosisChang",
+                    "FerroptosisLiang",
+                    "FerroptosisLi",
+                    "FerroptosisLiu",
+                    "FerroptosisYe",
+                    "FerroptosisZhu",
                     "LipidMetabolism",
                     "Hypoxia",
                     "PlatinumResistanceUp",
@@ -52,9 +57,11 @@ GetGenes <- function(name){
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "Ferroptosis", "Hypoxia", "ImmunoScoreHao", "IPS",
-            "LipidMetabolism", "PyroptosisYe", "PyroptosisShao",
-            "PyroptosisLin", "PyroptosisLi", "CD49BSC", "EMTMak")){
+            "FerroptosisChang", "FerroptosisLiang", "FerroptosisLi",
+            "FerroptosisLiu", "FerroptosisYe", "FerroptosisZhu", "Hypoxia",
+            "ImmunoScoreHao", "IPS", "LipidMetabolism", "PyroptosisYe",
+            "PyroptosisShao", "PyroptosisLin", "PyroptosisLi", "CD49BSC",
+            "EMTMak")){
             g <- datavar[,1]
         } else if (name %in% c(
             "Matrisome", "MitoticIndex", "CYT", "CIN", "CCS", "ImmunoScoreRoh",
@@ -72,7 +79,7 @@ range01 <- function(x){
 signatureNameCheck <- function(data, sName){
     if(!all(sName %in% SignatureNames)){
         stop(paste("signatures must be among:",
-                    paste(SignatureNames, collapse = ", ")))}
+                   paste(SignatureNames, collapse = ", ")))}
     if(!all(sName %in% colnames(SummarizedExperiment::colData(data)))){
         stop("signature names must be in data")}
 }
@@ -88,8 +95,8 @@ getMatrix <- function(userdata){
                 userdata <- as.matrix(userdata@assays$RNA@data)
             } else {userdata <- as.matrix(userdata@assays$SCT@data)}
         } else if(class(userdata) %in% c("SpatialExperiment",
-                                        "SummarizedExperiment",
-                                        "SingleCellExperiment")){
+                                         "SummarizedExperiment",
+                                         "SingleCellExperiment")){
             userdata <- as.matrix(SummarizedExperiment::assay(userdata))
         } else if(is.data.frame(userdata)){userdata <- as.matrix(userdata)
         } else {stop("This dataset type is not supported")}}
@@ -105,8 +112,8 @@ returnAsInput <- function(userdata, result, SignName, datasetm){
             } else {
                 userdata@meta.data <- cbind(userdata@meta.data, t(result))}
         } else if(class(userdata) %in% c("SpatialExperiment",
-                                        "SummarizedExperiment",
-                                        "SingleCellExperiment")){
+                                         "SummarizedExperiment",
+                                         "SingleCellExperiment")){
             names <- c(colnames(userdata@colData), SignName)
             if(is.vector(result)){
                 userdata@colData <- cbind(userdata@colData, name=result)
@@ -123,7 +130,7 @@ returnAsInput <- function(userdata, result, SignName, datasetm){
             result <- SummarizedExperiment::SummarizedExperiment(
                 assays = datasetm, colData = t(result))
         }
-    return(result)}
+        return(result)}
 }
 
 ipsmap <- function(x){
@@ -137,12 +144,12 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
         cat("Performing permutation number", x, "\n")
         permlist <- lapply(seq_len(length(gset.idx.list)), function(i)
             sample(datasetGenes, size = lengths(filteredGeneSets)[i],
-                    replace = FALSE))
+                   replace = FALSE))
         args$gset.idx.list <- permlist
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
         data.frame(t(gsva_matrix))}, mc.cores = 1)
     permutedResByGeneSet <- split.default(x = Reduce(cbind, permutedResults),
-                                            seq_len(length(gset.idx.list)))
+                                          seq_len(length(gset.idx.list)))
     permutedResByGeneSet <- lapply(
         permutedResByGeneSet, function(x)data.frame(t(x)))
     finalRes <- do.call(rbind, lapply(
@@ -150,8 +157,8 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
             gspvalues <- sapply(1:ncol(expr), function(j){
                 (min(c(sum(permutedResByGeneSet[[i]][,j]<=gsvaResult[i,j]),
                        sum(permutedResByGeneSet[[i]][,j]>=gsvaResult[i,j]))
-                     )+1)/(nperm+1)})
-        gspvalues}))
+                )+1)/(nperm+1)})
+            gspvalues}))
     colnames(finalRes) <- colnames(expr)
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
@@ -168,17 +175,17 @@ firstCheck <- function(nametype, tumorTissue, functionName, author = NULL){
             signatureTable$functionName==functionName &
             signatureTable$tumorTissue==tumorTissue])){
             stop("tumorTissue and author do not match")}}
-    }
+}
 
 coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
     if(nametype!="SYMBOL"){
         ourdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = ourdata$Gene_Symbol,
-                    column = nametype, keytype = "SYMBOL", multiVals = "first")}
+                                      column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     dataper <- (sum(ourdata$Gene_Symbol %in% row.names(datasetm)
-                    )/nrow(ourdata))*100
+    )/nrow(ourdata))*100
     cat(paste0(namesignature, " function is using ",
-                round(dataper), "% of genes\n"))
+               round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
 
@@ -194,14 +201,14 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
 }
 
 statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
-                    namesignature){
+                      namesignature){
     if(nametype!="SYMBOL"){
         ourdata <- mapIds(org.Hs.eg.db, keys = ourdata, column = nametype,
                           keytype = "SYMBOL", multiVals = "first")}
 
     dataper <- (sum(ourdata %in% row.names(datasetm))/length(ourdata))*100
     cat(paste0(namesignature, " function is using ",
-                round(dataper), "% of genes\n"))
+               round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
     ourdataset <- datasetm[ourdata, ]

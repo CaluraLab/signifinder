@@ -23,14 +23,20 @@ test_that("PyroptosisSign works", {
 })
 
 test_that("FerroptosysSign work", {
-    rmatrix <- fakeData("Ferroptosis")
-    myres <- ferroptosisSign(rmatrix)
+    ferrnames <- c("FerroptosisChang", "FerroptosisLiang", "FerroptosisLi",
+                   "FerroptosisLiu", "FerroptosisYe", "FerroptosisZhu")
+    fname <- sample(ferrnames, 1)
+    rmatrix <- fakeData(fname)
+    tissue <- signatureTable$tumorTissue[signatureTable$functionName=="ferroptosisSign" &
+            signatureTable$author==substring(fname, 12)]
+    myres <- ferroptosisSign(rmatrix, tumorTissue = tissue, author = substring(fname, 12))
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("Ferroptosis" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"Ferroptosis"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"Ferroptosis"], "double")
+    expect_true(fname %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,fname], ncol(assay(myres)))
+    expect_type(colData(myres)[,fname], "double")
     myoutput <- capture.output(ferroptosisSign(rmatrix, nametype = "SYMBOL",
-                                               tumorTissue = "ovary"))[1]
+                                               tumorTissue = tissue,
+                                               author = substring(fname, 12)))[1]
     myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
                             regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
@@ -63,3 +69,4 @@ test_that("CD49BSC work", {
                             regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
+
