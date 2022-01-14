@@ -35,7 +35,32 @@ SignatureNames <- c("Epithelial",
                     "TLS",
                     "CD49BSC",
                     "CIN",
-                    "CCS")
+                    "CCSLundberg",
+                    "CCSDavoli",
+                    "Chemokines",
+                    "ASC",
+                    "PassON",
+                    "IPRES",
+                    "CIS",
+                    "GlycolisisJiang",
+                    "GlycolisisLZhang",
+                    "GlycolisisLiu",
+                    "GlycolisisYu",
+                    "GlycolisisXu",
+                    "GlycolisisCZhang",
+                    "AutophagyZhang",
+                    "AutophagyYue",
+                    "AutophagyXu",
+                    "AutophagyWang",
+                    "AutophagyMChen",
+                    "AutophagyHu",
+                    "AutophagyHou",
+                    "AutophagyFei",
+                    "AutophagyFang",
+                    "AutophagyChen",
+                    "ECMup",
+                    "ECMdown",
+                    "HRDS")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -61,11 +86,16 @@ GetGenes <- function(name){
             "FerroptosisLiu", "FerroptosisYe", "FerroptosisZhu", "Hypoxia",
             "ImmunoScoreHao", "IPS", "LipidMetabolism", "PyroptosisYe",
             "PyroptosisShao", "PyroptosisLin", "PyroptosisLi", "CD49BSC",
-            "EMTMak")){
+            "EMTMak", "GlycolisisJiang", "GlycolisisLZhang", "GlycolisisLiu",
+            "GlycolisisYu", "GlycolisisXu", "GlycolisisCZhang", "AutophagyZhang",
+            "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyMChen",
+            "AutophagyHu", "AutophagyHou", "AutophagyFei", "AutophagyFang",
+            "AutophagyChen",  "ECMup", "ECMdown", "HRDS")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "Matrisome", "MitoticIndex", "CYT", "CIN", "CCS", "ImmunoScoreRoh",
-            "IFN", "ExpandedImmune", "TLS", "EMTCheng")){
+            "Matrisome", "MitoticIndex", "CYT", "CIN", "CCSDavoli",
+            "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
+            "EMTCheng", "Chemokines", "ASC", "PassON", "IPRES", "CIS")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
@@ -180,7 +210,8 @@ firstCheck <- function(nametype, tumorTissue, functionName, author = NULL){
 coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
     if(nametype!="SYMBOL"){
         ourdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = ourdata$Gene_Symbol,
-                                      column = nametype, keytype = "SYMBOL", multiVals = "first")}
+                                      column = nametype, keytype = "SYMBOL",
+                                      multiVals = "first")}
 
     dataper <- (sum(ourdata$Gene_Symbol %in% row.names(datasetm)
     )/nrow(ourdata))*100
@@ -188,14 +219,9 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
                round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
-
-    if(all(is.na(datasetm[ourdata$Gene_Symbol, ]))|
-       all(datasetm[ourdata$Gene_Symbol, ]==0)){
-        warning("The function cannot be used because all the genes of this
-        signature are not available (NA) or have expression 0")
-        ourscore <- rep(NA, ncol(datasetm))
-    } else {ourscore <- colSums(
-        datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient)}
+    datasetm <- managena(datasetm = datasetm, ourdata = ourdata$Gene_Symbol)
+    ourscore <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient,
+                        na.rm = TRUE)
 
     return(ourscore)
 }
@@ -211,27 +237,26 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
                round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
-    ourdataset <- datasetm[ourdata, ]
-    if(sum(is.na(ourdataset))/length(ourdataset) > 0.9){
-        warning("The function cannot be used because more that 90% of the genes
-        of this signature are not available (NA)")
-        ourscore <- rep(NA, ncol(datasetm))
-    } else {ourscore <- apply(
-        datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat)}
+
+    datasetm <- managena(datasetm = datasetm, ourdata = ourdata)
+
+    ourscore <- apply(
+        datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat,
+        na.rm = TRUE)
 
     return(ourscore)
 }
 
-dataTransformation <- function(data, trans, inputType){
-    if(inputType=="rnaseq"){
-        g <- rownames(data)
-        glen <- EDASeq::getGeneLengthAndGCContent(id = g, org = "hsa")
-        tdata <- DGEobj.utils::convertCounts(
-            countsMatrix = data, unit = trans, geneLength = glen[,"length"])
-        return(tdata)
-    }
-
+managena <- function(datasetm, ourdata){
+    datasetm <- datasetm[ourdata, ]
+    columnNA <- colSums(is.na(datasetm))/nrow(datasetm)
+    if(sum(columnNA > 0.9)>0) {
+        warning("There are some samples in the dataset that have more than 90%
+                of the genes of this signature not available (NA)")}
+    datasetm[, columnNA > 0.9] <- NA
+    return(datasetm)
 }
+
 
 #' 7 spots resolution
 #'

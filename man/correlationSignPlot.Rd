@@ -12,17 +12,20 @@ correlationSignPlot(
 )
 }
 \arguments{
-\item{data}{output from a signature function}
+\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
+signatures functions.}
 
-\item{whichSign}{le signature che si vuole far vedere nel correlation plot}
+\item{whichSign}{The signatures to show in the plot.}
 
-\item{sampleAnnot}{un vettore di annotazione dei sample, deve essere categorico}
+\item{sampleAnnot}{A categorical variable containing samples annotations.}
 
-\item{selectByAnnot}{a group from sampleAnnot to use to construct the correlation plot}
+\item{selectByAnnot}{A subgroup from `sampleAnnot` to use to construct the
+correlation plot}
 }
 \value{
-A correlation ellipse graph
+A correlation ellipse graph.
 }
 \description{
-Correlation Plot
+Given a matrix of multiple signatures, the function gives the opportunity to
+observe signatures correlates between each other.
 }

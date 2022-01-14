@@ -12,15 +12,20 @@ ridgelineSignPlot(
 )
 }
 \arguments{
-\item{data}{output from a signature function}
+\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
+signatures functions.}
 
-\item{whichSign}{le signature che si vuole far vedere nel ridgeline plot}
+\item{whichSign}{The signatures to test in the ridgeline plot.}
 
-\item{groupByAnnot}{un vettore di annotazione dei sample, deve essere categorico}
+\item{groupByAnnot}{A categorical variable containing samples annotations.}
+
+\item{selectByAnnot}{A character indicating the group/s defined in
+`groupByAnnot` to show in the plot.}
 }
 \value{
-A ggplot object
+A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Ridgeline Plot
+The function calculates densities from the point data mapped onto the x axis,
+arranging multiple density plots of the Signatures' scores.
 }

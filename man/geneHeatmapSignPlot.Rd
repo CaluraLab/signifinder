@@ -2,7 +2,7 @@
 % Please edit documentation in R/Plots.R
 \name{geneHeatmapSignPlot}
 \alias{geneHeatmapSignPlot}
-\title{Scatterplot for a single signature}
+\title{Gene's Signatures' Heatmap}
 \usage{
 geneHeatmapSignPlot(
   data,
@@ -15,24 +15,31 @@ geneHeatmapSignPlot(
 )
 }
 \arguments{
-\item{data}{output from a signature function}
+\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
+signatures functions.}
 
-\item{whichSign}{indicare quali signature usare, di cui verranno presi i geni}
+\item{whichSign}{The signatures to show in the plot. This will automatically
+select corresponding genes to show in the plot.}
 
-\item{logCount}{whether or not to compute logarithm for the expression values in the dataset}
+\item{logCount}{Logical. Give the opportunity to compute logarithm for the
+expression values in the dataset.}
 
-\item{splitBySign}{se splittare o no le righe dell'heatmap in base alla signature di provenienza dei geni}
+\item{splitBySign}{Logical. Give you the possibility to split heatmap's row
+based on the signature's origin of the genes.}
 
-\item{sampleAnnot}{un vettore di annotazione dei sample}
+\item{sampleAnnot}{A vector containing samples annotations.}
 
-\item{splitByAnnot}{se splittare o no le colonne in base all'annotazione dei sample, in
-questo caso sampleAnnot deve essere una variabile categorica}
+\item{splitByAnnot}{A categorical variable. Give you the possibility to split
+columns based on samples' annotations.}
 
-\item{...}{Heatmap params}
+\item{...}{Other parameters specific of the function
+\code{\link[ComplexHeatmap]{Heatmap}}.}
 }
 \value{
-A ComplexHeatmap object
+A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 }
 \description{
-Given a signatures...
+Given one or multiple signatures, the function gives the opportunity to
+observe the trend of the signature's scores based on the expression of the
+genes included in each of them.
 }
