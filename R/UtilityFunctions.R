@@ -225,11 +225,11 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
                round(dataper), "% of genes\n"))
 
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
-    datasetm <- managena(datasetm = datasetm, ourdata = ourdata$Gene_Symbol)
-    ourscore <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient,
+    columnNA <- managena(datasetm = datasetm, genes = ourdata$Gene_Symbol)
+    score <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient,
                         na.rm = TRUE)
-
-    return(ourscore)
+    score[columnNA > 0.9] <- NA
+    return(score)
 }
 
 statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
@@ -244,23 +244,23 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
 
-    datasetm <- managena(datasetm = datasetm, ourdata = ourdata)
+    columnNA <- managena(datasetm = datasetm, genes = ourdata)
+    score <- apply(datasetm[intersect(row.names(datasetm), ourdata), ],
+        2, typeofstat, na.rm = TRUE)
+    score[columnNA > 0.9] <- NA
 
-    ourscore <- apply(
-        datasetm[intersect(row.names(datasetm), ourdata), ], 2, typeofstat,
-        na.rm = TRUE)
-
-    return(ourscore)
+    return(score)
 }
 
-managena <- function(datasetm, ourdata){
-    datasetm <- datasetm[ourdata, ]
+managena <- function(datasetm, genes){
+    datasetm <- datasetm[genes,]
     columnNA <- colSums(is.na(datasetm))/nrow(datasetm)
     if(sum(columnNA > 0.9)>0) {
         warning("There are some samples in the dataset that have more than 90%
                 of the genes of this signature not available (NA)")}
-    datasetm[, columnNA > 0.9] <- NA
-    return(datasetm)
+    # datasetm[, columnNA > 0.9] <- NA
+    # return(datasetm)
+    return(columnNA)
 }
 
 dataTransformation <- function(data, trans){
