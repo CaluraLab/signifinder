@@ -313,57 +313,6 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 }
 
 
-#' Metabolic Signature
-#'
-#' @inherit EMTSign description
-#'
-#' @param DEdata A matrix of differentially expressed genes where rows
-#' correspond to genes, the first column to Log2FoldChange and second
-#' column to its adjusted p-value.
-#' @param nametype gene name ID of your DEdata (row names).
-#' @param tumorTissue type of tissue for which the signature is developed.
-#' @param nsamples number of samples in the DEdata.
-#'
-#' @return A data frame with a Metabolic score
-#' for each pathway and the respective p-values.
-#'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
-#' @export
-metabolicSign <- function(
-    DEdata, nametype = "SYMBOL", tumorTissue = "pan-tissue", nsamples){
-
-    firstCheck(nametype, tumorTissue, "metabolicSign")
-
-    if(!is.numeric(nsamples)){
-        stop("The nsample parameter must be a numeric vector")}
-
-    gene_score <- abs(DEdata[,1] -log(DEdata[,2]))
-    names(gene_score) <- row.names(DEdata)
-
-    if(nametype!="SYMBOL"){
-        Metabolismdata <- lapply(Metabolismdata, function(x)
-            suppressMessages(mapIds(
-                org.Hs.eg.db, keys=x, column=nametype,
-                keytype="SYMBOL", multiVals="first")))}
-
-    gene_pathway <- lapply(Metabolismdata, intersect, row.names(DEdata))
-    path_score <- sapply(
-        gene_pathway, function(x) sum(gene_score[x]))/sqrt(nsamples)
-    pvals <- c()
-    for(i in 1:length(path_score)){
-        z <- c()
-        for(j in 1:10000){
-            bootscore <- sample(
-                gene_score, size=lengths(gene_pathway)[i], replace = TRUE)
-            z[j] <- sum(bootscore)/sqrt(nsamples)}
-        pvals[i] <- sum(z>=path_score[i])/10000
-    }
-    return(cbind(MetabolicScore = path_score, Pvalue = pvals))
-}
-
-
 #' Immunogenic Signature
 #'
 #' @inherit EMTSign description
