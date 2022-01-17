@@ -13,6 +13,7 @@
 #' \code{\link[SeuratObject]{SeuratObject}} containing an assay
 #' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
+#' @param inputType type of data you are using: microarray or rnaseq.
 #' @param tumorTissue type of tissue for which the signature is developed.
 #' @param author first author of the specific signature publication.
 #' @param pvalues logical. It allows to compute p-values by permutations.
@@ -27,8 +28,8 @@
 #' @import org.Hs.eg.db
 #'
 #' @export
-EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
-                    author = "Miow", pvalues = FALSE, nperm = 100, ...) {
+EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
+    tumorTissue = "ovary", author = "Miow", pvalues = FALSE, nperm = 100, ...) {
 
     firstCheck(nametype, tumorTissue, "EMTSign", author = author)
 
@@ -55,9 +56,10 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                     Mesenchymal = Signature_ML$Gene_Symbol)
 
     dots <- list(...)
+    kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
     args <- matchArguments(dots, list(expr = datasetm,
                                         gset.idx.list = gene_sets,
-                                        method = "ssgsea", kcdf = "Gaussian",
+                                        method = "ssgsea", kcdf = kcdftype,
                                         min.sz = 5, ssgsea.norm = FALSE,
                                         verbose = FALSE))
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
@@ -89,6 +91,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                    "EMTSign function is using ", round(mper),
                    "% of mesenchymal-like genes\n"))
 
+        if(inputType == "rnaseq"){datasetm <- log2(datasetm)}
         EMTscore <- colMeans(datasetm[intersect(
             Sign_M$Gene_Symbol, row.names(datasetm)),]) - colMeans(datasetm[
                 intersect(Sign_E$Gene_Symbol, row.names(datasetm)), ])
@@ -106,6 +109,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                    "% of genes\n"))
 
         datasetm <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
+        if(inputType == "rnaseq"){datasetm <- log2(datasetm)}
         # managena(datasetm, EMTChengdata)
         EMTscore <- prcomp(t(datasetm))$x[,1]}
 
@@ -126,7 +130,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 #' @import org.Hs.eg.db
 #'
 #' @export
-pyroptosisSign <- function(dataset, nametype = "SYMBOL",
+pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                             tumorTissue = "ovary", author = "Ye"){
 
     firstCheck(nametype, tumorTissue, "pyroptosisSign", author)
@@ -135,14 +139,23 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm <- getMatrix(dataset)
 
-    if(tumorTissue == "ovary" & author == "Ye"){datasetm <- scale(datasetm)}
+    if(tumorTissue == "ovary" & author == "Ye"){
+        datasetm <- scale(datasetm)
+        datasetm <- dataTransformation(datasetm, "FPKM")
+    } else if (tumorTissue == "stomach" & author == "Shao"){
+        if(inputType == "rnaseq"){
+            datasetm <- dataTransformation(datasetm, "FPKM")}
+    } else if (tumorTissue == "lung" & author == "Lin"){
+        datasetm <- dataTransformation(datasetm, "TPM")
+    }
 
-    Piroscore <- coefficientsScore(Pyroptosisdata, datasetm = datasetm,
-                                    nametype = nametype,
-                                    namesignature = "pyroptosisSign")
+    Piroscore <- coefficientsScore(
+        Pyroptosisdata, datasetm = datasetm, nametype = nametype,
+        namesignature = "pyroptosisSign")
 
-    return(returnAsInput(userdata = dataset, result = Piroscore,
-                        SignName = paste0("Pyroptosis", author), datasetm))
+    return(returnAsInput(
+        userdata = dataset, result = Piroscore,
+        SignName = paste0("Pyroptosis", author), datasetm))
 }
 
 
@@ -218,25 +231,23 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
 #' @import org.Hs.eg.db
 #'
 #' @export
-hypoxiaSign <- function(dataset, nametype = "SYMBOL",
+hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                         tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "hypoxiaSign")
 
-    if(nametype=="SYMBOL") { genetouse <- Hypoxiadata$Gene_Symbol
-    } else if(nametype=="ENSEMBL") { genetouse <- Hypoxiadata$Gene_Ensembl
-    } else (genetouse <- mapIds(org.Hs.eg.db, keys = Hypoxiadata$Gene_Symbol,
-                                column = nametype, keytype = "SYMBOL",
-                                multiVals = "first"))
+    if(nametype=="SYMBOL") {genetouse <- Hypoxiadata$Gene_Symbol
+    } else if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl
+    } else {genetouse <- mapIds(org.Hs.eg.db, keys = Hypoxiadata$Gene_Symbol,
+        column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
+    if(inputType == "rnaseq"){datasetm <- log2(datasetm)}
+    score <- statScore(genetouse, datasetm = datasetm, nametype = "SYMBOL",
+        typeofstat = "median", namesignature = "hypoxiaSign")
 
-    Hypoxiascore<-statScore(genetouse, datasetm = datasetm, nametype = "SYMBOL",
-                            typeofstat = "median", namesignature= "hypoxiaSign")
-
-    return(returnAsInput(userdata = dataset,
-                            result = as.vector(scale(Hypoxiascore)),
-                            SignName = "Hypoxia", datasetm))
+    return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
+        SignName = "Hypoxia", datasetm))
 }
 
 
