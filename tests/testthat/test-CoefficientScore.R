@@ -73,3 +73,63 @@ test_that("CD49BSC work", {
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
+test_that("glycolysisSign works", {
+    pyrnames <- c("GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
+                  "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC")
+    pname <- sample(pyrnames, 1)
+    rmatrix <- fakeData(pname)
+    tissue <- if(pname == "GlycolysisZhangL"){
+        tissue <-"lung"} else if (pname == "GlycolysisZhangC"){
+            tissue <-"bladder"} else signatureTable$tumorTissue[
+        signatureTable$functionName=="glycolysisSign" &
+            signatureTable$author==substring(pname, 11)]
+
+    myres <- glycolysisSign(
+        rmatrix, tumorTissue = tissue,
+        author = if(pname == "GlycolysisZhangL"|pname == "GlycolysisZhangC"){
+            author <-"Zhang"} else substring(pname, 11))
+
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true(pname %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,pname], ncol(assay(myres)))
+    expect_type(colData(myres)[,pname], "double")
+    myoutput <- capture.output(glycolysisSign(
+        rmatrix, nametype = "SYMBOL", tumorTissue = tissue, author = if(
+            pname == "GlycolysisZhangL"|pname == "GlycolysisZhangC"){
+            author <-"Zhang"} else substring(pname, 11)))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
+
+test_that("autophagySign works", {
+    pyrnames <- c("AutophagyZhang","AutophagyYue", "AutophagyXu",
+                  "AutophagyWang", "AutophagyChenM", "AutophagyHu",
+                  "AutophagyHou", "AutophagyFei", "AutophagyFang",
+                  "AutophagyChenH")
+    pname <- sample(pyrnames, 1)
+    rmatrix <- fakeData(pname)
+    tissue <- if(pname == "AutophagyChenM"){
+        tissue <-"kidney"} else if (pname == "AutophagyChenH"){
+            tissue <-"cervix"} else signatureTable$tumorTissue[
+                signatureTable$functionName=="autophagySign" &
+                    signatureTable$author==substring(pname, 10)]
+
+    myres <- autophagySign(
+        rmatrix, tumorTissue = tissue,
+        author = if(pname == "AutophagyChenM"|pname == "AutophagyChenH"){
+            author <-"Chen"} else substring(pname, 10))
+
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true(pname %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,pname], ncol(assay(myres)))
+    expect_type(colData(myres)[,pname], "double")
+    myoutput <- capture.output(autophagySign(
+        rmatrix, nametype = "SYMBOL", tumorTissue = tissue, author = if(
+            pname == "AutophagyChenM"|pname == "AutophagyChenH"){
+            author <-"Chen"} else substring(pname, 10)))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
+

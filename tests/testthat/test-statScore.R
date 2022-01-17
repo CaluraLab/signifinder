@@ -1,4 +1,6 @@
 library(signifinder)
+library(testthat)
+
 suppressPackageStartupMessages(library(SummarizedExperiment))
 suppressPackageStartupMessages(library(labstatR))
 
@@ -114,19 +116,7 @@ test_that("CINSign works", {
                             regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
-#
-# test_that("CCSSign works", {
-#     rmatrix <- fakeData("CCS")
-#     myres <- CCSSign(rmatrix)
-#     expect_true(is(myres, "SummarizedExperiment"))
-#     expect_true("CCS" %in% colnames(colData(myres)))
-#     expect_length(colData(myres)[,"CCS"], ncol(assay(myres)))
-#     expect_type(colData(myres)[,"CCS"], "integer")
-#     myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
-#     myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
-#                             regexpr("%", myoutput)-1)
-#     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
-# })
+
 
 test_that("hypoxiaSign works", {
     rmatrix <- fakeData("Hypoxia")
@@ -142,4 +132,68 @@ test_that("hypoxiaSign works", {
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
+test_that("CCSSign works", {
+    rmatrix <- signifinder:::fakeData("CCSLundberg")
+    myres <- CCSSign(rmatrix, tumorTissue = "pan-tissue", author = "Lundberg")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("CCSLundberg" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"CCSLundberg"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"CCSLundberg"], "integer")
+    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                            regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
 
+
+test_that("CCSSign works", {
+    rmatrix <- signifinder:::fakeData("CCSDavoli")
+    myres <- CCSSign(rmatrix, tumorTissue = "pan-tissue", author = "Davoli")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("CCSDavoli" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"CCSDavoli"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"CCSDavoli"], "double")
+    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
+
+test_that("VEGFSign works", {
+    rmatrix <- signifinder:::fakeData("VEGF")
+    myres <- VEGFSign(rmatrix, tumorTissue = "ovary")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("VEGF" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"VEGF"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"VEGF"], "double")
+    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
+
+test_that("angioSign works", {
+    rmatrix <- signifinder:::fakeData("Angiogenesis")
+    myres <- angioSign(rmatrix, tumorTissue = "pan-tissue")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("Angiogenesis" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"Angiogenesis"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"Angiogenesis"], "double")
+    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
+
+test_that("CyISign works", {
+    rmatrix <- signifinder:::fakeData("CytoImmuno")
+    myres <- CyISign(rmatrix, tumorTissue = "pan-tissue")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("CytoImmuno" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"CytoImmuno"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"CytoImmuno"], "double")
+    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})

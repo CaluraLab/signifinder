@@ -1004,16 +1004,24 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "breast",
 
     firstCheck(nametype, tumorTissue, "glycolysisSign", author)
 
-    Glycolisisdata <- get(paste0("Glycolisis", author, "data"))
+    if(tumorTissue== "bladder"){
+        Glycolysisdata <- get(paste0("Glycolysis", author, "Cdata"))}
+    else if(tumorTissue== "lung"){
+        Glycolysisdata <- get(paste0("Glycolysis", author, "Ldata"))}
+    else(Glycolysisdata <- get(paste0("Glycolysis", author, "data")))
 
     datasetm <- getMatrix(dataset)
 
-    Glycoscore <- coefficientsScore(Glycolisisdata, datasetm = datasetm,
+    Glycoscore <- coefficientsScore(Glycolysisdata, datasetm = datasetm,
                                    nametype = nametype,
                                    namesignature = "glycolysisSign")
 
     return(returnAsInput(userdata = dataset, result = Glycoscore,
-                         SignName = paste0("Glycolysis",tumorTissue), datasetm))
+                         SignName = if(tumorTissue== "bladder"){
+                             paste0("Glycolysis", author, "C")
+                             } else if(tumorTissue== "lung"){
+                                 paste0("Glycolysis", author, "L")
+                                 } else paste0("Glycolysis", author), datasetm))
 }
 
 #' Autophagy Signature
@@ -1033,7 +1041,11 @@ autophagySign <- function(dataset, nametype = "SYMBOL",
 
     firstCheck(nametype, tumorTissue, "autophagySign", author)
 
-    Autophagydata <- get(paste0("Autophagy", author, "data"))
+    if(tumorTissue== "kidney"){
+        Autophagydata <- get(paste0("Autophagy", author, "Mdata"))}
+    else if(tumorTissue== "cervix"){
+        Autophagydata <- get(paste0("Autophagy", author, "Hdata"))}
+    else(Autophagydata <- get(paste0("Autophagy", author, "data")))
 
     datasetm <- getMatrix(dataset)
 
@@ -1041,7 +1053,11 @@ autophagySign <- function(dataset, nametype = "SYMBOL",
                  nametype = nametype, namesignature = "autophagySign")
 
     return(returnAsInput(userdata = dataset, result = Autoscore,
-                         SignName = paste0("Autophagy", author), datasetm))
+                         SignName = if(tumorTissue== "kidney"){
+                             paste0("Autophagy", author, "M")
+                         } else if(tumorTissue== "cervix"){
+                             paste0("Autophagy", author, "H")
+                         } else paste0("Autophagy", author), datasetm))
 }
 
 #' Extracellular Matrix Signature
@@ -1172,11 +1188,11 @@ CyISign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "CyISign")
 
     if(nametype!="SYMBOL"){
-        CyIdata<- mapIds(org.Hs.eg.db, keys = CyIdata, column = nametype,
+        CytoImmunodata<- mapIds(org.Hs.eg.db, keys = CytoImmunodata, column = nametype,
                             keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
 
-    ImmunoScore <- statScore(CyIdata, datasetm = datasetm, nametype = "SYMBOL",
+    ImmunoScore <- statScore(CytoImmunodata, datasetm = datasetm, nametype = "SYMBOL",
                              typeofstat = "mean", namesignature= "CyISign")
 
     return(returnAsInput(userdata = dataset, result = ImmunoScore,
@@ -1237,7 +1253,7 @@ ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
 #' @import org.Hs.eg.db
 #'
 #' @export
-VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     firstCheck(nametype, tumorTissue, "VEGFSign")
 
@@ -1271,7 +1287,7 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     datasetm <- getMatrix(dataset)
 
     Angioscore <-statScore(
-        Angiodata, datasetm = datasetm, nametype = "SYMBOL",
+        Angiogenesisdata, datasetm = datasetm, nametype = "SYMBOL",
         typeofstat = "median", namesignature= "angioSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(
