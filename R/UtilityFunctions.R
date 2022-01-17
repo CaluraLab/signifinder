@@ -257,6 +257,23 @@ managena <- function(datasetm, ourdata){
     return(datasetm)
 }
 
+dataTransformation <- function(data, trans, inputType){
+
+    if(inputType=="rnaseq"){
+        g <- rownames(data)
+        eg <- mapIds(
+            org.Hs.eg.db, keys = g, column = "ENSEMBL",
+            keytype = "SYMBOL", multiVals = "first")
+        data <- data[!is.na(eg),]
+        eg <- eg[!is.na(eg)]
+        glen <- EDASeq::getGeneLengthAndGCContent(id = eg, org = "hsa")
+        tdata <- DGEobj.utils::convertCounts(
+            countsMatrix = data, unit = trans, geneLength = glen[,"length"])
+        return(tdata)
+    }
+
+}
+
 
 #' 7 spots resolution
 #'
