@@ -114,19 +114,19 @@ test_that("CINSign works", {
                             regexpr("%", myoutput)-1)
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
-
-test_that("CCSSign works", {
-    rmatrix <- fakeData("CCS")
-    myres <- CCSSign(rmatrix)
-    expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("CCS" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"CCS"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"CCS"], "integer")
-    myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
-    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
-                            regexpr("%", myoutput)-1)
-    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
-})
+#
+# test_that("CCSSign works", {
+#     rmatrix <- fakeData("CCS")
+#     myres <- CCSSign(rmatrix)
+#     expect_true(is(myres, "SummarizedExperiment"))
+#     expect_true("CCS" %in% colnames(colData(myres)))
+#     expect_length(colData(myres)[,"CCS"], ncol(assay(myres)))
+#     expect_type(colData(myres)[,"CCS"], "integer")
+#     myoutput <- capture.output(immunoScoreSign(rmatrix, nametype = "SYMBOL"))[1]
+#     myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+#                             regexpr("%", myoutput)-1)
+#     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+# })
 
 test_that("hypoxiaSign works", {
     rmatrix <- fakeData("Hypoxia")
