@@ -4,7 +4,12 @@
 \alias{hypoxiaSign}
 \title{Hypoxia Signature}
 \usage{
-hypoxiaSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
+hypoxiaSign(
+  dataset,
+  nametype = "SYMBOL",
+  inputType = "microarray",
+  tumorTissue = "pan-tissue"
+)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -16,6 +21,8 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
+
+\item{inputType}{type of data you are using: microarray or rnaseq.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 }

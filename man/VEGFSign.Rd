@@ -4,7 +4,7 @@
 \alias{VEGFSign}
 \title{VEGF Signature}
 \usage{
-VEGFSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
+VEGFSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows

@@ -7,6 +7,7 @@
 EMTSign(
   dataset,
   nametype = "SYMBOL",
+  inputType = "microarray",
   tumorTissue = "ovary",
   author = "Miow",
   pvalues = FALSE,
@@ -24,6 +25,8 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
+
+\item{inputType}{type of data you are using: microarray or rnaseq.}
 
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
