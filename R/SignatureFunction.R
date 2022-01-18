@@ -757,7 +757,7 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
         sapply(as.data.frame(t(datasetm)), sd, na.rm = TRUE)
     pc1_score <- prcomp(t(z_score))$x[,1]
     return(returnAsInput(userdata = dataset, result = pc1_score,
-                                       SignName = "Chemokines", datasetm))
+                                       SignName = "Chemokine", datasetm))
 }
 
 #' Adult Stem Cell Signature
@@ -773,7 +773,7 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @export
 ASCSign <- function(dataset, nametype= "SYMBOL",
-                              tumorTissue = "ovary"){
+                    tumorTissue = "epithelial-derived neuroendocrine cancer"){
 
     firstCheck(nametype, tumorTissue, "ASCSign")
 
@@ -844,7 +844,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
 
 
     return(returnAsInput(userdata = dataset, result = gsva_mean,
-                                       SignName = "PassON", datasetm))
+                                       SignName = "PASS.ON", datasetm))
 }
 
 #' IPRES Signature
@@ -923,23 +923,28 @@ CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
     firstCheck(nametype, tumorTissue, "CISSign")
 
     if(nametype!="SYMBOL"){
-        CISdata  <- mapIds(org.Hs.eg.db, keys = CISdata, column = nametype,
+        CISdata$Gene_Symbol  <- mapIds(org.Hs.eg.db, keys = CISdata$Gene_Symbol,
+                                       column = nametype,
                            keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
-    upper <- (sum(CISdata$UP %in% row.names(datasetm))/
-                  length(CISdata$UP))*100
-    downper <- (sum(CISdata$DOWN %in% row.names(datasetm))/
-                    length(CISdata$DOWN))*100
-    cat(paste0("CISSign function is using ", round(upper),
+    Signature_up <- CISdata[grep('CISup', CISdata$Category),]
+    Signature_down <- CISdata[grep('CISdown', CISdata$Category),]
+
+    eper <- (sum(Signature_up$Gene_Symbol %in% row.names(datasetm))/
+                 nrow(Signature_up))*100
+    mper <- (sum(Signature_down$Gene_Symbol %in% row.names(datasetm))/
+                 nrow(Signature_down))*100
+
+    cat(paste0("CISSign function is using ", round(eper),
                "% of up-genes\n", "CISSign function is using ",
-               round(downper), "% of down-genes\n"))
+               round(mper), "% of down-genes\n"))
 
     med_data_up <- colMeans(log2(datasetm[intersect(
-        row.names(datasetm), CISdata$UP),]))
+        row.names(datasetm), Signature_up$Gene_Symbol),]))
     med_data_down <- colMeans(log2(datasetm[intersect(
-        row.names(datasetm), CISdata$DOWN),]))
+        row.names(datasetm), Signature_down$Gene_Symbol),]))
 
     CISscore <- med_data_up - med_data_down
 
@@ -1123,6 +1128,8 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
                 tmp[["statistic"]]
             }))
 
+    names(HRDSscore) <- colnames(datasetm)
+
     return(returnAsInput(userdata = dataset, result = HRDSscore,
                          SignName = "HRDS", datasetm))
 }
@@ -1273,21 +1280,24 @@ DNArepSign <- function(dataset, nametype = "SYMBOL",
     firstCheck(nametype, tumorTissue, "DNArepSign")
 
     if(nametype!="SYMBOL"){
-        DNArepdata$DNAre <- mapIds(org.Hs.eg.db, keys = DNArepdata$DNAre,
+        DNArepairdata$DNAre <- mapIds(org.Hs.eg.db, keys = DNArepairdata$DNAre,
                                    column = nametype, keytype = "SYMBOL",
                                    multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
-    DNAdatahigh <- DNArepdata[DNArepdata$status=="high",]
-    DNAdatalow <- DNArepdata[DNArepdata$status=="low",]
+    DNArep <- (sum(DNArepairdata$DNAre %in% row.names(datasetm))/
+                    length(DNArepairdata$DNAre))*100
+    cat(paste0("DNArepSign function is using ", round(DNArep), "% of genes\n"))
+
+    DNAdatahigh <- DNArepairdata[DNArepairdata$status=="high",]
+    DNAdatalow <- DNArepairdata[DNArepairdata$status=="low",]
 
     medianexp <- apply(datasetm, 2, median)
 
     DNArepscore <- apply(
-        norm_mtx[DNAdatahigh$DNAre, ] > medianexp, 2, sum,na.rm = TRUE)
-    +               apply(
-        norm_mtx[DNAdatalow$DNAre, ] > medianexp, 2, sum, na.rm = TRUE)
+        datasetm[DNAdatahigh$DNAre, ] > medianexp, 2, sum,na.rm = TRUE)+
+        apply(datasetm[DNAdatalow$DNAre, ] > medianexp, 2, sum, na.rm = TRUE)
 
     return(returnAsInput(userdata = dataset, result = DNArepscore,
                          SignName = "DNArepair", datasetm))

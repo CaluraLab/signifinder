@@ -37,9 +37,9 @@ SignatureNames <- c("Epithelial",
                     "CIN",
                     "CCSLundberg",
                     "CCSDavoli",
-                    "Chemokines",
+                    "Chemokine",
                     "ASC",
-                    "PassON",
+                    "PASS.ON",
                     "IPRES",
                     "CIS",
                     "GlycolysisJiang",
@@ -78,6 +78,10 @@ GetGenes <- function(name){
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
         g <- PlatinumResistancedata$Gene_Symbol[
             PlatinumResistancedata$Category==name]
+    } else if(name %in% c("ECMup", "ECMdown")){
+        g <- ECMdata$Gene_Symbol[ECMdata$Category==name]
+    } else if(name %in% c("CISup", "CISdown")){
+        g <- CISdata$Gene_Symbol[CISdata$Category==name]
     } else if (name %in% c(
         "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
         stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and
@@ -95,12 +99,12 @@ GetGenes <- function(name){
             "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC", "AutophagyZhang",
             "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyChenM",
             "AutophagyHu", "AutophagyHou", "AutophagyFei", "AutophagyFang",
-            "AutophagyChenH",  "ECMup", "ECMdown", "HRDS", "DNArepair")){
+            "AutophagyChenH",  "HRDS", "DNArepair")){
             g <- datavar[,1]
         } else if (name %in% c(
             "Matrisome", "MitoticIndex", "CYT", "CIN", "CCSDavoli",
             "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
-            "EMTCheng", "Chemokines", "ASC", "PassON", "IPRES", "CIS",
+            "EMTCheng", "Chemokine", "ASC", "PASS.ON", "IPRES",
             "CytoImmuno", "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }
