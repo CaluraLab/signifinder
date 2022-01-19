@@ -36,85 +36,93 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
     datasetm <- getMatrix(dataset)
 
     if(tumorTissue == "ovary" & author == "Miow"){
+
        if(nametype!="SYMBOL"){
         EMTMiowdata$Gene_Symbol <- mapIds(
             org.Hs.eg.db, keys = EMTMiowdata$Gene_Symbol, column = nametype,
             keytype = "SYMBOL", multiVals = "first")}
 
-    Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
-    Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
+        Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
+        Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
 
-    eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
-                nrow(Signature_EL))*100
-    mper <- (sum(Signature_ML$Gene_Symbol %in% row.names(datasetm))/
-                nrow(Signature_ML))*100
-    cat(paste0("EMTSign function is using ", round(eper),
-                "% of epithelial-like genes\n", "EMTSign function is using ",
-                round(mper), "% of mesenchymal-like genes\n"))
+        eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
+                    nrow(Signature_EL))*100
+        mper <- (sum(Signature_ML$Gene_Symbol %in% row.names(datasetm))/
+                    nrow(Signature_ML))*100
+        cat(paste0("EMTSign function is using ", round(eper),
+                    "% of epithelial-like genes\n",
+                    "EMTSign function is using ", round(mper),
+                    "% of mesenchymal-like genes\n"))
 
-    gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
-                    Mesenchymal = Signature_ML$Gene_Symbol)
+        gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
+                        Mesenchymal = Signature_ML$Gene_Symbol)
 
-    dots <- list(...)
-    kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
-    args <- matchArguments(dots, list(expr = datasetm,
+        dots <- list(...)
+        kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
+        args <- matchArguments(dots, list(expr = datasetm,
                                         gset.idx.list = gene_sets,
                                         method = "ssgsea", kcdf = kcdftype,
                                         min.sz = 5, ssgsea.norm = FALSE,
                                         verbose = FALSE))
-    gsva_matrix <- suppressWarnings(do.call(gsva, args))
+        gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
-    if(pvalues){
-        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets,
+        if(pvalues){
+            gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets,
                                     gsvaResult = gsva_matrix,
                                     nperm = nperm, args = args)
-        gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
+            gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
-    return(returnAsInput(userdata = dataset, result = gsva_matrix,
-                         SignName = "", datasetm))
+        return(returnAsInput(userdata = dataset, result = gsva_matrix,
+                            SignName = "", datasetm))
 
-    } else if(tumorTissue=="pan-tissue" & author == "Mak"){
-        if(nametype!="SYMBOL"){
-            EMTMakdata$Gene_Symbol <- mapIds(
-                org.Hs.eg.db, keys = EMTMakdata$Gene_Symbol, column = nametype,
-                keytype = "SYMBOL", multiVals = "first")}
+    } else {
+        if(tumorTissue == "pan-tissue" & author == "Mak") {
+            if(nametype!="SYMBOL"){
+                EMTMakdata$Gene_Symbol <- mapIds(
+                    org.Hs.eg.db, keys = EMTMakdata$Gene_Symbol, column = nametype,
+                    keytype = "SYMBOL", multiVals = "first")}
 
-        Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
-        Sign_M <- EMTMakdata[grep('M', EMTMakdata$Category),]
+            Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
+            Sign_M <- EMTMakdata[grep('M', EMTMakdata$Category),]
 
-        eper <- (sum(Sign_E$Gene_Symbol %in% row.names(datasetm))/
-                     nrow(Sign_E))*100
-        mper <- (sum(Sign_M$Gene_Symbol %in% row.names(datasetm))/
-                     nrow(Sign_M))*100
-        cat(paste0("EMTSign function is using ", round(eper),
-                   "% of epithelial-like genes\n",
-                   "EMTSign function is using ", round(mper),
-                   "% of mesenchymal-like genes\n"))
+            eper <- (sum(Sign_E$Gene_Symbol %in% row.names(datasetm))/
+                        nrow(Sign_E))*100
+            mper <- (sum(Sign_M$Gene_Symbol %in% row.names(datasetm))/
+                        nrow(Sign_M))*100
+            cat(paste0("EMTSign function is using ", round(eper),
+                    "% of epithelial-like genes\n",
+                    "EMTSign function is using ", round(mper),
+                    "% of mesenchymal-like genes\n"))
 
-        if(inputType == "rnaseq"){datasetm <- log2(datasetm)}
-        EMTscore <- colMeans(datasetm[intersect(
-            Sign_M$Gene_Symbol, row.names(datasetm)),]) - colMeans(datasetm[
-                intersect(Sign_E$Gene_Symbol, row.names(datasetm)), ])
+            datasetm_n <- datasetm[intersect(
+                row.names(datasetm), EMTMakdata$Gene_Symbol), ]
+            datasetm_n <- ifelse(inputType == "rnaseq", log2(datasetm_n), datasetm_n)
+            columnNA <- managena(datasetm_n, genes = EMTMakdata$Gene_Symbol)
+            score <- colMeans(
+                datasetm_n[intersect(Sign_M$Gene_Symbol, row.names(datasetm_n)),]
+                ) - colMeans(
+                datasetm_n[intersect(Sign_E$Gene_Symbol, row.names(datasetm_n)), ])
+            score[columnNA > 0.9] <- NA
 
-    } else if(tumorTissue=="breast" & author == "Cheng"){
+        } else if(tumorTissue == "breast" & author == "Cheng") {
+            if(nametype!="SYMBOL") {
+                EMTChengdata <- mapIds(
+                    org.Hs.eg.db, keys = EMTChengdata, column = nametype,
+                    keytype = "SYMBOL", multiVals = "first")}
 
-        if(nametype!="SYMBOL") {
-            EMTChengdata <- mapIds(org.Hs.eg.db, keys = EMTChengdata,
-                                   column = nametype, keytype = "SYMBOL",
-                                   multiVals = "first")}
+            Ebper <- (sum(EMTChengdata %in% row.names(datasetm))/
+                        length(EMTChengdata))*100
+            cat(paste0("EMTSign function is using ", round(Ebper),
+                    "% of genes\n"))
 
-        Ebper <- (sum(EMTChengdata %in% row.names(datasetm))/
-                      length(EMTChengdata))*100
-        cat(paste0("EMTSign function is using ", round(Ebper),
-                   "% of genes\n"))
-
-        datasetm <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
-        if(inputType == "rnaseq"){datasetm <- log2(datasetm)}
-        # managena(datasetm, EMTChengdata)
-        EMTscore <- prcomp(t(datasetm))$x[,1]}
-
-    return(returnAsInput(userdata = dataset, result = EMTscore,
-                         SignName = paste0("EMT", author), datasetm))
+            datasetm_n <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
+            datasetm_n <- ifelse(inputType == "rnaseq", log2(datasetm_n), datasetm_n)
+            columnNA <- managena(datasetm = datasetm_n, genes = EMTChengdata)
+            score <- prcomp(t(datasetm_n))$x[,1]
+            score[columnNA > 0.9] <- NA
+        }
+        return(returnAsInput(userdata = dataset, result = score,
+                             SignName = paste0("EMT", author), datasetm))}
 }
 
 
@@ -140,21 +148,20 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     datasetm <- getMatrix(dataset)
 
     if(tumorTissue == "ovary" & author == "Ye"){
-        datasetm <- scale(datasetm)
-        datasetm <- dataTransformation(datasetm, "FPKM")
+        datasetm_n <- scale(datasetm)
+        datasetm_n <- dataTransformation(datasetm_n, "FPKM")
     } else if (tumorTissue == "stomach" & author == "Shao"){
         if(inputType == "rnaseq"){
-            datasetm <- dataTransformation(datasetm, "FPKM")}
+            datasetm_n <- dataTransformation(datasetm, "FPKM")}
     } else if (tumorTissue == "lung" & author == "Lin"){
-        datasetm <- dataTransformation(datasetm, "TPM")
-    }
+        datasetm_n <- dataTransformation(datasetm, "TPM")
+    } else {datasetm_n <- datasetm}
 
-    Piroscore <- coefficientsScore(
-        Pyroptosisdata, datasetm = datasetm, nametype = nametype,
-        namesignature = "pyroptosisSign")
+    score <- coefficientsScore(Pyroptosisdata, datasetm_n, nametype,
+                                "pyroptosisSign")
 
     return(returnAsInput(
-        userdata = dataset, result = Piroscore,
+        userdata = dataset, result = score,
         SignName = paste0("Pyroptosis", author), datasetm))
 }
 
@@ -178,14 +185,13 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL",
     Ferroptosisdata <- get(paste0("Ferroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
-    ferrscore <- coefficientsScore(Ferroptosisdata, datasetm = datasetm,
-                                    nametype = nametype,
-                                    namesignature = "ferroptosisSign")
+    score <- coefficientsScore(Ferroptosisdata, datasetm,
+                                nametype, "ferroptosisSign")
 
-    if(tumorTissue == "liver" & author == "Liang" ){ferrscore <- exp(ferrscore)}
+    if(tumorTissue == "liver" & author == "Liang" ){score <- exp(score)}
 
-    return(returnAsInput(userdata = dataset, result = ferrscore,
-                            SignName = paste0("Ferroptosis", author), datasetm))
+    return(returnAsInput(userdata = dataset, result = score,
+                        SignName = paste0("Ferroptosis", author), datasetm))
 }
 
 
@@ -207,12 +213,11 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
     firstCheck(nametype, tumorTissue, "lipidMetabolismSign")
 
     datasetm <- getMatrix(dataset)
-    lipidscore <- coefficientsScore(LipidMetabolismdata, datasetm = datasetm,
-                                    nametype = nametype,
-                                    namesignature = "lipidMetabolismSign")
+    score <- coefficientsScore(LipidMetabolismdata, datasetm,
+                                nametype, "lipidMetabolismSign")
 
-    return(returnAsInput(userdata = dataset, result = lipidscore,
-                            SignName = "LipidMetabolism", datasetm))
+    return(returnAsInput(userdata = dataset, result = score,
+                        SignName = "LipidMetabolism", datasetm))
 }
 
 
@@ -242,8 +247,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
-    if(inputType == "rnaseq"){datasetm <- log2(datasetm)}
-    score <- statScore(genetouse, datasetm = datasetm, nametype = "SYMBOL",
+    datasetm_n <- ifelse(inputType == "rnaseq", log2(datasetm), datasetm)
+    score <- statScore(genetouse, datasetm = datasetm_n, nametype = "SYMBOL",
         typeofstat = "median", namesignature = "hypoxiaSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
@@ -267,8 +272,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #'
 #' @export
 platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
-                                    tumorTissue = "ovary", pvalues = FALSE,
-                                    nperm = 100, ...){
+        tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...){
 
     firstCheck(nametype, tumorTissue, "platinumResistanceSign")
 
@@ -332,7 +336,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm <- getMatrix(dataset)
 
-    if(tumorTissue=="ovary"){
+    if(tumorTissue == "ovary"){
         if(nametype!="SYMBOL"){
             ImmunoScoreHaodata$genes <- mapIds(
                 org.Hs.eg.db, keys = ImmunoScoreHaodata$genes,
@@ -343,21 +347,20 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
         cat(paste0(
             "immunoScoreSign function is using ", round(gper), "% of genes\n"))
 
-        subdataset <- datasetm[g,]
+        datasetm_n <- datasetm[g,]
         ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes%in%g,]
-
+        columnNA <- managena(datasetm_n, g)
         SE <- (ImmunoScoreHaodata$HR - ImmunoScoreHaodata$`95CI_L`)/1.96
         k <- (1 - ImmunoScoreHaodata$HR)/SE
-        ImmunoScores <- unlist(lapply(
-            seq_len(ncol(subdataset)), function(p){
-                sum(k*subdataset[,p], na.rm = TRUE)}))
+        score <- unlist(lapply(seq_len(ncol(datasetm_n)), function(p){
+                sum(k*datasetm_n[,p], na.rm = TRUE)}))
+        score[columnNA > 0.9] <- NA
     } else if(tumorTissue=="pan-tissue"){
-        ImmunoScores <- statScore(
+        score <- statScore(
             ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype,
             typeofstat = "meang", namesignature = "immunoScoreSign")}
 
-    return(returnAsInput(
-        userdata = dataset, result = ImmunoScores,
+    return(returnAsInput(userdata = dataset, result = score,
         SignName = paste0("ImmunoScore", author), datasetm))
 }
 
@@ -390,14 +393,16 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
         genename <- mapIds(org.Hs.eg.db, keys = row.names(datasetm),
                             column = "ENTREZID", keytype = nametype,
                             multiVals = "first")
-        datasetm <- datasetm[!is.na(genename),]
+        datasetm_n <- datasetm[!is.na(genename),]
         genename <- genename[!is.na(genename)]
-        datasetm <- datasetm[!duplicated(genename),]
+        datasetm_n <- datasetm_n[!duplicated(genename),]
         genename <- genename[!duplicated(genename)]
-    } else {genename <- row.names(datasetm)}
+    } else {
+        genename <- row.names(datasetm)
+        datasetm_n <- datasetm}
 
-    consensus_subtypes <- get.subtypes(expression.dataset=datasetm,
-                                    entrez.ids=genename, method=method, ...)
+    consensus_subtypes <- get.subtypes(expression.dataset = datasetm_n,
+                            entrez.ids = genename, method = method, ...)
 
     return(returnAsInput(userdata = dataset,
                         result = t(consensus_subtypes$rf.probs),
@@ -486,11 +491,10 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL",
     firstCheck(nametype, tumorTissue, "matrisomeSign")
 
     datasetm <- getMatrix(dataset)
-    median_cm <- statScore(Matrisomedata, datasetm = datasetm,
-                        nametype = nametype, typeofstat = "median",
-                        namesignature = "matrisomeSign")
+    score <- statScore(Matrisomedata, datasetm, nametype,
+                        "median", "matrisomeSign")
 
-    return(returnAsInput(userdata = dataset, result = median_cm,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "Matrisome", datasetm))
 }
 
@@ -513,11 +517,10 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
     firstCheck(nametype, tumorTissue, "mitoticIndexSign")
 
     datasetm <- getMatrix(dataset)
-    MI_means <- statScore(MitoticIndexdata, datasetm = datasetm,
-                        nametype = nametype, typeofstat = "mean",
-                        namesignature = "mitoticIndexSign")
+    score <- statScore(MitoticIndexdata, datasetm, nametype,
+                        "mean", "mitoticIndexSign")
 
-    return(returnAsInput(userdata = dataset, result = MI_means,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "MitoticIndex", datasetm))
 }
 
@@ -540,10 +543,9 @@ CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "CYTSign")
 
     datasetm <- getMatrix(dataset)
-    CYTScore <- statScore(CYTdata, datasetm = datasetm, nametype = nametype,
-                        typeofstat = "meang", namesignature = "CYTSign")
+    score <- statScore(CYTdata, datasetm, nametype, "meang", "CYTSign")
 
-    return(returnAsInput(userdata = dataset, result = CYTScore,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "CYT", datasetm))
 }
 
@@ -565,10 +567,9 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     firstCheck(nametype, tumorTissue, "IFNSign")
 
     datasetm <- getMatrix(dataset)
-    IFNscore <- statScore(IFNdata, datasetm = datasetm, nametype = nametype,
-                        typeofstat = "mean", namesignature = "IFNSign")
+    score <- statScore(IFNdata, datasetm, nametype, "mean", "IFNSign")
 
-    return(returnAsInput(userdata = dataset, result = IFNscore,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "IFN", datasetm))
 }
 
@@ -591,11 +592,10 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
     firstCheck(nametype, tumorTissue, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
-    ExpandedImmunescore <- statScore(ExpandedImmunedata, datasetm = datasetm,
-                                    nametype = nametype, typeofstat = "mean",
-                                    namesignature = "expandedImmuneSign")
+    score <- statScore(ExpandedImmunedata, datasetm, nametype,
+                        "mean", "expandedImmuneSign")
 
-    return(returnAsInput(userdata = dataset, result = ExpandedImmunescore,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "ExpandedImmune", datasetm))
 }
 
@@ -618,10 +618,9 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
     firstCheck(nametype, tumorTissue, "TLSSign")
 
     datasetm <- getMatrix(dataset)
-    TLSScore <- statScore(TLSdata, datasetm = datasetm, nametype = nametype,
-                        typeofstat = "meang", namesignature = "TLSSign")
+    score <- statScore(TLSdata, datasetm, nametype, "meang", "TLSSign")
 
-    return(returnAsInput(userdata = dataset, result = TLSScore,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "TLS", datasetm))
 }
 
@@ -643,10 +642,9 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
     firstCheck(nametype, tumorTissue, "CD49BSCSign")
 
     datasetm <- getMatrix(dataset)
-    CD49BSCScore <- coefficientsScore(CD49BSCdata, datasetm = datasetm,
-                    nametype = nametype, namesignature = "CD49BSCSign")
+    score <- coefficientsScore(CD49BSCdata, datasetm, nametype, "CD49BSCSign")
 
-    return(returnAsInput(userdata = dataset, result = CD49BSCScore,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "CD49BSC", datasetm))
 }
 

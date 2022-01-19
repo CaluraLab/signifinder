@@ -260,8 +260,8 @@ managena <- function(datasetm, genes){
     datasetm <- datasetm[genes,]
     columnNA <- colSums(is.na(datasetm))/nrow(datasetm)
     if(sum(columnNA > 0.9)>0) {
-        warning("There are some samples in the dataset that have more than 90%
-                of the genes of this signature not available (NA)")}
+        warning("Some samples in the dataset have more than 90%
+                not available (NA) expression values")}
     # datasetm[, columnNA > 0.9] <- NA
     # return(datasetm)
     return(columnNA)
