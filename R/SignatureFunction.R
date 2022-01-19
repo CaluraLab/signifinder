@@ -672,14 +672,10 @@ CINSign <- function(dataset, nametype = "SYMBOL",
     if (!(typeofCIN %in% c(70,25))){stop("typeofCIN must be either 70 or 25")}
 
     CINdata <- CINdata[seq_len(typeofCIN)]
-
     datasetm <- getMatrix(dataset)
+    score <- statScore(CINdata, datasetm, nametype, "sum", "CINSign")
 
-    CINscore <- statScore(
-        CINdata, datasetm = datasetm, nametype = nametype, typeofstat = "sum",
-        namesignature = "CINSign")
-
-    return(returnAsInput(userdata = dataset, result = CINscore,
+    return(returnAsInput(userdata = dataset, result = score,
                         SignName = "CIN", datasetm))
 }
 
@@ -703,21 +699,15 @@ CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
 
     datasetm <- getMatrix(dataset)
 
-    if(tumorTissue=="pan-tissue"&author=="Lundberg"){
+    if(author == "Lundberg"){
+        score <- statScore(CCSLundbergdata, datasetm, nametype,
+                            "sum", "CCSSign")
+    } else if(author == "Davoli"){
+        score <- statScore(CCSDavolidata, datasetm, nametype,
+                            "mean", "CCSSign")}
 
-        CCSscore <- statScore(
-            CCSLundbergdata, datasetm = datasetm, nametype = nametype,
-            typeofstat = "sum", namesignature = "CCSSign")
-
-    } else if(tumorTissue=="pan-tissue"&author == "Davoli"){
-
-        CCSscore <- statScore(
-            CCSDavolidata, datasetm = datasetm, nametype = nametype,
-            typeofstat = "mean", namesignature = "CCSSign")}
-
-    return(returnAsInput(
-        userdata = dataset, result = CCSscore, SignName = paste0("CCS", author),
-        datasetm))
+    return(returnAsInput(userdata = dataset, result = score,
+                         SignName = paste0("CCS", author), datasetm))
 }
 
 
@@ -967,24 +957,14 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "breast",
 
     firstCheck(nametype, tumorTissue, "glycolysisSign", author)
 
-    if(tumorTissue== "bladder"){
-        Glycolysisdata <- get(paste0("Glycolysis", author, "Cdata"))}
-    else if(tumorTissue== "lung"){
-        Glycolysisdata <- get(paste0("Glycolysis", author, "Ldata"))}
-    else(Glycolysisdata <- get(paste0("Glycolysis", author, "data")))
-
+    Glycolysisdata <- get(paste0("Glycolysis", author, "data"))
     datasetm <- getMatrix(dataset)
 
-    Glycoscore <- coefficientsScore(Glycolysisdata, datasetm = datasetm,
-                                   nametype = nametype,
-                                   namesignature = "glycolysisSign")
+    score <- coefficientsScore(Glycolysisdata, datasetm,
+                                nametype, "glycolysisSign")
 
-    return(returnAsInput(userdata = dataset, result = Glycoscore,
-                         SignName = if(tumorTissue== "bladder"){
-                             paste0("Glycolysis", author, "C")
-                             } else if(tumorTissue== "lung"){
-                                 paste0("Glycolysis", author, "L")
-                                 } else paste0("Glycolysis", author), datasetm))
+    return(returnAsInput(userdata = dataset, result = score,
+                         SignName = paste0("Glycolysis", author), datasetm))
 }
 
 #' Autophagy Signature
@@ -1012,10 +992,10 @@ autophagySign <- function(dataset, nametype = "SYMBOL",
 
     datasetm <- getMatrix(dataset)
 
-    Autoscore <- coefficientsScore(Autophagydata, datasetm = datasetm,
-                 nametype = nametype, namesignature = "autophagySign")
+    score <- coefficientsScore(Autophagydata, datasetm,
+                                nametype, "autophagySign")
 
-    return(returnAsInput(userdata = dataset, result = Autoscore,
+    return(returnAsInput(userdata = dataset, result = score,
                          SignName = if(tumorTissue== "kidney"){
                              paste0("Autophagy", author, "M")
                          } else if(tumorTissue== "cervix"){
