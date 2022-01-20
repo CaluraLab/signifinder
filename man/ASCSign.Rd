@@ -4,7 +4,11 @@
 \alias{ASCSign}
 \title{Adult Stem Cell Signature}
 \usage{
-ASCSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+ASCSign(
+  dataset,
+  nametype = "SYMBOL",
+  tumorTissue = "epithelial-derived neuroendocrine cancer"
+)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
