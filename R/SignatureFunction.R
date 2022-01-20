@@ -769,16 +769,18 @@ ASCSign <- function(dataset, nametype= "SYMBOL",
         ASCdata <- mapIds(org.Hs.eg.db, keys = ASCdata, column = nametype,
                           keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
+
     ASCper <- (sum(ASCdata %in% row.names(datasetm))/length(ASCdata))*100
     cat(paste0("AdultStemCellSign function is using ",
                round(ASCper), "% of AdultStemCell genes\n"))
 
-    ASCdatasetm <- log2(datasetm[row.names(datasetm) %in% ASCdata, ] + 1)
-    ASCscore <- colSums((ASCdatasetm - rowMeans(ASCdatasetm))/
-                            sapply(as.data.frame(t(ASCdatasetm)), sd,
-                                   na.rm = TRUE))
+    datasetm_n <- log2(datasetm[row.names(datasetm) %in% ASCdata, ] + 1)
+    columnNA <- managena(datasetm_n, ASCdata)
+    score <- colSums((datasetm_n - rowMeans(datasetm_n))/
+                    sapply(as.data.frame(t(datasetm_n)), sd, na.rm = TRUE))
+    score[columnNA > 0.9] <- NA
 
-    return(returnAsInput(userdata = dataset, result = ASCscore,
+    return(returnAsInput(userdata = dataset, result = score,
                          SignName = "ASC", datasetm))
 }
 
@@ -984,23 +986,13 @@ autophagySign <- function(dataset, nametype = "SYMBOL",
 
     firstCheck(nametype, tumorTissue, "autophagySign", author)
 
-    if(tumorTissue== "kidney"){
-        Autophagydata <- get(paste0("Autophagy", author, "Mdata"))}
-    else if(tumorTissue== "cervix"){
-        Autophagydata <- get(paste0("Autophagy", author, "Hdata"))}
-    else(Autophagydata <- get(paste0("Autophagy", author, "data")))
-
+    Autophagydata <- get(paste0("Autophagy", author, "data"))
     datasetm <- getMatrix(dataset)
-
     score <- coefficientsScore(Autophagydata, datasetm,
                                 nametype, "autophagySign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = if(tumorTissue== "kidney"){
-                             paste0("Autophagy", author, "M")
-                         } else if(tumorTissue== "cervix"){
-                             paste0("Autophagy", author, "H")
-                         } else paste0("Autophagy", author), datasetm))
+                         SignName = paste0("Autophagy", author), datasetm))
 }
 
 #' Extracellular Matrix Signature
