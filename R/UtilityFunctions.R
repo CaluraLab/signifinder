@@ -29,7 +29,7 @@ SignatureNames <- c("Epithelial",
                     "SC",
                     "Matrisome",
                     "MitoticIndex",
-                    "CYT",
+                    "ImmuneCytRooney",
                     "IFN",
                     "ExpandedImmune",
                     "TLS",
@@ -61,7 +61,7 @@ SignatureNames <- c("Epithelial",
                     "ECMup",
                     "ECMdown",
                     "HRDS",
-                    "CytoImmuno",
+                    "ImmuneCytDavoli",
                     "ISC",
                     "VEGF",
                     "Angiogenesis",
@@ -102,10 +102,10 @@ GetGenes <- function(name){
             "AutophagyChenH",  "HRDS", "DNArepair")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "Matrisome", "MitoticIndex", "CYT", "CIN", "CCSDavoli",
+            "Matrisome", "MitoticIndex", "ImmuneCytRooney", "CIN", "CCSDavoli",
             "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
             "EMTCheng", "Chemokine", "ASC", "PASS.ON", "IPRES",
-            "CytoImmuno", "ISC", "VEGF", "Angiogenesis")){
+            "ImmuneCytDavoli", "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

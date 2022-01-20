@@ -525,7 +525,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 }
 
 
-#' Local Immune Cytolytic Activity (CYT) Signature
+#' Immune Cytolytic Activity Signature
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
@@ -538,15 +538,21 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 #' @import org.Hs.eg.db
 #'
 #' @export
-CYTSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+ImmuneCytSign <- function(dataset, nametype = "SYMBOL",
+                          tumorTissue = "pan-tissue", author = "Rooney"){
 
-    firstCheck(nametype, tumorTissue, "CYTSign")
+    firstCheck(nametype, tumorTissue, "ImmuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
-    score <- statScore(CYTdata, datasetm, nametype, "meang", "CYTSign")
-
+    if(tumorTissue == "pan-tissue"& author=="Rooney"){
+         score <- statScore(
+             ImmuneCytRooneydata, datasetm, nametype, "meang", "ImmuneCytSign")
+    } else if(tumorTissue =="pan-tissue" & author == "Davoli") {
+        score <- statScore(
+            ImmuneCytDavolidata, datasetm, nametype,"mean", "ImmuneCytSign")
+    }
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "CYT", datasetm))
+                         SignName = paste0("ImmuneCyt", author), datasetm))
 }
 
 
@@ -1104,37 +1110,6 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
                          SignName = "HRDS", datasetm))
 }
 
-
-#' Cytotoxic Immuno Signature (Cytotoxic immune cell infiltrates)
-#'
-#' @inherit EMTSign description
-#' @inheritParams EMTSign
-#'
-#' @return A SummarizedExperiment object in which the scores is
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom AnnotationDbi mapIds
-#' @importFrom matrixStats colMedians
-#' @importFrom stats setNames
-#'
-#' @import org.Hs.eg.db
-#'
-#' @export
-CyISign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
-
-    firstCheck(nametype, tumorTissue, "CyISign")
-
-    if(nametype!="SYMBOL"){
-        CytoImmunodata<- mapIds(org.Hs.eg.db, keys = CytoImmunodata, column = nametype,
-                            keytype = "SYMBOL", multiVals = "first")}
-    datasetm <- getMatrix(dataset)
-
-    ImmunoScore <- statScore(CytoImmunodata, datasetm = datasetm, nametype = "SYMBOL",
-                             typeofstat = "mean", namesignature= "CyISign")
-
-    return(returnAsInput(userdata = dataset, result = ImmunoScore,
-                         SignName = "CytoImmuno", datasetm))
-}
 
 #' Adult Intestinal Stem Cell Signature
 #'
