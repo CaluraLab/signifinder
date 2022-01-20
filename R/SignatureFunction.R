@@ -544,12 +544,12 @@ ImmuneCytSign <- function(dataset, nametype = "SYMBOL",
     firstCheck(nametype, tumorTissue, "ImmuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
-    if(tumorTissue == "pan-tissue"& author=="Rooney"){
+    if(tumorTissue == "pan-tissue" & author == "Rooney"){
          score <- statScore(
              ImmuneCytRooneydata, datasetm, nametype, "meang", "ImmuneCytSign")
-    } else if(tumorTissue =="pan-tissue" & author == "Davoli") {
+    } else if(tumorTissue == "pan-tissue" & author == "Davoli") {
         score <- statScore(
-            ImmuneCytDavolidata, datasetm, nametype,"mean", "ImmuneCytSign")
+            ImmuneCytDavolidata, datasetm, nametype, "mean", "ImmuneCytSign")
     }
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = paste0("ImmuneCyt", author), datasetm))
@@ -731,13 +731,12 @@ CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
 #' @export
 chemokineSign <- function(dataset, nametype = "SYMBOL",
                           tumorTissue = "pan-tissue"){
+
     firstCheck(nametype, tumorTissue, "chemokineSign")
 
-    if(nametype!="SYMBOL") {Chemokinedata <- mapIds(org.Hs.eg.db,
-                                                    keys = Chemokinedata,
-                                                    column = nametype,
-                                                    keytype = "SYMBOL",
-                                                    multiVals = "first")}
+    if(nametype!="SYMBOL") {Chemokinedata <- mapIds(
+        org.Hs.eg.db, keys = Chemokinedata, column = nametype,
+        keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -746,12 +745,15 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
     cat(paste0("ChemokineSign function is using ",
                round(chemoper), "% of genes\n"))
 
-    datasetm <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
-    z_score <- (datasetm - rowMeans(datasetm))/
-        sapply(as.data.frame(t(datasetm)), sd, na.rm = TRUE)
-    pc1_score <- prcomp(t(z_score))$x[,1]
-    return(returnAsInput(userdata = dataset, result = pc1_score,
-                                       SignName = "Chemokine", datasetm))
+    datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
+    columnNA <- managena(datasetm_n, Chemokinedata)
+    z_score <- (datasetm_n - rowMeans(datasetm_n))/
+        sapply(as.data.frame(t(datasetm_n)), sd, na.rm = TRUE)
+    score <- prcomp(t(z_score))$x[,1]
+    score[columnNA > 0.9] <- NA
+
+    return(returnAsInput(userdata = dataset, result = score,
+                        SignName = "Chemokine", datasetm))
 }
 
 #' Adult Stem Cell Signature
@@ -819,28 +821,22 @@ PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
 
     passper <- (sum(unlist(PASS.ONdata) %in% row.names(datasetm))/
                     sum(lengths(PASS.ONdata)))*100
-
     cat(paste0("passONsignature function is using ", round(passper),
                "% of passON-related genes\n"))
 
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = datasetm,
-                                      gset.idx.list = PASS.ONdata,
-                                      method = "ssgsea",
-                                      kcdf = "Poisson",
-                                      min.sz = 5,
-                                      ssgsea.norm = TRUE,
-                                      verbose = TRUE))
+    args <- matchArguments(dots, list(
+        expr = datasetm, gset.idx.list = PASS.ONdata, method = "ssgsea",
+        kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
-    gsva_mean <- sapply(X = colnames(gsva_matrix) , FUN = function(x) {
+    gsva_mean <- sapply(colnames(gsva_matrix), function(x) {
         weighted.mean(gsva_matrix[,x], c(23, 26, 81, 18))
     })
 
-
     return(returnAsInput(userdata = dataset, result = gsva_mean,
-                                       SignName = "PASS.ON", datasetm))
+                            SignName = "PASS.ON", datasetm))
 }
 
 #' IPRES Signature
@@ -864,39 +860,32 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
     firstCheck(nametype, tumorTissue, "IPRESSign")
 
     if(nametype!="SYMBOL"){
-        ipresdata <- mapIds(org.Hs.eg.db, keys = ipresdata,
-                            column = nametype, keytype = "SYMBOL",
-                            multiVals = "first")}
+        ipresdata <- mapIds(org.Hs.eg.db, keys = ipresdata, column = nametype,
+                            keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
-
     passper <- (sum(unlist(ipresdata) %in% row.names(datasetm))/
                     sum(lengths(ipresdata)))*100
-
     cat(paste0("IPRESsignature function is using ", round(passper),
                "% of IPRES-related genes\n"))
 
-
     dots <- list(...)
-    args <- matchArguments(dots, list(expr = datasetm,
-                 gset.idx.list = ipresdata,
-                 method = "ssgsea", kcdf = "Poisson",
-                 min.sz = 5, ssgsea.norm = FALSE,
-                 verbose = FALSE))
+    args <- matchArguments(dots, list(
+        expr = datasetm, gset.idx.list = ipresdata, method = "ssgsea",
+        kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
     if(pvalues){
-        gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets,
-                                 gsvaResult = gsva_matrix,
-                                 nperm = nperm, args = args)
+        gsva_pval <- GSVAPvalues(
+            expr = datasetm, gset.idx.list = gene_sets,
+            gsvaResult = gsva_matrix, nperm = nperm, args = args)
         gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
     z_score <- (gsva_matrix - rowMeans(gsva_matrix))/sapply(
         as.data.frame(t(gsva_matrix)), sd, na.rm = TRUE)
     IPRESscore <- colMeans(z_score)
-
 
     return(returnAsInput(userdata = dataset, result = IPRESscore,
                          SignName = "IPRES", datasetm))
@@ -919,9 +908,9 @@ CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
     firstCheck(nametype, tumorTissue, "CISSign")
 
     if(nametype!="SYMBOL"){
-        CISdata$Gene_Symbol  <- mapIds(org.Hs.eg.db, keys = CISdata$Gene_Symbol,
-                                       column = nametype,
-                           keytype = "SYMBOL", multiVals = "first")}
+        CISdata$Gene_Symbol  <- mapIds(
+            org.Hs.eg.db, keys = CISdata$Gene_Symbol, column = nametype,
+            keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
@@ -932,10 +921,8 @@ CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
                  nrow(Signature_up))*100
     mper <- (sum(Signature_down$Gene_Symbol %in% row.names(datasetm))/
                  nrow(Signature_down))*100
-
-    cat(paste0("CISSign function is using ", round(eper),
-               "% of up-genes\n", "CISSign function is using ",
-               round(mper), "% of down-genes\n"))
+    cat(paste0("CISSign function is using ", round(eper), "% of up-genes\n",
+               "CISSign function is using ", round(mper), "% of down-genes\n"))
 
     med_data_up <- colMeans(log2(datasetm[intersect(
         row.names(datasetm), Signature_up$Gene_Symbol),]))
@@ -1092,21 +1079,18 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
                     length(HRDSdata$Gene_Symbol))*100
     cat(paste0("HRDSSign function is using ", round(HRDSper), "% of genes\n"))
 
-    HRDS_P <- datasetm[intersect(
-        row.names(datasetm), HRDSdata[
+    HRDS_P <- datasetm[intersect(row.names(datasetm), HRDSdata[
             HRDSdata$correlation == 1, ]$Gene_Symbol), ]
-    HRDS_N <- datasetm[intersect(
-        row.names(datasetm), HRDSdata[
+    HRDS_N <- datasetm[intersect(row.names(datasetm), HRDSdata[
             HRDSdata$correlation == -1, ]$Gene_Symbol), ]
 
-    HRDSscore <- unlist(lapply(X = colnames(datasetm), FUN = function(x){
-                tmp <- t.test(HRDS_P[,x], HRDS_N[,x], alternative = "two.sided")
-                tmp[["statistic"]]
-            }))
+    score <- unlist(lapply(colnames(datasetm), function(x){
+        tmp <- t.test(HRDS_P[,x], HRDS_N[,x], alternative = "two.sided")
+        tmp[["statistic"]]}))
 
-    names(HRDSscore) <- colnames(datasetm)
+    names(score) <- colnames(datasetm)
 
-    return(returnAsInput(userdata = dataset, result = HRDSscore,
+    return(returnAsInput(userdata = dataset, result = score,
                          SignName = "HRDS", datasetm))
 }
 
@@ -1141,8 +1125,9 @@ ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
 
     cat(paste0("ISCSign function is using ", round(Lgr5per),
                "% of Lgr5_ISC-genes, ", round(Ephper),
-               "% of EphB2_ISC-genes, ", round(TAper), "% of Late_TA-genes ",
-               "and ", round(proper), "% of Proliferation-genes\n"))
+               "% of EphB2_ISC-genes, ", round(TAper),
+               "% of Late_TA-genes and ", round(proper),
+               "% of Proliferation-genes\n"))
 
     ISCscores <- sapply(ISCdata, function(x)
         colMeans(datasetm[intersect(
@@ -1171,11 +1156,9 @@ VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     datasetm <- getMatrix(dataset)
 
-    VEGFscore <- log2(
-        statScore(VEGFdata, datasetm = datasetm, nametype = nametype,
-                  typeofstat = "mean", namesignature = "VEGFSign"))
+    score <- log2(statScore(VEGFdata, datasetm, nametype, "mean", "VEGFSign"))
 
-    return(returnAsInput(userdata = dataset, result = VEGFscore,
+    return(returnAsInput(userdata = dataset, result = score,
                          SignName = "VEGF", datasetm))
 }
 
@@ -1198,12 +1181,12 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
     datasetm <- getMatrix(dataset)
 
-    Angioscore <-statScore(
-        Angiogenesisdata, datasetm = datasetm, nametype = "SYMBOL",
-        typeofstat = "median", namesignature= "angioSign")
+    score <-statScore(
+        Angiogenesisdata, datasetm, nametype = "SYMBOL",
+        typeofstat = "median", namesignature = "angioSign")
 
-    return(returnAsInput(userdata = dataset, result = as.vector(
-        scale(Angioscore)), SignName = "Angiogenesis", datasetm))
+    return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
+                         SignName = "Angiogenesis", datasetm))
 }
 
 #' DNA Repair Signature
@@ -1215,19 +1198,16 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
-#' @importFrom labstatR meang
 #' @import org.Hs.eg.db
 #'
 #' @export
-DNArepSign <- function(dataset, nametype = "SYMBOL",
-                       tumorTissue = "ovary"){
+DNArepSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     firstCheck(nametype, tumorTissue, "DNArepSign")
 
-    if(nametype!="SYMBOL"){
-        DNArepairdata$DNAre <- mapIds(org.Hs.eg.db, keys = DNArepairdata$DNAre,
-                                   column = nametype, keytype = "SYMBOL",
-                                   multiVals = "first")}
+    if(nametype!="SYMBOL"){DNArepairdata$DNAre <- mapIds(
+        org.Hs.eg.db, keys = DNArepairdata$DNAre, column = nametype,
+        keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
 
