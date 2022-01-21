@@ -671,7 +671,7 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #'
 #' @export
 CINSign <- function(dataset, nametype = "SYMBOL",
-                    tumorTissue = "breast, lung, brain, lymphatic system",
+                    tumorTissue = "pan-cancer",
                     typeofCIN = 70){
 
     firstCheck(nametype, tumorTissue, "CINSign")
@@ -679,7 +679,9 @@ CINSign <- function(dataset, nametype = "SYMBOL",
 
     CINdata <- CINdata[seq_len(typeofCIN)]
     datasetm <- getMatrix(dataset)
-    score <- statScore(CINdata, datasetm, nametype, "sum", "CINSign")
+
+    score <- statScore(CINdata, scale(datasetm, center = TRUE, scale = FALSE),
+                       nametype, "sum", "CINSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                         SignName = "CIN", datasetm))
@@ -747,9 +749,7 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
     columnNA <- managena(datasetm_n, Chemokinedata)
-    z_score <- (datasetm_n - rowMeans(datasetm_n))/
-        sapply(as.data.frame(t(datasetm_n)), sd, na.rm = TRUE)
-    score <- prcomp(t(z_score))$x[,1]
+    score <- prcomp(t(datasetm), center = TRUE, scale = TRUE)$x[, 1]
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -1182,8 +1182,8 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     datasetm <- getMatrix(dataset)
 
     score <-statScore(
-        Angiogenesisdata, datasetm, nametype = "SYMBOL",
-        typeofstat = "median", namesignature = "angioSign")
+        Angiogenesisdata, datasetm, nametype, typeofstat = "median",
+        namesignature = "angioSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
                          SignName = "Angiogenesis", datasetm))

@@ -7,7 +7,7 @@
 CINSign(
   dataset,
   nametype = "SYMBOL",
-  tumorTissue = "breast, lung, brain, lymphatic system",
+  tumorTissue = "pan-cancer",
   typeofCIN = 70
 )
 }
