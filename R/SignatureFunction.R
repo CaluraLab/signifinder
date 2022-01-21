@@ -96,7 +96,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 
             datasetm_n <- datasetm[intersect(
                 row.names(datasetm), EMTMakdata$Gene_Symbol), ]
-            datasetm_n <- ifelse(inputType == "rnaseq", log2(datasetm_n), datasetm_n)
+            datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
+                } else {datasetm_n}
             columnNA <- managena(datasetm_n, genes = EMTMakdata$Gene_Symbol)
             score <- colMeans(
                 datasetm_n[intersect(Sign_M$Gene_Symbol, row.names(datasetm_n)),]
@@ -116,7 +117,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                     "% of genes\n"))
 
             datasetm_n <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
-            datasetm_n <- ifelse(inputType == "rnaseq", log2(datasetm_n), datasetm_n)
+            datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
+                } else {datasetm_n}
             columnNA <- managena(datasetm = datasetm_n, genes = EMTChengdata)
             score <- prcomp(t(datasetm_n))$x[,1]
             score[columnNA > 0.9] <- NA
@@ -247,7 +249,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- ifelse(inputType == "rnaseq", log2(datasetm), datasetm)
+    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
     score <- statScore(genetouse, datasetm = datasetm_n, nametype = "SYMBOL",
         typeofstat = "median", namesignature = "hypoxiaSign")
 
