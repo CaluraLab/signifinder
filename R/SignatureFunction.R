@@ -658,18 +658,22 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #'
 #' @export
 CINSign <- function(dataset, nametype = "SYMBOL",
-                    tumorTissue = "breast, lung, brain, lymphatic system",
-                    typeofCIN = 70){
+                    tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "CINSign")
-    if (!(typeofCIN %in% c(70,25))){stop("typeofCIN must be either 70 or 25")}
 
-    CINdata <- CINdata[seq_len(typeofCIN)]
     datasetm <- getMatrix(dataset)
-    score <- statScore(CINdata, datasetm, nametype, "sum", "CINSign")
 
-    return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "CIN", datasetm))
+    score25 <- statScore(CINdata$SYMBOL[CINdata$class == "CIN25"],
+                        scale(datasetm, center = TRUE, scale = FALSE),
+                        nametype, "sum", "CINSign")
+    score70 <- statScore(CINdata$SYMBOL,
+                        scale(datasetm, center = TRUE, scale = FALSE),
+                        nametype, "sum", "CINSign")
+    score <- data.frame(CIN25=score25, CIN70=score70)
+
+    return(returnAsInput(userdata = dataset, result = t(score),
+                        SignName = "", datasetm))
 }
 
 
@@ -731,9 +735,7 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
     columnNA <- managena(datasetm_n, Chemokinedata)
-    z_score <- (datasetm_n - rowMeans(datasetm_n))/
-        sapply(as.data.frame(t(datasetm_n)), sd, na.rm = TRUE)
-    score <- prcomp(t(z_score))$x[,1]
+    score <- prcomp(t(datasetm), center = TRUE, scale = TRUE)$x[, 1]
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -839,8 +841,9 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
     firstCheck(nametype, tumorTissue, "IPRESSign")
 
     if(nametype!="SYMBOL"){
-        ipresdata <- mapIds(org.Hs.eg.db, keys = ipresdata, column = nametype,
-                            keytype = "SYMBOL", multiVals = "first")}
+        IPRESdata <- lapply(IPRESdata, function(x)
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
+                                    keytype="SYMBOL", multiVals="first")))}
 
     datasetm <- getMatrix(dataset)
 
@@ -848,7 +851,7 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
 
     dots <- list(...)
     args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = ipresdata, method = "ssgsea",
+        expr = datasetm, gset.idx.list = IPRESdata, method = "ssgsea",
         kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
@@ -1049,11 +1052,9 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
     HRDS_N <- datasetm[intersect(row.names(datasetm), HRDSdata[
             HRDSdata$correlation == -1, ]$Gene_Symbol), ]
 
-    score <- unlist(lapply(colnames(datasetm), function(x){
+    score <- unlist(lapply(seq_len(ncol(datasetm)), function(x){
         tmp <- t.test(HRDS_P[,x], HRDS_N[,x], alternative = "two.sided")
         tmp[["statistic"]]}))
-
-    names(score) <- colnames(datasetm)
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = "HRDS", datasetm))
@@ -1141,8 +1142,8 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     datasetm <- getMatrix(dataset)
 
     score <-statScore(
-        Angiogenesisdata, datasetm, nametype = "SYMBOL",
-        typeofstat = "median", namesignature = "angioSign")
+        Angiogenesisdata, datasetm, nametype, typeofstat = "median",
+        namesignature = "angioSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
                          SignName = "Angiogenesis", datasetm))

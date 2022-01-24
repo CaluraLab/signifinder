@@ -4,12 +4,7 @@
 \alias{CINSign}
 \title{Chromosomal instability Signature}
 \usage{
-CINSign(
-  dataset,
-  nametype = "SYMBOL",
-  tumorTissue = "breast, lung, brain, lymphatic system",
-  typeofCIN = 70
-)
+CINSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
