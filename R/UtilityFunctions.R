@@ -223,10 +223,7 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
                                       column = nametype, keytype = "SYMBOL",
                                       multiVals = "first")}
 
-    dataper <- (sum(ourdata$Gene_Symbol %in% row.names(datasetm)
-    )/nrow(ourdata))*100
-    cat(paste0(namesignature, " function is using ",
-               round(dataper), "% of genes\n"))
+    percentageOfGenesUsed(namesignature, datasetm, ourdata$Gene_Symbol)
 
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
     columnNA <- managena(datasetm = datasetm, genes = ourdata$Gene_Symbol)
@@ -242,9 +239,7 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
         ourdata <- mapIds(org.Hs.eg.db, keys = ourdata, column = nametype,
                           keytype = "SYMBOL", multiVals = "first")}
 
-    dataper <- (sum(ourdata %in% row.names(datasetm))/length(ourdata))*100
-    cat(paste0(namesignature, " function is using ",
-               round(dataper), "% of genes\n"))
+    percentageOfGenesUsed(namesignature, datasetm, ourdata)
 
     ourdata <- ourdata[ourdata %in% row.names(datasetm)]
 
@@ -278,6 +273,17 @@ dataTransformation <- function(data, trans){
     tdata <- DGEobj.utils::convertCounts(
         countsMatrix = data, unit = trans, geneLength = glen[,"length"])
     return(tdata)
+}
+
+percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){
+
+    g_per <- (sum(gs %in% row.names(datasetm))/length(gs)) * 100
+
+    if(is.null(detail)){
+        message(paste0(name, " function is using ", round(g_per), "% of genes"))
+    } else {
+        message(paste0(name, " function is using ", round(g_per),
+                       "% of ", detail, " genes"))}
 }
 
 

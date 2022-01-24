@@ -45,14 +45,10 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
         Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
 
-        eper <- (sum(Signature_EL$Gene_Symbol %in% row.names(datasetm))/
-                    nrow(Signature_EL))*100
-        mper <- (sum(Signature_ML$Gene_Symbol %in% row.names(datasetm))/
-                    nrow(Signature_ML))*100
-        cat(paste0("EMTSign function is using ", round(eper),
-                    "% of epithelial-like genes\n",
-                    "EMTSign function is using ", round(mper),
-                    "% of mesenchymal-like genes\n"))
+        percentageOfGenesUsed("EMTSign", datasetm, Signature_EL$Gene_Symbol,
+                                detail = "epithelial-like")
+        percentageOfGenesUsed("EMTSign", datasetm, Signature_ML$Gene_Symbol,
+                                detail = "mesenchymal-like")
 
         gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
                         Mesenchymal = Signature_ML$Gene_Symbol)
@@ -85,14 +81,10 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
             Sign_M <- EMTMakdata[grep('M', EMTMakdata$Category),]
 
-            eper <- (sum(Sign_E$Gene_Symbol %in% row.names(datasetm))/
-                        nrow(Sign_E))*100
-            mper <- (sum(Sign_M$Gene_Symbol %in% row.names(datasetm))/
-                        nrow(Sign_M))*100
-            cat(paste0("EMTSign function is using ", round(eper),
-                    "% of epithelial-like genes\n",
-                    "EMTSign function is using ", round(mper),
-                    "% of mesenchymal-like genes\n"))
+            percentageOfGenesUsed("EMTSign", datasetm, Sign_E$Gene_Symbol,
+                                  detail = "epithelial-like")
+            percentageOfGenesUsed("EMTSign", datasetm, Sign_M$Gene_Symbol,
+                                  detail = "mesenchymal-like")
 
             datasetm_n <- datasetm[intersect(
                 row.names(datasetm), EMTMakdata$Gene_Symbol), ]
@@ -111,10 +103,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                     org.Hs.eg.db, keys = EMTChengdata, column = nametype,
                     keytype = "SYMBOL", multiVals = "first")}
 
-            Ebper <- (sum(EMTChengdata %in% row.names(datasetm))/
-                        length(EMTChengdata))*100
-            cat(paste0("EMTSign function is using ", round(Ebper),
-                    "% of genes\n"))
+            percentageOfGenesUsed("EMTSign", datasetm, EMTChengdata)
 
             datasetm_n <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
             datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
@@ -290,13 +279,10 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
     Signature_down <- PlatinumResistancedata[
         -grep('PlatinumResistanceUp', PlatinumResistancedata$Category),]
 
-    upper <- (sum(Signature_up$Gene_Symbol %in% row.names(datasetm))/
-                 nrow(Signature_up))*100
-    downper <- (sum(Signature_down$Gene_Symbol %in% row.names(datasetm))/
-                 nrow(Signature_down))*100
-    cat(paste0("platinumResistanceSign function is using ", round(upper),
-                "% of up-genes\n", "platinumResistanceSign function is using ",
-                round(downper), "% of down-genes\n"))
+    percentageOfGenesUsed("platinumResistanceSign", datasetm,
+                          Signature_up$Gene_Symbol, detail = "up")
+    percentageOfGenesUsed("platinumResistanceSign", datasetm,
+                          Signature_down$Gene_Symbol, detail = "down")
 
     gene_sets <- list(PlatinumResistanceUp = Signature_up$Gene_Symbol,
                       PlatinumResistanceDown = Signature_down$Gene_Symbol)
@@ -345,9 +331,9 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
                 column = nametype, keytype = "SYMBOL", multiVals = "first")}
 
         g <- intersect(row.names(datasetm), ImmunoScoreHaodata$genes)
-        gper <- (length(g)/length(ImmunoScoreHaodata$genes))*100
-        cat(paste0(
-            "immunoScoreSign function is using ", round(gper), "% of genes\n"))
+
+        percentageOfGenesUsed("immunoScoreSign", datasetm,
+                              ImmunoScoreHaodata$genes)
 
         datasetm_n <- datasetm[g,]
         ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes%in%g,]
@@ -441,8 +427,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
 
-    ipsper <- (sum(IPSdata$GENE %in% row.names(datasetm))/nrow(IPSdata))*100
-    cat(paste0("IPSSign function is using", round(ipsper), "% of genes\n"))
+    percentageOfGenesUsed("IPSSign", datasetm, IPSdata$GENE)
 
     ind <- which(is.na(match(IPSdata$GENE, row.names(datasetm))))
     MISSING_GENES <- IPSdata$GENE[ind]
@@ -742,10 +727,7 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm <- getMatrix(dataset)
 
-    chemoper <- (sum(Chemokinedata %in% row.names(datasetm))/
-                     length(Chemokinedata))*100
-    cat(paste0("ChemokineSign function is using ",
-               round(chemoper), "% of genes\n"))
+    percentageOfGenesUsed("ChemokineSign", datasetm, Chemokinedata)
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
     columnNA <- managena(datasetm_n, Chemokinedata)
@@ -780,9 +762,7 @@ ASCSign <- function(dataset, nametype= "SYMBOL",
                           keytype = "SYMBOL", multiVals = "first")}
     datasetm <- getMatrix(dataset)
 
-    ASCper <- (sum(ASCdata %in% row.names(datasetm))/length(ASCdata))*100
-    cat(paste0("AdultStemCellSign function is using ",
-               round(ASCper), "% of AdultStemCell genes\n"))
+    percentageOfGenesUsed("ASCSign", datasetm, ASCdata)
 
     datasetm_n <- log2(datasetm[row.names(datasetm) %in% ASCdata, ] + 1)
     columnNA <- managena(datasetm_n, ASCdata)
@@ -821,10 +801,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
 
     datasetm <- getMatrix(dataset)
 
-    passper <- (sum(unlist(PASS.ONdata) %in% row.names(datasetm))/
-                    sum(lengths(PASS.ONdata)))*100
-    cat(paste0("passONsignature function is using ", round(passper),
-               "% of passON-related genes\n"))
+    percentageOfGenesUsed("PassONSign", datasetm, unlist(PASS.ONdata))
 
     dots <- list(...)
     args <- matchArguments(dots, list(
@@ -867,10 +844,7 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
 
     datasetm <- getMatrix(dataset)
 
-    passper <- (sum(unlist(ipresdata) %in% row.names(datasetm))/
-                    sum(lengths(ipresdata)))*100
-    cat(paste0("IPRESsignature function is using ", round(passper),
-               "% of IPRES-related genes\n"))
+    percentageOfGenesUsed("IPRESSign", datasetm, unlist(ipresdata))
 
     dots <- list(...)
     args <- matchArguments(dots, list(
@@ -919,12 +893,8 @@ CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
     Signature_up <- CISdata[grep('CISup', CISdata$Category),]
     Signature_down <- CISdata[grep('CISdown', CISdata$Category),]
 
-    eper <- (sum(Signature_up$Gene_Symbol %in% row.names(datasetm))/
-                 nrow(Signature_up))*100
-    mper <- (sum(Signature_down$Gene_Symbol %in% row.names(datasetm))/
-                 nrow(Signature_down))*100
-    cat(paste0("CISSign function is using ", round(eper), "% of up-genes\n",
-               "CISSign function is using ", round(mper), "% of down-genes\n"))
+    percentageOfGenesUsed("CISSign", datasetm, Signature_up$Gene_Symbol, "up")
+    percentageOfGenesUsed("CISSign", datasetm, Signature_down$Gene_Symbol, "down")
 
     med_data_up <- colMeans(log2(datasetm[intersect(
         row.names(datasetm), Signature_up$Gene_Symbol),]))
@@ -1021,13 +991,8 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
     Signature_up <- ECMdata[grep('ECMup', ECMdata$Category),]
     Signature_down <- ECMdata[grep('ECMdown', ECMdata$Category),]
 
-    upper <- (sum(Signature_up$Gene_Symbol %in% row.names(datasetm))/
-                  nrow(Signature_up))*100
-    downper <- (sum(Signature_down$Gene_Symbol %in% row.names(datasetm))/
-                    nrow(Signature_down))*100
-    cat(paste0("ECMSign function is using ", round(upper),
-               "% of up-genes\n", "ECMSign function is using ",
-               round(downper), "% of down-genes\n"))
+    percentageOfGenesUsed("ECMSign", datasetm, Signature_up$Gene_Symbol, "up")
+    percentageOfGenesUsed("ECMSign", datasetm, Signature_down$Gene_Symbol, "down")
 
     gene_sets <- list(ECMup = Signature_up$Gene_Symbol,
                       ECMdown = Signature_down$Gene_Symbol)
@@ -1077,9 +1042,7 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     datasetm <- getMatrix(dataset)
 
-    HRDSper <- (sum(HRDSdata$Gene_Symbol %in% row.names(datasetm))/
-                    length(HRDSdata$Gene_Symbol))*100
-    cat(paste0("HRDSSign function is using ", round(HRDSper), "% of genes\n"))
+    percentageOfGenesUsed("HRDSSign", datasetm, HRDSdata$Gene_Symbol)
 
     HRDS_P <- datasetm[intersect(row.names(datasetm), HRDSdata[
             HRDSdata$correlation == 1, ]$Gene_Symbol), ]
@@ -1120,16 +1083,10 @@ ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
 
     datasetm <- getMatrix(dataset)
 
-    Lgr5per<-(sum(ISCdata$Lgr5%in%row.names(datasetm))/length(ISCdata$Lgr5))*100
-    Ephper<-(sum(ISCdata$Eph%in%row.names(datasetm))/length(ISCdata$Eph))*100
-    TAper<-(sum(ISCdata$TA%in%row.names(datasetm))/length(ISCdata$TA))*100
-    proper<-(sum(ISCdata$pro%in%row.names(datasetm))/length(ISCdata$pro))*100
-
-    cat(paste0("ISCSign function is using ", round(Lgr5per),
-               "% of Lgr5_ISC-genes, ", round(Ephper),
-               "% of EphB2_ISC-genes, ", round(TAper),
-               "% of Late_TA-genes and ", round(proper),
-               "% of Proliferation-genes\n"))
+    percentageOfGenesUsed("ISCSign", datasetm, ISCdata$Lgr5, "Lgr5_ISC")
+    percentageOfGenesUsed("ISCSign", datasetm, ISCdata$Eph, "EphB2_ISC")
+    percentageOfGenesUsed("ISCSign", datasetm, ISCdata$TA, "Late_TA")
+    percentageOfGenesUsed("ISCSign", datasetm, ISCdata$pro, "Proliferation")
 
     ISCscores <- sapply(ISCdata, function(x)
         colMeans(datasetm[intersect(
@@ -1213,9 +1170,7 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     datasetm <- getMatrix(dataset)
 
-    DNArep <- (sum(DNArepairdata$DNAre %in% row.names(datasetm))/
-                    length(DNArepairdata$DNAre))*100
-    cat(paste0("DNArepSign function is using ", round(DNArep), "% of genes\n"))
+    percentageOfGenesUsed("DNArepSign", datasetm, DNArepairdata$DNAre)
 
     DNAdatahigh <- DNArepairdata[DNArepairdata$status=="high",]
     DNAdatalow <- DNArepairdata[DNArepairdata$status=="low",]
