@@ -864,19 +864,23 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
     firstCheck(nametype, tumorTissue, "IPRESSign")
 
     if(nametype!="SYMBOL"){
-        ipresdata <- mapIds(org.Hs.eg.db, keys = ipresdata, column = nametype,
-                            keytype = "SYMBOL", multiVals = "first")}
+        IPRESdata <- lapply(IPRESdata, function(x)
+            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
+                                    keytype="SYMBOL", multiVals="first")))}
 
     datasetm <- getMatrix(dataset)
 
-    passper <- (sum(unlist(ipresdata) %in% row.names(datasetm))/
-                    sum(lengths(ipresdata)))*100
+    IPRESdata_c <- unlist(IPRESdata)
+    names(IPRESdata_c) <- NULL
+
+    passper <- (sum(IPRESdata_c %in% row.names(datasetm))/
+                    length(IPRESdata_c))*100
     cat(paste0("IPRESsignature function is using ", round(passper),
                "% of IPRES-related genes\n"))
 
     dots <- list(...)
     args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = ipresdata, method = "ssgsea",
+        expr = datasetm, gset.idx.list = IPRESdata, method = "ssgsea",
         kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))

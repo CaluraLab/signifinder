@@ -157,3 +157,16 @@ test_that("DNArepSign work", {
     expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
 })
 
+test_that("IPRES work", {
+    # rmatrix  <- fakeData("IPRES")
+    myres <- IPRESSign(datasetm, nametype = "SYMBOL", tumorTissue = "skin")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("IPRES" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"IPRES"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"IPRES"], "double")
+    myoutput <- capture.output(IPRESSign(datasetm, nametype = "SYMBOL",
+                                       tumorTissue = "skin"))[1]
+    myoutput <- substring(myoutput, regexpr("g ", myoutput)+2,
+                          regexpr("%", myoutput)-1)
+    expect_true(as.numeric(myoutput)>=0 & as.numeric(myoutput)<=100)
+})
