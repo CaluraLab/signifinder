@@ -673,20 +673,22 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #'
 #' @export
 CINSign <- function(dataset, nametype = "SYMBOL",
-                    tumorTissue = "pan-cancer",
-                    typeofCIN = 70){
+                    tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "CINSign")
-    if (!(typeofCIN %in% c(70,25))){stop("typeofCIN must be either 70 or 25")}
 
-    CINdata <- CINdata[seq_len(typeofCIN)]
     datasetm <- getMatrix(dataset)
 
-    score <- statScore(CINdata, scale(datasetm, center = TRUE, scale = FALSE),
-                       nametype, "sum", "CINSign")
+    score25 <- statScore(CINdata$SYMBOL[CINdata$class == "CIN25"],
+                        scale(datasetm, center = TRUE, scale = FALSE),
+                        nametype, "sum", "CINSign")
+    score70 <- statScore(CINdata$SYMBOL,
+                        scale(datasetm, center = TRUE, scale = FALSE),
+                        nametype, "sum", "CINSign")
+    score <- data.frame(CIN25=score25, CIN70=score70)
 
-    return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "CIN", datasetm))
+    return(returnAsInput(userdata = dataset, result = t(score),
+                        SignName = "", datasetm))
 }
 
 
@@ -1086,11 +1088,9 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
     HRDS_N <- datasetm[intersect(row.names(datasetm), HRDSdata[
             HRDSdata$correlation == -1, ]$Gene_Symbol), ]
 
-    score <- unlist(lapply(colnames(datasetm), function(x){
+    score <- unlist(lapply(seq_len(ncol(datasetm)), function(x){
         tmp <- t.test(HRDS_P[,x], HRDS_N[,x], alternative = "two.sided")
         tmp[["statistic"]]}))
-
-    names(score) <- colnames(datasetm)
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = "HRDS", datasetm))

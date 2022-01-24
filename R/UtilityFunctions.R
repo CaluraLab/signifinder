@@ -99,10 +99,10 @@ GetGenes <- function(name){
             "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC", "AutophagyZhang",
             "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyChenM",
             "AutophagyHu", "AutophagyHou", "AutophagyFei", "AutophagyFang",
-            "AutophagyChenH",  "HRDS", "DNArepair")){
+            "AutophagyChenH",  "HRDS", "DNArepair", "CIN")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "Matrisome", "MitoticIndex", "ImmuneCytRooney", "CIN", "CCSDavoli",
+            "Matrisome", "MitoticIndex", "ImmuneCytRooney", "CCSDavoli",
             "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
             "EMTCheng", "Chemokine", "ASC", "PASS.ON", "IPRES",
             "ImmuneCytDavoli", "ISC", "VEGF", "Angiogenesis")){
