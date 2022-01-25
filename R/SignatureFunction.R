@@ -54,9 +54,10 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                         Mesenchymal = Signature_ML$Gene_Symbol)
 
         dots <- list(...)
+        kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
         args <- matchArguments(dots, list(expr = datasetm,
                                         gset.idx.list = gene_sets,
-                                        method = "ssgsea", kcdf = "Poisson",
+                                        method = "ssgsea", kcdf = kcdftype,
                                         min.sz = 5, ssgsea.norm = FALSE,
                                         verbose = FALSE))
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
@@ -143,7 +144,8 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
         datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
     } else if (tumorTissue == "stomach" & author == "Shao"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)}
+            datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        } else {datasetm_n <- datasetm}
     } else if (tumorTissue == "lung" & author == "Lin"){
         datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
     } else {datasetm_n <- datasetm}
@@ -161,6 +163,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @return A SummarizedExperiment object in which the Ferroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -169,14 +172,22 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #' @import org.Hs.eg.db
 #'
 #' @export
-ferroptosisSign <- function(dataset, nametype = "SYMBOL",
-                            tumorTissue = "ovary", author = "Ye"){
+ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
+                    tumorTissue = "ovary", author = "Ye", hgReference = "hg19"){
 
     firstCheck(nametype, tumorTissue, "ferroptosisSign", author)
     Ferroptosisdata <- get(paste0("Ferroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
-    score <- coefficientsScore(Ferroptosisdata, datasetm,
+
+    if(author == "Liu"){
+        if(inputType == "rnaseq"){
+            datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        } else {datasetm_n <- datasetm}
+    } else if (author == "Li"){
+        datasetm_n <- datasetm}
+
+    score <- coefficientsScore(Ferroptosisdata, datasetm_n,
                                 nametype, "ferroptosisSign")
 
     if(tumorTissue == "liver" & author == "Liang" ){score <- exp(score)}
@@ -516,6 +527,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -525,15 +537,18 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 #' @import org.Hs.eg.db
 #'
 #' @export
-ImmuneCytSign <- function(dataset, nametype = "SYMBOL",
-                          tumorTissue = "pan-tissue", author = "Rooney"){
+ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
+            tumorTissue = "pan-tissue", author = "Rooney", hgReference = "hg19"){
 
     firstCheck(nametype, tumorTissue, "ImmuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
     if(tumorTissue == "pan-tissue" & author == "Rooney"){
+        if(inputType == "rnaseq"){
+            datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)+0.01
+        } else {datasetm_n <- datasetm}
          score <- statScore(
-             ImmuneCytRooneydata, datasetm, nametype, "meang", "ImmuneCytSign")
+             ImmuneCytRooneydata, datasetm_n, nametype, "meang", "ImmuneCytSign")
     } else if(tumorTissue == "pan-tissue" & author == "Davoli") {
         score <- statScore(
             ImmuneCytDavolidata, datasetm, nametype, "mean", "ImmuneCytSign")
@@ -720,7 +735,7 @@ CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
 #' @import org.Hs.eg.db
 #'
 #' @export
-chemokineSign <- function(dataset, nametype = "SYMBOL",
+chemokineSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                           tumorTissue = "pan-tissue"){
 
     firstCheck(nametype, tumorTissue, "chemokineSign")
@@ -734,6 +749,8 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
     percentageOfGenesUsed("ChemokineSign", datasetm, Chemokinedata)
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
+    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
+    } else {datasetm_n}
     columnNA <- managena(datasetm_n, Chemokinedata)
     score <- prcomp(t(datasetm), center = TRUE, scale = TRUE)$x[, 1]
     score[columnNA > 0.9] <- NA
@@ -1001,12 +1018,10 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
                       ECMdown = Signature_down$Gene_Symbol)
 
     dots <- list(...)
-    kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
-
 
     args <- matchArguments(dots,list(expr = datasetm,
                                      gset.idx.list = gene_sets,
-                                     method = "ssgsea", kcdf = kcdftype,
+                                     method = "ssgsea", kcdf = "Poisson",
                                      min.sz = 5, ssgsea.norm = FALSE,
                                      verbose = FALSE))
 
