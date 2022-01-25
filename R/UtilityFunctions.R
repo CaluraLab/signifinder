@@ -262,16 +262,28 @@ managena <- function(datasetm, genes){
     return(columnNA)
 }
 
-dataTransformation <- function(data, trans){
+dataTransformation <- function(data, trans, hgReference){
+
+    if(hgReference=="hg19"){
+        txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+    } else if(hgReference=="hg38"){
+        txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
+    } else {stop("Human reference genome must be either hg19 or hg38")}
+
+    exons.db = ensembldb::exonsBy(txdb, by = "gene")
+
     g <- rownames(data)
-    eg <- mapIds(
-        org.Hs.eg.db, keys = g, column = "ENSEMBL",
-        keytype = "SYMBOL", multiVals = "first")
-    data <- data[!is.na(eg),]
-    eg <- eg[!is.na(eg)]
-    glen <- EDASeq::getGeneLengthAndGCContent(id = eg, org = "hsa")
+    egs <- suppressMessages(mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",
+        keytype = "SYMBOL", multiVals = "first"))
+    # data <- data[!is.na(eg),]
+    # eg <- eg[!is.na(eg)]
+
+    # glen <- getGeneLengthAndGCContent(id = eg, org = "hsa")
+    glen <- sapply(egs, function(eg){ sum(width(reduce( exons.db[[eg]] ))) })
+
     tdata <- DGEobj.utils::convertCounts(
-        countsMatrix = data, unit = trans, geneLength = glen[,"length"])
+        countsMatrix = data, unit = trans, geneLength = glen)
+
     return(tdata)
 }
 
@@ -281,9 +293,16 @@ percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){
 
     if(is.null(detail)){
         message(paste0(name, " function is using ", round(g_per), "% of genes"))
+        if(g_per < 30){
+            warning("The signature is computed with less than 30% of its genes")
+        }
     } else {
         message(paste0(name, " function is using ", round(g_per),
-                       "% of ", detail, " genes"))}
+                       "% of ", detail, " genes"))
+        if(g_per < 30){
+            warning(paste(detail,"is computed with less than 30% of its genes"))
+        }
+    }
 }
 
 

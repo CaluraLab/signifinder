@@ -121,6 +121,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @return A SummarizedExperiment object in which the Pyroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -130,7 +131,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #'
 #' @export
 pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
-                            tumorTissue = "ovary", author = "Ye"){
+                tumorTissue = "ovary", author = "Ye", hgReference = "hg19"){
 
     firstCheck(nametype, tumorTissue, "pyroptosisSign", author)
 
@@ -139,13 +140,13 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     datasetm <- getMatrix(dataset)
 
     if(tumorTissue == "ovary" & author == "Ye"){
-        datasetm_n <- scale(datasetm)
-        datasetm_n <- dataTransformation(datasetm_n, "FPKM")
+        # datasetm_n <- scale(datasetm)
+        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
     } else if (tumorTissue == "stomach" & author == "Shao"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm, "FPKM")}
+            datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)}
     } else if (tumorTissue == "lung" & author == "Lin"){
-        datasetm_n <- dataTransformation(datasetm, "TPM")
+        datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
     } else {datasetm_n <- datasetm}
 
     score <- coefficientsScore(Pyroptosisdata, datasetm_n, nametype,
