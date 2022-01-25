@@ -58,10 +58,9 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                         Mesenchymal = Signature_ML$Gene_Symbol)
 
         dots <- list(...)
-        kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
         args <- matchArguments(dots, list(expr = datasetm,
                                         gset.idx.list = gene_sets,
-                                        method = "ssgsea", kcdf = kcdftype,
+                                        method = "ssgsea", kcdf = "Poisson",
                                         min.sz = 5, ssgsea.norm = FALSE,
                                         verbose = FALSE))
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
@@ -1039,11 +1038,14 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
                       ECMdown = Signature_down$Gene_Symbol)
 
     dots <- list(...)
+    kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
 
-    args <- matchArguments(dots,list(
-        expr = datasetm, gset.idx.list = gene_sets,
-        method = "gsva", kcdf = "Gaussian", min.sz = 5,
-        ssgsea.norm = FALSE, verbose = FALSE))
+
+    args <- matchArguments(dots,list(expr = datasetm,
+                                     gset.idx.list = gene_sets,
+                                     method = "ssgsea", kcdf = kcdftype,
+                                     min.sz = 5, ssgsea.norm = FALSE,
+                                     verbose = FALSE))
 
     gsva_count <- suppressWarnings(do.call(gsva, args))
 
