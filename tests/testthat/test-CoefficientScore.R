@@ -20,10 +20,10 @@ test_that("PyroptosisSign works", {
 })
 
 test_that("FerroptosysSign work", {
-    ferrnames <- c("FerroptosisChang", "FerroptosisLiang", "FerroptosisLi",
-                   "FerroptosisLiu", "FerroptosisYe", "FerroptosisZhu")
+    ferrnames <- c("FerroptosisLiang", "FerroptosisLi", "FerroptosisLiu",
+                   "FerroptosisYe")
     fname <- sample(ferrnames, 1)
-    rmatrix <- fakeData(fname)
+    rmatrix <- signifinder:::fakeData(fname)
     tissue <- signatureTable$tumorTissue[
         signatureTable$functionName=="ferroptosisSign" &
             signatureTable$author==substring(fname, 12)]

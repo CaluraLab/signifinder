@@ -6,12 +6,10 @@ SignatureNames <- c("Epithelial",
                     "PyroptosisShao",
                     "PyroptosisLin",
                     "PyroptosisLi",
-                    "FerroptosisChang",
                     "FerroptosisLiang",
                     "FerroptosisLi",
                     "FerroptosisLiu",
                     "FerroptosisYe",
-                    "FerroptosisZhu",
                     "LipidMetabolism",
                     "Hypoxia",
                     "PlatinumResistanceUp",
@@ -91,8 +89,8 @@ GetGenes <- function(name){
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "FerroptosisChang", "FerroptosisLiang", "FerroptosisLi",
-            "FerroptosisLiu", "FerroptosisYe", "FerroptosisZhu", "Hypoxia",
+            "FerroptosisLiang", "FerroptosisLi",
+            "FerroptosisLiu", "FerroptosisYe", "Hypoxia",
             "ImmunoScoreHao", "IPS", "LipidMetabolism", "PyroptosisYe",
             "PyroptosisShao", "PyroptosisLin", "PyroptosisLi", "CD49BSC",
             "EMTMak", "GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
