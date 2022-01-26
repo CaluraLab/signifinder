@@ -785,8 +785,8 @@ ASCSign <- function(dataset, nametype= "SYMBOL",
 
     datasetm_n <- log2(datasetm[row.names(datasetm) %in% ASCdata, ] + 1)
     columnNA <- managena(datasetm_n, ASCdata)
-    score <- colSums((datasetm_n - rowMeans(datasetm_n))/
-                    sapply(as.data.frame(t(datasetm_n)), sd, na.rm = TRUE))
+
+    score <- colSums(scale(datasetm_n, center= TRUE, scale= TRUE), na.rm= TRUE)
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -1196,9 +1196,11 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     medianexp <- apply(datasetm, 2, median)
 
-    DNArepscore <- apply(
-        datasetm[DNAdatahigh$DNAre, ] > medianexp, 2, sum,na.rm = TRUE)+
-        apply(datasetm[DNAdatalow$DNAre, ] > medianexp, 2, sum, na.rm = TRUE)
+    DNArepscore <- apply(datasetm[
+        intersect(rownames(datasetm), DNAdatahigh$DNAre), ] > medianexp, 2, sum,
+        na.rm = TRUE) + apply(datasetm[
+        intersect(rownames(datasetm), DNAdatalow$DNAre), ] > medianexp, 2, sum,
+        na.rm = TRUE)
 
     return(returnAsInput(userdata = dataset, result = DNArepscore,
                          SignName = "DNArepair", datasetm))
