@@ -201,7 +201,7 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
 
-firstCheck <- function(nametype, tumorTissue, functionName, author = NULL){
+consistencyCheck <- function(nametype, tumorTissue, functionName, author = NULL){
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL"))){
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
     if (!(tumorTissue %in% signatureTable$tumorTissue[
@@ -216,10 +216,8 @@ firstCheck <- function(nametype, tumorTissue, functionName, author = NULL){
 }
 
 coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
-    if(nametype!="SYMBOL"){
-        ourdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys = ourdata$Gene_Symbol,
-                                      column = nametype, keytype = "SYMBOL",
-                                      multiVals = "first")}
+
+    ourdata$Gene_Symbol <- geneIDtrans(nametype, ourdata$Gene_Symbol)
 
     percentageOfGenesUsed(namesignature, datasetm, ourdata$Gene_Symbol)
 
@@ -233,9 +231,8 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
 
 statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
                       namesignature){
-    if(nametype!="SYMBOL"){
-        ourdata <- mapIds(org.Hs.eg.db, keys = ourdata, column = nametype,
-                          keytype = "SYMBOL", multiVals = "first")}
+
+    ourdata <- geneIDtrans(nametype, ourdata)
 
     percentageOfGenesUsed(namesignature, datasetm, ourdata)
 
@@ -301,6 +298,13 @@ percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){
             warning(paste(detail,"is computed with less than 30% of its genes"))
         }
     }
+}
+
+geneIDtrans <- function(nametype, genes){
+    if(nametype!="SYMBOL"){
+        AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = genes,
+            column = nametype, keytype = "SYMBOL", multiVals = "first")
+    } else { genes }
 }
 
 
