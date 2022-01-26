@@ -247,8 +247,8 @@ statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
 }
 
 managena <- function(datasetm, genes){
-    datasetm <- datasetm[genes,]
-    columnNA <- colSums(is.na(datasetm))/nrow(datasetm)
+    datasetm <- datasetm[row.names(datasetm) %in% genes, ]
+    columnNA <- (length(genes) - colSums(!is.na(datasetm)))/length(genes)
     if(sum(columnNA > 0.9)>0) {
         warning("Some samples in the dataset have more than 90%
                 not available (NA) expression values")}
