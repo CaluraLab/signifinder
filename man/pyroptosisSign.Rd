@@ -9,7 +9,8 @@ pyroptosisSign(
   nametype = "SYMBOL",
   inputType = "rnaseq",
   tumorTissue = "ovary",
-  author = "Ye"
+  author = "Ye",
+  hgReference = "hg19"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ where rows correspond to genes and columns correspond to samples.}
 \item{tumorTissue}{type of tissue for which the signature is developed.}
 
 \item{author}{first author of the specific signature publication.}
+
+\item{hgReference}{Human reference genome: "hg19" or "hg38"}
 }
 \value{
 A SummarizedExperiment object in which the Pyroptosis score

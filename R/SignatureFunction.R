@@ -24,23 +24,18 @@
 #' scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
 #'
 #' @export
 EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
     tumorTissue = "ovary", author = "Miow", pvalues = FALSE, nperm = 100, ...) {
 
-    firstCheck(nametype, tumorTissue, "EMTSign", author = author)
+    consistencyCheck(nametype, tumorTissue, "EMTSign", author)
 
     datasetm <- getMatrix(dataset)
 
     if(tumorTissue == "ovary" & author == "Miow"){
 
-       if(nametype!="SYMBOL"){
-        EMTMiowdata$Gene_Symbol <- mapIds(
-            org.Hs.eg.db, keys = EMTMiowdata$Gene_Symbol, column = nametype,
-            keytype = "SYMBOL", multiVals = "first")}
+        EMTMiowdata$Gene_Symbol <- geneIDtrans(nametype, EMTMiowdata$Gene_Symbol)
 
         Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
         Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
@@ -73,10 +68,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 
     } else {
         if(tumorTissue == "pan-tissue" & author == "Mak") {
-            if(nametype!="SYMBOL"){
-                EMTMakdata$Gene_Symbol <- mapIds(
-                    org.Hs.eg.db, keys = EMTMakdata$Gene_Symbol, column = nametype,
-                    keytype = "SYMBOL", multiVals = "first")}
+
+            EMTMakdata$Gene_Symbol <- geneIDtrans(nametype, EMTMakdata$Gene_Symbol)
 
             Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
             Sign_M <- EMTMakdata[grep('M', EMTMakdata$Category),]
@@ -98,10 +91,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             score[columnNA > 0.9] <- NA
 
         } else if(tumorTissue == "breast" & author == "Cheng") {
-            if(nametype!="SYMBOL") {
-                EMTChengdata <- mapIds(
-                    org.Hs.eg.db, keys = EMTChengdata, column = nametype,
-                    keytype = "SYMBOL", multiVals = "first")}
+
+            EMTChengdata <- geneIDtrans(nametype, EMTChengdata)
 
             percentageOfGenesUsed("EMTSign", datasetm, EMTChengdata)
 
@@ -126,14 +117,11 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #' @return A SummarizedExperiment object in which the Pyroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                 tumorTissue = "ovary", author = "Ye", hgReference = "hg19"){
 
-    firstCheck(nametype, tumorTissue, "pyroptosisSign", author)
+    consistencyCheck(nametype, tumorTissue, "pyroptosisSign", author)
 
     Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
@@ -168,14 +156,11 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #' @return A SummarizedExperiment object in which the Ferroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                     tumorTissue = "ovary", author = "Ye", hgReference = "hg19"){
 
-    firstCheck(nametype, tumorTissue, "ferroptosisSign", author)
+    consistencyCheck(nametype, tumorTissue, "ferroptosisSign", author)
     Ferroptosisdata <- get(paste0("Ferroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
@@ -205,14 +190,11 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #' @return A SummarizedExperiment object in which the Lipid scores is
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
                                 tumorTissue = "ovary") {
 
-    firstCheck(nametype, tumorTissue, "lipidMetabolismSign")
+    consistencyCheck(nametype, tumorTissue, "lipidMetabolismSign")
 
     datasetm <- getMatrix(dataset)
     score <- coefficientsScore(LipidMetabolismdata, datasetm,
@@ -232,16 +214,13 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom AnnotationDbi mapIds
-#' @importFrom matrixStats colMedians
-#' @importFrom stats setNames
-#'
 #' @import org.Hs.eg.db
 #'
 #' @export
 hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                         tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "hypoxiaSign")
+    consistencyCheck(nametype, tumorTissue, "hypoxiaSign")
 
     if(nametype=="SYMBOL") {genetouse <- Hypoxiadata$Gene_Symbol
     } else if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl
@@ -269,19 +248,15 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
 #'
 #' @export
 platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
         tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...){
 
-    firstCheck(nametype, tumorTissue, "platinumResistanceSign")
+    consistencyCheck(nametype, tumorTissue, "platinumResistanceSign")
 
-    if(nametype!="SYMBOL"){
-        PlatinumResistancedata$Gene_Symbol <- mapIds(
-            org.Hs.eg.db, keys = PlatinumResistancedata$Gene_Symbol,
-            column = nametype, keytype = "SYMBOL", multiVals = "first")}
+    PlatinumResistancedata$Gene_Symbol <- geneIDtrans(
+        nametype, PlatinumResistancedata$Gene_Symbol)
 
     datasetm <- getMatrix(dataset)
 
@@ -324,22 +299,20 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the Immunogenic scores will
 #' be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
+#' @importFrom labstatR meang
 #'
 #' @export
 immunoScoreSign <- function(dataset, nametype = "SYMBOL",
                             tumorTissue = "ovary", author = "Hao"){
 
-    firstCheck(nametype, tumorTissue, "immunoScoreSign", author)
+    consistencyCheck(nametype, tumorTissue, "immunoScoreSign", author)
 
     datasetm <- getMatrix(dataset)
 
     if(tumorTissue == "ovary"){
-        if(nametype!="SYMBOL"){
-            ImmunoScoreHaodata$genes <- mapIds(
-                org.Hs.eg.db, keys = ImmunoScoreHaodata$genes,
-                column = nametype, keytype = "SYMBOL", multiVals = "first")}
+
+        ImmunoScoreHaodata$genes <- geneIDtrans(
+            nametype, ImmunoScoreHaodata$genes)
 
         g <- intersect(row.names(datasetm), ImmunoScoreHaodata$genes)
 
@@ -384,7 +357,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
                             method = "consensusOV", ...){
 
-    firstCheck(nametype, tumorTissue, "consensusOVSign")
+    consistencyCheck(nametype, tumorTissue, "consensusOVSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -418,22 +391,16 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 #' IPS, MHC, CP, EC and SC scores will be added in the
 #' \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#' @import ggplot2
-#' @importFrom gridExtra grid.arrange
-#' @importFrom grDevices pdf dev.off
 #' @importFrom stats sd
 #'
 #' @export
 IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "IPSSign")
+    consistencyCheck(nametype, tumorTissue, "IPSSign")
 
-    if(nametype!="SYMBOL"){
-        IPSdata[,c(1,2)] <- data.frame(lapply(IPSdata[,c(1,2)], function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
-                                    keytype="SYMBOL", multiVals="first"))))}
+    IPSdata[,c(1,2)] <- data.frame(lapply(IPSdata[,c(1,2)], function(x){
+        geneIDtrans(nametype, x)}))
+    colnames(IPSdata) <- c("GENE","NAME","CLASS","WEIGHT")
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
@@ -478,15 +445,11 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom matrixStats colMedians
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 matrisomeSign <- function(dataset, nametype = "SYMBOL",
                         tumorTissue = "pan-tissue") {
 
-    firstCheck(nametype, tumorTissue, "matrisomeSign")
+    consistencyCheck(nametype, tumorTissue, "matrisomeSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(Matrisomedata, datasetm, nametype,
@@ -505,14 +468,11 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
                             tumorTissue = "pan-tissue") {
 
-    firstCheck(nametype, tumorTissue, "mitoticIndexSign")
+    consistencyCheck(nametype, tumorTissue, "mitoticIndexSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(MitoticIndexdata, datasetm, nametype,
@@ -532,15 +492,13 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
 #' @importFrom labstatR meang
-#' @import org.Hs.eg.db
 #'
 #' @export
 ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             tumorTissue = "pan-tissue", author = "Rooney", hgReference = "hg19"){
 
-    firstCheck(nametype, tumorTissue, "ImmuneCytSign", author)
+    consistencyCheck(nametype, tumorTissue, "ImmuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
     if(tumorTissue == "pan-tissue" & author == "Rooney"){
@@ -566,13 +524,10 @@ ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "IFNSign")
+    consistencyCheck(nametype, tumorTissue, "IFNSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(IFNdata, datasetm, nametype, "mean", "IFNSign")
@@ -590,14 +545,11 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
                                 tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "expandedImmuneSign")
+    consistencyCheck(nametype, tumorTissue, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(ExpandedImmunedata, datasetm, nametype,
@@ -616,14 +568,12 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
 #' @importFrom labstatR meang
-#' @import org.Hs.eg.db
 #'
 #' @export
 TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
 
-    firstCheck(nametype, tumorTissue, "TLSSign")
+    consistencyCheck(nametype, tumorTissue, "TLSSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(TLSdata, datasetm, nametype, "meang", "TLSSign")
@@ -641,13 +591,10 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 
-    firstCheck(nametype, tumorTissue, "CD49BSCSign")
+    consistencyCheck(nametype, tumorTissue, "CD49BSCSign")
 
     datasetm <- getMatrix(dataset)
     score <- coefficientsScore(CD49BSCdata, datasetm, nametype, "CD49BSCSign")
@@ -668,14 +615,11 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 CINSign <- function(dataset, nametype = "SYMBOL",
                     tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "CINSign")
+    consistencyCheck(nametype, tumorTissue, "CINSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -700,14 +644,11 @@ CINSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
                     author = "Lundberg"){
 
-    firstCheck(nametype, tumorTissue, "CCSSign", author)
+    consistencyCheck(nametype, tumorTissue, "CCSSign", author)
 
     datasetm <- getMatrix(dataset)
 
@@ -731,18 +672,13 @@ CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 chemokineSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                           tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "chemokineSign")
+    consistencyCheck(nametype, tumorTissue, "chemokineSign")
 
-    if(nametype!="SYMBOL") {Chemokinedata <- mapIds(
-        org.Hs.eg.db, keys = Chemokinedata, column = nametype,
-        keytype = "SYMBOL", multiVals = "first")}
+    Chemokinedata <- geneIDtrans(nametype, Chemokinedata)
 
     datasetm <- getMatrix(dataset)
 
@@ -767,23 +703,20 @@ chemokineSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 ASCSign <- function(dataset, nametype= "SYMBOL",
                     tumorTissue = "epithelial-derived neuroendocrine cancer"){
 
-    firstCheck(nametype, tumorTissue, "ASCSign")
+    consistencyCheck(nametype, tumorTissue, "ASCSign")
 
-    if(nametype!="SYMBOL"){
-        ASCdata <- mapIds(org.Hs.eg.db, keys = ASCdata, column = nametype,
-                          keytype = "SYMBOL", multiVals = "first")}
+    ASCdata <- geneIDtrans(nametype, ASCdata)
+
     datasetm <- getMatrix(dataset)
 
     percentageOfGenesUsed("ASCSign", datasetm, ASCdata)
 
-    datasetm_n <- log2(datasetm[row.names(datasetm) %in% ASCdata, ] + 1)
+    datasetm_n <- log2(datasetm[row.names(datasetm) %in% ASCdata,] + 1)
+
     columnNA <- managena(datasetm_n, ASCdata)
     score <- colSums((datasetm_n - rowMeans(datasetm_n))/
                     sapply(as.data.frame(t(datasetm_n)), sd, na.rm = TRUE))
@@ -805,18 +738,13 @@ ASCSign <- function(dataset, nametype= "SYMBOL",
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
 #'
 #' @export
 PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
 
-    firstCheck(nametype, tumorTissue, "PassONSign")
+    consistencyCheck(nametype, tumorTissue, "PassONSign")
 
-    if(nametype!="SYMBOL"){
-        PASS.ONdata <- lapply(PASS.ONdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
-                                    keytype="SYMBOL", multiVals="first")))}
+    PASS.ONdata <- lapply(PASS.ONdata, function(x){geneIDtrans(nametype, x)})
 
     datasetm <- getMatrix(dataset)
 
@@ -848,19 +776,14 @@ PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
 #'
 #' @export
 IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
                       pvalues = FALSE, nperm = 100, ...) {
 
-    firstCheck(nametype, tumorTissue, "IPRESSign")
+    consistencyCheck(nametype, tumorTissue, "IPRESSign")
 
-    if(nametype!="SYMBOL"){
-        IPRESdata <- lapply(IPRESdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
-                                    keytype="SYMBOL", multiVals="first")))}
+    IPRESdata <- lapply(IPRESdata, function(x){geneIDtrans(nametype, x)})
 
     datasetm <- getMatrix(dataset)
 
@@ -895,18 +818,12 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
 #' @return A SummarizedExperiment object in which the CIS score
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
 
-    firstCheck(nametype, tumorTissue, "CISSign")
+    consistencyCheck(nametype, tumorTissue, "CISSign")
 
-    if(nametype!="SYMBOL"){
-        CISdata$Gene_Symbol  <- mapIds(
-            org.Hs.eg.db, keys = CISdata$Gene_Symbol, column = nametype,
-            keytype = "SYMBOL", multiVals = "first")}
+    CISdata$Gene_Symbol <- geneIDtrans(nametype, CISdata$Gene_Symbol)
 
     datasetm <- getMatrix(dataset)
 
@@ -935,14 +852,11 @@ CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
 #' @return A SummarizedExperiment object in which the glycolysis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 glycolysisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "breast",
                            author = "Jiang"){
 
-    firstCheck(nametype, tumorTissue, "glycolysisSign", author)
+    consistencyCheck(nametype, tumorTissue, "glycolysisSign", author)
 
     Glycolysisdata <- get(paste0("Glycolysis", author, "data"))
     datasetm <- getMatrix(dataset)
@@ -962,14 +876,11 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "breast",
 #' @return A SummarizedExperiment object in which the Autophagy score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 autophagySign <- function(dataset, nametype = "SYMBOL",
                           tumorTissue = "brain", author = "Xu"){
 
-    firstCheck(nametype, tumorTissue, "autophagySign", author)
+    consistencyCheck(nametype, tumorTissue, "autophagySign", author)
 
     Autophagydata <- get(paste0("Autophagy", author, "data"))
     datasetm <- getMatrix(dataset)
@@ -991,20 +902,15 @@ autophagySign <- function(dataset, nametype = "SYMBOL",
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
 #'
 #' @export
 ECMSign <- function(dataset, nametype = "SYMBOL",
                     tumorTissue = "pan-tissue", pvalues = FALSE,
                     nperm = 100, ...){
 
-    firstCheck(nametype, tumorTissue, "ECMSign")
+    consistencyCheck(nametype, tumorTissue, "ECMSign")
 
-    if(nametype!="SYMBOL"){
-        ECMdata$Gene_Symbol <- mapIds(
-            org.Hs.eg.db, keys = ECMdata$Gene_Symbol,
-            column = nametype, keytype = "SYMBOL", multiVals = "first")}
+    ECMdata$Gene_Symbol <- geneIDtrans(nametype, ECMdata$Gene_Symbol)
 
     datasetm <- getMatrix(dataset)
 
@@ -1046,20 +952,12 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the HRDS scores is
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @importFrom stats setNames
-#'
-#' @import org.Hs.eg.db
-#'
 #' @export
 HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype, tumorTissue, "HRDSSign")
+    consistencyCheck(nametype, tumorTissue, "HRDSSign")
 
-    if(nametype!="SYMBOL"){
-        HRDSdata$Gene_Symbol <- mapIds(org.Hs.eg.db, keys= HRDSdata$Gene_Symbol,
-                                       column = nametype, keytype = "SYMBOL",
-                                       multiVals = "first")}
+    HRDSdata$Gene_Symbol <- geneIDtrans(nametype, HRDSdata$Gene_Symbol)
 
     datasetm <- getMatrix(dataset)
 
@@ -1087,18 +985,12 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' @return A SummarizedExperiment object in which the ISC scores will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
 
-    firstCheck(nametype, tumorTissue, "ISCSign")
+    consistencyCheck(nametype, tumorTissue, "ISCSign")
 
-    if(nametype!= "SYMBOL"){
-        ISCdata <- lapply(ISCdata, function(x)
-            suppressMessages(mapIds(org.Hs.eg.db, keys=x, column=nametype,
-                                    keytype="SYMBOL", multiVals="first")))}
+    ISCdata <- lapply(ISCdata, function(x){geneIDtrans(nametype, x)})
 
     datasetm <- getMatrix(dataset)
 
@@ -1123,14 +1015,10 @@ ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
 #' @return A SummarizedExperiment object in which the VEGF score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @importFrom labstatR meang
-#' @import org.Hs.eg.db
-#'
 #' @export
 VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype, tumorTissue, "VEGFSign")
+    consistencyCheck(nametype, tumorTissue, "VEGFSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -1148,14 +1036,10 @@ VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' @return A SummarizedExperiment object in which the Angiogenesis score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @importFrom labstatR meang
-#' @import org.Hs.eg.db
-#'
 #' @export
 angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 
-    firstCheck(nametype, tumorTissue, "angioSign")
+    consistencyCheck(nametype, tumorTissue, "angioSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -1175,17 +1059,12 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' @return A SummarizedExperiment object in which the Angiogenesis score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @export
 DNArepSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
-    firstCheck(nametype, tumorTissue, "DNArepSign")
+    consistencyCheck(nametype, tumorTissue, "DNArepSign")
 
-    if(nametype!="SYMBOL"){DNArepairdata$DNAre <- mapIds(
-        org.Hs.eg.db, keys = DNArepairdata$DNAre, column = nametype,
-        keytype = "SYMBOL", multiVals = "first")}
+    DNArepairdata$DNAre <- geneIDtrans(nametype, DNArepairdata$DNAre)
 
     datasetm <- getMatrix(dataset)
 
