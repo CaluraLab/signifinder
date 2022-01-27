@@ -14,7 +14,6 @@
 #' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param inputType type of data you are using: microarray or rnaseq.
-#' @param tumorTissue type of tissue for which the signature is developed.
 #' @param author first author of the specific signature publication.
 #' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
@@ -27,13 +26,13 @@
 #'
 #' @export
 EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
-    tumorTissue = "ovary", author = "Miow", pvalues = FALSE, nperm = 100, ...) {
+    author = "Miow", pvalues = FALSE, nperm = 100, ...) {
 
-    consistencyCheck(nametype, tumorTissue, "EMTSign", author)
+    consistencyCheck(nametype, "EMTSign", author)
 
     datasetm <- getMatrix(dataset)
 
-    if(tumorTissue == "ovary" & author == "Miow"){
+    if(author == "Miow"){
 
         EMTMiowdata$Gene_Symbol <- geneIDtrans(nametype, EMTMiowdata$Gene_Symbol)
 
@@ -41,9 +40,9 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
 
         percentageOfGenesUsed("EMTSign", datasetm, Signature_EL$Gene_Symbol,
-                                detail = "epithelial-like")
+                                detail = "epithelial")
         percentageOfGenesUsed("EMTSign", datasetm, Signature_ML$Gene_Symbol,
-                                detail = "mesenchymal-like")
+                                detail = "mesenchymal")
 
         gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
                         Mesenchymal = Signature_ML$Gene_Symbol)
@@ -67,30 +66,26 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
                             SignName = "", datasetm))
 
     } else {
-        if(tumorTissue == "pan-tissue" & author == "Mak") {
+        if(author == "Mak") {
 
             EMTMakdata$Gene_Symbol <- geneIDtrans(nametype, EMTMakdata$Gene_Symbol)
 
-            Sign_E <- EMTMakdata[grep('E', EMTMakdata$Category),]
-            Sign_M <- EMTMakdata[grep('M', EMTMakdata$Category),]
+            Sign_E <- EMTMakdata$Gene_Symbol[EMTMakdata$Category=="E"]
+            Sign_M <- EMTMakdata$Gene_Symbol[EMTMakdata$Category=="M"]
 
-            percentageOfGenesUsed("EMTSign", datasetm, Sign_E$Gene_Symbol,
-                                  detail = "epithelial-like")
-            percentageOfGenesUsed("EMTSign", datasetm, Sign_M$Gene_Symbol,
-                                  detail = "mesenchymal-like")
+            percentageOfGenesUsed("EMTSign", datasetm, Sign_E,
+                                  detail = "epithelial")
+            percentageOfGenesUsed("EMTSign", datasetm, Sign_M,
+                                  detail = "mesenchymal")
 
-            datasetm_n <- datasetm[intersect(
-                row.names(datasetm), EMTMakdata$Gene_Symbol), ]
-            datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
-                } else {datasetm_n}
-            columnNA <- managena(datasetm_n, genes = EMTMakdata$Gene_Symbol)
+            columnNA <- managena(datasetm, genes = EMTMakdata$Gene_Symbol)
             score <- colMeans(
-                datasetm_n[intersect(Sign_M$Gene_Symbol, row.names(datasetm_n)),]
+                datasetm[intersect(Sign_M, row.names(datasetm)),]
                 ) - colMeans(
-                datasetm_n[intersect(Sign_E$Gene_Symbol, row.names(datasetm_n)), ])
+                datasetm[intersect(Sign_E, row.names(datasetm)),])
             score[columnNA > 0.9] <- NA
 
-        } else if(tumorTissue == "breast" & author == "Cheng") {
+        } else if(author == "Cheng") {
 
             EMTChengdata <- geneIDtrans(nametype, EMTChengdata)
 
@@ -119,22 +114,22 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #'
 #' @export
 pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
-                tumorTissue = "ovary", author = "Ye", hgReference = "hg19"){
+                author = "Ye", hgReference = "hg19"){
 
-    consistencyCheck(nametype, tumorTissue, "pyroptosisSign", author)
+    consistencyCheck(nametype, "pyroptosisSign", author)
 
     Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
 
-    if(tumorTissue == "ovary" & author == "Ye"){
+    if(author == "Ye"){
         # datasetm_n <- scale(datasetm)
         datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
-    } else if (tumorTissue == "stomach" & author == "Shao"){
+    } else if (author == "Shao"){
         if(inputType == "rnaseq"){
             datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
         } else {datasetm_n <- datasetm}
-    } else if (tumorTissue == "lung" & author == "Lin"){
+    } else if (author == "Lin"){
         datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
     } else {datasetm_n <- datasetm}
 
@@ -158,9 +153,9 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #'
 #' @export
 ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
-                    tumorTissue = "ovary", author = "Ye", hgReference = "hg19"){
+                    author = "Ye", hgReference = "hg19"){
 
-    consistencyCheck(nametype, tumorTissue, "ferroptosisSign", author)
+    consistencyCheck(nametype, "ferroptosisSign", author)
     Ferroptosisdata <- get(paste0("Ferroptosis", author, "data"))
 
     datasetm <- getMatrix(dataset)
@@ -170,12 +165,14 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
             datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
         } else {datasetm_n <- datasetm}
     } else if (author == "Li"){
+        datasetm_n <- datasetm
+    } else {
         datasetm_n <- datasetm}
 
     score <- coefficientsScore(Ferroptosisdata, datasetm_n,
                                 nametype, "ferroptosisSign")
 
-    if(tumorTissue == "liver" & author == "Liang" ){score <- exp(score)}
+    if(author == "Liang" ){score <- exp(score)}
 
     return(returnAsInput(userdata = dataset, result = score,
                         SignName = paste0("Ferroptosis", author), datasetm))
@@ -191,10 +188,9 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
-                                tumorTissue = "ovary") {
+lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 
-    consistencyCheck(nametype, tumorTissue, "lipidMetabolismSign")
+    consistencyCheck(nametype, "lipidMetabolismSign")
 
     datasetm <- getMatrix(dataset)
     score <- coefficientsScore(LipidMetabolismdata, datasetm,
@@ -217,10 +213,9 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL",
 #' @import org.Hs.eg.db
 #'
 #' @export
-hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
-                        tumorTissue = "pan-tissue"){
+hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
-    consistencyCheck(nametype, tumorTissue, "hypoxiaSign")
+    consistencyCheck(nametype, "hypoxiaSign")
 
     if(nametype=="SYMBOL") {genetouse <- Hypoxiadata$Gene_Symbol
     } else if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl
@@ -251,9 +246,9 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #'
 #' @export
 platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
-        tumorTissue = "ovary", pvalues = FALSE, nperm = 100, ...){
+        pvalues = FALSE, nperm = 100, ...){
 
-    consistencyCheck(nametype, tumorTissue, "platinumResistanceSign")
+    consistencyCheck(nametype, "platinumResistanceSign")
 
     PlatinumResistancedata$Gene_Symbol <- geneIDtrans(
         nametype, PlatinumResistancedata$Gene_Symbol)
@@ -302,14 +297,13 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #' @importFrom labstatR meang
 #'
 #' @export
-immunoScoreSign <- function(dataset, nametype = "SYMBOL",
-                            tumorTissue = "ovary", author = "Hao"){
+immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao"){
 
-    consistencyCheck(nametype, tumorTissue, "immunoScoreSign", author)
+    consistencyCheck(nametype, "immunoScoreSign", author)
 
     datasetm <- getMatrix(dataset)
 
-    if(tumorTissue == "ovary"){
+    if(author == "Hao"){
 
         ImmunoScoreHaodata$genes <- geneIDtrans(
             nametype, ImmunoScoreHaodata$genes)
@@ -327,7 +321,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
         score <- unlist(lapply(seq_len(ncol(datasetm_n)), function(p){
                 sum(k*datasetm_n[,p], na.rm = TRUE)}))
         score[columnNA > 0.9] <- NA
-    } else if(tumorTissue=="pan-tissue"){
+    } else if(author == "Roh"){
         score <- statScore(
             ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype,
             typeofstat = "meang", namesignature = "immunoScoreSign")}
@@ -354,10 +348,10 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL",
 #' @import org.Hs.eg.db
 #'
 #' @export
-consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
+consensusOVSign <- function(dataset, nametype = "SYMBOL",
                             method = "consensusOV", ...){
 
-    consistencyCheck(nametype, tumorTissue, "consensusOVSign")
+    consistencyCheck(nametype, "consensusOVSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -394,9 +388,9 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary",
 #' @importFrom stats sd
 #'
 #' @export
-IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+IPSSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "IPSSign")
+    consistencyCheck(nametype, "IPSSign")
 
     IPSdata[,c(1,2)] <- data.frame(lapply(IPSdata[,c(1,2)], function(x){
         geneIDtrans(nametype, x)}))
@@ -446,10 +440,9 @@ IPSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-matrisomeSign <- function(dataset, nametype = "SYMBOL",
-                        tumorTissue = "pan-tissue") {
+matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 
-    consistencyCheck(nametype, tumorTissue, "matrisomeSign")
+    consistencyCheck(nametype, "matrisomeSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(Matrisomedata, datasetm, nametype,
@@ -469,10 +462,9 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL",
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
-                            tumorTissue = "pan-tissue") {
+mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 
-    consistencyCheck(nametype, tumorTissue, "mitoticIndexSign")
+    consistencyCheck(nametype, "mitoticIndexSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(MitoticIndexdata, datasetm, nametype,
@@ -496,18 +488,18 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @export
 ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
-            tumorTissue = "pan-tissue", author = "Rooney", hgReference = "hg19"){
+            author = "Rooney", hgReference = "hg19"){
 
-    consistencyCheck(nametype, tumorTissue, "ImmuneCytSign", author)
+    consistencyCheck(nametype, "ImmuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
-    if(tumorTissue == "pan-tissue" & author == "Rooney"){
+    if(author == "Rooney"){
         if(inputType == "rnaseq"){
             datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)+0.01
         } else {datasetm_n <- datasetm}
          score <- statScore(
              ImmuneCytRooneydata, datasetm_n, nametype, "meang", "ImmuneCytSign")
-    } else if(tumorTissue == "pan-tissue" & author == "Davoli") {
+    } else if(author == "Davoli") {
         score <- statScore(
             ImmuneCytDavolidata, datasetm, nametype, "mean", "ImmuneCytSign")
     }
@@ -525,9 +517,9 @@ ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+IFNSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "IFNSign")
+    consistencyCheck(nametype, "IFNSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(IFNdata, datasetm, nametype, "mean", "IFNSign")
@@ -546,10 +538,9 @@ IFNSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
-                                tumorTissue = "pan-tissue"){
+expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "expandedImmuneSign")
+    consistencyCheck(nametype, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(ExpandedImmunedata, datasetm, nametype,
@@ -571,9 +562,9 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL",
 #' @importFrom labstatR meang
 #'
 #' @export
-TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
+TLSSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "TLSSign")
+    consistencyCheck(nametype, "TLSSign")
 
     datasetm <- getMatrix(dataset)
     score <- statScore(TLSdata, datasetm, nametype, "meang", "TLSSign")
@@ -592,9 +583,9 @@ TLSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
+CD49BSCSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "CD49BSCSign")
+    consistencyCheck(nametype, "CD49BSCSign")
 
     datasetm <- getMatrix(dataset)
     score <- coefficientsScore(CD49BSCdata, datasetm, nametype, "CD49BSCSign")
@@ -616,10 +607,9 @@ CD49BSCSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "prostate"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CINSign <- function(dataset, nametype = "SYMBOL",
-                    tumorTissue = "pan-tissue"){
+CINSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "CINSign")
+    consistencyCheck(nametype, "CINSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -645,10 +635,9 @@ CINSign <- function(dataset, nametype = "SYMBOL",
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
-                    author = "Lundberg"){
+CCSSign <- function(dataset, nametype = "SYMBOL", author = "Lundberg"){
 
-    consistencyCheck(nametype, tumorTissue, "CCSSign", author)
+    consistencyCheck(nametype, "CCSSign", author)
 
     datasetm <- getMatrix(dataset)
 
@@ -673,10 +662,10 @@ CCSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue",
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-chemokineSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
-                          tumorTissue = "pan-tissue"){
+chemokineSign <- function(dataset, nametype = "SYMBOL",
+                          inputType = "microarray"){
 
-    consistencyCheck(nametype, tumorTissue, "chemokineSign")
+    consistencyCheck(nametype, "chemokineSign")
 
     Chemokinedata <- geneIDtrans(nametype, Chemokinedata)
 
@@ -704,10 +693,9 @@ chemokineSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-ASCSign <- function(dataset, nametype= "SYMBOL",
-                    tumorTissue = "epithelial-derived neuroendocrine cancer"){
+ASCSign <- function(dataset, nametype= "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "ASCSign")
+    consistencyCheck(nametype, "ASCSign")
 
     ASCdata <- geneIDtrans(nametype, ASCdata)
 
@@ -740,9 +728,9 @@ ASCSign <- function(dataset, nametype= "SYMBOL",
 #' @importFrom GSVA gsva
 #'
 #' @export
-PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
+PassONSign <- function(dataset, nametype = "SYMBOL", ...){
 
-    consistencyCheck(nametype, tumorTissue, "PassONSign")
+    consistencyCheck(nametype, "PassONSign")
 
     PASS.ONdata <- lapply(PASS.ONdata, function(x){geneIDtrans(nametype, x)})
 
@@ -778,10 +766,10 @@ PassONSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin", ...){
 #' @importFrom GSVA gsva
 #'
 #' @export
-IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
+IPRESSign <- function(dataset, nametype = "SYMBOL",
                       pvalues = FALSE, nperm = 100, ...) {
 
-    consistencyCheck(nametype, tumorTissue, "IPRESSign")
+    consistencyCheck(nametype, "IPRESSign")
 
     IPRESdata <- lapply(IPRESdata, function(x){geneIDtrans(nametype, x)})
 
@@ -819,9 +807,9 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "skin",
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
+CISSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "CISSign")
+    consistencyCheck(nametype, "CISSign")
 
     CISdata$Gene_Symbol <- geneIDtrans(nametype, CISdata$Gene_Symbol)
 
@@ -853,10 +841,9 @@ CISSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "bladder"){
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-glycolysisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "breast",
-                           author = "Jiang"){
+glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Jiang"){
 
-    consistencyCheck(nametype, tumorTissue, "glycolysisSign", author)
+    consistencyCheck(nametype, "glycolysisSign", author)
 
     Glycolysisdata <- get(paste0("Glycolysis", author, "data"))
     datasetm <- getMatrix(dataset)
@@ -877,10 +864,9 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "breast",
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-autophagySign <- function(dataset, nametype = "SYMBOL",
-                          tumorTissue = "brain", author = "Xu"){
+autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu"){
 
-    consistencyCheck(nametype, tumorTissue, "autophagySign", author)
+    consistencyCheck(nametype, "autophagySign", author)
 
     Autophagydata <- get(paste0("Autophagy", author, "data"))
     datasetm <- getMatrix(dataset)
@@ -905,10 +891,9 @@ autophagySign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @export
 ECMSign <- function(dataset, nametype = "SYMBOL",
-                    tumorTissue = "pan-tissue", pvalues = FALSE,
-                    nperm = 100, ...){
+                    pvalues = FALSE, nperm = 100, ...){
 
-    consistencyCheck(nametype, tumorTissue, "ECMSign")
+    consistencyCheck(nametype, "ECMSign")
 
     ECMdata$Gene_Symbol <- geneIDtrans(nametype, ECMdata$Gene_Symbol)
 
@@ -953,9 +938,9 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+HRDSSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "HRDSSign")
+    consistencyCheck(nametype, "HRDSSign")
 
     HRDSdata$Gene_Symbol <- geneIDtrans(nametype, HRDSdata$Gene_Symbol)
 
@@ -986,9 +971,9 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
+ISCSign <- function(dataset, nametype= "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "ISCSign")
+    consistencyCheck(nametype, "ISCSign")
 
     ISCdata <- lapply(ISCdata, function(x){geneIDtrans(nametype, x)})
 
@@ -1016,9 +1001,9 @@ ISCSign <- function(dataset, nametype= "SYMBOL", tumorTissue = "colon"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+VEGFSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "VEGFSign")
+    consistencyCheck(nametype, "VEGFSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -1037,9 +1022,9 @@ VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
+angioSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "angioSign")
+    consistencyCheck(nametype, "angioSign")
 
     datasetm <- getMatrix(dataset)
 
@@ -1060,9 +1045,9 @@ angioSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-DNArepSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
+DNArepSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, tumorTissue, "DNArepSign")
+    consistencyCheck(nametype, "DNArepSign")
 
     DNArepairdata$DNAre <- geneIDtrans(nametype, DNArepairdata$DNAre)
 

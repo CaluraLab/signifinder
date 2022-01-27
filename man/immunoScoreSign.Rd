@@ -4,12 +4,7 @@
 \alias{immunoScoreSign}
 \title{Immunogenic Signature}
 \usage{
-immunoScoreSign(
-  dataset,
-  nametype = "SYMBOL",
-  tumorTissue = "ovary",
-  author = "Hao"
-)
+immunoScoreSign(dataset, nametype = "SYMBOL", author = "Hao")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -21,8 +16,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 
 \item{author}{first author of the specific signature publication.}
 }

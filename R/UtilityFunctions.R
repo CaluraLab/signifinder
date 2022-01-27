@@ -201,18 +201,15 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
     return(finalRes)}
 
-consistencyCheck <- function(nametype, tumorTissue, functionName, author = NULL){
+consistencyCheck <- function(nametype, functionName, author = NULL){
+
     if (!(nametype %in% c("SYMBOL","ENTREZID","ENSEMBL"))){
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
-    if (!(tumorTissue %in% signatureTable$tumorTissue[
-        signatureTable$functionName==functionName])){
-        stop("tumorTissue is not available, check availableSignatures() to see
-             which tissues are included")}
+
     if(!is.null(author)){
         if(!(author %in% signatureTable$author[
-            signatureTable$functionName==functionName &
-            signatureTable$tumorTissue==tumorTissue])){
-            stop("tumorTissue and author do not match")}}
+            signatureTable$functionName==functionName])){
+            stop("This author is not present for this signature")}}
 }
 
 coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
@@ -356,24 +353,20 @@ GetAggregatedSpot <- function(dataset){
 #' It shows a table containing all the information of the signatures collected
 #' in the package.
 #'
-#' @param tumorTissue filter for tissue type
+#' @param tumorTissue type of tissue for which the signature is developed
 #' @param signatureType filter for signature type
-#' @param datasetInput filter for input type
+#' @param inputType type of data you are using: microarray or rnaseq
 #' @param description whether to show or not the signature description
 #'
 #' @return a data frame
 #'
 #' @export
 availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
-                                datasetInput = NULL, description = TRUE){
-    signTable <- signatureTable
-    if(!is.null(tumorTissue)){
-        signTable <- signTable[signTable$tumorTissue==tumorTissue,]}
-    if(!is.null(signatureType)){
-        signTable <- signTable[signTable$signatureType==signatureType,]}
-    if(!is.null(datasetInput)){
-        signTable <- signTable[signTable$datasetInput==datasetInput,]}
-    if(!description){
-        signTable <- signTable[,1:6]}
-    return(signTable)
+                                inputType = NULL, description = TRUE){
+    st <- signatureTable
+    if(!is.null(tumorTissue)){st <- st[st$tumorTissue==tumorTissue,]}
+    if(!is.null(signatureType)){st <- st[st$signatureType==signatureType,]}
+    if(!is.null(inputType)){st <- st[st$inputType==inputType,]}
+    if(!description){st <- st[,1:6]}
+    return(st)
 }

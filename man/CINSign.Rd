@@ -4,7 +4,7 @@
 \alias{CINSign}
 \title{Chromosomal instability Signature}
 \usage{
-CINSign(dataset, nametype = "SYMBOL", tumorTissue = "pan-tissue")
+CINSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -16,8 +16,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 
 \item{typeofCIN}{A pre-defined number 25 or 70. It represents the number of
 genes on which the score can be calculated. The 25 genes represent a subgroup

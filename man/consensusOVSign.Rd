@@ -4,13 +4,7 @@
 \alias{consensusOVSign}
 \title{ConsensusOV Signature}
 \usage{
-consensusOVSign(
-  dataset,
-  nametype = "SYMBOL",
-  tumorTissue = "ovary",
-  method = "consensusOV",
-  ...
-)
+consensusOVSign(dataset, nametype = "SYMBOL", method = "consensusOV", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -22,8 +16,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 
 \item{method}{the subtyping method to use. Default is "consensusOV".}
 

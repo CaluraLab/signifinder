@@ -7,16 +7,16 @@
 availableSignatures(
   tumorTissue = NULL,
   signatureType = NULL,
-  datasetInput = NULL,
+  inputType = NULL,
   description = TRUE
 )
 }
 \arguments{
-\item{tumorTissue}{filter for tissue type}
+\item{tumorTissue}{type of tissue for which the signature is developed}
 
 \item{signatureType}{filter for signature type}
 
-\item{datasetInput}{filter for input type}
+\item{inputType}{type of data you are using: microarray or rnaseq}
 
 \item{description}{whether to show or not the signature description}
 }

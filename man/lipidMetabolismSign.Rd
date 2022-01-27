@@ -4,7 +4,7 @@
 \alias{lipidMetabolismSign}
 \title{Lipid Metabolism Signature}
 \usage{
-lipidMetabolismSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+lipidMetabolismSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -16,8 +16,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 }
 \value{
 A SummarizedExperiment object in which the Lipid scores is
