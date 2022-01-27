@@ -290,6 +290,7 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @return A SummarizedExperiment object in which the Immunogenic scores will
 #' be added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -297,7 +298,8 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #' @importFrom labstatR meang
 #'
 #' @export
-immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao"){
+immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
+                            inputType = "rnaseq", hgReference = "hg19"){
 
     consistencyCheck(nametype, "immunoScoreSign", author)
 
@@ -314,6 +316,10 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao"){
                               ImmunoScoreHaodata$genes)
 
         datasetm_n <- datasetm[g,]
+        if(inputType == "rnaseq"){
+            datasetm_n <- log2(dataTransformation(
+                datasetm_n, "FPKM", hgReference) + 0.01)}
+
         ImmunoScoreHaodata <- ImmunoScoreHaodata[ImmunoScoreHaodata$genes%in%g,]
         columnNA <- managena(datasetm_n, g)
         SE <- (ImmunoScoreHaodata$HR - ImmunoScoreHaodata$`95CI_L`)/1.96
@@ -380,6 +386,7 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @return A SummarizedExperiment object in which the
 #' IPS, MHC, CP, EC and SC scores will be added in the
@@ -388,7 +395,7 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
 #' @importFrom stats sd
 #'
 #' @export
-IPSSign <- function(dataset, nametype = "SYMBOL"){
+IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
     consistencyCheck(nametype, "IPSSign")
 
@@ -406,11 +413,13 @@ IPSSign <- function(dataset, nametype = "SYMBOL"){
     if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ",
                                     MISSING_GENES, "\n")}
 
+    datasetm_n <- log2(dataTransformation(datasetm, "TPM", hgReference) + 1)
+
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
-        GE <- datasetm[,i]
-        Z1 <- (datasetm[match(
-            IPSdata$GENE, row.names(datasetm)),i]-mean(GE))/sd(GE)
+        GE <- datasetm_n[,i]
+        Z1 <- (datasetm_n[match(
+            IPSdata$GENE, row.names(datasetm_n)),i]-mean(GE))/sd(GE)
         WEIGHT <- NULL; MIG <- NULL; k <- 1
         for (gen in unique(IPSdata$NAME)) {
             MIG[k] <- mean(Z1[which(IPSdata$NAME==gen)], na.rm=TRUE)

@@ -4,7 +4,7 @@
 \alias{IPSSign}
 \title{ImmunoPhenoScore Signature}
 \usage{
-IPSSign(dataset, nametype = "SYMBOL")
+IPSSign(dataset, nametype = "SYMBOL", hgReference = "hg19")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -16,6 +16,8 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
+
+\item{hgReference}{Human reference genome: "hg19" or "hg38"}
 }
 \value{
 A SummarizedExperiment object in which the

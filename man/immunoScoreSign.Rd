@@ -4,7 +4,13 @@
 \alias{immunoScoreSign}
 \title{Immunogenic Signature}
 \usage{
-immunoScoreSign(dataset, nametype = "SYMBOL", author = "Hao")
+immunoScoreSign(
+  dataset,
+  nametype = "SYMBOL",
+  author = "Hao",
+  inputType = "rnaseq",
+  hgReference = "hg19"
+)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -18,6 +24,10 @@ where rows correspond to genes and columns correspond to samples.}
 \item{nametype}{gene name ID of your dataset (row names).}
 
 \item{author}{first author of the specific signature publication.}
+
+\item{inputType}{type of data you are using: microarray or rnaseq.}
+
+\item{hgReference}{Human reference genome: "hg19" or "hg38"}
 }
 \value{
 A SummarizedExperiment object in which the Immunogenic scores will
