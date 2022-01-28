@@ -719,7 +719,8 @@ ASCSign <- function(dataset, nametype= "SYMBOL",
 
     columnNA <- managena(datasetm_n, ASCdata)
 
-    score <- colSums(scale(datasetm_n, center= TRUE, scale= TRUE), na.rm= TRUE)
+    score <- rowSums(
+        scale(t(datasetm_n), center = TRUE, scale = TRUE), na.rm = TRUE)
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -960,15 +961,16 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
     HRDSdata$Gene_Symbol <- geneIDtrans(nametype, HRDSdata$Gene_Symbol)
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- datasetm - rowMedians(datasetm)
 
     percentageOfGenesUsed("HRDSSign", datasetm, HRDSdata$Gene_Symbol)
 
-    HRDS_P <- datasetm[intersect(row.names(datasetm), HRDSdata[
+    HRDS_P <- datasetm_n[intersect(row.names(datasetm_n), HRDSdata[
             HRDSdata$correlation == 1, ]$Gene_Symbol), ]
-    HRDS_N <- datasetm[intersect(row.names(datasetm), HRDSdata[
+    HRDS_N <- datasetm_n[intersect(row.names(datasetm_n), HRDSdata[
             HRDSdata$correlation == -1, ]$Gene_Symbol), ]
 
-    score <- unlist(lapply(seq_len(ncol(datasetm)), function(x){
+    score <- unlist(lapply(seq_len(ncol(datasetm_n)), function(x){
         tmp <- t.test(HRDS_P[,x], HRDS_N[,x], alternative = "two.sided")
         tmp[["statistic"]]}))
 
@@ -1021,8 +1023,9 @@ VEGFSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
     consistencyCheck(nametype, tumorTissue, "VEGFSign")
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- log2(datasetm)
 
-    score <- log2(statScore(VEGFdata, datasetm, nametype, "mean", "VEGFSign"))
+    score <- statScore(VEGFdata, datasetm, nametype, "mean", "VEGFSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = "VEGF", datasetm))
@@ -1070,17 +1073,19 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", tumorTissue = "ovary"){
 
     percentageOfGenesUsed("DNArepSign", datasetm, DNArepairdata$DNAre)
 
-    DNAdatahigh <- DNArepairdata[DNArepairdata$status=="high",]
-    DNAdatalow <- DNArepairdata[DNArepairdata$status=="low",]
+    datasetm_n <- datasetm[row.names(datasetm) %in% DNArepairdata$DNAre, ]
+    datasetm_n <- scale(t(datasetm_n), center = TRUE, scale = FALSE)
 
-    medianexp <- apply(datasetm, 2, median)
+    medianexp <- apply(datasetm_n, 2, median)
 
-    DNArepscore <- apply(datasetm[
-        intersect(rownames(datasetm), DNAdatahigh$DNAre), ] > medianexp, 2, sum,
-        na.rm = TRUE) + apply(datasetm[
-        intersect(rownames(datasetm), DNAdatalow$DNAre), ] > medianexp, 2, sum,
-        na.rm = TRUE)
+    genes_h <- intersect(
+    colnames(datasetm_n), DNArepairdata[DNArepairdata$status=="high",]$DNAre)
+    genes_l <- intersect(
+    colnames(datasetm_n), DNArepairdata[DNArepairdata$status=="low",]$DNAre)
 
-    return(returnAsInput(userdata = dataset, result = DNArepscore,
+    score <- rowSums(datasetm_n[,genes_h] > medianexp[genes_h]) +
+        rowSums(datasetm_n[,genes_l] < medianexp[genes_l])
+
+    return(returnAsInput(userdata = dataset, result = score,
                          SignName = "DNArepair", datasetm))
 }
