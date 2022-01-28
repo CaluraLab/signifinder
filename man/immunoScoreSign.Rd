@@ -7,8 +7,9 @@
 immunoScoreSign(
   dataset,
   nametype = "SYMBOL",
-  tumorTissue = "ovary",
-  author = "Hao"
+  author = "Hao",
+  inputType = "rnaseq",
+  hgReference = "hg19"
 )
 }
 \arguments{
@@ -22,9 +23,11 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
 
-\item{tumorTissue}{type of tissue for which the signature is developed.}
-
 \item{author}{first author of the specific signature publication.}
+
+\item{inputType}{type of data you are using: microarray or rnaseq.}
+
+\item{hgReference}{Human reference genome: "hg19" or "hg38"}
 }
 \value{
 A SummarizedExperiment object in which the Immunogenic scores will

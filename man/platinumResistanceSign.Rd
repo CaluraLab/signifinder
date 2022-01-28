@@ -7,7 +7,6 @@
 platinumResistanceSign(
   dataset,
   nametype = "SYMBOL",
-  tumorTissue = "ovary",
   pvalues = FALSE,
   nperm = 100,
   ...
@@ -23,8 +22,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 
 \item{pvalues}{logical. It allows to compute p-values by permutations.}
 

@@ -4,12 +4,7 @@
 \alias{autophagySign}
 \title{Autophagy Signature}
 \usage{
-autophagySign(
-  dataset,
-  nametype = "SYMBOL",
-  tumorTissue = "brain",
-  author = "Xu"
-)
+autophagySign(dataset, nametype = "SYMBOL", author = "Xu")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -21,8 +16,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 
 \item{author}{first author of the specific signature publication.}
 }

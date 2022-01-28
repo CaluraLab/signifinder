@@ -6,12 +6,12 @@ suppressPackageStartupMessages(library(labstatR))
 
 test_that("TLSSign works", {
     rmatrix <- fakeData("TLS")
-    myres <- TLSSign(rmatrix, tumorTissue = "skin")
+    myres <- TLSSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("TLS" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"TLS"], ncol(assay(myres)))
     expect_type(colData(myres)[,"TLS"], "double")
-    expect_message(TLSSign(rmatrix, tumorTissue = "skin"), "100")
+    expect_message(TLSSign(rmatrix), "100")
 })
 
 test_that("ExpandedImmuneSign works", {
@@ -36,14 +36,12 @@ test_that("IFNSign works", {
 
 test_that("ImmuneCytSign based on Rooney's work", {
     rmatrix <- fakeData("ImmuneCytRooney")
-    myres <- ImmuneCytSign(rmatrix, tumorTissue = "pan-tissue",
-                           author = "Rooney")
+    myres <- ImmuneCytSign(rmatrix, author = "Rooney")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmuneCytRooney" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ImmuneCytRooney"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmuneCytRooney"], "double")
-    expect_message(ImmuneCytSign(
-        rmatrix, tumorTissue = "pan-tissue", author = "Rooney"), "100")
+    expect_message(ImmuneCytSign(rmatrix, author = "Rooney"), "100")
 })
 
 test_that("MitoticIndexSign works", {
@@ -68,13 +66,12 @@ test_that("MatrisomeSign works", {
 
 test_that("immunoScoreSign based on Roh's work", {
     rmatrix <- fakeData("ImmunoScoreRoh")
-    myres <- immunoScoreSign(rmatrix, tumorTissue= "pan-tissue", author= "Roh")
+    myres <- immunoScoreSign(rmatrix, author= "Roh")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmunoScoreRoh" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ImmunoScoreRoh"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmunoScoreRoh"], "double")
-    expect_message(immunoScoreSign(
-        rmatrix, tumorTissue = "pan-tissue", author = "Roh"), "100")
+    expect_message(immunoScoreSign(rmatrix, author = "Roh"), "100")
 })
 
 test_that("CINSign works", {
@@ -99,24 +96,22 @@ test_that("hypoxiaSign works", {
 
 test_that("CCSSign based on Lundberg's work", {
     rmatrix <- signifinder:::fakeData("CCSLundberg")
-    myres <- CCSSign(rmatrix, tumorTissue = "pan-tissue", author = "Lundberg")
+    myres <- CCSSign(rmatrix, author = "Lundberg")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CCSLundberg" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"CCSLundberg"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CCSLundberg"], "integer")
-    expect_message(CCSSign(
-        rmatrix, tumorTissue = "pan-tissue", author = "Lundberg"), "100")
+    expect_message(CCSSign(rmatrix, author = "Lundberg"), "100")
 })
 
 test_that("CCSSign based on Davoli's work", {
     rmatrix <- signifinder:::fakeData("CCSDavoli")
-    myres <- CCSSign(rmatrix, tumorTissue = "pan-tissue", author = "Davoli")
+    myres <- CCSSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CCSDavoli" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"CCSDavoli"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CCSDavoli"], "double")
-    expect_message(CCSSign(
-        rmatrix, tumorTissue = "pan-tissue", author = "Davoli"), "100")
+    expect_message(CCSSign(rmatrix, author = "Davoli"), "100")
 })
 
 test_that("VEGFSign works", {
@@ -141,13 +136,11 @@ test_that("angioSign works", {
 
 test_that("ImmuneCytSign based on Dabvoli's work", {
     rmatrix <- fakeData("ImmuneCytDavoli")
-    myres <- ImmuneCytSign(rmatrix, tumorTissue= "pan-tissue",
-                           author = "Davoli")
+    myres <- ImmuneCytSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmuneCytDavoli" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ImmuneCytDavoli"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmuneCytDavoli"], "double")
-    expect_message(ImmuneCytSign(
-        rmatrix, tumorTissue= "pan-tissue", author = "Davoli"), "100")
+    expect_message(ImmuneCytSign(rmatrix, author = "Davoli"), "100")
 })
 

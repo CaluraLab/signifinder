@@ -4,7 +4,7 @@
 \alias{HRDSSign}
 \title{Homologous Recombination Deficiency Signature}
 \usage{
-HRDSSign(dataset, nametype = "SYMBOL", tumorTissue = "ovary")
+HRDSSign(dataset, nametype = "SYMBOL")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -16,8 +16,6 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
-
-\item{tumorTissue}{type of tissue for which the signature is developed.}
 }
 \value{
 A SummarizedExperiment object in which the HRDS scores is
