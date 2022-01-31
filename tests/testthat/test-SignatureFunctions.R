@@ -15,22 +15,22 @@ test_that("EMTSign based on Miow's work", {
 })
 
 test_that("EMTSign based on Mak's work", {
-    rmatrix  <- fakeData("EMTMak")
+    rmatrix  <- fakeData("EMT_Mak")
     myresMak <- EMTSign(rmatrix, author = "Mak")
     expect_true(is(myresMak, "SummarizedExperiment"))
-    expect_true("EMTMak" %in% colnames(colData(myresMak)))
-    expect_length(colData(myresMak)[,"EMTMak"], ncol(assay(myresMak)))
-    expect_type(colData(myresMak)[,"EMTMak"], "double")
+    expect_true("EMT_Mak" %in% colnames(colData(myresMak)))
+    expect_length(colData(myresMak)[,"EMT_Mak"], ncol(assay(myresMak)))
+    expect_type(colData(myresMak)[,"EMT_Mak"], "double")
     expect_message(EMTSign(rmatrix, author = "Mak"), "100")
 })
 
 test_that("EMTSign based on Cheng's work", {
-    rmatrix  <- fakeData("EMTCheng")
+    rmatrix  <- fakeData("EMT_Cheng")
     myres <- EMTSign(rmatrix, author = "Cheng")
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("EMTCheng" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"EMTCheng"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"EMTCheng"], "double")
+    expect_true("EMT_Cheng" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"EMT_Cheng"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"EMT_Cheng"], "double")
     expect_message(EMTSign(rmatrix, author = "Cheng"), "100")
 })
 

@@ -1,7 +1,7 @@
 SignatureNames <- c("Epithelial",
                     "Mesenchymal",
-                    "EMTMak",
-                    "EMTCheng",
+                    "EMT_Mak",
+                    "EMT_Cheng",
                     "PyroptosisYe",
                     "PyroptosisShao",
                     "PyroptosisLin",
@@ -72,7 +72,7 @@ my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
     if(name %in% c("Epithelial", "Mesenchymal")){
-        g <- EMTMiowdata$Gene_Symbol[EMTMiowdata$Category==name]
+        g <- EMT_Miow$SYMBOL[EMT_Miow$class==paste0(name, "-like")]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
         g <- PlatinumResistancedata$Gene_Symbol[
             PlatinumResistancedata$Category==name]
@@ -86,6 +86,8 @@ GetGenes <- function(name){
              MES_consensus are not available")
     } else if(name %in% c("MHC", "CP", "EC", "SC")){
         g <- IPSdata$GENE[IPSdata$CLASS==name]
+    } else if(name %in% c("EMT_Mak", "EMT_Cheng")){
+        g <- eval(parse(text = name))[,"SYMBOL"]
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
@@ -93,7 +95,7 @@ GetGenes <- function(name){
             "FerroptosisLiu", "FerroptosisYe", "Hypoxia",
             "ImmunoScoreHao", "IPS", "LipidMetabolism", "PyroptosisYe",
             "PyroptosisShao", "PyroptosisLin", "PyroptosisLi", "CD49BSC",
-            "EMTMak", "GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
+            "GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
             "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC", "AutophagyZhang",
             "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyChenM",
             "AutophagyHu", "AutophagyHou", "AutophagyFei", "AutophagyFang",
@@ -102,7 +104,7 @@ GetGenes <- function(name){
         } else if (name %in% c(
             "Matrisome", "MitoticIndex", "ImmuneCytRooney", "CCSDavoli",
             "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
-            "EMTCheng", "Chemokine", "ASC", "PASS.ON", "IPRES",
+            "Chemokine", "ASC", "PASS.ON", "IPRES",
             "ImmuneCytDavoli", "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }

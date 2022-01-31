@@ -34,51 +34,43 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 
     if(author == "Miow"){
 
-        EMTMiowdata$Gene_Symbol <- geneIDtrans(nametype, EMTMiowdata$Gene_Symbol)
+        EMT_Miow$SYMBOL <- geneIDtrans(nametype, EMT_Miow$SYMBOL)
 
-        Signature_EL <- EMTMiowdata[grep('Epithelial', EMTMiowdata$Category),]
-        Signature_ML <- EMTMiowdata[grep('Mesenchymal', EMTMiowdata$Category),]
+        EL <- EMT_Miow[grep('Epithelial-like', EMT_Miow$class),]
+        ML <- EMT_Miow[grep('Mesenchymal-like', EMT_Miow$class),]
 
-        percentageOfGenesUsed("EMTSign", datasetm, Signature_EL$Gene_Symbol,
-                                detail = "epithelial")
-        percentageOfGenesUsed("EMTSign", datasetm, Signature_ML$Gene_Symbol,
-                                detail = "mesenchymal")
+        percentageOfGenesUsed("EMTSign", datasetm, EL$SYMBOL, "epithelial")
+        percentageOfGenesUsed("EMTSign", datasetm, ML$SYMBOL, "mesenchymal")
 
-        gene_sets <- list(Epithelial = Signature_EL$Gene_Symbol,
-                        Mesenchymal = Signature_ML$Gene_Symbol)
+        gene_sets <- list(Epithelial = EL$SYMBOL, Mesenchymal = ML$SYMBOL)
 
         dots <- list(...)
         kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
-        args <- matchArguments(dots, list(expr = datasetm,
-                                        gset.idx.list = gene_sets,
-                                        method = "ssgsea", kcdf = kcdftype,
-                                        min.sz = 5, ssgsea.norm = FALSE,
-                                        verbose = FALSE))
+        args <- matchArguments(dots, list(
+            expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
+            kcdf = kcdftype, min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
         if(pvalues){
             gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets,
-                                    gsvaResult = gsva_matrix,
-                                    nperm = nperm, args = args)
+                gsvaResult = gsva_matrix, nperm = nperm, args = args)
             gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
-        return(returnAsInput(userdata = dataset, result = gsva_matrix,
-                            SignName = "", datasetm))
+        return(returnAsInput(
+            userdata = dataset, result = gsva_matrix, SignName = "", datasetm))
 
     } else {
         if(author == "Mak") {
 
-            EMTMakdata$Gene_Symbol <- geneIDtrans(nametype, EMTMakdata$Gene_Symbol)
+            EMT_Mak$SYMBOL <- geneIDtrans(nametype, EMT_Mak$SYMBOL)
 
-            Sign_E <- EMTMakdata$Gene_Symbol[EMTMakdata$Category=="E"]
-            Sign_M <- EMTMakdata$Gene_Symbol[EMTMakdata$Category=="M"]
+            Sign_E <- EMT_Mak$SYMBOL[EMT_Mak$class=="E"]
+            Sign_M <- EMT_Mak$SYMBOL[EMT_Mak$class=="M"]
 
-            percentageOfGenesUsed("EMTSign", datasetm, Sign_E,
-                                  detail = "epithelial")
-            percentageOfGenesUsed("EMTSign", datasetm, Sign_M,
-                                  detail = "mesenchymal")
+            percentageOfGenesUsed("EMTSign", datasetm, Sign_E, "epithelial")
+            percentageOfGenesUsed("EMTSign", datasetm, Sign_M, "mesenchymal")
 
-            columnNA <- managena(datasetm, genes = EMTMakdata$Gene_Symbol)
+            columnNA <- managena(datasetm, genes = EMT_Mak$SYMBOL)
             score <- colMeans(
                 datasetm[intersect(Sign_M, row.names(datasetm)),]
                 ) - colMeans(
@@ -87,19 +79,21 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 
         } else if(author == "Cheng") {
 
-            EMTChengdata <- geneIDtrans(nametype, EMTChengdata)
+            EMT_Cheng$SYMBOL <- geneIDtrans(nametype, EMT_Cheng$SYMBOL)
 
-            percentageOfGenesUsed("EMTSign", datasetm, EMTChengdata)
+            percentageOfGenesUsed("EMTSign", datasetm, EMT_Cheng$SYMBOL)
 
-            datasetm_n <- datasetm[intersect(row.names(datasetm), EMTChengdata), ]
+            datasetm_n <- datasetm[intersect(
+                row.names(datasetm), EMT_Cheng$SYMBOL), ]
             datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
                 } else {datasetm_n}
-            columnNA <- managena(datasetm = datasetm_n, genes = EMTChengdata)
+            columnNA <- managena(datasetm = datasetm_n,
+                                genes = EMT_Cheng$SYMBOL)
             score <- prcomp(t(datasetm_n))$x[,1]
             score[columnNA > 0.9] <- NA
         }
         return(returnAsInput(userdata = dataset, result = score,
-                             SignName = paste0("EMT", author), datasetm))}
+                             SignName = paste0("EMT_", author), datasetm))}
 }
 
 
@@ -1057,7 +1051,7 @@ angioSign <- function(dataset, nametype = "SYMBOL"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-DNArepSign <- function(dataset, nametype = "SYMBOL"){
+DNArepSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "DNArepSign")
 
@@ -1067,7 +1061,9 @@ DNArepSign <- function(dataset, nametype = "SYMBOL"){
 
     percentageOfGenesUsed("DNArepSign", datasetm, DNArepairdata$DNAre)
 
-    datasetm_n <- datasetm[row.names(datasetm) %in% DNArepairdata$DNAre, ]
+    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)
+        } else {datasetm}
+    datasetm_n <- datasetm_n[row.names(datasetm_n) %in% DNArepairdata$DNAre, ]
     datasetm_n <- scale(t(datasetm_n), center = TRUE, scale = FALSE)
 
     medianexp <- apply(datasetm_n, 2, median)
