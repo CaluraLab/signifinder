@@ -1,69 +1,61 @@
-SignatureNames <- c("Epithelial",
-                    "Mesenchymal",
-                    "EMT_Mak",
-                    "EMT_Cheng",
-                    "PyroptosisYe",
-                    "PyroptosisShao",
-                    "PyroptosisLin",
-                    "PyroptosisLi",
-                    "FerroptosisLiang",
-                    "FerroptosisLi",
-                    "FerroptosisLiu",
-                    "FerroptosisYe",
-                    "LipidMetabolism",
-                    "Hypoxia",
-                    "PlatinumResistanceUp",
-                    "PlatinumResistanceDown",
-                    "ImmunoScoreHao",
-                    "ImmunoScoreRoh",
-                    "IMR_consensus",
-                    "DIF_consensus",
-                    "PRO_consensus",
-                    "MES_consensus",
-                    "IPS",
-                    "MHC",
-                    "CP",
-                    "EC",
-                    "SC",
-                    "Matrisome",
-                    "MitoticIndex",
-                    "ImmuneCytRooney",
-                    "IFN",
-                    "ExpandedImmune",
-                    "TLS",
-                    "CD49BSC",
-                    "CIN",
-                    "CCSLundberg",
-                    "CCSDavoli",
-                    "Chemokine",
-                    "ASC",
-                    "PASS.ON",
-                    "IPRES",
-                    "CIS",
-                    "GlycolysisJiang",
-                    "GlycolysisZhangL",
-                    "GlycolysisLiu",
-                    "GlycolysisYu",
-                    "GlycolysisXu",
-                    "GlycolysisZhangC",
-                    "AutophagyZhang",
-                    "AutophagyYue",
-                    "AutophagyXu",
-                    "AutophagyWang",
-                    "AutophagyChenM",
-                    "AutophagyHu",
-                    "AutophagyHou",
-                    "AutophagyFei",
-                    "AutophagyFang",
-                    "AutophagyChenH",
-                    "ECMup",
-                    "ECMdown",
-                    "HRDS",
-                    "ImmuneCytDavoli",
-                    "ISC",
-                    "VEGF",
-                    "Angiogenesis",
-                    "DNArepair")
+SignatureNames <- c(
+    "Epithelial", "Mesenchymal", "EMT_Mak", "EMT_Cheng",
+    "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
+    "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
+    "LipidMetabolism",
+    "Hypoxia",
+    "PlatinumResistanceUp",
+    "PlatinumResistanceDown",
+    "ImmunoScoreHao",
+    "ImmunoScoreRoh",
+    "IMR_consensus",
+    "DIF_consensus",
+    "PRO_consensus",
+    "MES_consensus",
+    "IPS",
+    "MHC",
+    "CP",
+    "EC",
+    "SC",
+    "Matrisome",
+    "MitoticIndex",
+    "ImmuneCytRooney",
+    "IFN",
+    "ExpandedImmune",
+    "TLS",
+    "CD49BSC",
+    "CIN",
+    "CCSLundberg",
+    "CCSDavoli",
+    "Chemokine",
+    "ASC",
+    "PASS.ON",
+    "IPRES",
+    "CIS",
+    "GlycolysisJiang",
+    "GlycolysisZhangL",
+    "GlycolysisLiu",
+    "GlycolysisYu",
+    "GlycolysisXu",
+    "GlycolysisZhangC",
+    "AutophagyZhang",
+    "AutophagyYue",
+    "AutophagyXu",
+    "AutophagyWang",
+    "AutophagyChenM",
+    "AutophagyHu",
+    "AutophagyHou",
+    "AutophagyFei",
+    "AutophagyFang",
+    "AutophagyChenH",
+    "ECMup",
+    "ECMdown",
+    "HRDS",
+    "ImmuneCytDavoli",
+    "ISC",
+    "VEGF",
+    "Angiogenesis",
+    "DNArepair")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -86,15 +78,16 @@ GetGenes <- function(name){
              MES_consensus are not available")
     } else if(name %in% c("MHC", "CP", "EC", "SC")){
         g <- IPSdata$GENE[IPSdata$CLASS==name]
-    } else if(name %in% c("EMT_Mak", "EMT_Cheng")){
+    } else if(name %in% c(
+        "EMT_Mak", "EMT_Cheng",
+        "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
+        "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye")){
         g <- eval(parse(text = name))[,"SYMBOL"]
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "FerroptosisLiang", "FerroptosisLi",
-            "FerroptosisLiu", "FerroptosisYe", "Hypoxia",
-            "ImmunoScoreHao", "IPS", "LipidMetabolism", "PyroptosisYe",
-            "PyroptosisShao", "PyroptosisLin", "PyroptosisLi", "CD49BSC",
+            "Hypoxia",
+            "ImmunoScoreHao", "IPS", "LipidMetabolism", "CD49BSC",
             "GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
             "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC", "AutophagyZhang",
             "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyChenM",
@@ -225,6 +218,20 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
     score <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient,
                         na.rm = TRUE)
     score[columnNA > 0.9] <- NA
+    return(score)
+}
+
+coeffScore <- function(sdata, datasetm, nametype, namesignature){
+
+    sdata$SYMBOL <- geneIDtrans(nametype, sdata$SYMBOL)
+
+    percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL)
+
+    sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
+    columnNA <- managena(datasetm = datasetm, genes = sdata$SYMBOL)
+    score <- colSums(datasetm[sdata$SYMBOL, ] * sdata$coeff, na.rm = TRUE)
+    score[columnNA > 0.9] <- NA
+
     return(score)
 }
 

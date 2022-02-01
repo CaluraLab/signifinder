@@ -112,7 +112,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 
     consistencyCheck(nametype, "pyroptosisSign", author)
 
-    Pyroptosisdata <- get(paste0("Pyroptosis", author, "data"))
+    Pyroptosisdata <- get(paste0("Pyroptosis_", author))
 
     datasetm <- getMatrix(dataset)
 
@@ -127,12 +127,11 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
         datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
     } else {datasetm_n <- datasetm}
 
-    score <- coefficientsScore(Pyroptosisdata, datasetm_n, nametype,
-                                "pyroptosisSign")
+    score <- coeffScore(Pyroptosisdata, datasetm_n, nametype, "pyroptosisSign")
 
     return(returnAsInput(
         userdata = dataset, result = score,
-        SignName = paste0("Pyroptosis", author), datasetm))
+        SignName = paste0("Pyroptosis_", author), datasetm))
 }
 
 
@@ -150,7 +149,7 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                     author = "Ye", hgReference = "hg19"){
 
     consistencyCheck(nametype, "ferroptosisSign", author)
-    Ferroptosisdata <- get(paste0("Ferroptosis", author, "data"))
+    Ferrdata <- get(paste0("Ferroptosis_", author))
 
     datasetm <- getMatrix(dataset)
 
@@ -163,13 +162,12 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     } else {
         datasetm_n <- datasetm}
 
-    score <- coefficientsScore(Ferroptosisdata, datasetm_n,
-                                nametype, "ferroptosisSign")
+    score <- coeffScore(Ferrdata, datasetm_n, nametype, "ferroptosisSign")
 
     if(author == "Liang" ){score <- exp(score)}
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = paste0("Ferroptosis", author), datasetm))
+        SignName = paste0("Ferroptosis_", author), datasetm))
 }
 
 
