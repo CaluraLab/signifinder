@@ -185,11 +185,11 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
     consistencyCheck(nametype, "lipidMetabolismSign")
 
     datasetm <- getMatrix(dataset)
-    score <- coefficientsScore(LipidMetabolismdata, datasetm,
-                                nametype, "lipidMetabolismSign")
+    score <- coeffScore(LipidMetabolism_Zheng, datasetm,
+                        nametype, "lipidMetabolismSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "LipidMetabolism", datasetm))
+                SignName = "LipidMetabolism_Zheng", datasetm))
 }
 
 
@@ -209,18 +209,16 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "hypoxiaSign")
 
-    if(nametype=="SYMBOL") {genetouse <- Hypoxiadata$Gene_Symbol
-    } else if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl
-    } else {genetouse <- mapIds(org.Hs.eg.db, keys = Hypoxiadata$Gene_Symbol,
-        column = nametype, keytype = "SYMBOL", multiVals = "first")}
+    # if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl}
 
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
-    score <- statScore(genetouse, datasetm = datasetm_n, nametype = "SYMBOL",
-        typeofstat = "median", namesignature = "hypoxiaSign")
+    score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = datasetm_n,
+                        nametype = "SYMBOL", typeofstat = "median",
+                        namesignature = "hypoxiaSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
-        SignName = "Hypoxia", datasetm))
+        SignName = "Hypoxia_Buffa", datasetm))
 }
 
 
@@ -446,11 +444,11 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
     consistencyCheck(nametype, "matrisomeSign")
 
     datasetm <- getMatrix(dataset)
-    score <- statScore(Matrisomedata, datasetm, nametype,
+    score <- statScore(Matrisome_Yuzhalin$SYMBOL, datasetm, nametype,
                         "median", "matrisomeSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "Matrisome", datasetm))
+                        SignName = "Matrisome_Yuzhalin", datasetm))
 }
 
 
@@ -614,13 +612,13 @@ CINSign <- function(dataset, nametype = "SYMBOL"){
 
     datasetm <- getMatrix(dataset)
 
-    score25 <- statScore(CINdata$SYMBOL[CINdata$class == "CIN25"],
+    score25 <- statScore(CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"],
                         scale(datasetm, center = TRUE, scale = FALSE),
                         nametype, "sum", "CINSign")
-    score70 <- statScore(CINdata$SYMBOL,
+    score70 <- statScore(CIN_Carter$SYMBOL,
                         scale(datasetm, center = TRUE, scale = FALSE),
                         nametype, "sum", "CINSign")
-    score <- data.frame(CIN25=score25, CIN70=score70)
+    score <- data.frame(CIN25 = score25, CIN70 = score70)
 
     return(returnAsInput(userdata = dataset, result = t(score),
                         SignName = "", datasetm))
@@ -668,21 +666,21 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
 
     consistencyCheck(nametype, "chemokineSign")
 
-    Chemokinedata <- geneIDtrans(nametype, Chemokinedata)
+    Chemokines_Messina$SYMBOL <- geneIDtrans(nametype, Chemokines_Messina$SYMBOL)
 
     datasetm <- getMatrix(dataset)
 
-    percentageOfGenesUsed("ChemokineSign", datasetm, Chemokinedata)
+    percentageOfGenesUsed("ChemokineSign", datasetm, Chemokines_Messina$SYMBOL)
 
-    datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokinedata), ]
+    datasetm_n <- datasetm[intersect(row.names(datasetm), Chemokines_Messina$SYMBOL), ]
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
     } else {datasetm_n}
-    columnNA <- managena(datasetm_n, Chemokinedata)
+    columnNA <- managena(datasetm_n, Chemokines_Messina$SYMBOL)
     score <- prcomp(t(datasetm), center = TRUE, scale = TRUE)$x[, 1]
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "Chemokine", datasetm))
+                        SignName = "Chemokines_Messina", datasetm))
 }
 
 #' Adult Stem Cell Signature

@@ -30,12 +30,12 @@ test_that("FerroptosysSign work", {
 })
 
 test_that("LipidMetabolism work", {
-    rmatrix <- fakeData("LipidMetabolism")
+    rmatrix <- fakeData("LipidMetabolism_Zheng")
     myres <- lipidMetabolismSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("LipidMetabolism" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"LipidMetabolism"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"LipidMetabolism"], "double")
+    expect_true("LipidMetabolism_Zheng" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"LipidMetabolism_Zheng"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"LipidMetabolism_Zheng"], "double")
     expect_message(lipidMetabolismSign(rmatrix), "100")
 })
 

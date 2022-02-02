@@ -55,12 +55,12 @@ test_that("MitoticIndexSign works", {
 })
 
 test_that("MatrisomeSign works", {
-    rmatrix <- fakeData("Matrisome")
+    rmatrix <- fakeData("Matrisome_Yuzhalin")
     myres <- matrisomeSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("Matrisome" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"Matrisome"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"Matrisome"], "integer")
+    expect_true("Matrisome_Yuzhalin" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"Matrisome_Yuzhalin"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"Matrisome_Yuzhalin"], "integer")
     expect_message(matrisomeSign(rmatrix), "100")
 })
 
@@ -75,7 +75,9 @@ test_that("immunoScoreSign based on Roh's work", {
 })
 
 test_that("CINSign works", {
-    rmatrix <- fakeData("CIN")
+    n <- c("CIN25", "CIN70")
+    pname <- sample(n, 1)
+    rmatrix <- fakeData(pname)
     myres <- CINSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(all(c("CIN25", "CIN70") %in% colnames(colData(myres))))
@@ -85,17 +87,17 @@ test_that("CINSign works", {
 })
 
 test_that("hypoxiaSign works", {
-    rmatrix <- fakeData("Hypoxia")
+    rmatrix <- fakeData("Hypoxia_Buffa")
     myres <- hypoxiaSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("Hypoxia" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"Hypoxia"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"Hypoxia"], "double")
+    expect_true("Hypoxia_Buffa" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"Hypoxia_Buffa"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"Hypoxia_Buffa"], "double")
     expect_message(hypoxiaSign(rmatrix), "100")
 })
 
 test_that("CCSSign based on Lundberg's work", {
-    rmatrix <- signifinder:::fakeData("CCSLundberg")
+    rmatrix <- fakeData("CCSLundberg")
     myres <- CCSSign(rmatrix, author = "Lundberg")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CCSLundberg" %in% colnames(colData(myres)))
@@ -105,7 +107,7 @@ test_that("CCSSign based on Lundberg's work", {
 })
 
 test_that("CCSSign based on Davoli's work", {
-    rmatrix <- signifinder:::fakeData("CCSDavoli")
+    rmatrix <- fakeData("CCSDavoli")
     myres <- CCSSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CCSDavoli" %in% colnames(colData(myres)))
@@ -115,7 +117,7 @@ test_that("CCSSign based on Davoli's work", {
 })
 
 test_that("VEGFSign works", {
-    rmatrix <- signifinder:::fakeData("VEGF")
+    rmatrix <- fakeData("VEGF")
     myres <- VEGFSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("VEGF" %in% colnames(colData(myres)))
@@ -125,7 +127,7 @@ test_that("VEGFSign works", {
 })
 
 test_that("angioSign works", {
-    rmatrix <- signifinder:::fakeData("Angiogenesis")
+    rmatrix <- fakeData("Angiogenesis")
     myres <- angioSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("Angiogenesis" %in% colnames(colData(myres)))

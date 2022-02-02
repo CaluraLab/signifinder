@@ -2,8 +2,8 @@ SignatureNames <- c(
     "Epithelial", "Mesenchymal", "EMT_Mak", "EMT_Cheng",
     "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
     "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
-    "LipidMetabolism",
-    "Hypoxia",
+    "LipidMetabolism_Zheng",
+    "Hypoxia_Buffa",
     "PlatinumResistanceUp",
     "PlatinumResistanceDown",
     "ImmunoScoreHao",
@@ -17,17 +17,17 @@ SignatureNames <- c(
     "CP",
     "EC",
     "SC",
-    "Matrisome",
+    "Matrisome_Yuzhalin",
     "MitoticIndex",
     "ImmuneCytRooney",
     "IFN",
     "ExpandedImmune",
     "TLS",
     "CD49BSC",
-    "CIN",
+    "CIN25", "CIN70",
     "CCSLundberg",
     "CCSDavoli",
-    "Chemokine",
+    "Chemokines_Messina",
     "ASC",
     "PASS.ON",
     "IPRES",
@@ -78,26 +78,31 @@ GetGenes <- function(name){
              MES_consensus are not available")
     } else if(name %in% c("MHC", "CP", "EC", "SC")){
         g <- IPSdata$GENE[IPSdata$CLASS==name]
+    } else if(name %in% c("CIN25", "CIN70")){
+        g <- if(name == "CIN25"){
+            CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
+            } else {CIN_Carter$SYMBOL}
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
-        "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye")){
+        "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
+        "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
+        "Chemokines_Messina")){
         g <- eval(parse(text = name))[,"SYMBOL"]
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "Hypoxia",
-            "ImmunoScoreHao", "IPS", "LipidMetabolism", "CD49BSC",
+            "ImmunoScoreHao", "IPS", "CD49BSC",
             "GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
             "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC", "AutophagyZhang",
             "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyChenM",
             "AutophagyHu", "AutophagyHou", "AutophagyFei", "AutophagyFang",
-            "AutophagyChenH",  "HRDS", "DNArepair", "CIN")){
+            "AutophagyChenH",  "HRDS", "DNArepair")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "Matrisome", "MitoticIndex", "ImmuneCytRooney", "CCSDavoli",
+            "MitoticIndex", "ImmuneCytRooney", "CCSDavoli",
             "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
-            "Chemokine", "ASC", "PASS.ON", "IPRES",
+            "ASC", "PASS.ON", "IPRES",
             "ImmuneCytDavoli", "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }
@@ -235,17 +240,17 @@ coeffScore <- function(sdata, datasetm, nametype, namesignature){
     return(score)
 }
 
-statScore <- function(ourdata, datasetm, nametype, typeofstat = "mean",
+statScore <- function(genes, datasetm, nametype, typeofstat = "mean",
                       namesignature){
 
-    ourdata <- geneIDtrans(nametype, ourdata)
+    genes <- geneIDtrans(nametype, genes)
 
-    percentageOfGenesUsed(namesignature, datasetm, ourdata)
+    percentageOfGenesUsed(namesignature, datasetm, genes)
 
-    ourdata <- ourdata[ourdata %in% row.names(datasetm)]
+    genes <- genes[genes %in% row.names(datasetm)]
 
-    columnNA <- managena(datasetm = datasetm, genes = ourdata)
-    score <- apply(datasetm[intersect(row.names(datasetm), ourdata), ],
+    columnNA <- managena(datasetm = datasetm, genes = genes)
+    score <- apply(datasetm[intersect(row.names(datasetm), genes), ],
         2, typeofstat, na.rm = TRUE)
     score[columnNA > 0.9] <- NA
 

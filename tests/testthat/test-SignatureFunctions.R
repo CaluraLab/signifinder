@@ -57,12 +57,12 @@ test_that("ASCSign work", {
 })
 
 test_that("chemokineSign work", {
-    rmatrix  <- signifinder:::fakeData("Chemokine")
+    rmatrix  <- fakeData("Chemokines_Messina")
     myres <- chemokineSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("Chemokine" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"Chemokine"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"Chemokine"], "double")
+    expect_true("Chemokines_Messina" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"Chemokines_Messina"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"Chemokines_Messina"], "double")
     expect_message(chemokineSign(rmatrix), "100")
 })
 
