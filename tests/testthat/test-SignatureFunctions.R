@@ -66,15 +66,15 @@ test_that("chemokineSign work", {
     expect_message(chemokineSign(rmatrix), "100")
 })
 
-# test_that("PassONSign work", {
-#     rmatrix  <- signifinder:::fakeData("PASS.ON")
-#     myres <- PassONSign(rmatrix)
-#     expect_true(is(myres, "SummarizedExperiment"))
-#     expect_true("Pass.ON" %in% colnames(colData(myres)))
-#     expect_length(colData(myres)[,"Pass.ON"], ncol(assay(myres)))
-#     expect_type(colData(myres)[,"Pass.ON"], "double")
-#     expect_message(PassONSign(rmatrix), "100")
-# })
+test_that("PassONSign work", {
+    rmatrix  <- signifinder:::fakeData("PASS.ON")
+    myres <- PassONSign(rmatrix)
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("PASS.ON" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"PASS.ON"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"PASS.ON"], "double")
+    expect_message(PassONSign(rmatrix), "100")
+})
 
 
 test_that("CISSign work", {

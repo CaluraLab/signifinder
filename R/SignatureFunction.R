@@ -749,8 +749,8 @@ PassONSign <- function(dataset, nametype = "SYMBOL", ...){
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
-    gsva_mean <- sapply(colnames(gsva_matrix), function(x) {
-        weighted.mean(gsva_matrix[,x], c(23, 26, 81, 18))
+    gsva_mean <- sapply(seq_len(ncol(gsva_matrix)), function(x) {
+        weighted.mean(gsva_matrix[,x], lengths(PASS.ONdata))
     })
 
     return(returnAsInput(userdata = dataset, result = gsva_mean,
