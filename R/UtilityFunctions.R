@@ -82,6 +82,8 @@ GetGenes <- function(name){
         g <- if(name == "CIN25"){
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
             } else {CIN_Carter$SYMBOL}
+    } else if(name %in% "PASS.ON"){
+        g <- as.vector(unlist(PASS.ONdata))
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
@@ -102,7 +104,7 @@ GetGenes <- function(name){
         } else if (name %in% c(
             "MitoticIndex", "ImmuneCytRooney", "CCSDavoli",
             "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
-            "ASC", "PASS.ON", "IPRES",
+            "ASC", "IPRES",
             "ImmuneCytDavoli", "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }
