@@ -216,7 +216,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
-    score <- statScore(Hypoxia_Buffa, datasetm = datasetm_n,
+    score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = datasetm_n,
                         nametype = "SYMBOL", typeofstat = "median",
                         namesignature = "hypoxiaSign")
 

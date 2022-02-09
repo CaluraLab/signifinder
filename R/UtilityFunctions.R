@@ -283,11 +283,15 @@ dataTransformation <- function(data, trans, hgReference){
     g <- rownames(data)
     egs <- suppressMessages(mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",
         keytype = "SYMBOL", multiVals = "first"))
-    # data <- data[!is.na(eg),]
-    # eg <- eg[!is.na(eg)]
+    data <- data[!is.na(egs),]
+    egs <- egs[!is.na(egs)]
 
     # glen <- getGeneLengthAndGCContent(id = eg, org = "hsa")
-    glen <- sapply(egs, function(eg){ sum(width(reduce( exons.db[[eg]] ))) })
+    exons_g <- lapply(egs, function(eg){ exons.db[[eg]] })
+    data <- data[!sapply(exons_g, is.null),]
+    egs <- egs[!sapply(exons_g, is.null)]
+    exons_g <- exons_g[!sapply(exons_g, is.null)]
+    glen <- sapply(names(egs), function(eg){ sum(width(reduce( exons_g[[eg]] ))) })
 
     tdata <- DGEobj.utils::convertCounts(
         countsMatrix = data, unit = trans, geneLength = glen)
