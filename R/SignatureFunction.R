@@ -500,8 +500,11 @@ ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
         score <- statScore(
             ImmuneCytRooneydata, datasetm_n, nametype, "meang", "ImmuneCytSign")
     } else if(author == "Davoli") {
-        score <- statScore(
-            ImmuneCytDavolidata, datasetm, nametype, "mean", "ImmuneCytSign")
+        datasetm_n <- datasetm[ImmuneCytDavolidata, ]
+        datasetm_r <- apply(datasetm_n, 1, rank)
+        datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
+        score <- statScore(ImmuneCytDavolidata, t(datasetm_r), nametype,
+                           "mean", "ImmuneCytSign")
     }
     return(returnAsInput(userdata = dataset, result = score,
             SignName = paste0("ImmuneCyt", author), datasetm))
@@ -645,7 +648,10 @@ CCSSign <- function(dataset, nametype = "SYMBOL", author = "Lundberg"){
         score <- statScore(CCSLundbergdata, datasetm, nametype,
                             "sum", "CCSSign")
     } else if(author == "Davoli"){
-        score <- statScore(CCSDavolidata, datasetm, nametype,
+        datasetm_n <- datasetm[CCSDavolidata, ]
+        datasetm_r <- apply(datasetm_n, 1, rank)
+        datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
+        score <- statScore(CCSDavolidata, t(datasetm_r), nametype,
                             "mean", "CCSSign")}
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -750,7 +756,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", ...){
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
     gsva_mean <- sapply(seq_len(ncol(gsva_matrix)), function(x) {
-        weighted.mean(gsva_matrix[,x], lengths(PASS.ONdata))
+        weighted.mean(gsva_matrix[,x], lengths(sign_df))
     })
 
     return(returnAsInput(userdata = dataset, result = gsva_mean,

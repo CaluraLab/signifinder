@@ -84,6 +84,8 @@ GetGenes <- function(name){
             } else {CIN_Carter$SYMBOL}
     } else if(name %in% "PASS.ON"){
         g <- as.vector(unlist(PASS.ONdata))
+    } else if(name %in% "IPRES"){
+        g <- as.vector(unlist(IPRESdata))
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
@@ -94,18 +96,17 @@ GetGenes <- function(name){
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "ImmunoScoreHao", "IPS", "CD49BSC",
-            "GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
-            "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC", "AutophagyZhang",
-            "AutophagyYue", "AutophagyXu", "AutophagyWang", "AutophagyChenM",
-            "AutophagyHu", "AutophagyHou", "AutophagyFei", "AutophagyFang",
-            "AutophagyChenH",  "HRDS", "DNArepair")){
+            "ImmunoScoreHao", "IPS", "CD49BSC", "GlycolysisJiang",
+            "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
+            "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
+            "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
+            "AutophagyFei", "AutophagyFang", "AutophagyChenH",  "HRDS",
+            "DNArepair")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "MitoticIndex", "ImmuneCytRooney", "CCSDavoli",
-            "CCSLundberg", "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS",
-            "ASC", "IPRES",
-            "ImmuneCytDavoli", "ISC", "VEGF", "Angiogenesis")){
+            "MitoticIndex", "ImmuneCytRooney", "CCSDavoli", "ASC", "CCSLundberg",
+            "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS", "ImmuneCytDavoli",
+            "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
