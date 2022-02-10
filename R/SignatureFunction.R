@@ -122,8 +122,8 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        datasetm_n <- scale(datasetm_n)
         datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
+        datasetm_n <- scale(datasetm_n)
     } else if (author == "Shao"){
         if(inputType == "rnaseq"){
             datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
