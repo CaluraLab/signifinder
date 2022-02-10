@@ -500,11 +500,11 @@ ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
         score <- statScore(
             ImmuneCytRooneydata, datasetm_n, nametype, "meang", "ImmuneCytSign")
     } else if(author == "Davoli") {
-        datasetm_n <- datasetm[ImmuneCytDavolidata, ]
+        datasetm_n <- datasetm[row.names(datasetm) %in% ImmuneCytDavolidata, ]
         datasetm_r <- apply(datasetm_n, 1, rank)
         datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
         score <- statScore(ImmuneCytDavolidata, t(datasetm_r), nametype,
-                           "mean", "ImmuneCytSign")
+                           "meang", "ImmuneCytSign")
     }
     return(returnAsInput(userdata = dataset, result = score,
             SignName = paste0("ImmuneCyt", author), datasetm))
@@ -648,11 +648,11 @@ CCSSign <- function(dataset, nametype = "SYMBOL", author = "Lundberg"){
         score <- statScore(CCSLundbergdata, datasetm, nametype,
                             "sum", "CCSSign")
     } else if(author == "Davoli"){
-        datasetm_n <- datasetm[CCSDavolidata, ]
+        datasetm_n <- datasetm[row.names(datasetm) %in% CCSDavolidata, ]
         datasetm_r <- apply(datasetm_n, 1, rank)
         datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
         score <- statScore(CCSDavolidata, t(datasetm_r), nametype,
-                            "mean", "CCSSign")}
+                            "meang", "CCSSign")}
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = paste0("CCS", author), datasetm))
