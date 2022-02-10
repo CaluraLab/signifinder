@@ -116,21 +116,23 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     consistencyCheck(nametype, "pyroptosisSign", author)
 
     sign_df <- get(paste0("Pyroptosis_", author))
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        datasetm_n <- scale(datasetm)
-        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        datasetm_n <- scale(datasetm_n)
+        datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
     } else if (author == "Shao"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
-        } else {datasetm_n <- datasetm}
+            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
+        } else {datasetm_n <- datasetm_n}
     } else if (author == "Lin"){
-        datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
-    } else {datasetm_n <- datasetm}
+        datasetm_n <- dataTransformation(datasetm_n, "TPM", hgReference)
+    } else {datasetm_n <- datasetm_n}
 
-    score <- coeffScore(sign_df, datasetm_n, nametype, "pyroptosisSign")
+    score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
 
     return(returnAsInput(
         userdata = dataset, result = score,
@@ -152,20 +154,23 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                     author = "Ye", hgReference = "hg19"){
 
     consistencyCheck(nametype, "ferroptosisSign", author)
+
     sign_df <- get(paste0("Ferroptosis_", author))
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Liu"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
-        } else {datasetm_n <- datasetm}
+            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
+        } else {datasetm_n <- datasetm_n}
     } else if (author == "Li"){
-        datasetm_n <- datasetm
+        datasetm_n <- datasetm_n
     } else {
-        datasetm_n <- datasetm}
+        datasetm_n <- datasetm_n}
 
-    score <- coeffScore(sign_df, datasetm_n, nametype, "ferroptosisSign")
+    score <- coeffScore(sign_df, datasetm_n, "ferroptosisSign")
 
     if(author == "Liang" ){score <- exp(score)}
 
@@ -187,9 +192,11 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 
     consistencyCheck(nametype, "lipidMetabolismSign")
 
+    sign_df <- LipidMetabolism_Zheng
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+
     datasetm <- getMatrix(dataset)
-    score <- coeffScore(LipidMetabolism_Zheng, datasetm,
-                        nametype, "lipidMetabolismSign")
+    score <- coeffScore(sign_df, datasetm, "lipidMetabolismSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                 SignName = "LipidMetabolism_Zheng", datasetm))
@@ -394,15 +401,15 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
+    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$GENE,]
 
     percentageOfGenesUsed("IPSSign", datasetm, sign_df$GENE)
 
-    ind <- which(is.na(match(sign_df$GENE, row.names(datasetm))))
-    MISSING_GENES <- sign_df$GENE[ind]
+    MISSING_GENES <- sign_df$GENE[is.na(match(sign_df$GENE,rownames(datasetm)))]
     if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ",
                                     MISSING_GENES, "\n")}
 
-    datasetm_n <- log2(dataTransformation(datasetm, "TPM", hgReference) + 1)
+    datasetm_n <- log2(dataTransformation(datasetm_n, "TPM", hgReference) + 1)
 
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {

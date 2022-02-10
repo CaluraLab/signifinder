@@ -229,9 +229,7 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
     return(score)
 }
 
-coeffScore <- function(sdata, datasetm, nametype, namesignature){
-
-    sdata$SYMBOL <- geneIDtrans(nametype, sdata$SYMBOL)
+coeffScore <- function(sdata, datasetm, namesignature){
 
     percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL)
 
