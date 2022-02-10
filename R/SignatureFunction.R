@@ -119,20 +119,20 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
+    # datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        # datasetm_n <- scale(datasetm_n)
-        datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
+        datasetm <- dataTransformation(datasetm, "FPKM", hgReference)
+        datasetm <- scale(datasetm)
     } else if (author == "Shao"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
-        } else {datasetm_n <- datasetm_n}
+            datasetm <- dataTransformation(datasetm, "FPKM", hgReference)
+        } else {datasetm <- datasetm}
     } else if (author == "Lin"){
-        datasetm_n <- dataTransformation(datasetm_n, "TPM", hgReference)
-    } else {datasetm_n <- datasetm_n}
+        datasetm <- dataTransformation(datasetm, "TPM", hgReference)
+    } else {datasetm <- datasetm}
 
-    score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
+    score <- coeffScore(sign_df, datasetm, "pyroptosisSign")
 
     return(returnAsInput(
         userdata = dataset, result = score,
@@ -223,7 +223,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
-    score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = datasetm_n,
+    abs(datasetm)
+    score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n),
                         nametype = "SYMBOL", typeofstat = "median",
                         namesignature = "hypoxiaSign")
 
@@ -292,8 +293,6 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @return A SummarizedExperiment object in which the Immunogenic scores will
 #' be added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom labstatR meang
 #'
 #' @export
 immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
@@ -491,8 +490,6 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom labstatR meang
-#'
 #' @export
 ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             author = "Rooney", hgReference = "hg19"){
@@ -568,8 +565,6 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom labstatR meang
 #'
 #' @export
 TLSSign <- function(dataset, nametype = "SYMBOL"){
@@ -1051,7 +1046,7 @@ angioSign <- function(dataset, nametype = "SYMBOL"){
     datasetm <- getMatrix(dataset)
 
     score <-statScore(
-        Angiogenesisdata, datasetm, nametype, typeofstat = "median",
+        Angiogenesisdata, abs(datasetm), nametype, typeofstat = "median",
         namesignature = "angioSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
