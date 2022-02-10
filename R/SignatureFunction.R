@@ -120,7 +120,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     datasetm <- getMatrix(dataset)
 
     if(author == "Ye"){
-        # datasetm_n <- scale(datasetm)
+        datasetm_n <- scale(datasetm)
         datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
     } else if (author == "Shao"){
         if(inputType == "rnaseq"){
@@ -285,8 +285,6 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @return A SummarizedExperiment object in which the Immunogenic scores will
 #' be added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom labstatR meang
 #'
 #' @export
 immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
@@ -484,8 +482,6 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom labstatR meang
-#'
 #' @export
 ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             author = "Rooney", hgReference = "hg19"){
@@ -561,8 +557,6 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
 #'
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom labstatR meang
 #'
 #' @export
 TLSSign <- function(dataset, nametype = "SYMBOL"){
