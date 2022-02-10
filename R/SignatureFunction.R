@@ -119,20 +119,20 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
+    # datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
-        datasetm_n <- scale(datasetm_n)
+        datasetm <- dataTransformation(datasetm, "FPKM", hgReference)
+        datasetm <- scale(datasetm)
     } else if (author == "Shao"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
-        } else {datasetm_n <- datasetm_n}
+            datasetm <- dataTransformation(datasetm, "FPKM", hgReference)
+        } else {datasetm <- datasetm}
     } else if (author == "Lin"){
-        datasetm_n <- dataTransformation(datasetm_n, "TPM", hgReference)
-    } else {datasetm_n <- datasetm_n}
+        datasetm <- dataTransformation(datasetm, "TPM", hgReference)
+    } else {datasetm <- datasetm}
 
-    score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
+    score <- coeffScore(sign_df, datasetm, "pyroptosisSign")
 
     return(returnAsInput(
         userdata = dataset, result = score,
@@ -223,7 +223,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
-    score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = datasetm_n,
+    abs(datasetm)
+    score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n),
                         nametype = "SYMBOL", typeofstat = "median",
                         namesignature = "hypoxiaSign")
 
@@ -1045,7 +1046,7 @@ angioSign <- function(dataset, nametype = "SYMBOL"){
     datasetm <- getMatrix(dataset)
 
     score <-statScore(
-        Angiogenesisdata, datasetm, nametype, typeofstat = "median",
+        Angiogenesisdata, abs(datasetm), nametype, typeofstat = "median",
         namesignature = "angioSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),

@@ -241,7 +241,9 @@ coeffScore <- function(sdata, datasetm, namesignature){
     return(score)
 }
 
-meang <- function(x, na.rm){exp(mean(log(x[x>0]), na.rm = na.rm))}
+meang <- function(x, na.rm){
+    exp(mean(log(x[x>0]), na.rm = na.rm))
+    }
 
 statScore <- function(genes, datasetm, nametype, typeofstat = "mean",
                       namesignature){
