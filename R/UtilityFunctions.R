@@ -6,8 +6,7 @@ SignatureNames <- c(
     "Hypoxia_Buffa",
     "PlatinumResistanceUp",
     "PlatinumResistanceDown",
-    "ImmunoScoreHao",
-    "ImmunoScoreRoh",
+    "ImmunoScore_Hao", "ImmunoScore_Roh",
     "IMR_consensus",
     "DIF_consensus",
     "PRO_consensus",
@@ -19,7 +18,7 @@ SignatureNames <- c(
     "SC",
     "Matrisome_Yuzhalin",
     "MitoticIndex",
-    "ImmuneCytRooney",
+    "ImmuneCyt_Rooney", "ImmuneCyt_Davoli",
     "IFN",
     "ExpandedImmune",
     "TLS",
@@ -51,7 +50,6 @@ SignatureNames <- c(
     "ECMup",
     "ECMdown",
     "HRDS",
-    "ImmuneCytDavoli",
     "ISC",
     "VEGF",
     "Angiogenesis",
@@ -91,12 +89,13 @@ GetGenes <- function(name){
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
         "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
         "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
-        "Chemokines_Messina")){
+        "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
+        "ImmuneCyt_Rooney", "ImmuneCyt_Davoli")){
         g <- eval(parse(text = name))[,"SYMBOL"]
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "ImmunoScoreHao", "IPS", "CD49BSC", "GlycolysisJiang",
+            "IPS", "CD49BSC", "GlycolysisJiang",
             "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
             "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
             "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
@@ -104,9 +103,8 @@ GetGenes <- function(name){
             "DNArepair")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "MitoticIndex", "ImmuneCytRooney", "CCSDavoli", "ASC", "CCSLundberg",
-            "ImmunoScoreRoh", "IFN", "ExpandedImmune", "TLS", "ImmuneCytDavoli",
-            "ISC", "VEGF", "Angiogenesis")){
+            "MitoticIndex", "CCSDavoli", "ASC", "CCSLundberg",
+            "IFN", "ExpandedImmune", "TLS", "ISC", "VEGF", "Angiogenesis")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

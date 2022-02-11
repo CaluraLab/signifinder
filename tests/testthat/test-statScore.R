@@ -34,12 +34,12 @@ test_that("IFNSign works", {
 })
 
 test_that("ImmuneCytSign based on Rooney's work", {
-    rmatrix <- fakeData("ImmuneCytRooney")
+    rmatrix <- fakeData("ImmuneCyt_Rooney")
     myres <- ImmuneCytSign(rmatrix, author = "Rooney")
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("ImmuneCytRooney" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"ImmuneCytRooney"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"ImmuneCytRooney"], "double")
+    expect_true("ImmuneCyt_Rooney" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"ImmuneCyt_Rooney"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"ImmuneCyt_Rooney"], "double")
     expect_message(ImmuneCytSign(rmatrix, author = "Rooney"), "100")
 })
 
@@ -64,12 +64,12 @@ test_that("MatrisomeSign works", {
 })
 
 test_that("immunoScoreSign based on Roh's work", {
-    rmatrix <- fakeData("ImmunoScoreRoh")
-    myres <- immunoScoreSign(rmatrix, author= "Roh")
+    rmatrix <- fakeData("ImmunoScore_Roh")
+    myres <- immunoScoreSign(rmatrix, author = "Roh")
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("ImmunoScoreRoh" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"ImmunoScoreRoh"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"ImmunoScoreRoh"], "double")
+    expect_true("ImmunoScore_Roh" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"ImmunoScore_Roh"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"ImmunoScore_Roh"], "double")
     expect_message(immunoScoreSign(rmatrix, author = "Roh"), "100")
 })
 
@@ -136,12 +136,12 @@ test_that("angioSign works", {
 })
 
 test_that("ImmuneCytSign based on Dabvoli's work", {
-    rmatrix <- fakeData("ImmuneCytDavoli")
+    rmatrix <- fakeData("ImmuneCyt_Davoli")
     myres <- ImmuneCytSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("ImmuneCytDavoli" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"ImmuneCytDavoli"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"ImmuneCytDavoli"], "double")
+    expect_true("ImmuneCyt_Davoli" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"ImmuneCyt_Davoli"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"ImmuneCyt_Davoli"], "double")
     expect_message(ImmuneCytSign(rmatrix, author = "Davoli"), "100")
 })
 

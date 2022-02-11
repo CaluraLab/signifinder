@@ -304,19 +304,19 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
 
     if(author == "Hao"){
 
-        sign_df <- ImmunoScoreHaodata
-        sign_df$genes <- geneIDtrans(nametype, sign_df$genes)
+        sign_df <- ImmunoScore_Hao
+        sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
-        g <- intersect(row.names(datasetm), sign_df$genes)
+        g <- intersect(row.names(datasetm), sign_df$SYMBOL)
 
-        percentageOfGenesUsed("immunoScoreSign", datasetm, sign_df$genes)
+        percentageOfGenesUsed("immunoScoreSign", datasetm, sign_df$SYMBOL)
 
         datasetm_n <- datasetm[g,]
         if(inputType == "rnaseq"){
             datasetm_n <- log2(dataTransformation(
                 datasetm_n, "FPKM", hgReference) + 0.01)}
 
-        sign_df <- sign_df[sign_df$genes %in% g,]
+        sign_df <- sign_df[sign_df$SYMBOL %in% g,]
         columnNA <- managena(datasetm_n, g)
         SE <- (sign_df$HR - sign_df$`95CI_L`)/1.96
         k <- (1 - sign_df$HR)/SE
@@ -325,11 +325,11 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
         score[columnNA > 0.9] <- NA
     } else if(author == "Roh"){
         score <- statScore(
-            ImmunoScoreRohdata, datasetm = datasetm, nametype = nametype,
+            ImmunoScore_Roh$SYMBOL, datasetm = datasetm, nametype = nametype,
             typeofstat = "meang", namesignature = "immunoScoreSign")}
 
     return(returnAsInput(userdata = dataset, result = score,
-        SignName = paste0("ImmunoScore", author), datasetm))
+        SignName = paste0("ImmunoScore_", author), datasetm))
 }
 
 
@@ -502,16 +502,17 @@ ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
             datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)+0.01
         } else {datasetm_n <- datasetm}
         score <- statScore(
-            ImmuneCytRooneydata, datasetm_n, nametype, "meang", "ImmuneCytSign")
+            ImmuneCyt_Rooney$SYMBOL, datasetm_n,
+            nametype, "meang", "ImmuneCytSign")
     } else if(author == "Davoli") {
-        datasetm_n <- datasetm[row.names(datasetm) %in% ImmuneCytDavolidata, ]
+        datasetm_n <- datasetm[row.names(datasetm)%in%ImmuneCyt_Davoli$SYMBOL,]
         datasetm_r <- apply(datasetm_n, 1, rank)
         datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
-        score <- statScore(ImmuneCytDavolidata, t(datasetm_r), nametype,
-                           "meang", "ImmuneCytSign")
+        score <- statScore(ImmuneCyt_Davoli$SYMBOL, t(datasetm_r),
+                           nametype, "meang", "ImmuneCytSign")
     }
     return(returnAsInput(userdata = dataset, result = score,
-            SignName = paste0("ImmuneCyt", author), datasetm))
+            SignName = paste0("ImmuneCyt_", author), datasetm))
 }
 
 
