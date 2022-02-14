@@ -67,12 +67,12 @@ test_that("chemokineSign work", {
 })
 
 test_that("PassONSign work", {
-    rmatrix  <- signifinder:::fakeData("PASS.ON")
+    rmatrix  <- signifinder:::fakeData("PassON_Du")
     myres <- PassONSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("PASS.ON" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"PASS.ON"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"PASS.ON"], "double")
+    expect_true("PassON_Du" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"PassON_Du"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"PassON_Du"], "double")
     expect_message(PassONSign(rmatrix), "100")
 })
 
@@ -91,12 +91,12 @@ test_that("CISSign work", {
 })
 
 test_that("HRDSSign work", {
-    rmatrix  <- signifinder:::fakeData("HRDS")
+    rmatrix  <- signifinder:::fakeData("HRDS_Lu")
     myres <- HRDSSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("HRDS" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"HRDS"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"HRDS"], "double")
+    expect_true("HRDS_Lu" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"HRDS_Lu"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"HRDS_Lu"], "double")
     expect_message(HRDSSign(rmatrix), "100")
 })
 
