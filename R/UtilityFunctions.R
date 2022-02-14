@@ -22,7 +22,7 @@ SignatureNames <- c(
     "IFN_Ayers",
     "expandedImmune_Ayers",
     "TLS",
-    "CD49BSC",
+    "StemCellCD49f",
     "CIN25", "CIN70",
     "CellCycle_Lundberg", "CellCycle_Davoli",
     "Chemokines_Messina",
@@ -51,7 +51,8 @@ SignatureNames <- c(
     "ISC",
     "VEGF",
     "Angiogenesis",
-    "DNArepair")
+    "DNArepair",
+    "TinflamSign")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -78,7 +79,7 @@ GetGenes <- function(name){
     } else if(name %in% c("CIN25", "CIN70")){
         g <- if(name == "CIN25"){
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
-            } else {CIN_Carter$SYMBOL}
+             } else {CIN_Carter$SYMBOL}
     } else if(name %in% "IPRES"){
         g <- as.vector(unlist(IPRESdata))
     } else if(name %in% c(
@@ -93,7 +94,7 @@ GetGenes <- function(name){
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "IPS", "CD49BSC", "GlycolysisJiang",
+            "IPS", "StemCellCD49f", "GlycolysisJiang",
             "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
             "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
             "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
@@ -102,7 +103,7 @@ GetGenes <- function(name){
             g <- datavar[,1]
         } else if (name %in% c(
             "MitoticIndex", "ASC", "CellCycle_Lundberg",
-            "TLS", "ISC", "VEGF", "Angiogenesis")){
+            "TLS", "ISC", "VEGF", "Angiogenesis", "TinflamSign")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
@@ -220,7 +221,7 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
     ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
     columnNA <- managena(datasetm = datasetm, genes = ourdata$Gene_Symbol)
     score <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient,
-                        na.rm = TRUE)
+                     na.rm = TRUE)
     score[columnNA > 0.9] <- NA
     return(score)
 }
@@ -239,7 +240,7 @@ coeffScore <- function(sdata, datasetm, namesignature){
 
 meang <- function(x, na.rm){
     exp(mean(log(x[x>0]), na.rm = na.rm))
-    }
+}
 
 statScore <- function(genes, datasetm, nametype, typeofstat = "mean",
                       namesignature){
@@ -252,7 +253,7 @@ statScore <- function(genes, datasetm, nametype, typeofstat = "mean",
 
     columnNA <- managena(datasetm = datasetm, genes = genes)
     score <- apply(datasetm[intersect(row.names(datasetm), genes), ],
-        2, typeofstat, na.rm = TRUE)
+                   2, typeofstat, na.rm = TRUE)
     score[columnNA > 0.9] <- NA
 
     return(score)
@@ -281,7 +282,7 @@ dataTransformation <- function(data, trans, hgReference){
 
     g <- rownames(data)
     egs <- suppressMessages(mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",
-        keytype = "SYMBOL", multiVals = "first"))
+                                   keytype = "SYMBOL", multiVals = "first"))
     data <- data[!is.na(egs),]
     egs <- egs[!is.na(egs)]
 
@@ -319,7 +320,7 @@ percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){
 geneIDtrans <- function(nametype, genes){
     if(nametype!="SYMBOL"){
         AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = genes,
-            column = nametype, keytype = "SYMBOL", multiVals = "first")
+                              column = nametype, keytype = "SYMBOL", multiVals = "first")
     } else { genes }
 }
 
