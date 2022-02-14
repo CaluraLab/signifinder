@@ -39,14 +39,14 @@ test_that("LipidMetabolism work", {
     expect_message(lipidMetabolismSign(rmatrix), "100")
 })
 
-test_that("CD49BSC work", {
-    rmatrix <- fakeData("CD49BSC")
-    myres <- CD49BSCSign(rmatrix)
+test_that("StemCellCD49f work", {
+    rmatrix <- fakeData("StemCellCD49f")
+    myres <- StemCellCD49fSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("CD49BSC" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"CD49BSC"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"CD49BSC"], "double")
-    expect_message(CD49BSCSign(rmatrix), "100")
+    expect_true("StemCellCD49f" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"StemCellCD49f"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"StemCellCD49f"], "double")
+    expect_message(StemCellCD49fSign(rmatrix), "100")
 })
 
 test_that("glycolysisSign works", {
@@ -87,5 +87,15 @@ test_that("autophagySign works", {
     expect_type(colData(myres)[,pname], "double")
     expect_message(autophagySign(
         rmatrix, author = author), "100")
+})
+
+test_that("TinflamSign work", {
+    rmatrix <- fakeData("TinflamSign")
+    myres <- TinflamSign(rmatrix)
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("TinflamSign" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"TinflamSign"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"TinflamSign"], "double")
+    expect_message(CD49BSCSign(rmatrix), "100")
 })
 

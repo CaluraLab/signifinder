@@ -558,6 +558,33 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
 }
 
 
+#' TinflamSign Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
+#'
+#' @return A SummarizedExperiment object in which the score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @export
+TinflamSign <- function(dataset, nametype = "SYMBOL"){
+
+    consistencyCheck(nametype, "TinflamSign")
+
+    datasetm <- getMatrix(dataset)
+
+    housekeeping <- intersect(row.names(datasetm), Housekeeping)
+    genes_pred <- intersect(row.names(datasetm), Tflammdata$SYMBOL)
+
+    housekeeping_m <- apply(datasetm[intersect(row.names(datasetm), Housekeeping), ] , 2, mean)
+    datasetm_n <- sweep(datasetm[genes_pred, ], 2, housekeeping_m, FUN = "-")
+    score <- coeffScore(Tflammdata, datasetm_n, TinflamSign)
+
+    return(returnAsInput(userdata = dataset, result = score,
+                         SignName = "TinflamSign", datasetm))
+}
+
+
 #' Tertiary Lymphoid Structures (TLS) Signature
 #'
 #' @inherit EMTSign description
@@ -588,15 +615,15 @@ TLSSign <- function(dataset, nametype = "SYMBOL"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CD49BSCSign <- function(dataset, nametype = "SYMBOL"){
+StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
 
-    consistencyCheck(nametype, "CD49BSCSign")
+    consistencyCheck(nametype, "StemCellCD49fSign")
 
     datasetm <- getMatrix(dataset)
-    score <- coefficientsScore(CD49BSCdata, datasetm, nametype, "CD49BSCSign")
+    score <- coefficientsScore(CD49BSCdata, datasetm, nametype, "StemCellCD49fSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "CD49BSC", datasetm))
+                        SignName = "StemCellCD49f", datasetm))
 }
 
 
