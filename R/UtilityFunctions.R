@@ -291,7 +291,8 @@ dataTransformation <- function(data, trans, hgReference){
     data <- data[!sapply(exons_g, is.null),]
     egs <- egs[!sapply(exons_g, is.null)]
     exons_g <- exons_g[!sapply(exons_g, is.null)]
-    glen <- sapply(names(egs), function(eg){ sum(BiocGenerics::width(reduce( exons_g[[eg]] ))) })
+    glen <- sapply(names(egs), function(eg){
+        sum(BiocGenerics::width(IRanges::reduce( exons_g[[eg]] ))) })
 
     tdata <- DGEobj.utils::convertCounts(
         countsMatrix = data, unit = trans, geneLength = glen)

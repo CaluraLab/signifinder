@@ -11,7 +11,7 @@ Authors@R: c(   person("Fabiola", "Pedrini",
 Description: A collection of signatures to analyze high-throughput data.
 License: AGPL-3
 Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, dplyr, ellipse, ggplot2, 
-        ggridges, grDevices, grid, gridExtra, GSVA, labstatR, magrittr, Matrix, 
+        ggridges, grDevices, grid, gridExtra, GSVA, IRanges, labstatR, magrittr, Matrix, 
         matrixStats, maxstat, org.Hs.eg.db, openair, patchwork, stats, 
         SummarizedExperiment, survminer, survival, viridis
 Encoding: UTF-8
