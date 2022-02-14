@@ -89,13 +89,13 @@ test_that("autophagySign works", {
         rmatrix, author = author), "100")
 })
 
-test_that("TinflamSign work", {
-    rmatrix <- fakeData("TinflamSign")
-    myres <- TinflamSign(rmatrix)
-    expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("TinflamSign" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"TinflamSign"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"TinflamSign"], "double")
-    expect_message(CD49BSCSign(rmatrix), "100")
-})
+# test_that("TinflamSign work", {
+#     rmatrix <- fakeData("TinflamSign")
+#     myres <- TinflamSign(rmatrix)
+#     expect_true(is(myres, "SummarizedExperiment"))
+#     expect_true("TinflamSign" %in% colnames(colData(myres)))
+#     expect_length(colData(myres)[,"TinflamSign"], ncol(assay(myres)))
+#     expect_type(colData(myres)[,"TinflamSign"], "double")
+#     expect_message(CD49BSCSign(rmatrix), "100")
+# })
 

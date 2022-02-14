@@ -621,7 +621,7 @@ StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "StemCellCD49fSign")
 
     datasetm <- getMatrix(dataset)
-    score <- coefficientsScore(CD49BSCdata, datasetm, nametype, "StemCellCD49fSign")
+    score <- coefficientsScore(StemCellCD49fdata, datasetm, nametype, "StemCellCD49fSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                         SignName = "StemCellCD49f", datasetm))
