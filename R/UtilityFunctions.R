@@ -49,9 +49,9 @@ SignatureNames <- c(
     "ECM_Chakravarthy_up", "ECM_Chakravarthy_down",
     "HRDS_Lu",
     "ISC",
-    "VEGF",
+    "VEGF_Hu",
     "Angiogenesis",
-    "DNArepair",
+    "DNArep_Kang",
     "TinflamSign")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
@@ -89,7 +89,8 @@ GetGenes <- function(name){
         "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
         "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
         "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
-        "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du")){
+        "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
+        "DNArep_Kang")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
@@ -98,12 +99,11 @@ GetGenes <- function(name){
             "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
             "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
             "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
-            "AutophagyFei", "AutophagyFang", "AutophagyChenH",
-            "DNArepair")){
+            "AutophagyFei", "AutophagyFang", "AutophagyChenH")){
             g <- datavar[,1]
         } else if (name %in% c(
             "MitoticIndex", "ASC", "CellCycle_Lundberg",
-            "TLS", "ISC", "VEGF", "Angiogenesis", "TinflamSign")){
+            "TLS", "ISC", "Angiogenesis", "TinflamSign")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

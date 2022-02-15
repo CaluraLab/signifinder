@@ -1051,10 +1051,10 @@ VEGFSign <- function(dataset, nametype = "SYMBOL"){
     datasetm <- getMatrix(dataset)
     datasetm_n <- log2(datasetm)
 
-    score <- statScore(VEGFdata, datasetm, nametype, "mean", "VEGFSign")
+    score <- statScore(VEGF_Hu$SYMBOL, datasetm, nametype, "mean", "VEGFSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "VEGF", datasetm))
+                         SignName = "VEGF_Hu", datasetm))
 }
 
 #' Angiogenesis Signature
@@ -1093,28 +1093,28 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "DNArepSign")
 
-    sign_df <- DNArepairdata
-    sign_df$DNAre <- geneIDtrans(nametype, sign_df$DNAre)
+    sign_df <- DNArep_Kang
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
 
-    percentageOfGenesUsed("DNArepSign", datasetm, sign_df$DNAre)
+    percentageOfGenesUsed("DNArepSign", datasetm, sign_df$SYMBOL)
 
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)
         } else {datasetm}
-    datasetm_n <- datasetm_n[row.names(datasetm_n) %in% sign_df$DNAre, ]
+    datasetm_n <- datasetm_n[row.names(datasetm_n) %in% sign_df$SYMBOL, ]
     datasetm_n <- scale(t(datasetm_n), center = TRUE, scale = FALSE)
 
     medianexp <- apply(datasetm_n, 2, median)
 
     genes_h <- intersect(
-    colnames(datasetm_n), sign_df[sign_df$status=="high",]$DNAre)
+    colnames(datasetm_n), sign_df[sign_df$class=="high",]$SYMBOL)
     genes_l <- intersect(
-    colnames(datasetm_n), sign_df[sign_df$status=="low",]$DNAre)
+    colnames(datasetm_n), sign_df[sign_df$class=="low",]$SYMBOL)
 
     score <- rowSums(datasetm_n[,genes_h] > medianexp[genes_h]) +
         rowSums(datasetm_n[,genes_l] < medianexp[genes_l])
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "DNArepair", datasetm))
+                         SignName = "DNArep_Kang", datasetm))
 }

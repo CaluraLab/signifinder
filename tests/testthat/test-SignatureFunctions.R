@@ -101,12 +101,12 @@ test_that("HRDSSign work", {
 })
 
 test_that("DNArepSign work", {
-    rmatrix  <- signifinder:::fakeData("DNArepair")
+    rmatrix  <- signifinder:::fakeData("DNArep_Kang")
     myres <- DNArepSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("DNArepair" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"DNArepair"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"DNArepair"], "double")
+    expect_true("DNArep_Kang" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"DNArep_Kang"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"DNArep_Kang"], "double")
     expect_message(DNArepSign(rmatrix), "100")
 })
 
