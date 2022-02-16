@@ -47,12 +47,12 @@ test_that("platinumResistanceSign work", {
 })
 
 test_that("ASCSign work", {
-    rmatrix  <- signifinder:::fakeData("ASC")
+    rmatrix  <- signifinder:::fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("ASC" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"ASC"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"ASC"], "double")
+    expect_true("ASC_Smith" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"ASC_Smith"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"ASC_Smith"], "double")
     expect_message(ASCSign(rmatrix), "100")
 })
 

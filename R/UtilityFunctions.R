@@ -26,7 +26,7 @@ SignatureNames <- c(
     "CIN25", "CIN70",
     "CellCycle_Lundberg", "CellCycle_Davoli",
     "Chemokines_Messina",
-    "ASC",
+    "ASC_Smith",
     "PassON_Du",
     "IPRES",
     "CIS",
@@ -92,7 +92,7 @@ GetGenes <- function(name){
         "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
         "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
         "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
-        "DNArep_Kang")){
+        "DNArep_Kang", "ASC_Smith")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
@@ -104,7 +104,7 @@ GetGenes <- function(name){
             "AutophagyFei", "AutophagyFang", "AutophagyChenH")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "MitoticIndex", "ASC", "CellCycle_Lundberg",
+            "MitoticIndex", "CellCycle_Lundberg",
             "TLS", "ISC", "Angiogenesis")){
             g <- datavar}
     }

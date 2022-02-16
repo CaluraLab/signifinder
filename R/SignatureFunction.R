@@ -743,23 +743,23 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 
     consistencyCheck(nametype, "ASCSign")
 
-    sign_df <- ASCdata
-    sign_df <- geneIDtrans(nametype, sign_df)
+    sign_df <- ASC_Smith
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
 
-    percentageOfGenesUsed("ASCSign", datasetm, sign_df)
+    percentageOfGenesUsed("ASCSign", datasetm, sign_df$SYMBOL)
 
-    datasetm_n <- log2(datasetm[row.names(datasetm) %in% sign_df,] + 1)
+    datasetm_n <- log2(datasetm[row.names(datasetm) %in% sign_df$SYMBOL,] + 1)
 
-    columnNA <- managena(datasetm_n, sign_df)
+    columnNA <- managena(datasetm_n, sign_df$SYMBOL)
 
     score <- rowSums(
         scale(t(datasetm_n), center = TRUE, scale = TRUE), na.rm = TRUE)
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "ASC", datasetm))
+                         SignName = "ASC_Smith", datasetm))
 }
 
 
