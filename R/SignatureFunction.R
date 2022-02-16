@@ -219,11 +219,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "hypoxiaSign")
 
-    # if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl}
-
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
-    abs(datasetm)
     score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n),
                         nametype = "SYMBOL", typeofstat = "median",
                         namesignature = "hypoxiaSign")
@@ -394,22 +391,22 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
 #' @export
 IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
+    ## code adapted from https://github.com/icbi-lab/Immunophenogram
+
     consistencyCheck(nametype, "IPSSign")
 
-    sign_df <- IPSdata
-    sign_df[,c(1,2)] <- data.frame(lapply(sign_df[,c(1,2)], function(x){
-        geneIDtrans(nametype, x)}))
-    colnames(sign_df) <- c("GENE","NAME","CLASS","WEIGHT")
+    sign_df <- IPS_Charoentong
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
-    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$GENE,]
+    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
-    percentageOfGenesUsed("IPSSign", datasetm, sign_df$GENE)
+    percentageOfGenesUsed("IPSSign", datasetm, sign_df$SYMBOL)
 
-    MISSING_GENES <- sign_df$GENE[is.na(match(sign_df$GENE,rownames(datasetm)))]
-    if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ",
-                                    MISSING_GENES, "\n")}
+    MISSING_GENES <- sign_df$SYMBOL[is.na(match(sign_df$SYMBOL,rownames(datasetm)))]
+    if (length(MISSING_GENES)>0) {
+        cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
 
     datasetm_n <- log2(dataTransformation(datasetm_n, "TPM", hgReference) + 1)
 
@@ -417,22 +414,32 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
     for (i in 1:length(sample_names)) {
         GE <- datasetm_n[,i]
         Z1 <- (datasetm_n[match(
-            sign_df$GENE, row.names(datasetm_n)),i]-mean(GE))/sd(GE)
+            sign_df$SYMBOL, row.names(datasetm_n)),i]-mean(GE))/sd(GE)
         WEIGHT <- NULL; MIG <- NULL; k <- 1
         for (gen in unique(sign_df$NAME)) {
-            MIG[k] <- mean(Z1[which(sign_df$NAME==gen)], na.rm=TRUE)
+            MIG[k] <- mean(Z1[which(sign_df$NAME==gen)], na.rm = TRUE)
             WEIGHT[k] <- mean(sign_df$WEIGHT[which(sign_df$NAME==gen)])
             k<-k+1}
         WG <- MIG*WEIGHT
-        MHC[i]<-mean(WG[1:10], na.rm = TRUE)
-        CP[i]<-mean(WG[11:20], na.rm = TRUE)
-        EC[i]<-mean(WG[21:24], na.rm = TRUE)
-        SC[i]<-mean(WG[25:26], na.rm = TRUE)
+        MHC[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="MHC"]))], na.rm = TRUE)
+        CP[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="CP"]))], na.rm = TRUE)
+        EC[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="EC"]))], na.rm = TRUE)
+        SC[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="SC"]))], na.rm = TRUE)
         AZ[i]<-sum(MHC[i],CP[i],EC[i],SC[i])
         IPS[i]<-ipsmap(AZ[i])}
 
     ipsres <- data.frame(IPS, MHC, CP, EC, SC)
-    row.names(ipsres) <- sample_names
+    rownames(ipsres) <- sample_names
+    colnames(ipsres) <- c("IPS_Charoentong", "IPS_MHC",
+                          "IPS_CP", "IPS_EC", "IPS_SC")
     return(returnAsInput(userdata = dataset, result = t(ipsres),
                         SignName = "", datasetm))
 }

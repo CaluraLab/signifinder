@@ -7,15 +7,8 @@ SignatureNames <- c(
     "PlatinumResistanceUp",
     "PlatinumResistanceDown",
     "ImmunoScore_Hao", "ImmunoScore_Roh",
-    "IMR_consensus",
-    "DIF_consensus",
-    "PRO_consensus",
-    "MES_consensus",
-    "IPS",
-    "MHC",
-    "CP",
-    "EC",
-    "SC",
+    "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus",
+    "IPS_Charoentong", "IPS_MHC", "IPS_CP", "IPS_EC", "IPS_SC",
     "Matrisome_Yuzhalin",
     "MitoticIndex",
     "ImmuneCyt_Rooney", "ImmuneCyt_Davoli",
@@ -74,8 +67,8 @@ GetGenes <- function(name){
         "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
         stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and
              MES_consensus are not available")
-    } else if(name %in% c("MHC", "CP", "EC", "SC")){
-        g <- IPSdata$GENE[IPSdata$CLASS==name]
+    } else if(name %in% c("IPS_MHC", "IPS_CP", "IPS_EC", "IPS_SC")){
+        g <- IPS_Charoentong$SYMBOL[IPS_Charoentong$class==substring(name, 5)]
     } else if(name %in% c("CIN25", "CIN70")){
         g <- if(name == "CIN25"){
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
@@ -92,12 +85,12 @@ GetGenes <- function(name){
         "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
         "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
         "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
-        "DNArep_Kang", "ASC_Smith")){
+        "DNArep_Kang", "ASC_Smith", "IPS_Charoentong")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "IPS", "StemCellCD49f", "GlycolysisJiang",
+            "StemCellCD49f", "GlycolysisJiang",
             "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
             "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
             "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
