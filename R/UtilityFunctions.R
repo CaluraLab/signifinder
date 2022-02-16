@@ -52,7 +52,7 @@ SignatureNames <- c(
     "VEGF_Hu",
     "Angiogenesis",
     "DNArep_Kang",
-    "TinflamSign")
+    "Tinflam_Ayers")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -82,6 +82,8 @@ GetGenes <- function(name){
              } else {CIN_Carter$SYMBOL}
     } else if(name %in% "IPRES"){
         g <- as.vector(unlist(IPRESdata))
+    } else if(name == "Tinflam_Ayers"){
+        g <- Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"]
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
@@ -103,7 +105,7 @@ GetGenes <- function(name){
             g <- datavar[,1]
         } else if (name %in% c(
             "MitoticIndex", "ASC", "CellCycle_Lundberg",
-            "TLS", "ISC", "Angiogenesis", "TinflamSign")){
+            "TLS", "ISC", "Angiogenesis")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

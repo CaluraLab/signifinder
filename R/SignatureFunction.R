@@ -579,15 +579,17 @@ TinflamSign <- function(dataset, nametype = "SYMBOL"){
     datasetm <- getMatrix(dataset)
     datasetm_n <- log10(datasetm)
 
-    housekeeping <- intersect(row.names(datasetm_n), Housekeeping)
-    genes_pred <- intersect(row.names(datasetm_n), Tflammdata$SYMBOL)
+    housekeeping <- intersect(row.names(datasetm_n),
+        Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="Housekeeping"])
+    genes_pred <- intersect(row.names(datasetm_n),
+        Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"])
 
-    housekeeping_m <- apply(datasetm_n[housekeeping, ] , 2, mean)
+    housekeeping_m <- apply(datasetm_n[housekeeping, ], 2, mean)
     datasetm_n <- sweep(datasetm_n[genes_pred, ], 2, housekeeping_m, FUN = "-")
-    score <- coeffScore(Tflammdata, datasetm_n, TinflamSign)
+    score <- coeffScore(Tinflam_Ayers[genes_pred,], datasetm_n, "TinflamSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "TinflamSign", datasetm))
+                         SignName = "Tinflam_Ayers", datasetm))
 }
 
 
