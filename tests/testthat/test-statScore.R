@@ -116,12 +116,12 @@ test_that("CellCycleSign based on Davoli's work", {
 })
 
 test_that("VEGFSign works", {
-    rmatrix <- fakeData("VEGF")
+    rmatrix <- fakeData("VEGF_Hu")
     myres <- VEGFSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("VEGF" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"VEGF"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"VEGF"], "double")
+    expect_true("VEGF_Hu" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"VEGF_Hu"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"VEGF_Hu"], "double")
     expect_message(VEGFSign(rmatrix), "100")
 })
 

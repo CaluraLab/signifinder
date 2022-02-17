@@ -47,12 +47,12 @@ test_that("platinumResistanceSign work", {
 })
 
 test_that("ASCSign work", {
-    rmatrix  <- signifinder:::fakeData("ASC")
+    rmatrix  <- signifinder:::fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("ASC" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"ASC"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"ASC"], "double")
+    expect_true("ASC_Smith" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"ASC_Smith"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"ASC_Smith"], "double")
     expect_message(ASCSign(rmatrix), "100")
 })
 
@@ -101,12 +101,12 @@ test_that("HRDSSign work", {
 })
 
 test_that("DNArepSign work", {
-    rmatrix  <- signifinder:::fakeData("DNArepair")
+    rmatrix  <- signifinder:::fakeData("DNArep_Kang")
     myres <- DNArepSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("DNArepair" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"DNArepair"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"DNArepair"], "double")
+    expect_true("DNArep_Kang" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"DNArep_Kang"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"DNArep_Kang"], "double")
     expect_message(DNArepSign(rmatrix), "100")
 })
 

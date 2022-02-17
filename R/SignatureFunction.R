@@ -219,11 +219,8 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "hypoxiaSign")
 
-    # if(nametype=="ENSEMBL") {genetouse <- Hypoxiadata$Gene_Ensembl}
-
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
-    abs(datasetm)
     score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n),
                         nametype = "SYMBOL", typeofstat = "median",
                         namesignature = "hypoxiaSign")
@@ -324,8 +321,9 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
                 sum(k*datasetm_n[,p], na.rm = TRUE)}))
         score[columnNA > 0.9] <- NA
     } else if(author == "Roh"){
+        datasetm_n <- log2(datasetm+1)
         score <- statScore(
-            ImmunoScore_Roh$SYMBOL, datasetm = datasetm, nametype = nametype,
+            ImmunoScore_Roh$SYMBOL, datasetm = datasetm_n, nametype = nametype,
             typeofstat = "meang", namesignature = "immunoScoreSign")}
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -393,22 +391,22 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
 #' @export
 IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
+    ## code adapted from https://github.com/icbi-lab/Immunophenogram
+
     consistencyCheck(nametype, "IPSSign")
 
-    sign_df <- IPSdata
-    sign_df[,c(1,2)] <- data.frame(lapply(sign_df[,c(1,2)], function(x){
-        geneIDtrans(nametype, x)}))
-    colnames(sign_df) <- c("GENE","NAME","CLASS","WEIGHT")
+    sign_df <- IPS_Charoentong
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
-    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$GENE,]
+    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
-    percentageOfGenesUsed("IPSSign", datasetm, sign_df$GENE)
+    percentageOfGenesUsed("IPSSign", datasetm, sign_df$SYMBOL)
 
-    MISSING_GENES <- sign_df$GENE[is.na(match(sign_df$GENE,rownames(datasetm)))]
-    if (length(MISSING_GENES)>0) {cat("Differently named or missing genes: ",
-                                    MISSING_GENES, "\n")}
+    MISSING_GENES <- sign_df$SYMBOL[is.na(match(sign_df$SYMBOL,rownames(datasetm)))]
+    if (length(MISSING_GENES)>0) {
+        cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
 
     datasetm_n <- log2(dataTransformation(datasetm_n, "TPM", hgReference) + 1)
 
@@ -416,22 +414,32 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
     for (i in 1:length(sample_names)) {
         GE <- datasetm_n[,i]
         Z1 <- (datasetm_n[match(
-            sign_df$GENE, row.names(datasetm_n)),i]-mean(GE))/sd(GE)
+            sign_df$SYMBOL, row.names(datasetm_n)),i]-mean(GE))/sd(GE)
         WEIGHT <- NULL; MIG <- NULL; k <- 1
         for (gen in unique(sign_df$NAME)) {
-            MIG[k] <- mean(Z1[which(sign_df$NAME==gen)], na.rm=TRUE)
+            MIG[k] <- mean(Z1[which(sign_df$NAME==gen)], na.rm = TRUE)
             WEIGHT[k] <- mean(sign_df$WEIGHT[which(sign_df$NAME==gen)])
             k<-k+1}
         WG <- MIG*WEIGHT
-        MHC[i]<-mean(WG[1:10], na.rm = TRUE)
-        CP[i]<-mean(WG[11:20], na.rm = TRUE)
-        EC[i]<-mean(WG[21:24], na.rm = TRUE)
-        SC[i]<-mean(WG[25:26], na.rm = TRUE)
+        MHC[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="MHC"]))], na.rm = TRUE)
+        CP[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="CP"]))], na.rm = TRUE)
+        EC[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="EC"]))], na.rm = TRUE)
+        SC[i]<-mean(WG[which(
+            unique(sign_df$NAME) %in%
+                unique(sign_df$NAME[sign_df$class=="SC"]))], na.rm = TRUE)
         AZ[i]<-sum(MHC[i],CP[i],EC[i],SC[i])
         IPS[i]<-ipsmap(AZ[i])}
 
     ipsres <- data.frame(IPS, MHC, CP, EC, SC)
-    row.names(ipsres) <- sample_names
+    rownames(ipsres) <- sample_names
+    colnames(ipsres) <- c("IPS_Charoentong", "IPS_MHC",
+                          "IPS_CP", "IPS_EC", "IPS_SC")
     return(returnAsInput(userdata = dataset, result = t(ipsres),
                         SignName = "", datasetm))
 }
@@ -530,7 +538,9 @@ IFNSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "IFNSign")
 
     datasetm <- getMatrix(dataset)
-    score <- statScore(IFN_Ayers$SYMBOL, datasetm, nametype, "mean", "IFNSign")
+    datasetm_n <- log10(datasetm)
+    score <- statScore(IFN_Ayers$SYMBOL, datasetm_n,
+                        nametype, "mean", "IFNSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                         SignName = "IFN_Ayers", datasetm))
@@ -551,8 +561,9 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
-    score <- statScore(expandedImmune_Ayers$SYMBOL, datasetm, nametype,
-                        "mean", "expandedImmuneSign")
+    datasetm_n <- log10(datasetm)
+    score <- statScore(expandedImmune_Ayers$SYMBOL, datasetm_n,
+                        nametype, "mean", "expandedImmuneSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                         SignName = "expandedImmune_Ayers", datasetm))
@@ -573,16 +584,19 @@ TinflamSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "TinflamSign")
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- log10(datasetm)
 
-    housekeeping <- intersect(row.names(datasetm), Housekeeping)
-    genes_pred <- intersect(row.names(datasetm), Tflammdata$SYMBOL)
+    housekeeping <- intersect(row.names(datasetm_n),
+        Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="Housekeeping"])
+    genes_pred <- intersect(row.names(datasetm_n),
+        Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"])
 
-    housekeeping_m <- apply(datasetm[intersect(row.names(datasetm), Housekeeping), ] , 2, mean)
-    datasetm_n <- sweep(datasetm[genes_pred, ], 2, housekeeping_m, FUN = "-")
-    score <- coeffScore(Tflammdata, datasetm_n, TinflamSign)
+    housekeeping_m <- apply(datasetm_n[housekeeping, ], 2, mean)
+    datasetm_n <- sweep(datasetm_n[genes_pred, ], 2, housekeeping_m, FUN = "-")
+    score <- coeffScore(Tinflam_Ayers[genes_pred,], datasetm_n, "TinflamSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "TinflamSign", datasetm))
+                         SignName = "Tinflam_Ayers", datasetm))
 }
 
 
@@ -621,7 +635,9 @@ StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "StemCellCD49fSign")
 
     datasetm <- getMatrix(dataset)
-    score <- coefficientsScore(StemCellCD49fdata, datasetm, nametype, "StemCellCD49fSign")
+    datasetm_n <- log2(datasetm)
+    score <- coefficientsScore(StemCellCD49fdata, datasetm_n,
+                               nametype, "StemCellCD49fSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                         SignName = "StemCellCD49f", datasetm))
@@ -734,23 +750,23 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 
     consistencyCheck(nametype, "ASCSign")
 
-    sign_df <- ASCdata
-    sign_df <- geneIDtrans(nametype, sign_df)
+    sign_df <- ASC_Smith
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
 
-    percentageOfGenesUsed("ASCSign", datasetm, sign_df)
+    percentageOfGenesUsed("ASCSign", datasetm, sign_df$SYMBOL)
 
-    datasetm_n <- log2(datasetm[row.names(datasetm) %in% sign_df,] + 1)
+    datasetm_n <- log2(datasetm[row.names(datasetm) %in% sign_df$SYMBOL,] + 1)
 
-    columnNA <- managena(datasetm_n, sign_df)
+    columnNA <- managena(datasetm_n, sign_df$SYMBOL)
 
     score <- rowSums(
         scale(t(datasetm_n), center = TRUE, scale = TRUE), na.rm = TRUE)
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "ASC", datasetm))
+                         SignName = "ASC_Smith", datasetm))
 }
 
 
@@ -759,6 +775,7 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
 #'
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
 #' @return A SummarizedExperiment object in which the passON score
@@ -767,7 +784,7 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 #' @importFrom GSVA gsva
 #'
 #' @export
-PassONSign <- function(dataset, nametype = "SYMBOL", ...){
+PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 
     consistencyCheck(nametype, "PassONSign")
 
@@ -776,12 +793,13 @@ PassONSign <- function(dataset, nametype = "SYMBOL", ...){
     sign_list <- lapply(sign_list, function(x){geneIDtrans(nametype, x)})
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
 
-    percentageOfGenesUsed("PassONSign", datasetm, sign_df$SYMBOL)
+    percentageOfGenesUsed("PassONSign", datasetm_n, sign_df$SYMBOL)
 
     dots <- list(...)
     args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = sign_list, method = "ssgsea",
+        expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
         kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
@@ -890,8 +908,11 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Jiang"){
 
     sign_df <- get(paste0("Glycolysis", author, "data"))
     datasetm <- getMatrix(dataset)
+    datasetm_n <- if(author %in% c("Zhang_L", "Xu")){
+        log2(datasetm)
+    } else { datasetm }
 
-    score <- coefficientsScore(sign_df, datasetm, nametype, "glycolysisSign")
+    score <- coefficientsScore(sign_df, datasetm_n, nametype, "glycolysisSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = paste0("Glycolysis", author), datasetm))
@@ -1051,10 +1072,10 @@ VEGFSign <- function(dataset, nametype = "SYMBOL"){
     datasetm <- getMatrix(dataset)
     datasetm_n <- log2(datasetm)
 
-    score <- statScore(VEGFdata, datasetm, nametype, "mean", "VEGFSign")
+    score <- statScore(VEGF_Hu$SYMBOL, datasetm, nametype, "mean", "VEGFSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "VEGF", datasetm))
+                         SignName = "VEGF_Hu", datasetm))
 }
 
 #' Angiogenesis Signature
@@ -1093,28 +1114,28 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "DNArepSign")
 
-    sign_df <- DNArepairdata
-    sign_df$DNAre <- geneIDtrans(nametype, sign_df$DNAre)
+    sign_df <- DNArep_Kang
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
 
-    percentageOfGenesUsed("DNArepSign", datasetm, sign_df$DNAre)
+    percentageOfGenesUsed("DNArepSign", datasetm, sign_df$SYMBOL)
 
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)
         } else {datasetm}
-    datasetm_n <- datasetm_n[row.names(datasetm_n) %in% sign_df$DNAre, ]
+    datasetm_n <- datasetm_n[row.names(datasetm_n) %in% sign_df$SYMBOL, ]
     datasetm_n <- scale(t(datasetm_n), center = TRUE, scale = FALSE)
 
     medianexp <- apply(datasetm_n, 2, median)
 
     genes_h <- intersect(
-    colnames(datasetm_n), sign_df[sign_df$status=="high",]$DNAre)
+    colnames(datasetm_n), sign_df[sign_df$class=="high",]$SYMBOL)
     genes_l <- intersect(
-    colnames(datasetm_n), sign_df[sign_df$status=="low",]$DNAre)
+    colnames(datasetm_n), sign_df[sign_df$class=="low",]$SYMBOL)
 
     score <- rowSums(datasetm_n[,genes_h] > medianexp[genes_h]) +
         rowSums(datasetm_n[,genes_l] < medianexp[genes_l])
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = "DNArepair", datasetm))
+                         SignName = "DNArep_Kang", datasetm))
 }
