@@ -119,3 +119,15 @@ test_that("IPRES work", {
     expect_type(colData(myres)[,"IPRES"], "double")
     expect_message(IPRESSign(rmatrix), "100")
 })
+
+test_that("ECM work", {
+    pyrnames <- c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")
+    pname <- sample(pyrnames, 1)
+    rmatrix  <- signifinder:::fakeData(pname)
+    myres <- ECMSign(rmatrix)
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true(pname %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,pname], ncol(assay(myres)))
+    expect_type(colData(myres)[,pname], "double")
+    expect_message(ECMSign(rmatrix), "100")
+})
