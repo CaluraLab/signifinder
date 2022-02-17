@@ -788,12 +788,13 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 
     consistencyCheck(nametype, "PassONSign")
 
-    sign_df <- PassON_Du
-    sign_list <- split(sign_df$SYMBOL, sign_df$class)
-    sign_list <- lapply(sign_list, function(x){geneIDtrans(nametype, x)})
-
     datasetm <- getMatrix(dataset)
     datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
+
+    sign_df <- PassON_Du
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n),]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     percentageOfGenesUsed("PassONSign", datasetm_n, sign_df$SYMBOL)
 
