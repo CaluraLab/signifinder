@@ -131,3 +131,13 @@ test_that("ECM work", {
     expect_type(colData(myres)[,pname], "double")
     expect_message(ECMSign(rmatrix), "100")
 })
+
+test_that("IPSOV work", {
+    rmatrix  <- fakeData("IPSOV")
+    myres <- IPSOVSign(rmatrix)
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("IPSOV" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"IPSOV"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"IPSOV"], "double")
+    expect_message(IPSOVSign(rmatrix), "100")
+})
