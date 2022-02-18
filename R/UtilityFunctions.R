@@ -45,7 +45,8 @@ SignatureNames <- c(
     "VEGF_Hu",
     "Angiogenesis",
     "DNArep_Kang",
-    "Tinflam_Ayers")
+    "Tinflam_Ayers",
+    "IPSOV")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
@@ -94,7 +95,7 @@ GetGenes <- function(name){
             "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
             "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
             "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
-            "AutophagyFei", "AutophagyFang", "AutophagyChenH")){
+            "AutophagyFei", "AutophagyFang", "AutophagyChenH", "IPSOV")){
             g <- datavar[,1]
         } else if (name %in% c(
             "MitoticIndex", "CellCycle_Lundberg",

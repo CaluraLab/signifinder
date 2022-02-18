@@ -1043,15 +1043,16 @@ ISCSign <- function(dataset, nametype= "SYMBOL"){
     sign_df <- lapply(sign_df, function(x){geneIDtrans(nametype, x)})
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- datasetm - rowMeans(datasetm)
 
-    percentageOfGenesUsed("ISCSign", datasetm, sign_df$Lgr5, "Lgr5_ISC")
-    percentageOfGenesUsed("ISCSign", datasetm, sign_df$Eph, "EphB2_ISC")
-    percentageOfGenesUsed("ISCSign", datasetm, sign_df$TA, "Late_TA")
-    percentageOfGenesUsed("ISCSign", datasetm, sign_df$pro, "Proliferation")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$Lgr5, "Lgr5_ISC")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$Eph, "EphB2_ISC")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$TA, "Late_TA")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$pro, "Proliferation")
 
     ISCscores <- sapply(sign_df, function(x)
-        colMeans(datasetm[intersect(
-            x, row.names(datasetm - colMeans(datasetm))),]))
+        colMeans(datasetm_n[intersect(
+            x, row.names(datasetm_n - colMeans(datasetm_n))),]))
 
     return(returnAsInput(userdata = dataset, result = t(ISCscores),
                          SignName = "ISC", datasetm))
@@ -1139,4 +1140,42 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = "DNArep_Kang", datasetm))
+}
+
+
+#' IPSOV Signature
+#'
+##' @inherit EMTSign description
+#' @inheritParams EMTSign
+#'
+#' @return A SummarizedExperiment object in which the IPSOV score will be
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @export
+IPSOVSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE,
+                      nperm = 100, ...){
+
+    consistencyCheck(nametype, "IPSOVSign")
+
+    datasetm <- getMatrix(dataset)
+
+    sign_df <- IPSOVdata
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+
+    percentageOfGenesUsed("IPSOVSign", datasetm, sign_df$SYMBOL)
+
+    dots <- list(...)
+    args <- matchArguments(dots, list(
+        expr = datasetm, gset.idx.list = sign_list,
+        method = "ssgsea", kcdf = "Poisson", min.sz = 5,
+        ssgsea.norm = FALSE, verbose = FALSE))
+    gsva_matrix <- suppressWarnings(do.call(gsva, args))
+
+    sign_class <- unique(sign_df[,2:3])
+    score <- coeffScore(sign_class, gsva_matrix, "IPSOVSign")
+
+    return(returnAsInput(
+        userdata = dataset, result = score, SignName = "IPSOV", datasetm))
 }
