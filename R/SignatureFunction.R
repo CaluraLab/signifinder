@@ -1161,6 +1161,7 @@ IPSOVSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE,
     consistencyCheck(nametype, "IPSOVSign")
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- scale(datasetm, center = TRUE, scale = TRUE)
 
     sign_df <- IPSOVdata
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
