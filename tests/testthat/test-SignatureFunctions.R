@@ -3,7 +3,7 @@ library(testthat)
 suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("EMTSign based on Miow's work", {
-    pyrnames <- c("Epithelial", "Mesenchymal")
+    pyrnames <- c("EMT_Miow-Epithelial", "EMT_Miow-Mesenchymal")
     pname <- sample(pyrnames, 1)
     rmatrix <- fakeData(pname)
     myres <- EMTSign(rmatrix)
@@ -75,7 +75,6 @@ test_that("PassONSign work", {
     expect_type(colData(myres)[,"PassON_Du"], "double")
     expect_message(PassONSign(rmatrix), "100")
 })
-
 
 test_that("CISSign work", {
     pyrnames <- c("CISup", "CISdown")

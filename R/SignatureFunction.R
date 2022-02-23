@@ -44,6 +44,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         percentageOfGenesUsed("EMTSign", datasetm, ML$SYMBOL, "mesenchymal")
 
         gene_sets <- list(Epithelial = EL$SYMBOL, Mesenchymal = ML$SYMBOL)
+        names(gene_sets) <- paste0("EMT_Miow-", names(gene_sets))
 
         dots <- list(...)
         kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
@@ -369,10 +370,12 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
 
     consensus_subtypes <- get.subtypes(expression.dataset = datasetm_n,
                             entrez.ids = genename, method = method, ...)
+    scores <- consensus_subtypes$rf.probs
+    colnames(scores) <- paste0(
+        "ConsensusOV_Chen-", substring(colnames(scores), 1, 3))
 
-    return(returnAsInput(userdata = dataset,
-                        result = t(consensus_subtypes$rf.probs),
-                        SignName = "", datasetm))
+    return(returnAsInput(
+        userdata = dataset, result = t(scores), SignName = "", datasetm))
 }
 
 
@@ -438,8 +441,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
     ipsres <- data.frame(IPS, MHC, CP, EC, SC)
     rownames(ipsres) <- sample_names
-    colnames(ipsres) <- c("IPS_Charoentong", "IPS_MHC",
-                          "IPS_CP", "IPS_EC", "IPS_SC")
+    colnames(ipsres) <- c("IPS_Charoentong", "IPS_Charoentong-MHC",
+        "IPS_Charoentong-CP", "IPS_Charoentong-EC", "IPS_Charoentong-SC")
     return(returnAsInput(userdata = dataset, result = t(ipsres),
                         SignName = "", datasetm))
 }
@@ -671,7 +674,8 @@ CINSign <- function(dataset, nametype = "SYMBOL"){
     score70 <- statScore(CIN_Carter$SYMBOL,
                         scale(datasetm, center = TRUE, scale = FALSE),
                         nametype, "sum", "CINSign")
-    score <- data.frame(CIN25 = score25, CIN70 = score70)
+    score <- data.frame(score25, score70)
+    colnames(score) <- c("CIN_Carter-25", "CIN_Carter-70")
 
     return(returnAsInput(userdata = dataset, result = t(score),
                         SignName = "", datasetm))
@@ -1046,27 +1050,30 @@ HRDSSign <- function(dataset, nametype = "SYMBOL"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-ISCSign <- function(dataset, nametype= "SYMBOL"){
+ISCSign <- function(dataset, nametype= "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "ISCSign")
 
-    sign_df <- ISCdata
-    sign_df <- lapply(sign_df, function(x){geneIDtrans(nametype, x)})
+    sign_df <- ISC_MerlosSuarez
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- datasetm - rowMeans(datasetm)
+    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
+    datasetm_n <- datasetm_n - rowMeans(datasetm_n)
 
-    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$Lgr5, "Lgr5_ISC")
-    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$Eph, "EphB2_ISC")
-    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$TA, "Late_TA")
-    percentageOfGenesUsed("ISCSign", datasetm_n, sign_df$pro, "Proliferation")
+    percentageOfGenesUsed("ISCSign", datasetm_n,sign_list$`ISCEphB2`,"ISCEphB2")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_list$`LateTA`, "LateTA")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_list$`ISCLgr5`, "ISCLgr5")
+    percentageOfGenesUsed("ISCSign", datasetm_n, sign_list$`Prolif`, "Prolif")
 
-    ISCscores <- sapply(sign_df, function(x)
+    scores <- sapply(sign_list, function(x)
         colMeans(datasetm_n[intersect(
             x, row.names(datasetm_n - colMeans(datasetm_n))),]))
+    colnames(scores) <- paste0("ISC_MerlosSuarez-", colnames(scores))
 
-    return(returnAsInput(userdata = dataset, result = t(ISCscores),
-                         SignName = "ISC", datasetm))
+    return(returnAsInput(userdata = dataset, result = t(scores),
+                         SignName = "", datasetm))
 }
 
 #' VEGF Signature

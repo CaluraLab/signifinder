@@ -4,7 +4,7 @@
 \alias{ISCSign}
 \title{Adult Intestinal Stem Cell Signature}
 \usage{
-ISCSign(dataset, nametype = "SYMBOL")
+ISCSign(dataset, nametype = "SYMBOL", inputType = "microarray")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -16,6 +16,8 @@ Alternatively an object of type \linkS4class{SummarizedExperiment},
 where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
+
+\item{inputType}{type of data you are using: microarray or rnaseq.}
 }
 \value{
 A SummarizedExperiment object in which the ISC scores will be

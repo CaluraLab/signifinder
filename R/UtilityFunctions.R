@@ -1,22 +1,22 @@
 SignatureNames <- c(
-    "Epithelial", "Mesenchymal", "EMT_Mak", "EMT_Cheng",
+    "EMT_Miow-Epithelial", "EMT_Miow-Mesenchymal", "EMT_Mak", "EMT_Cheng",
     "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
     "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
     "LipidMetabolism_Zheng",
     "Hypoxia_Buffa",
-    "PlatinumResistanceUp",
-    "PlatinumResistanceDown",
+    "PlatinumResistanceUp", "PlatinumResistanceDown",
     "ImmunoScore_Hao", "ImmunoScore_Roh",
-    "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus",
-    "IPS_Charoentong", "IPS_MHC", "IPS_CP", "IPS_EC", "IPS_SC",
+    "ConsensusOV_Chen-IMR", "ConsensusOV_Chen-DIF",
+    "ConsensusOV_Chen-PRO", "ConsensusOV_Chen-MES",
+    "IPS_Charoentong", "IPS_Charoentong-MHC", "IPS_Charoentong-CP",
+    "IPS_Charoentong-EC", "IPS_Charoentong-SC",
     "Matrisome_Yuzhalin",
     "MitoticIndex",
     "ImmuneCyt_Rooney", "ImmuneCyt_Davoli",
-    "IFN_Ayers",
-    "expandedImmune_Ayers",
+    "IFN_Ayers", "expandedImmune_Ayers", "Tinflam_Ayers",
     "TLS",
     "StemCellCD49f_Smith",
-    "CIN25", "CIN70",
+    "CIN_Carter-25", "CIN_Carter-70",
     "CellCycle_Lundberg", "CellCycle_Davoli",
     "Chemokines_Messina",
     "ASC_Smith",
@@ -27,11 +27,11 @@ SignatureNames <- c(
     "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH",
     "ECM_Chakravarthy_up", "ECM_Chakravarthy_down",
     "HRDS_Lu",
-    "ISC",
+    "ISC_MerlosSuarez-ISCEphB2", "ISC_MerlosSuarez-LateTA",
+    "ISC_MerlosSuarez-ISCLgr5", "ISC_MerlosSuarez-Prolif",
     "VEGF_Hu",
     "Angiogenesis",
     "DNArep_Kang",
-    "Tinflam_Ayers",
     "IPSOV")
 
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
@@ -40,8 +40,9 @@ my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
 my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
-    if(name %in% c("Epithelial", "Mesenchymal")){
-        g <- EMT_Miow$SYMBOL[EMT_Miow$class==paste0(name, "-like")]
+    if(name %in% c("EMT_Miow-Epithelial", "EMT_Miow-Mesenchymal")){
+        name <- paste0(substring(name, 10), "-like")
+        g <- EMT_Miow$SYMBOL[EMT_Miow$class==name]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
         g <- PlatinumResistancedata$Gene_Symbol[
             PlatinumResistancedata$Category==name]
@@ -51,15 +52,21 @@ GetGenes <- function(name){
     } else if(name %in% c("CISup", "CISdown")){
         g <- CISdata$Gene_Symbol[CISdata$Category==name]
     } else if (name %in% c(
-        "IMR_consensus", "DIF_consensus", "PRO_consensus", "MES_consensus")){
-        stop("Genes for IMR_consensus, DIF_consensus, PRO_consensus and
-             MES_consensus are not available")
-    } else if(name %in% c("IPS_MHC", "IPS_CP", "IPS_EC", "IPS_SC")){
-        g <- IPS_Charoentong$SYMBOL[IPS_Charoentong$class==substring(name, 5)]
-    } else if(name %in% c("CIN25", "CIN70")){
-        g <- if(name == "CIN25"){
+        "ConsensusOV_Chen-IMR", "ConsensusOV_Chen-DIF",
+        "ConsensusOV_Chen-PRO", "ConsensusOV_Chen-MES")){
+        stop("Genes for ConsensusOV are not available")
+    } else if(name %in% c("IPS_Charoentong-MHC", "IPS_Charoentong-CP",
+                          "IPS_Charoentong-EC", "IPS_Charoentong-SC")){
+        g <- IPS_Charoentong$SYMBOL[IPS_Charoentong$class==substring(name, 17)]
+    } else if(name %in% c("CIN_Carter-25", "CIN_Carter-70")){
+        g <- if(name == "CIN_Carter-25"){
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
              } else {CIN_Carter$SYMBOL}
+    } else if (name %in% c(
+        "ISC_MerlosSuarez-ISCEphB2", "ISC_MerlosSuarez-LateTA",
+        "ISC_MerlosSuarez-ISCLgr5", "ISC_MerlosSuarez-Prolif")){
+        name <- substring(name, 18)
+        g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == name]
     } else if(name %in% "IPRES"){
         g <- as.vector(unlist(IPRESdata))
     } else if(name == "Tinflam_Ayers"){
@@ -81,8 +88,7 @@ GetGenes <- function(name){
         if(name %in% c("IPSOV")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "MitoticIndex", "CellCycle_Lundberg",
-            "TLS", "ISC", "Angiogenesis")){
+            "MitoticIndex", "CellCycle_Lundberg", "TLS", "Angiogenesis")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

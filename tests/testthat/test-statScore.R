@@ -74,14 +74,14 @@ test_that("immunoScoreSign based on Roh's work", {
 })
 
 test_that("CINSign works", {
-    n <- c("CIN25", "CIN70")
+    n <- c("CIN_Carter-25", "CIN_Carter-70")
     pname <- sample(n, 1)
     rmatrix <- fakeData(pname)
     myres <- CINSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true(all(c("CIN25", "CIN70") %in% colnames(colData(myres))))
-    expect_length(colData(myres)[,"CIN25"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"CIN70"], "double")
+    expect_true(all(c("CIN_Carter-25", "CIN_Carter-70") %in% colnames(colData(myres))))
+    expect_length(colData(myres)[,"CIN_Carter-25"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"CIN_Carter-70"], "double")
     expect_message(CINSign(rmatrix), "100")
 })
 
