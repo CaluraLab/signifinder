@@ -4,7 +4,12 @@
 \alias{autophagySign}
 \title{Autophagy Signature}
 \usage{
-autophagySign(dataset, nametype = "SYMBOL", author = "Xu")
+autophagySign(
+  dataset,
+  nametype = "SYMBOL",
+  author = "Xu",
+  hgReference = "hg19"
+)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -18,6 +23,8 @@ where rows correspond to genes and columns correspond to samples.}
 \item{nametype}{gene name ID of your dataset (row names).}
 
 \item{author}{first author of the specific signature publication.}
+
+\item{hgReference}{Human reference genome: "hg19" or "hg38"}
 }
 \value{
 A SummarizedExperiment object in which the Autophagy score

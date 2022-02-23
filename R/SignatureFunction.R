@@ -926,21 +926,29 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Zhang"){
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @return A SummarizedExperiment object in which the Autophagy score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu"){
+autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
+                          hgReference = "hg19"){
 
     consistencyCheck(nametype, "autophagySign", author)
 
-    sign_df <- get(paste0("Autophagy", author, "data"))
+    sign_df <- get(paste0("Autophagy_", author))
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+
     datasetm <- getMatrix(dataset)
-    score <- coefficientsScore(sign_df, datasetm, nametype, "autophagySign")
+    datasetm_n <- if(author=="ChenM"){
+        dataTransformation(datasetm, "FPKM", hgReference)
+    } else {datasetm}
+
+    score <- coeffScore(sign_df, datasetm_n, "autophagySign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = paste0("Autophagy", author), datasetm))
+        SignName = paste0("Autophagy_", author), datasetm))
 }
 
 #' Extracellular Matrix Signature

@@ -63,24 +63,17 @@ test_that("glycolysisSign works", {
 })
 
 test_that("autophagySign works", {
-    pyrnames <- c("AutophagyZhang","AutophagyYue", "AutophagyXu",
-                  "AutophagyWang", "AutophagyChenM", "AutophagyHu",
-                  "AutophagyHou", "AutophagyFei", "AutophagyFang",
-                  "AutophagyChenH")
-    pname <- sample(pyrnames, 1)
+    pnames <- c(
+        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH")
+    pname <- sample(pnames, 1)
     rmatrix <- fakeData(pname)
-
-    author <- if(pname == "AutophagyChenM"|pname == "AutophagyChenH"){
-        "Chen"} else substring(pname, 10)
-
-    myres <- autophagySign(rmatrix, author = author)
-
+    myres <- autophagySign(rmatrix, author = substring(pname, 11))
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[,pname], ncol(assay(myres)))
     expect_type(colData(myres)[,pname], "double")
     expect_message(autophagySign(
-        rmatrix, author = author), "100")
+        rmatrix, author = substring(pname, 11)), "100")
 })
 
 test_that("TinflamSign work", {

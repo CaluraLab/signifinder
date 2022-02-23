@@ -24,16 +24,7 @@ SignatureNames <- c(
     "IPRES",
     "CIS",
     "Glycolysis_Zhang", "Glycolysis_Xu",
-    "AutophagyZhang",
-    "AutophagyYue",
-    "AutophagyXu",
-    "AutophagyWang",
-    "AutophagyChenM",
-    "AutophagyHu",
-    "AutophagyHou",
-    "AutophagyFei",
-    "AutophagyFang",
-    "AutophagyChenH",
+    "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH",
     "ECM_Chakravarthy_up", "ECM_Chakravarthy_down",
     "HRDS_Lu",
     "ISC",
@@ -82,14 +73,12 @@ GetGenes <- function(name){
         "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
         "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
-        "Glycolysis_Zhang", "Glycolysis_Xu")){
+        "Glycolysis_Zhang", "Glycolysis_Xu",
+        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
-        if(name %in% c(
-            "AutophagyZhang", "AutophagyYue", "AutophagyXu",
-            "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
-            "AutophagyFei", "AutophagyFang", "AutophagyChenH", "IPSOV")){
+        if(name %in% c("IPSOV")){
             g <- datavar[,1]
         } else if (name %in% c(
             "MitoticIndex", "CellCycle_Lundberg",
