@@ -945,14 +945,21 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- if(author=="ChenM"){
-        dataTransformation(datasetm, "FPKM", hgReference)
-    } else {datasetm}
 
-    score <- coeffScore(sign_df, datasetm_n, "autophagySign")
-
-    return(returnAsInput(userdata = dataset, result = score,
-        SignName = paste0("Autophagy_", author), datasetm))
+    if(author=="ChenM"){
+        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        OSscore <- coeffScore(
+            sign_df[sign_df$class == "OS",], datasetm_n, "autophagySign", "OS")
+        DFSscore <- coeffScore(
+            sign_df[sign_df$class == "DFS",], datasetm_n, "autophagySign","DFS")
+        score <- data.frame(OSscore, DFSscore)
+        colnames(score) <- c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")
+        return(returnAsInput(
+            userdata = dataset, result = t(score), SignName = "", datasetm))
+    } else {
+        score <- coeffScore(sign_df, datasetm, "autophagySign")
+        return(returnAsInput(userdata = dataset, result = score,
+        SignName = paste0("Autophagy_", author), datasetm))}
 }
 
 #' Extracellular Matrix Signature

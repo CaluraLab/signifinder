@@ -63,10 +63,9 @@ test_that("glycolysisSign works", {
 })
 
 test_that("autophagySign works", {
-    pnames <- c(
-        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH")
+    pnames <- c("Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH")
     pname <- sample(pnames, 1)
-    rmatrix <- fakeData(pname)
+    rmatrix <- signifinder:::fakeData(pname)
     myres <- autophagySign(rmatrix, author = substring(pname, 11))
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
@@ -74,6 +73,19 @@ test_that("autophagySign works", {
     expect_type(colData(myres)[,pname], "double")
     expect_message(autophagySign(
         rmatrix, author = substring(pname, 11)), "100")
+})
+
+test_that("autophagySign ChenM works", {
+    pnames <- c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")
+    pname <- sample(pnames, 1)
+    rmatrix <- signifinder:::fakeData(pname)
+    myres <- autophagySign(rmatrix, author = "ChenM")
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true(pname %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,pname], ncol(assay(myres)))
+    expect_type(colData(myres)[,pname], "double")
+    expect_message(autophagySign(
+        rmatrix, author = "ChenM"), "100")
 })
 
 test_that("TinflamSign work", {

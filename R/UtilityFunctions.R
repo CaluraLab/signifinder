@@ -24,7 +24,8 @@ SignatureNames <- c(
     "IPRES",
     "CIS",
     "Glycolysis_Zhang", "Glycolysis_Xu",
-    "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH",
+    "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM-OS",
+    "Autophagy_ChenM-DFS", "Autophagy_ChenH",
     "ECM_Chakravarthy_up", "ECM_Chakravarthy_down",
     "HRDS_Lu",
     "ISC_MerlosSuarez-ISCEphB2", "ISC_MerlosSuarez-LateTA",
@@ -71,6 +72,9 @@ GetGenes <- function(name){
         g <- as.vector(unlist(IPRESdata))
     } else if(name == "Tinflam_Ayers"){
         g <- Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"]
+    } else if(name %in% c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")){
+        name <- substring(name, 17)
+        g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == name]
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
@@ -81,7 +85,7 @@ GetGenes <- function(name){
         "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
         "Glycolysis_Zhang", "Glycolysis_Xu",
-        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM", "Autophagy_ChenH")){
+        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
@@ -211,9 +215,9 @@ coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
     return(score)
 }
 
-coeffScore <- function(sdata, datasetm, namesignature){
+coeffScore <- function(sdata, datasetm, namesignature, detail = NULL){
 
-    percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL)
+    percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL, detail)
 
     sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
     columnNA <- managena(datasetm = datasetm, genes = sdata$SYMBOL)
