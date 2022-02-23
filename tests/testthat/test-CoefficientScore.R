@@ -40,32 +40,26 @@ test_that("LipidMetabolism work", {
 })
 
 test_that("StemCellCD49f work", {
-    rmatrix <- fakeData("StemCellCD49f")
+    rmatrix <- fakeData("StemCellCD49f_Smith")
     myres <- StemCellCD49fSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("StemCellCD49f" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"StemCellCD49f"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"StemCellCD49f"], "double")
+    expect_true("StemCellCD49f_Smith" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"StemCellCD49f_Smith"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"StemCellCD49f_Smith"], "double")
     expect_message(StemCellCD49fSign(rmatrix), "100")
 })
 
 test_that("glycolysisSign works", {
-    pyrnames <- c("GlycolysisJiang", "GlycolysisZhangL", "GlycolysisLiu",
-                  "GlycolysisYu", "GlycolysisXu", "GlycolysisZhangC")
-    pname <- sample(pyrnames, 1)
+    pnames <- c("Glycolysis_Zhang", "Glycolysis_Xu")
+    pname <- sample(pnames, 1)
     rmatrix <- fakeData(pname)
-
-    author <- if(pname == "GlycolysisZhangL"|pname == "GlycolysisZhangC"){
-        author <-"Zhang"} else substring(pname, 11)
-
-    myres <- glycolysisSign(rmatrix, author = author)
-
+    myres <- glycolysisSign(rmatrix, author = substring(pname, 12))
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[,pname], ncol(assay(myres)))
     expect_type(colData(myres)[,pname], "double")
     expect_message(glycolysisSign(
-        rmatrix, author = author), "100")
+        rmatrix, author = substring(pname, 12)), "100")
 })
 
 test_that("autophagySign works", {

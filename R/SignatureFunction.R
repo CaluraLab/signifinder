@@ -634,13 +634,16 @@ StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
 
     consistencyCheck(nametype, "StemCellCD49fSign")
 
+    sign_df <- StemCellCD49f_Smith
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+
     datasetm <- getMatrix(dataset)
     datasetm_n <- log2(datasetm)
-    score <- coefficientsScore(StemCellCD49fdata, datasetm_n,
-                               nametype, "StemCellCD49fSign")
+
+    score <- coeffScore(sign_df, datasetm_n, "StemCellCD49fSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "StemCellCD49f", datasetm))
+                SignName = "StemCellCD49f_Smith", datasetm))
 }
 
 
@@ -903,20 +906,20 @@ CISSign <- function(dataset, nametype = "SYMBOL"){
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Jiang"){
+glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Zhang"){
 
     consistencyCheck(nametype, "glycolysisSign", author)
 
-    sign_df <- get(paste0("Glycolysis", author, "data"))
-    datasetm <- getMatrix(dataset)
-    datasetm_n <- if(author %in% c("Zhang_L", "Xu")){
-        log2(datasetm)
-    } else { datasetm }
+    sign_df <- get(paste0("Glycolysis_", author))
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
-    score <- coefficientsScore(sign_df, datasetm_n, nametype, "glycolysisSign")
+    datasetm <- getMatrix(dataset)
+    datasetm_n <- log2(datasetm)
+
+    score <- coeffScore(sign_df, datasetm_n, "glycolysisSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                         SignName = paste0("Glycolysis", author), datasetm))
+        SignName = paste0("Glycolysis_", author), datasetm))
 }
 
 #' Autophagy Signature

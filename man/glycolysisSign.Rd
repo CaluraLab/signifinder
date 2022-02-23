@@ -4,7 +4,7 @@
 \alias{glycolysisSign}
 \title{Glycolysis Signature}
 \usage{
-glycolysisSign(dataset, nametype = "SYMBOL", author = "Jiang")
+glycolysisSign(dataset, nametype = "SYMBOL", author = "Zhang")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows

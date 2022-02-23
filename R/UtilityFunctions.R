@@ -15,7 +15,7 @@ SignatureNames <- c(
     "IFN_Ayers",
     "expandedImmune_Ayers",
     "TLS",
-    "StemCellCD49f",
+    "StemCellCD49f_Smith",
     "CIN25", "CIN70",
     "CellCycle_Lundberg", "CellCycle_Davoli",
     "Chemokines_Messina",
@@ -23,12 +23,7 @@ SignatureNames <- c(
     "PassON_Du",
     "IPRES",
     "CIS",
-    "GlycolysisJiang",
-    "GlycolysisZhangL",
-    "GlycolysisLiu",
-    "GlycolysisYu",
-    "GlycolysisXu",
-    "GlycolysisZhangC",
+    "Glycolysis_Zhang", "Glycolysis_Xu",
     "AutophagyZhang",
     "AutophagyYue",
     "AutophagyXu",
@@ -86,14 +81,13 @@ GetGenes <- function(name){
         "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
         "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
         "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
-        "DNArep_Kang", "ASC_Smith", "IPS_Charoentong")){
+        "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
+        "Glycolysis_Zhang", "Glycolysis_Xu")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c(
-            "StemCellCD49f", "GlycolysisJiang",
-            "GlycolysisZhangL", "GlycolysisLiu", "GlycolysisYu", "GlycolysisXu",
-            "GlycolysisZhangC", "AutophagyZhang", "AutophagyYue", "AutophagyXu",
+            "AutophagyZhang", "AutophagyYue", "AutophagyXu",
             "AutophagyWang", "AutophagyChenM", "AutophagyHu", "AutophagyHou",
             "AutophagyFei", "AutophagyFang", "AutophagyChenH", "IPSOV")){
             g <- datavar[,1]
