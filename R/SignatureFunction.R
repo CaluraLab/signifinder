@@ -123,17 +123,17 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     # datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        datasetm <- dataTransformation(datasetm, "FPKM", hgReference)
-        datasetm <- scale(datasetm)
+        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        datasetm_n <- scale(datasetm_n)
     } else if (author == "Shao"){
-        if(inputType == "rnaseq"){
-            datasetm <- dataTransformation(datasetm, "FPKM", hgReference)
-        } else {datasetm <- datasetm}
+        datasetm_n <- if(inputType == "rnaseq"){
+            dataTransformation(datasetm, "FPKM", hgReference)
+        } else {datasetm}
     } else if (author == "Lin"){
-        datasetm <- dataTransformation(datasetm, "TPM", hgReference)
-    } else {datasetm <- datasetm}
+        datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
+    } else {datasetm_n <- datasetm}
 
-    score <- coeffScore(sign_df, datasetm, "pyroptosisSign")
+    score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
 
     return(returnAsInput(
         userdata = dataset, result = score,
@@ -662,17 +662,17 @@ StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CINSign <- function(dataset, nametype = "SYMBOL"){
+CINSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     consistencyCheck(nametype, "CINSign")
 
     datasetm <- getMatrix(dataset)
+    datasetm_n <- if(inputType=="rnaseq"){log2(datasetm)} else {datasetm}
+    datasetm_n <- scale(datasetm_n, center = TRUE, scale = FALSE)
 
     score25 <- statScore(CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"],
-                        scale(datasetm, center = TRUE, scale = FALSE),
-                        nametype, "sum", "CINSign")
-    score70 <- statScore(CIN_Carter$SYMBOL,
-                        scale(datasetm, center = TRUE, scale = FALSE),
+                        datasetm_n, nametype, "sum", "CINSign")
+    score70 <- statScore(CIN_Carter$SYMBOL, datasetm_n,
                         nametype, "sum", "CINSign")
     score <- data.frame(score25, score70)
     colnames(score) <- c("CIN_Carter-25", "CIN_Carter-70")
@@ -735,9 +735,9 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), sign_df$SYMBOL), ]
     datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
-    } else {datasetm_n}
+        } else {datasetm_n}
     columnNA <- managena(datasetm_n, sign_df$SYMBOL)
-    score <- prcomp(t(datasetm), center = TRUE, scale = TRUE)$x[, 1]
+    score <- prcomp(t(datasetm_n), center = TRUE, scale = TRUE)$x[, 1]
     score[columnNA > 0.9] <- NA
 
     return(returnAsInput(userdata = dataset, result = score,
@@ -1099,7 +1099,8 @@ VEGFSign <- function(dataset, nametype = "SYMBOL"){
     datasetm <- getMatrix(dataset)
     datasetm_n <- log2(datasetm)
 
-    score <- statScore(VEGF_Hu$SYMBOL, datasetm, nametype, "mean", "VEGFSign")
+    score <- statScore(VEGF_Hu$SYMBOL, datasetm_n,
+                       nametype, "mean", "VEGFSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = "VEGF_Hu", datasetm))
@@ -1194,7 +1195,7 @@ IPSOVSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE,
 
     dots <- list(...)
     args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = sign_list,
+        expr = datasetm_n, gset.idx.list = sign_list,
         method = "ssgsea", kcdf = "Poisson", min.sz = 5,
         ssgsea.norm = FALSE, verbose = FALSE))
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
