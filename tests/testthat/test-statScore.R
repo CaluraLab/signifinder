@@ -125,16 +125,6 @@ test_that("VEGFSign works", {
     expect_message(VEGFSign(rmatrix), "100")
 })
 
-test_that("angioSign works", {
-    rmatrix <- fakeData("Angiogenesis")
-    myres <- angioSign(rmatrix)
-    expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("Angiogenesis" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"Angiogenesis"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"Angiogenesis"], "double")
-    expect_message(angioSign(rmatrix), "100")
-})
-
 test_that("ImmuneCytSign based on Dabvoli's work", {
     rmatrix <- fakeData("ImmuneCyt_Davoli")
     myres <- ImmuneCytSign(rmatrix, author = "Davoli")

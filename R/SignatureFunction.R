@@ -1106,28 +1106,6 @@ VEGFSign <- function(dataset, nametype = "SYMBOL"){
                          SignName = "VEGF_Hu", datasetm))
 }
 
-#' Angiogenesis Signature
-#'
-#' @inherit EMTSign description
-#' @inheritParams EMTSign
-#'
-#' @return A SummarizedExperiment object in which the Angiogenesis score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @export
-angioSign <- function(dataset, nametype = "SYMBOL"){
-
-    consistencyCheck(nametype, "angioSign")
-
-    datasetm <- getMatrix(dataset)
-
-    score <-statScore(
-        Angiogenesisdata, abs(datasetm), nametype, typeofstat = "median",
-        namesignature = "angioSign")
-
-    return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
-                         SignName = "Angiogenesis", datasetm))
-}
 
 #' DNA Repair Signature
 #'

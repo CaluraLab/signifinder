@@ -31,7 +31,6 @@ SignatureNames <- c(
     "ISC_MerlosSuarez-ISCEphB2", "ISC_MerlosSuarez-LateTA",
     "ISC_MerlosSuarez-ISCLgr5", "ISC_MerlosSuarez-Prolif",
     "VEGF_Hu",
-    "Angiogenesis",
     "DNArep_Kang",
     "IPSOV")
 
@@ -92,7 +91,7 @@ GetGenes <- function(name){
         if(name %in% c("IPSOV")){
             g <- datavar[,1]
         } else if (name %in% c(
-            "MitoticIndex", "CellCycle_Lundberg", "TLS", "Angiogenesis")){
+            "MitoticIndex", "CellCycle_Lundberg", "TLS")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
