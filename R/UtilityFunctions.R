@@ -11,9 +11,9 @@ SignatureNames <- c(
     "IPS_Charoentong", "IPS_Charoentong-MHC", "IPS_Charoentong-CP",
     "IPS_Charoentong-EC", "IPS_Charoentong-SC",
     "Matrisome_Yuzhalin",
-    "MitoticIndex",
+    "MitoticIndex_Yang",
     "ImmuneCyt_Rooney", "ImmuneCyt_Davoli",
-    "IFN_Ayers", "expandedImmune_Ayers", "Tinflam_Ayers",
+    "IFN_Ayers", "ExpandedImmune_Ayers", "Tinflam_Ayers",
     "TLS",
     "StemCellCD49f_Smith",
     "CIN_Carter-25", "CIN_Carter-70",
@@ -54,7 +54,8 @@ GetGenes <- function(name){
     } else if (name %in% c(
         "ConsensusOV_Chen-IMR", "ConsensusOV_Chen-DIF",
         "ConsensusOV_Chen-PRO", "ConsensusOV_Chen-MES")){
-        stop("Genes for ConsensusOV are not available")
+        name <- substring(name, 18)
+        g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class==name]
     } else if(name %in% c("IPS_Charoentong-MHC", "IPS_Charoentong-CP",
                           "IPS_Charoentong-EC", "IPS_Charoentong-SC")){
         g <- IPS_Charoentong$SYMBOL[IPS_Charoentong$class==substring(name, 17)]
@@ -77,21 +78,20 @@ GetGenes <- function(name){
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
-        "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
+        "Ferroptosis_Liang","Ferroptosis_Li","Ferroptosis_Liu","Ferroptosis_Ye",
         "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
         "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
         "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
-        "expandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
+        "ExpandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
-        "Glycolysis_Zhang", "Glycolysis_Xu",
+        "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
         "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c("IPSOV")){
             g <- datavar[,1]
-        } else if (name %in% c(
-            "MitoticIndex", "CellCycle_Lundberg", "TLS")){
+        } else if (name %in% c("CellCycle_Lundberg", "TLS")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))
@@ -261,9 +261,9 @@ managena <- function(datasetm, genes){
 dataTransformation <- function(data, trans, hgReference){
 
     if(hgReference=="hg19"){
-        txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+    txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
     } else if(hgReference=="hg38"){
-        txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
+    txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
     } else {stop("Human reference genome must be either hg19 or hg38")}
 
     exons.db = ensembldb::exonsBy(txdb, by = "gene")
@@ -308,8 +308,9 @@ percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){
 
 geneIDtrans <- function(nametype, genes){
     if(nametype!="SYMBOL"){
-        AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = genes,
-                              column = nametype, keytype = "SYMBOL", multiVals = "first")
+        AnnotationDbi::mapIds(
+            org.Hs.eg.db::org.Hs.eg.db, keys = genes,
+            column = nametype, keytype = "SYMBOL", multiVals = "first")
     } else { genes }
 }
 

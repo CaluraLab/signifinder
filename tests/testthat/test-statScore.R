@@ -14,12 +14,12 @@ test_that("TLSSign works", {
 })
 
 test_that("ExpandedImmuneSign works", {
-    rmatrix <- fakeData("expandedImmune_Ayers")
+    rmatrix <- fakeData("ExpandedImmune_Ayers")
     myres <- expandedImmuneSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("expandedImmune_Ayers" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"expandedImmune_Ayers"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"expandedImmune_Ayers"], "double")
+    expect_true("ExpandedImmune_Ayers" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"ExpandedImmune_Ayers"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"ExpandedImmune_Ayers"], "double")
     expect_message(expandedImmuneSign(rmatrix), "100")
 })
 
@@ -44,12 +44,12 @@ test_that("ImmuneCytSign based on Rooney's work", {
 })
 
 test_that("MitoticIndexSign works", {
-    rmatrix <- fakeData("MitoticIndex")
+    rmatrix <- fakeData("MitoticIndex_Yang")
     myres <- mitoticIndexSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("MitoticIndex" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"MitoticIndex"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"MitoticIndex"], "double")
+    expect_true("MitoticIndex_Yang" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"MitoticIndex_Yang"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"MitoticIndex_Yang"], "double")
     expect_message(mitoticIndexSign(rmatrix), "100")
 })
 

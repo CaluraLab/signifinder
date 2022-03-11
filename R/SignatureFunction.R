@@ -484,11 +484,12 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
     consistencyCheck(nametype, "mitoticIndexSign")
 
     datasetm <- getMatrix(dataset)
-    score <- statScore(MitoticIndexdata, datasetm, nametype,
-                        "mean", "mitoticIndexSign")
+
+    score <- statScore(MitoticIndex_Yang$SYMBOL, datasetm,
+                        nametype, "mean", "mitoticIndexSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "MitoticIndex", datasetm))
+                    SignName = "MitoticIndex_Yang", datasetm))
 }
 
 
@@ -565,11 +566,11 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
 
     datasetm <- getMatrix(dataset)
     datasetm_n <- log10(datasetm)
-    score <- statScore(expandedImmune_Ayers$SYMBOL, datasetm_n,
+    score <- statScore(ExpandedImmune_Ayers$SYMBOL, datasetm_n,
                         nametype, "mean", "expandedImmuneSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "expandedImmune_Ayers", datasetm))
+                        SignName = "ExpandedImmune_Ayers", datasetm))
 }
 
 
