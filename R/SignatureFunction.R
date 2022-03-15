@@ -89,7 +89,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 
             datasetm_n <- datasetm[intersect(
                 row.names(datasetm), sign_df$SYMBOL), ]
-            datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
+            datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n + 0.01)
                 } else {datasetm_n}
             columnNA <- managena(datasetm = datasetm_n,
                                 genes = sign_df$SYMBOL)
@@ -221,7 +221,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
     consistencyCheck(nametype, "hypoxiaSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
+    datasetm_n <- if(inputType == "rnaseq"){log2(datasetm+0.01)}else{datasetm}
     score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n),
                         nametype = "SYMBOL", typeofstat = "median",
                         namesignature = "hypoxiaSign")
@@ -542,7 +542,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "IFNSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log10(datasetm)
+    datasetm_n <- log2(datasetm + 0.01)
     score <- statScore(IFN_Ayers$SYMBOL, datasetm_n,
                         nametype, "mean", "IFNSign")
 
@@ -565,7 +565,7 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "expandedImmuneSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log10(datasetm)
+    datasetm_n <- log2(datasetm + 0.01)
     score <- statScore(ExpandedImmune_Ayers$SYMBOL, datasetm_n,
                         nametype, "mean", "expandedImmuneSign")
 
@@ -588,7 +588,7 @@ TinflamSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "TinflamSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log10(datasetm)
+    datasetm_n <- log2(datasetm + 0.01)
 
     housekeeping <- intersect(row.names(datasetm_n),
         Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="Housekeeping"])
@@ -642,7 +642,7 @@ StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log2(datasetm)
+    datasetm_n <- log2(datasetm + 0.01)
 
     score <- coeffScore(sign_df, datasetm_n, "StemCellCD49fSign")
 
@@ -668,7 +668,7 @@ CINSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
     consistencyCheck(nametype, "CINSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- if(inputType=="rnaseq"){log2(datasetm)} else {datasetm}
+    datasetm_n <- if(inputType=="rnaseq"){log2(datasetm+0.01)} else {datasetm}
     datasetm_n <- scale(datasetm_n, center = TRUE, scale = FALSE)
 
     score25 <- statScore(CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"],
@@ -700,7 +700,7 @@ cellCycleSign <- function(dataset, nametype = "SYMBOL",
     datasetm <- getMatrix(dataset)
 
     if(author == "Lundberg"){
-        datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)
+        datasetm_n <- if(inputType == "rnaseq") {log2(datasetm + 0.01)
             } else {datasetm}
         score <- statScore(CellCycle_Lundberg$SYMBOL, datasetm_n,
                             nametype, "sum", "cellCycleSign")
@@ -738,7 +738,7 @@ chemokineSign <- function(dataset, nametype = "SYMBOL",
     percentageOfGenesUsed("ChemokineSign", datasetm, sign_df$SYMBOL)
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), sign_df$SYMBOL), ]
-    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n)
+    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm_n + 0.01)
         } else {datasetm_n}
     columnNA <- managena(datasetm_n, sign_df$SYMBOL)
     score <- prcomp(t(datasetm_n), center = TRUE, scale = TRUE)$x[, 1]
@@ -895,9 +895,9 @@ CISSign <- function(dataset, nametype = "SYMBOL"){
     percentageOfGenesUsed("CISSign", datasetm, sign_down$Gene_Symbol, "down")
 
     med_data_up <- colMeans(log2(datasetm[intersect(
-        row.names(datasetm), sign_up$Gene_Symbol),]))
+        row.names(datasetm), sign_up$Gene_Symbol),] + 0.01))
     med_data_down <- colMeans(log2(datasetm[intersect(
-        row.names(datasetm), sign_down$Gene_Symbol),]))
+        row.names(datasetm), sign_down$Gene_Symbol),] + 0.01))
 
     CISscore <- med_data_up - med_data_down
 
@@ -922,7 +922,7 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Zhang"){
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log2(datasetm)
+    datasetm_n <- log2(datasetm + 0.01)
 
     score <- coeffScore(sign_df, datasetm_n, "glycolysisSign")
 
@@ -1070,7 +1070,7 @@ ISCSign <- function(dataset, nametype= "SYMBOL", inputType = "microarray"){
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)} else {datasetm}
+    datasetm_n <- if(inputType == "rnaseq"){log2(datasetm+0.01)}else{datasetm}
     datasetm_n <- datasetm_n - rowMeans(datasetm_n)
 
     percentageOfGenesUsed("ISCSign", datasetm_n,sign_list$`ISCEphB2`,"ISCEphB2")
@@ -1101,7 +1101,7 @@ VEGFSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "VEGFSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log2(datasetm)
+    datasetm_n <- log2(datasetm + 0.01)
 
     score <- statScore(VEGF_Hu$SYMBOL, datasetm_n,
                        nametype, "mean", "VEGFSign")
@@ -1131,7 +1131,7 @@ DNArepSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 
     percentageOfGenesUsed("DNArepSign", datasetm, sign_df$SYMBOL)
 
-    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)
+    datasetm_n <- if(inputType == "rnaseq") {log2(datasetm + 0.01)
         } else {datasetm}
     datasetm_n <- datasetm_n[row.names(datasetm_n) %in% sign_df$SYMBOL, ]
     datasetm_n <- scale(t(datasetm_n), center = TRUE, scale = FALSE)
