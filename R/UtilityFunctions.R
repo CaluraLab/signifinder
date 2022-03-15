@@ -85,13 +85,14 @@ GetGenes <- function(name){
         "ExpandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
         "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
-        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH")){
+        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
+        "CellCycle_Lundberg")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
         if(name %in% c("IPSOV")){
             g <- datavar[,1]
-        } else if (name %in% c("CellCycle_Lundberg", "TLS")){
+        } else if (name %in% c("TLS")){
             g <- datavar}
     }
     res <- cbind(g, rep(name, length(g)))

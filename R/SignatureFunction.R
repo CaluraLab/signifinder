@@ -692,15 +692,18 @@ CINSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-cellCycleSign <- function(dataset, nametype = "SYMBOL", author = "Lundberg"){
+cellCycleSign <- function(dataset, nametype = "SYMBOL",
+        author = "Lundberg", inputType = "microarray"){
 
     consistencyCheck(nametype, "cellCycleSign", author)
 
     datasetm <- getMatrix(dataset)
 
     if(author == "Lundberg"){
-        score <- statScore(CellCycle_Lundbergdata, datasetm, nametype,
-                            "sum", "cellCycleSign")
+        datasetm_n <- if(inputType == "rnaseq") {log2(datasetm)
+            } else {datasetm}
+        score <- statScore(CellCycle_Lundberg$SYMBOL, datasetm_n,
+                            nametype, "sum", "cellCycleSign")
     } else if(author == "Davoli"){
         datasetm_n <- datasetm[row.names(datasetm)%in%CellCycle_Davoli$SYMBOL,]
         datasetm_r <- apply(datasetm_n, 1, rank)
