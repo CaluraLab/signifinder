@@ -95,24 +95,24 @@ test_that("hypoxiaSign works", {
     expect_message(hypoxiaSign(rmatrix), "100")
 })
 
-test_that("CellCycleSign based on Lundberg's work", {
+test_that("cellCycleSign based on Lundberg's work", {
     rmatrix <- fakeData("CellCycle_Lundberg")
-    myres <- CellCycleSign(rmatrix, author = "Lundberg")
+    myres <- cellCycleSign(rmatrix, author = "Lundberg")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CellCycle_Lundberg" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"CellCycle_Lundberg"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CellCycle_Lundberg"], "integer")
-    expect_message(CellCycleSign(rmatrix, author = "Lundberg"), "100")
+    expect_message(cellCycleSign(rmatrix, author = "Lundberg"), "100")
 })
 
-test_that("CellCycleSign based on Davoli's work", {
+test_that("cellCycleSign based on Davoli's work", {
     rmatrix <- fakeData("CellCycle_Davoli")
-    myres <- CellCycleSign(rmatrix, author = "Davoli")
+    myres <- cellCycleSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CellCycle_Davoli" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"CellCycle_Davoli"], ncol(assay(myres)))
     expect_type(colData(myres)[,"CellCycle_Davoli"], "double")
-    expect_message(CellCycleSign(rmatrix, author = "Davoli"), "100")
+    expect_message(cellCycleSign(rmatrix, author = "Davoli"), "100")
 })
 
 test_that("VEGFSign works", {

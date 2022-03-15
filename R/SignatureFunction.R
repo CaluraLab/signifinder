@@ -692,21 +692,21 @@ CINSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-CellCycleSign <- function(dataset, nametype = "SYMBOL", author = "Lundberg"){
+cellCycleSign <- function(dataset, nametype = "SYMBOL", author = "Lundberg"){
 
-    consistencyCheck(nametype, "CellCycleSign", author)
+    consistencyCheck(nametype, "cellCycleSign", author)
 
     datasetm <- getMatrix(dataset)
 
     if(author == "Lundberg"){
         score <- statScore(CellCycle_Lundbergdata, datasetm, nametype,
-                            "sum", "CellCycleSign")
+                            "sum", "cellCycleSign")
     } else if(author == "Davoli"){
         datasetm_n <- datasetm[row.names(datasetm)%in%CellCycle_Davoli$SYMBOL,]
         datasetm_r <- apply(datasetm_n, 1, rank)
         datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
         score <- statScore(CellCycle_Davoli$SYMBOL, t(datasetm_r), nametype,
-                            "meang", "CellCycleSign")}
+                            "meang", "cellCycleSign")}
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = paste0("CellCycle_", author), datasetm))
