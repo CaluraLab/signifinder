@@ -109,13 +109,13 @@ test_that("DNArepSign work", {
     expect_message(DNArepSign(rmatrix), "100")
 })
 
-test_that("IPRES work", {
-    rmatrix  <- fakeData("IPRES")
+test_that("IPRESSign work", {
+    rmatrix  <- fakeData("IPRES_Hugo")
     myres <- IPRESSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("IPRES" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"IPRES"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"IPRES"], "double")
+    expect_true("IPRES_Hugo" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"IPRES_Hugo"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"IPRES_Hugo"], "double")
     expect_message(IPRESSign(rmatrix), "100")
 })
 

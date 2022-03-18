@@ -50,7 +50,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
         args <- matchArguments(dots, list(
             expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-            kcdf = kcdftype, min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
+            kcdf = kcdftype, ssgsea.norm = FALSE, verbose = FALSE))
         gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
         if(pvalues){
@@ -268,7 +268,7 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
     dots <- list(...)
     args <- matchArguments(dots, list(
         expr = datasetm, gset.idx.list = gene_sets,
-        method = "gsva", kcdf = "Gaussian", min.sz = 5,
+        method = "gsva", kcdf = "Gaussian",
         ssgsea.norm = FALSE, verbose = FALSE))
     gsva_count <- suppressWarnings(do.call(gsva, args))
 
@@ -812,7 +812,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
     dots <- list(...)
     args <- matchArguments(dots, list(
         expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
-        kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
+        kcdf = "Poisson", ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
@@ -828,6 +828,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
+#' @param hgReference Human reference genome: "hg19" or "hg38"
 #'
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
@@ -837,37 +838,31 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 #' @importFrom GSVA gsva
 #'
 #' @export
-IPRESSign <- function(dataset, nametype = "SYMBOL",
-                      pvalues = FALSE, nperm = 100, ...) {
+IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
 
     consistencyCheck(nametype, "IPRESSign")
 
-    sign_df <- IPRESdata
-    sign_df <- lapply(sign_df, function(x){geneIDtrans(nametype, x)})
-
     datasetm <- getMatrix(dataset)
+    datasetm_n <- log2(dataTransformation(datasetm, "CPM", hgReference))
 
-    percentageOfGenesUsed("IPRESSign", datasetm, unlist(sign_df))
+    sign_df <- IPRES_Hugo
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n),]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+
+    percentageOfGenesUsed("IPRESSign", datasetm_n, sign_df$SYMBOL)
 
     dots <- list(...)
     args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = sign_df, method = "ssgsea",
-        kcdf = "Poisson", min.sz = 5, ssgsea.norm = TRUE, verbose = FALSE))
+        expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
+        kcdf = "Gaussian", ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 
-    if(pvalues){
-        gsva_pval <- GSVAPvalues(
-            expr = datasetm, gset.idx.list = gene_sets,
-            gsvaResult = gsva_matrix, nperm = nperm, args = args)
-        gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
+    score <- rowMeans(sapply(as.data.frame(t(gsva_matrix)), scale))
 
-    z_score <- (gsva_matrix - rowMeans(gsva_matrix))/sapply(
-        as.data.frame(t(gsva_matrix)), sd, na.rm = TRUE)
-    IPRESscore <- colMeans(z_score)
-
-    return(returnAsInput(userdata = dataset, result = IPRESscore,
-                         SignName = "IPRES", datasetm))
+    return(returnAsInput(userdata = dataset, result = score,
+                         SignName = "IPRES_Hugo", datasetm))
 }
 
 #'  CIS (carcinoma-in situ) Signature
@@ -1002,7 +997,7 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
 
     args <- matchArguments(dots,list(
         expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-        kcdf = "Poisson", min.sz = 5, ssgsea.norm = FALSE, verbose = FALSE))
+        kcdf = "Poisson", ssgsea.norm = FALSE, verbose = FALSE))
 
     gsva_count <- suppressWarnings(do.call(gsva, args))
 
@@ -1178,7 +1173,7 @@ IPSOVSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE,
     dots <- list(...)
     args <- matchArguments(dots, list(
         expr = datasetm_n, gset.idx.list = sign_list,
-        method = "ssgsea", kcdf = "Poisson", min.sz = 5,
+        method = "ssgsea", kcdf = "Poisson",
         ssgsea.norm = FALSE, verbose = FALSE))
     gsva_matrix <- suppressWarnings(do.call(gsva, args))
 

@@ -21,7 +21,7 @@ SignatureNames <- c(
     "Chemokines_Messina",
     "ASC_Smith",
     "PassON_Du",
-    "IPRES",
+    "IPRES_Hugo",
     "CIS",
     "Glycolysis_Zhang", "Glycolysis_Xu",
     "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM-OS",
@@ -68,8 +68,6 @@ GetGenes <- function(name){
         "ISC_MerlosSuarez-ISCLgr5", "ISC_MerlosSuarez-Prolif")){
         name <- substring(name, 18)
         g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == name]
-    } else if(name %in% "IPRES"){
-        g <- as.vector(unlist(IPRESdata))
     } else if(name == "Tinflam_Ayers"){
         g <- Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"]
     } else if(name %in% c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")){
@@ -86,7 +84,7 @@ GetGenes <- function(name){
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
         "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
         "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
-        "CellCycle_Lundberg")){
+        "CellCycle_Lundberg", "IPRES_Hugo")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))

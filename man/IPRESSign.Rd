@@ -4,7 +4,7 @@
 \alias{IPRESSign}
 \title{IPRES Signature}
 \usage{
-IPRESSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
+IPRESSign(dataset, nametype = "SYMBOL", hgReference = "hg19", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -17,9 +17,7 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{nametype}{gene name ID of your dataset (row names).}
 
-\item{pvalues}{logical. It allows to compute p-values by permutations.}
-
-\item{nperm}{number of permutations.}
+\item{hgReference}{Human reference genome: "hg19" or "hg38"}
 
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}} function.}
 }
