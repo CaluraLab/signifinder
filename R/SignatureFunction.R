@@ -878,26 +878,25 @@ CISSign <- function(dataset, nametype = "SYMBOL"){
 
     consistencyCheck(nametype, "CISSign")
 
-    sign_df <- CISdata
-    sign_df$Gene_Symbol <- geneIDtrans(nametype, sign_df$Gene_Symbol)
+    sign_df <- CIS_Robertson
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
 
-    sign_up <- sign_df[grep('CISup', sign_df$Category),]
-    sign_down <- sign_df[grep('CISdown', sign_df$Category),]
+    sign_up <- sign_df[grep('up', sign_df$class),]
+    sign_down <- sign_df[grep('down', sign_df$class),]
 
-    percentageOfGenesUsed("CISSign", datasetm, sign_up$Gene_Symbol, "up")
-    percentageOfGenesUsed("CISSign", datasetm, sign_down$Gene_Symbol, "down")
+    percentageOfGenesUsed("CISSign", datasetm, sign_up$SYMBOL, "up")
+    percentageOfGenesUsed("CISSign", datasetm, sign_down$SYMBOL, "down")
 
-    med_data_up <- colMeans(log2(datasetm[intersect(
-        row.names(datasetm), sign_up$Gene_Symbol),] + 0.01))
-    med_data_down <- colMeans(log2(datasetm[intersect(
-        row.names(datasetm), sign_down$Gene_Symbol),] + 0.01))
+    datasetm_n <- datasetm[intersect(row.names(datasetm), sign_df$SYMBOL),]
+    score_up <- colMeans(log2(datasetm_n[sign_up$SYMBOL,] + 0.01))
+    score_down <- colMeans(log2(datasetm_n[sign_down$SYMBOL,] + 0.01))
 
-    CISscore <- med_data_up - med_data_down
+    score <- score_up - score_down
 
     return(returnAsInput(
-        userdata = dataset, result = CISscore, SignName = "CIS", datasetm))
+        userdata = dataset, result = score, SignName = "CIS_Robertson", datasetm))
 }
 
 #' Glycolysis Signature

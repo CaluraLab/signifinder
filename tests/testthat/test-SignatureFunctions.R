@@ -77,15 +77,12 @@ test_that("PassONSign work", {
 })
 
 test_that("CISSign work", {
-    pyrnames <- c("CISup", "CISdown")
-    pname <- sample(pyrnames, 1)
-    rmatrix  <- signifinder:::fakeData(pname)
+    rmatrix  <- signifinder:::fakeData("CIS_Robertson")
     myres <- CISSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    pname <- substring(pname, 1,3)
-    expect_true(pname %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,pname], ncol(assay(myres)))
-    expect_type(colData(myres)[,pname], "double")
+    expect_true("CIS_Robertson" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"CIS_Robertson"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"CIS_Robertson"], "double")
     expect_message(CISSign(rmatrix), "100")
 })
 

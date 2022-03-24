@@ -22,7 +22,7 @@ SignatureNames <- c(
     "ASC_Smith",
     "PassON_Du",
     "IPRES_Hugo",
-    "CIS",
+    "CIS_Robertson",
     "Glycolysis_Zhang", "Glycolysis_Xu",
     "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM-OS",
     "Autophagy_ChenM-DFS", "Autophagy_ChenH",
@@ -49,8 +49,6 @@ GetGenes <- function(name){
     } else if(name %in% c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")){
         name <- substring(name, 18)
         g <- ECM_Chakravarthy$SYMBOL[grepl(name, ECM_Chakravarthy$class)]
-    } else if(name %in% c("CISup", "CISdown")){
-        g <- CISdata$Gene_Symbol[CISdata$Category==name]
     } else if (name %in% c(
         "ConsensusOV_Chen-IMR", "ConsensusOV_Chen-DIF",
         "ConsensusOV_Chen-PRO", "ConsensusOV_Chen-MES")){
@@ -84,7 +82,7 @@ GetGenes <- function(name){
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
         "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
         "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
-        "CellCycle_Lundberg", "IPRES_Hugo")){
+        "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
