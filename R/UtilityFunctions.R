@@ -377,3 +377,53 @@ availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
     if(!description){st <- st[,1:6]}
     return(st)
 }
+
+
+#' Multiple Signature Computation
+#'
+#' @description This function computes all the signatures for a specific
+#' 'inputType' and for a specific 'tumorTissue' and/or 'signatureType'.
+#'
+#' @param dataset Expression values. A data frame or a matrix where rows
+#' correspond to genes and columns correspond to samples.
+#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
+#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
+#' where rows correspond to genes and columns correspond to samples.
+#' @param nametype gene name ID of your dataset (row names).
+#' @param inputType type of data you are using: microarray or rnaseq.
+#' @param tumorTissue compute signatures only from a specific tissue (this
+#' can also be pan-tissue).
+#' @param signatureType compute signatures only from a specific cancer topic.
+#' @param ... other arguments passed on to the signature functions.
+#'
+#' @return A SummarizedExperiment object in which the signatures' scores
+#' are added in the \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @export
+multipleSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
+                         tumorTissue = NULL, signatureType = NULL, ...){
+    argg <- c(as.list(environment()), list(...))
+    st <- availableSignatures(tumorTissue = tumorTissue,
+        signatureType = signatureType, inputType = inputType)
+
+    for(i in seq_len(nrow(st))){
+        author <- st[i, "author"]
+        argg_i <- c(argg, list(author = author))
+
+        signName <- st[i, "functionName"]
+        signFunc <- eval(parse(text = signName))
+        signFuncArg <- formals(signFunc)
+
+        argg_i[!(names(argg_i) %in% names(signFuncArg))] <- NULL
+        signFuncArg[names(signFuncArg) %in% names(argg_i)] <- NULL
+        matchedArg <- c(argg_i, signFuncArg)
+
+        dataset <- do.call(signFunc, matchedArg)
+        argg$dataset <- dataset
+    }
+    return(dataset)
+}
+
+

@@ -336,7 +336,6 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
-#'
 #' @param method the subtyping method to use. Default is "consensusOV".
 #' @param ... optional parameters to be passed to
 #' \code{\link[consensusOV]{get.subtypes}}.
@@ -656,9 +655,6 @@ StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
 #'
-#' @param typeofCIN A pre-defined number 25 or 70. It represents the number of
-#' genes on which the score can be calculated. The 25 genes represent a subgroup
-#' derived from the 70.
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
@@ -785,7 +781,6 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
-#'
 #' @param hgReference Human reference genome: "hg19" or "hg38"
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
@@ -829,7 +824,6 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
 #' @param hgReference Human reference genome: "hg19" or "hg38"
-#'
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
 #' @return A SummarizedExperiment object in which the passON score
@@ -964,7 +958,6 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
-#'
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
 #'
 #' @return A SummarizedExperiment object in which the ECM scores
