@@ -371,9 +371,9 @@ GetAggregatedSpot <- function(dataset){
 availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
                                 inputType = NULL, description = TRUE){
     st <- signatureTable
-    if(!is.null(tumorTissue)){st <- st[st$tumorTissue==tumorTissue,]}
-    if(!is.null(signatureType)){st <- st[st$signatureType==signatureType,]}
-    if(!is.null(inputType)){st <- st[st$inputType==inputType,]}
+    if(!is.null(tumorTissue)){st <- st[st$tumorTissue%in%tumorTissue,]}
+    if(!is.null(signatureType)){st <- st[st$signatureType%in%signatureType,]}
+    if(!is.null(inputType)){st <- st[grepl(inputType, st$inputType),]}
     if(!description){st <- st[,1:6]}
     return(st)
 }
@@ -419,6 +419,7 @@ multipleSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
         argg_i[!(names(argg_i) %in% names(signFuncArg))] <- NULL
         signFuncArg[names(signFuncArg) %in% names(argg_i)] <- NULL
         matchedArg <- c(argg_i, signFuncArg)
+        matchedArg[names(matchedArg) == "..."] <- NULL
 
         dataset <- do.call(signFunc, matchedArg)
         argg$dataset <- dataset
