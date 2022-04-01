@@ -1152,26 +1152,28 @@ IPSOVSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE,
 
     consistencyCheck(nametype, "IPSOVSign")
 
-    datasetm <- getMatrix(dataset)
-    datasetm_n <- scale(datasetm, center = TRUE, scale = TRUE)
+    # datasetm <- getMatrix(dataset)
+    # datasetm_n <- scale(datasetm, center = TRUE, scale = TRUE)
+    #
+    # sign_df <- IPSOVdata
+    # sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+    # sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
+    # sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    #
+    # percentageOfGenesUsed("IPSOVSign", datasetm, sign_df$SYMBOL)
+    #
+    # dots <- list(...)
+    # args <- matchArguments(dots, list(
+    #     expr = datasetm_n, gset.idx.list = sign_list,
+    #     method = "ssgsea", kcdf = "Poisson",
+    #     ssgsea.norm = FALSE, verbose = FALSE))
+    # gsva_matrix <- suppressWarnings(do.call(gsva, args))
+    #
+    # sign_class <- unique(sign_df[,2:3])
+    # score <- coeffScore(sign_class, gsva_matrix, "IPSOVSign")
+    #
+    # return(returnAsInput(
+    #     userdata = dataset, result = score, SignName = "IPSOV", datasetm))
 
-    sign_df <- IPSOVdata
-    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
-    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
-    sign_list <- split(sign_df$SYMBOL, sign_df$class)
-
-    percentageOfGenesUsed("IPSOVSign", datasetm, sign_df$SYMBOL)
-
-    dots <- list(...)
-    args <- matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list,
-        method = "ssgsea", kcdf = "Poisson",
-        ssgsea.norm = FALSE, verbose = FALSE))
-    gsva_matrix <- suppressWarnings(do.call(gsva, args))
-
-    sign_class <- unique(sign_df[,2:3])
-    score <- coeffScore(sign_class, gsva_matrix, "IPSOVSign")
-
-    return(returnAsInput(
-        userdata = dataset, result = score, SignName = "IPSOV", datasetm))
+    return(dataset)
 }

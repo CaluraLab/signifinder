@@ -371,9 +371,12 @@ GetAggregatedSpot <- function(dataset){
 availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
                                 inputType = NULL, description = TRUE){
     st <- signatureTable
-    if(!is.null(tumorTissue)){st <- st[st$tumorTissue%in%tumorTissue,]}
-    if(!is.null(signatureType)){st <- st[st$signatureType%in%signatureType,]}
-    if(!is.null(inputType)){st <- st[grepl(inputType, st$inputType),]}
+    if(!is.null(tumorTissue)){
+        st <- st[grepl(paste(tumorTissue, collapse = "|"), st$tumorTissue),]}
+    if(!is.null(signatureType)){
+        st <- st[grepl(paste(signatureType, collapse = "|"), st$signatureType),]}
+    if(!is.null(inputType)){
+        st <- st[grepl(paste(inputType, collapse = "|"), st$inputType),]}
     if(!description){st <- st[,1:6]}
     return(st)
 }
