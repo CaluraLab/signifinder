@@ -1,22 +1,22 @@
 SignatureNames <- c(
-    "EMT_Miow-Epithelial", "EMT_Miow-Mesenchymal", "EMT_Mak", "EMT_Cheng",
+    "EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal", "EMT_Mak", "EMT_Cheng",
     "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
     "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
     "LipidMetabolism_Zheng",
     "Hypoxia_Buffa",
     "PlatinumResistanceUp", "PlatinumResistanceDown",
     "ImmunoScore_Hao", "ImmunoScore_Roh",
-    "ConsensusOV_Chen-IMR", "ConsensusOV_Chen-DIF",
-    "ConsensusOV_Chen-PRO", "ConsensusOV_Chen-MES",
-    "IPS_Charoentong", "IPS_Charoentong-MHC", "IPS_Charoentong-CP",
-    "IPS_Charoentong-EC", "IPS_Charoentong-SC",
+    "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
+    "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES",
+    "IPS_Charoentong", "IPS_Charoentong_MHC", "IPS_Charoentong_CP",
+    "IPS_Charoentong_EC", "IPS_Charoentong_SC",
     "Matrisome_Yuzhalin",
     "MitoticIndex_Yang",
     "ImmuneCyt_Rooney", "ImmuneCyt_Davoli",
     "IFN_Ayers", "ExpandedImmune_Ayers", "Tinflam_Ayers",
     "TLS",
     "StemCellCD49f_Smith",
-    "CIN_Carter-25", "CIN_Carter-70",
+    "CIN_Carter_25", "CIN_Carter_70",
     "CellCycle_Lundberg", "CellCycle_Davoli",
     "Chemokines_Messina",
     "ASC_Smith",
@@ -24,12 +24,12 @@ SignatureNames <- c(
     "IPRES_Hugo",
     "CIS_Robertson",
     "Glycolysis_Zhang", "Glycolysis_Xu",
-    "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM-OS",
-    "Autophagy_ChenM-DFS", "Autophagy_ChenH",
+    "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenM_OS",
+    "Autophagy_ChenM_DFS", "Autophagy_ChenH",
     "ECM_Chakravarthy_up", "ECM_Chakravarthy_down",
     "HRDS_Lu",
-    "ISC_MerlosSuarez-ISCEphB2", "ISC_MerlosSuarez-LateTA",
-    "ISC_MerlosSuarez-ISCLgr5", "ISC_MerlosSuarez-Prolif",
+    "ISC_MerlosSuarez_ISCEphB2", "ISC_MerlosSuarez_LateTA",
+    "ISC_MerlosSuarez_ISCLgr5", "ISC_MerlosSuarez_Prolif",
     "VEGF_Hu",
     "DNArep_Kang",
     "IPSOV")
@@ -40,7 +40,7 @@ my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
 my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
-    if(name %in% c("EMT_Miow-Epithelial", "EMT_Miow-Mesenchymal")){
+    if(name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")){
         name <- paste0(substring(name, 10), "-like")
         g <- EMT_Miow$SYMBOL[EMT_Miow$class==name]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
@@ -50,25 +50,25 @@ GetGenes <- function(name){
         name <- substring(name, 18)
         g <- ECM_Chakravarthy$SYMBOL[grepl(name, ECM_Chakravarthy$class)]
     } else if (name %in% c(
-        "ConsensusOV_Chen-IMR", "ConsensusOV_Chen-DIF",
-        "ConsensusOV_Chen-PRO", "ConsensusOV_Chen-MES")){
+        "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
+        "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES")){
         name <- substring(name, 18)
         g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class==name]
-    } else if(name %in% c("IPS_Charoentong-MHC", "IPS_Charoentong-CP",
-                          "IPS_Charoentong-EC", "IPS_Charoentong-SC")){
+    } else if(name %in% c("IPS_Charoentong_MHC", "IPS_Charoentong_CP",
+                          "IPS_Charoentong_EC", "IPS_Charoentong_SC")){
         g <- IPS_Charoentong$SYMBOL[IPS_Charoentong$class==substring(name, 17)]
-    } else if(name %in% c("CIN_Carter-25", "CIN_Carter-70")){
-        g <- if(name == "CIN_Carter-25"){
+    } else if(name %in% c("CIN_Carter_25", "CIN_Carter_70")){
+        g <- if(name == "CIN_Carter_25"){
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
              } else {CIN_Carter$SYMBOL}
     } else if (name %in% c(
-        "ISC_MerlosSuarez-ISCEphB2", "ISC_MerlosSuarez-LateTA",
-        "ISC_MerlosSuarez-ISCLgr5", "ISC_MerlosSuarez-Prolif")){
+        "ISC_MerlosSuarez_ISCEphB2", "ISC_MerlosSuarez_LateTA",
+        "ISC_MerlosSuarez_ISCLgr5", "ISC_MerlosSuarez_Prolif")){
         name <- substring(name, 18)
         g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == name]
     } else if(name == "Tinflam_Ayers"){
         g <- Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"]
-    } else if(name %in% c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")){
+    } else if(name %in% c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")){
         name <- substring(name, 17)
         g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == name]
     } else if(name %in% c(

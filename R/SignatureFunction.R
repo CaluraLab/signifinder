@@ -44,7 +44,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         percentageOfGenesUsed("EMTSign", datasetm, ML$SYMBOL, "mesenchymal")
 
         gene_sets <- list(Epithelial = EL$SYMBOL, Mesenchymal = ML$SYMBOL)
-        names(gene_sets) <- paste0("EMT_Miow-", names(gene_sets))
+        names(gene_sets) <- paste0("EMT_Miow_", names(gene_sets))
 
         dots <- list(...)
         kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
@@ -371,7 +371,7 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
                             entrez.ids = genename, method = method, ...)
     scores <- consensus_subtypes$rf.probs
     colnames(scores) <- paste0(
-        "ConsensusOV_Chen-", substring(colnames(scores), 1, 3))
+        "ConsensusOV_Chen_", substring(colnames(scores), 1, 3))
 
     return(returnAsInput(
         userdata = dataset, result = t(scores), SignName = "", datasetm))
@@ -440,8 +440,8 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
     ipsres <- data.frame(IPS, MHC, CP, EC, SC)
     rownames(ipsres) <- sample_names
-    colnames(ipsres) <- c("IPS_Charoentong", "IPS_Charoentong-MHC",
-        "IPS_Charoentong-CP", "IPS_Charoentong-EC", "IPS_Charoentong-SC")
+    colnames(ipsres) <- c("IPS_Charoentong", "IPS_Charoentong_MHC",
+        "IPS_Charoentong_CP", "IPS_Charoentong_EC", "IPS_Charoentong_SC")
     return(returnAsInput(userdata = dataset, result = t(ipsres),
                         SignName = "", datasetm))
 }
@@ -672,7 +672,7 @@ CINSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
     score70 <- statScore(CIN_Carter$SYMBOL, datasetm_n,
                         nametype, "sum", "CINSign")
     score <- data.frame(score25, score70)
-    colnames(score) <- c("CIN_Carter-25", "CIN_Carter-70")
+    colnames(score) <- c("CIN_Carter_25", "CIN_Carter_70")
 
     return(returnAsInput(userdata = dataset, result = t(score),
                         SignName = "", datasetm))
@@ -945,7 +945,7 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
         DFSscore <- coeffScore(
             sign_df[sign_df$class == "DFS",], datasetm_n, "autophagySign","DFS")
         score <- data.frame(OSscore, DFSscore)
-        colnames(score) <- c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")
+        colnames(score) <- c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")
         return(returnAsInput(
             userdata = dataset, result = t(score), SignName = "", datasetm))
     } else {
@@ -1068,7 +1068,7 @@ ISCSign <- function(dataset, nametype= "SYMBOL", inputType = "microarray"){
     scores <- sapply(sign_list, function(x)
         colMeans(datasetm_n[intersect(
             x, row.names(datasetm_n - colMeans(datasetm_n))),]))
-    colnames(scores) <- paste0("ISC_MerlosSuarez-", colnames(scores))
+    colnames(scores) <- paste0("ISC_MerlosSuarez_", colnames(scores))
 
     return(returnAsInput(userdata = dataset, result = t(scores),
                          SignName = "", datasetm))
