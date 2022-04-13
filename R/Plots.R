@@ -297,7 +297,7 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL,
     SignMatrix <- sapply(tmp, range01)
 
     g <- corPlot(as.data.frame(SignMatrix), cluster = TRUE,
-                 dendrogram = TRUE, lower = TRUE)
+                 dendrogram = TRUE, lower = TRUE, fontsize=7)
 
     return(g)
 }
