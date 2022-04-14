@@ -617,10 +617,11 @@ TLSSign <- function(dataset, nametype = "SYMBOL"){
     consistencyCheck(nametype, "TLSSign")
 
     datasetm <- getMatrix(dataset)
-    score <- statScore(TLSdata, datasetm, nametype, "meang", "TLSSign")
+    score <- statScore(TLS_Cabrita$SYMBOL, datasetm,
+                       nametype, "mean", "TLSSign")
 
     return(returnAsInput(userdata = dataset, result = score,
-                        SignName = "TLS", datasetm))
+                        SignName = "TLS_Cabrita", datasetm))
 }
 
 
