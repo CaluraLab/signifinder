@@ -502,7 +502,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-ImmuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
+immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             author = "Rooney", hgReference = "hg19"){
 
     consistencyCheck(nametype, "ImmuneCytSign", author)
@@ -634,7 +634,7 @@ TLSSign <- function(dataset, nametype = "SYMBOL"){
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-StemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
+stemCellCD49fSign <- function(dataset, nametype = "SYMBOL"){
 
     consistencyCheck(nametype, "StemCellCD49fSign")
 
