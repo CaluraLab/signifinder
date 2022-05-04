@@ -14,7 +14,7 @@ SignatureNames <- c(
     "MitoticIndex_Yang",
     "ImmuneCyt_Rooney", "ImmuneCyt_Davoli",
     "IFN_Ayers", "ExpandedImmune_Ayers", "Tinflam_Ayers",
-    "TLS",
+    "TLS_Cabrita",
     "StemCellCD49f_Smith",
     "CIN_Carter_25", "CIN_Carter_70",
     "CellCycle_Lundberg", "CellCycle_Davoli",
@@ -41,19 +41,19 @@ my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name){
     if(name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")){
-        name <- paste0(substring(name, 10), "-like")
-        g <- EMT_Miow$SYMBOL[EMT_Miow$class==name]
+        sname <- paste0(substring(name, 10), "-like")
+        g <- EMT_Miow$SYMBOL[EMT_Miow$class==sname]
     } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
         g <- PlatinumResistancedata$Gene_Symbol[
             PlatinumResistancedata$Category==name]
     } else if(name %in% c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")){
-        name <- substring(name, 18)
-        g <- ECM_Chakravarthy$SYMBOL[grepl(name, ECM_Chakravarthy$class)]
+        sname <- substring(name, 18)
+        g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
     } else if (name %in% c(
         "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
         "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES")){
-        name <- substring(name, 18)
-        g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class==name]
+        sname <- substring(name, 18)
+        g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class==sname]
     } else if(name %in% c("IPS_Charoentong_MHC", "IPS_Charoentong_CP",
                           "IPS_Charoentong_EC", "IPS_Charoentong_SC")){
         g <- IPS_Charoentong$SYMBOL[IPS_Charoentong$class==substring(name, 17)]
@@ -64,13 +64,13 @@ GetGenes <- function(name){
     } else if (name %in% c(
         "ISC_MerlosSuarez_ISCEphB2", "ISC_MerlosSuarez_LateTA",
         "ISC_MerlosSuarez_ISCLgr5", "ISC_MerlosSuarez_Prolif")){
-        name <- substring(name, 18)
-        g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == name]
+        sname <- substring(name, 18)
+        g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == sname]
     } else if(name == "Tinflam_Ayers"){
         g <- Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"]
     } else if(name %in% c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")){
-        name <- substring(name, 17)
-        g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == name]
+        sname <- substring(name, 17)
+        g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == sname]
     } else if(name %in% c(
         "EMT_Mak", "EMT_Cheng",
         "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
@@ -82,14 +82,11 @@ GetGenes <- function(name){
         "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
         "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
         "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
-        "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson")){
+        "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson", "TLS_Cabrita")){
         g <- unique(eval(parse(text = name))[,"SYMBOL"])
     } else {
         datavar <- eval(parse(text = paste0(name, "data")))
-        if(name %in% c("IPSOV")){
-            g <- datavar[,1]
-        } else if (name %in% c("TLS")){
-            g <- datavar}
+        if(name %in% c("IPSOV")){g <- datavar[,1]}
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
@@ -255,7 +252,7 @@ managena <- function(datasetm, genes){
     return(columnNA)
 }
 
-dataTransformation <- function(data, trans, hgReference){
+dataTransformation <- function(data, trans, hgReference, nametype){
 
     if(hgReference=="hg19"){
     txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
@@ -267,7 +264,7 @@ dataTransformation <- function(data, trans, hgReference){
 
     g <- rownames(data)
     egs <- suppressMessages(mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",
-                                   keytype = "SYMBOL", multiVals = "first"))
+                                   keytype = nametype, multiVals = "first"))
     data <- data[!is.na(egs),]
     egs <- egs[!is.na(egs)]
 
@@ -368,9 +365,11 @@ GetAggregatedSpot <- function(dataset){
 #' @return a data frame
 #'
 #' @export
-availableSignatures <- function(tumorTissue = NULL, signatureType = NULL,
-                                inputType = NULL, description = TRUE){
+availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
+            signatureType = NULL, inputType = NULL, description = TRUE){
     st <- signatureTable
+    if(!is.null(tumorType)){
+        st <- st[grepl(paste(tumorType, collapse = "|"), st$tumorType),]}
     if(!is.null(tumorTissue)){
         st <- st[grepl(paste(tumorTissue, collapse = "|"), st$tumorTissue),]}
     if(!is.null(signatureType)){

@@ -5,6 +5,7 @@
 \title{Show available signatures}
 \usage{
 availableSignatures(
+  tumorType = NULL,
   tumorTissue = NULL,
   signatureType = NULL,
   inputType = NULL,
