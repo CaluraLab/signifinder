@@ -3,7 +3,7 @@ library(testthat)
 suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("EMTSign based on Miow's work", {
-    pyrnames <- c("EMT_Miow-Epithelial", "EMT_Miow-Mesenchymal")
+    pyrnames <- c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")
     pname <- sample(pyrnames, 1)
     rmatrix <- fakeData(pname)
     myres <- EMTSign(rmatrix)

@@ -41,12 +41,12 @@ test_that("LipidMetabolism work", {
 
 test_that("StemCellCD49f work", {
     rmatrix <- fakeData("StemCellCD49f_Smith")
-    myres <- StemCellCD49fSign(rmatrix)
+    myres <- stemCellCD49fSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("StemCellCD49f_Smith" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"StemCellCD49f_Smith"], ncol(assay(myres)))
     expect_type(colData(myres)[,"StemCellCD49f_Smith"], "double")
-    expect_message(StemCellCD49fSign(rmatrix), "100")
+    expect_message(stemCellCD49fSign(rmatrix), "100")
 })
 
 test_that("glycolysisSign works", {
@@ -76,7 +76,7 @@ test_that("autophagySign works", {
 })
 
 test_that("autophagySign ChenM works", {
-    pnames <- c("Autophagy_ChenM-OS", "Autophagy_ChenM-DFS")
+    pnames <- c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")
     pname <- sample(pnames, 1)
     rmatrix <- signifinder:::fakeData(pname)
     myres <- autophagySign(rmatrix, author = "ChenM")

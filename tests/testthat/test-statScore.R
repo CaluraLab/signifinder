@@ -4,12 +4,12 @@ library(testthat)
 suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("TLSSign works", {
-    rmatrix <- fakeData("TLS")
+    rmatrix <- fakeData("TLS_Cabrita")
     myres <- TLSSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("TLS" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"TLS"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"TLS"], "double")
+    expect_true("TLS_Cabrita" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"TLS_Cabrita"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"TLS_Cabrita"], "double")
     expect_message(TLSSign(rmatrix), "100")
 })
 
@@ -33,14 +33,14 @@ test_that("IFNSign works", {
     expect_message(IFNSign(rmatrix), "100")
 })
 
-test_that("ImmuneCytSign based on Rooney's work", {
+test_that("immuneCytSign based on Rooney's work", {
     rmatrix <- fakeData("ImmuneCyt_Rooney")
-    myres <- ImmuneCytSign(rmatrix, author = "Rooney")
+    myres <- immuneCytSign(rmatrix, author = "Rooney")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmuneCyt_Rooney" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ImmuneCyt_Rooney"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmuneCyt_Rooney"], "double")
-    expect_message(ImmuneCytSign(rmatrix, author = "Rooney"), "100")
+    expect_message(immuneCytSign(rmatrix, author = "Rooney"), "100")
 })
 
 test_that("MitoticIndexSign works", {
@@ -74,14 +74,14 @@ test_that("immunoScoreSign based on Roh's work", {
 })
 
 test_that("CINSign works", {
-    n <- c("CIN_Carter-25", "CIN_Carter-70")
+    n <- c("CIN_Carter_25", "CIN_Carter_70")
     pname <- sample(n, 1)
     rmatrix <- fakeData(pname)
     myres <- CINSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true(all(c("CIN_Carter-25", "CIN_Carter-70") %in% colnames(colData(myres))))
-    expect_length(colData(myres)[,"CIN_Carter-25"], ncol(assay(myres)))
-    expect_type(colData(myres)[,"CIN_Carter-70"], "double")
+    expect_true(all(c("CIN_Carter_25", "CIN_Carter_70") %in% colnames(colData(myres))))
+    expect_length(colData(myres)[,"CIN_Carter_25"], ncol(assay(myres)))
+    expect_type(colData(myres)[,"CIN_Carter_70"], "double")
     expect_message(CINSign(rmatrix), "100")
 })
 
@@ -125,13 +125,13 @@ test_that("VEGFSign works", {
     expect_message(VEGFSign(rmatrix), "100")
 })
 
-test_that("ImmuneCytSign based on Dabvoli's work", {
+test_that("immuneCytSign based on Davoli's work", {
     rmatrix <- fakeData("ImmuneCyt_Davoli")
-    myres <- ImmuneCytSign(rmatrix, author = "Davoli")
+    myres <- immuneCytSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmuneCyt_Davoli" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"ImmuneCyt_Davoli"], ncol(assay(myres)))
     expect_type(colData(myres)[,"ImmuneCyt_Davoli"], "double")
-    expect_message(ImmuneCytSign(rmatrix, author = "Davoli"), "100")
+    expect_message(immuneCytSign(rmatrix, author = "Davoli"), "100")
 })
 
