@@ -123,14 +123,14 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     # datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference, nametype)
         datasetm_n <- scale(datasetm_n)
     } else if (author == "Shao"){
         datasetm_n <- if(inputType == "rnaseq"){
-            dataTransformation(datasetm, "FPKM", hgReference)
+            dataTransformation(datasetm, "FPKM", hgReference, nametype)
         } else {datasetm}
     } else if (author == "Lin"){
-        datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
+        datasetm_n <- dataTransformation(datasetm, "TPM", hgReference, nametype)
     } else {datasetm_n <- datasetm}
 
     score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
@@ -164,7 +164,7 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 
     if(author == "Liu"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference)
+            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference, nametype)
         } else {datasetm_n <- datasetm_n}
     } else if (author == "Li"){
         datasetm_n <- datasetm_n
@@ -223,7 +223,7 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
     datasetm <- getMatrix(dataset)
     datasetm_n <- if(inputType == "rnaseq"){log2(datasetm+0.01)}else{datasetm}
     score <- statScore(Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n),
-                        nametype = "SYMBOL", typeofstat = "median",
+                        nametype = nametype, typeofstat = "median",
                         namesignature = "hypoxiaSign")
 
     return(returnAsInput(userdata = dataset, result = as.vector(scale(score)),
@@ -312,7 +312,7 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
         datasetm_n <- datasetm[g,]
         if(inputType == "rnaseq"){
             datasetm_n <- log2(dataTransformation(
-                datasetm_n, "FPKM", hgReference) + 0.01)}
+                datasetm_n, "FPKM", hgReference, nametype) + 0.01)}
 
         sign_df <- sign_df[sign_df$SYMBOL %in% g,]
         columnNA <- managena(datasetm_n, g)
@@ -410,7 +410,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
     if (length(MISSING_GENES)>0) {
         cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
 
-    datasetm_n <- log2(dataTransformation(datasetm_n, "TPM", hgReference) + 1)
+    datasetm_n <- log2(dataTransformation(datasetm_n, "TPM", hgReference, nametype) + 1)
 
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
@@ -505,12 +505,12 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             author = "Rooney", hgReference = "hg19"){
 
-    consistencyCheck(nametype, "ImmuneCytSign", author)
+    consistencyCheck(nametype, "immuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
     if(author == "Rooney"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)+0.01
+            datasetm_n <- dataTransformation(datasetm, "TPM", hgReference, nametype)+0.01
         } else {datasetm_n <- datasetm}
         score <- statScore(
             ImmuneCyt_Rooney$SYMBOL, datasetm_n,
@@ -796,7 +796,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
     consistencyCheck(nametype, "PassONSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- dataTransformation(datasetm, "TPM", hgReference)
+    datasetm_n <- dataTransformation(datasetm, "TPM", hgReference, nametype)
 
     sign_df <- PassON_Du
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
@@ -838,7 +838,7 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
     consistencyCheck(nametype, "IPRESSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log2(dataTransformation(datasetm, "CPM", hgReference))
+    datasetm_n <- log2(dataTransformation(datasetm, "CPM", hgReference, nametype))
 
     sign_df <- IPRES_Hugo
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
@@ -940,7 +940,7 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
     datasetm <- getMatrix(dataset)
 
     if(author=="ChenM"){
-        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference)
+        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference, nametype)
         OSscore <- coeffScore(
             sign_df[sign_df$class == "OS",], datasetm_n, "autophagySign", "OS")
         DFSscore <- coeffScore(
