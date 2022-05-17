@@ -395,8 +395,12 @@ availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
 #' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param inputType type of data you are using: microarray or rnaseq.
-#' @param tumorTissue compute signatures only from a specific tissue (this
-#' can also be pan-tissue).
+#' @param whichSign character vector of function names of the signature
+#' to compute.
+#' @param tumorType character vector of tumor types to compute signatures
+#' only from a specific tumor(s) (this can also be pan-cancer).
+#' @param tumorTissue character vector of tumor tissue to compute signatures
+#' only from a specific tissue (this can also be pan-tissue).
 #' @param signatureType compute signatures only from a specific cancer topic.
 #' @param ... other arguments passed on to the signature functions.
 #'
@@ -404,11 +408,16 @@ availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
 #' are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @export
-multipleSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
-                         tumorTissue = NULL, signatureType = NULL, ...){
+multipleSign <- function(dataset, nametype = "SYMBOL",
+                         inputType = "rnaseq", whichSign = NULL,
+                         tumorType = NULL, tumorTissue = NULL,
+                         signatureType = NULL, ...){
     argg <- c(as.list(environment()), list(...))
-    st <- availableSignatures(tumorTissue = tumorTissue,
+    st <- availableSignatures(tumorType = tumorType, tumorTissue = tumorTissue,
         signatureType = signatureType, inputType = inputType)
+
+    if(!is.null(whichSign)){
+        st <- st[grepl(paste(whichSign, collapse = "|"), st$functionName),]}
 
     for(i in seq_len(nrow(st))){
         author <- st[i, "author"]

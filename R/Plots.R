@@ -136,7 +136,7 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
 
     dots <- list(...)
     htargs <- matchArguments(dots, list(
-        name = "Genes", show_column_names = FALSE, col = mycol,
+        name = "Gene\nexpression", show_column_names = FALSE, col = mycol,
         row_names_gp = grid::gpar(fontsize = 6)))
 
     if(logCount){htargs$matrix = log2(filtdataset+1)
@@ -152,13 +152,13 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
 
     if(splitByAnnot & is.character(sampleAnnot)){
         htargs$column_split = sampleAnnot
-        ht <- Heatmap(signval, name = "Signature", col = mycol1,
+        ht <- Heatmap(signval, name = "Score", col = mycol1,
                       column_split = sampleAnnot)
     } else {
         if(!is.null(sampleAnnot)){
             hatop = HeatmapAnnotation(sampleAnnot = sampleAnnot)
             htargs$top_annotation = hatop}
-        ht <- Heatmap(signval, name = "Signature", col = mycol1)}
+        ht <- Heatmap(signval, name = "Score", col = mycol1)}
 
     ht2 <- do.call(Heatmap, htargs)
     g <- ht %v% ht2
@@ -208,7 +208,7 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
         stop("splitByAnnot can be TRUE only if sampleAnnot is provided")}}
 
     if(!is.null(whichSign)){
-        data <- data[, intersect(colnames(data), c(whichSign, clusterBySign))]}
+        data <- data[, intersect(c(whichSign, clusterBySign), colnames(data))]}
     keepnames <- rownames(data)
 
     data <- sapply(data, range01)
@@ -217,7 +217,7 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 
     dots <- list(...)
     htargs <- matchArguments(
-        dots, list(name = "Signatures", show_column_names = FALSE, col = mycol))
+        dots, list(name = "Scaled\nscore", show_column_names = FALSE, col = mycol))
 
     if(!is.null(sampleAnnot)){
         if(splitByAnnot){
@@ -235,10 +235,10 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
         sm <- as.matrix(data.frame(data)[-n,])
         htargs$matrix = sm
         if(splitByAnnot){
-            ht <- Heatmap(fm, name = "Guiding Signatures", col = mycol1,
+            ht <- Heatmap(fm, name = "Guiding\nSignatures", col = mycol1,
                           column_split = sampleAnnot)
         } else {
-            ht <- Heatmap(fm, name = "Guiding Signatures", col = mycol1)}
+            ht <- Heatmap(fm, name = "Guiding\nSignatures", col = mycol1)}
         g <- ht %v% do.call(Heatmap, htargs)
     }
     return(g)
@@ -275,7 +275,7 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL,
             signs <- intersect(SignatureNames, colnames(tmp))
         } else {
             signs <- Reduce(
-                intersect, list(SignatureNames, colnames(tmp), whichSign))}
+                intersect, list(whichSign, SignatureNames, colnames(tmp)))}
     } else {stop("There are no signatures in data")}
 
     tmp <- tmp[,signs]
@@ -429,7 +429,7 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
             signs <- intersect(SignatureNames, colnames(tmp))
         } else {
             signs <- Reduce(
-                intersect, list(SignatureNames, colnames(tmp), whichSign))}
+                intersect, list(whichSign, SignatureNames, colnames(tmp)))}
     } else {stop("There are no signatures in data")}
 
     tmp <- tmp[,signs]
@@ -461,6 +461,6 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
     } else {
         g <- g + geom_density_ridges(aes(fill = rep(groupByAnnot, n)),
                                      alpha=0.5, bandwidth = 0.05, scale = 1)}
-    g <- g + scale_fill_discrete(name = "Annotation")
+    g <- g + scale_fill_discrete(name = "Group")
     return(g)
 }
