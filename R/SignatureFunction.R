@@ -510,7 +510,8 @@ immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
     datasetm <- getMatrix(dataset)
     if(author == "Rooney"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm, "TPM", hgReference, nametype)+0.01
+            datasetm_n <- dataTransformation(
+                datasetm, "TPM", hgReference, nametype)+0.01
         } else {datasetm_n <- datasetm}
         score <- statScore(
             ImmuneCyt_Rooney$SYMBOL, datasetm_n,

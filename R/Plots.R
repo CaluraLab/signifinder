@@ -235,10 +235,10 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
         sm <- as.matrix(data.frame(data)[-n,])
         htargs$matrix = sm
         if(splitByAnnot){
-            ht <- Heatmap(fm, name = "Guiding\nSignatures", col = mycol1,
+            ht <- Heatmap(fm, name = "Clustered\nscore", col = mycol1,
                           column_split = sampleAnnot)
         } else {
-            ht <- Heatmap(fm, name = "Guiding\nSignatures", col = mycol1)}
+            ht <- Heatmap(fm, name = "Clustered\nscore", col = mycol1)}
         g <- ht %v% do.call(Heatmap, htargs)
     }
     return(g)

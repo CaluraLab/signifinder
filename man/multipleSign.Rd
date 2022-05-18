@@ -9,9 +9,9 @@ multipleSign(
   nametype = "SYMBOL",
   inputType = "rnaseq",
   whichSign = NULL,
-  tumorType = NULL,
-  tumorTissue = NULL,
-  signatureType = NULL,
+  tumor = NULL,
+  tissue = NULL,
+  topic = NULL,
   ...
 )
 }
@@ -31,13 +31,13 @@ where rows correspond to genes and columns correspond to samples.}
 \item{whichSign}{character vector of function names of the signature
 to compute.}
 
-\item{tumorType}{character vector of tumor types to compute signatures
+\item{tumor}{character vector of tumor types to compute signatures
 only from a specific tumor(s) (this can also be pan-cancer).}
 
-\item{tumorTissue}{character vector of tumor tissue to compute signatures
+\item{tissue}{character vector of tumor tissue to compute signatures
 only from a specific tissue (this can also be pan-tissue).}
 
-\item{signatureType}{compute signatures only from a specific cancer topic.}
+\item{topic}{compute signatures only from a specific cancer topic.}
 
 \item{...}{other arguments passed on to the signature functions.}
 }
@@ -47,5 +47,5 @@ are added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This function computes all the signatures for a specific
-'inputType' and for a specific 'tumorTissue' and/or 'signatureType'.
+'requiredInput' and for a specific 'tissue' and/or 'topic'.
 }

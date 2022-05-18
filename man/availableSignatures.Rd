@@ -5,19 +5,21 @@
 \title{Show available signatures}
 \usage{
 availableSignatures(
-  tumorType = NULL,
-  tumorTissue = NULL,
-  signatureType = NULL,
-  inputType = NULL,
+  tumor = NULL,
+  tissue = NULL,
+  topic = NULL,
+  requiredInput = NULL,
   description = TRUE
 )
 }
 \arguments{
-\item{tumorTissue}{type of tissue for which the signature is developed}
+\item{tumor}{type of tumor for which the signature is developed}
 
-\item{signatureType}{filter for signature type}
+\item{tissue}{type of tissue for which the signature is developed}
 
-\item{inputType}{type of data you are using: microarray or rnaseq}
+\item{topic}{filter for signature topic}
+
+\item{requiredInput}{type of data required: microarray or rnaseq}
 
 \item{description}{whether to show or not the signature description}
 }

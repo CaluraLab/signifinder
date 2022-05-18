@@ -357,25 +357,26 @@ GetAggregatedSpot <- function(dataset){
 #' It shows a table containing all the information of the signatures collected
 #' in the package.
 #'
-#' @param tumorTissue type of tissue for which the signature is developed
-#' @param signatureType filter for signature type
-#' @param inputType type of data you are using: microarray or rnaseq
+#' @param tumor type of tumor for which the signature is developed
+#' @param tissue type of tissue for which the signature is developed
+#' @param topic filter for signature topic
+#' @param requiredInput type of data required: microarray or rnaseq
 #' @param description whether to show or not the signature description
 #'
 #' @return a data frame
 #'
 #' @export
-availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
-            signatureType = NULL, inputType = NULL, description = TRUE){
+availableSignatures <- function(tumor = NULL, tissue = NULL,
+            topic = NULL, requiredInput = NULL, description = TRUE){
     st <- signatureTable
-    if(!is.null(tumorType)){
-        st <- st[grepl(paste(tumorType, collapse = "|"), st$tumorType),]}
-    if(!is.null(tumorTissue)){
-        st <- st[grepl(paste(tumorTissue, collapse = "|"), st$tumorTissue),]}
-    if(!is.null(signatureType)){
-        st <- st[grepl(paste(signatureType, collapse = "|"), st$signatureType),]}
-    if(!is.null(inputType)){
-        st <- st[grepl(paste(inputType, collapse = "|"), st$inputType),]}
+    if(!is.null(tumor)){
+        st <- st[grepl(paste(tumor, collapse = "|"), st$tumor),]}
+    if(!is.null(tissue)){
+        st <- st[grepl(paste(tissue, collapse = "|"), st$tissue),]}
+    if(!is.null(topic)){
+        st <- st[grepl(paste(topic, collapse = "|"), st$topic),]}
+    if(!is.null(requiredInput)){
+        st <- st[grepl(paste(requiredInput, collapse = "|"), st$requiredInput),]}
     if(!description){st <- st[,1:6]}
     return(st)
 }
@@ -384,7 +385,7 @@ availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
 #' Multiple Signature Computation
 #'
 #' @description This function computes all the signatures for a specific
-#' 'inputType' and for a specific 'tumorTissue' and/or 'signatureType'.
+#' 'requiredInput' and for a specific 'tissue' and/or 'topic'.
 #'
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
@@ -395,13 +396,12 @@ availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
 #' where rows correspond to genes and columns correspond to samples.
 #' @param nametype gene name ID of your dataset (row names).
 #' @param inputType type of data you are using: microarray or rnaseq.
-#' @param whichSign character vector of function names of the signature
-#' to compute.
-#' @param tumorType character vector of tumor types to compute signatures
+#' @param whichSign character vector of signature names to compute.
+#' @param tumor character vector of tumor types to compute signatures
 #' only from a specific tumor(s) (this can also be pan-cancer).
-#' @param tumorTissue character vector of tumor tissue to compute signatures
+#' @param tissue character vector of tumor tissue to compute signatures
 #' only from a specific tissue (this can also be pan-tissue).
-#' @param signatureType compute signatures only from a specific cancer topic.
+#' @param topic compute signatures only from a specific cancer topic.
 #' @param ... other arguments passed on to the signature functions.
 #'
 #' @return A SummarizedExperiment object in which the signatures' scores
@@ -410,14 +410,14 @@ availableSignatures <- function(tumorType = NULL, tumorTissue = NULL,
 #' @export
 multipleSign <- function(dataset, nametype = "SYMBOL",
                          inputType = "rnaseq", whichSign = NULL,
-                         tumorType = NULL, tumorTissue = NULL,
-                         signatureType = NULL, ...){
+                         tumor = NULL, tissue = NULL,
+                         topic = NULL, ...){
     argg <- c(as.list(environment()), list(...))
-    st <- availableSignatures(tumorType = tumorType, tumorTissue = tumorTissue,
-        signatureType = signatureType, inputType = inputType)
+    st <- availableSignatures(tumor = tumor, tissue = tissue,
+        topic = topic, requiredInput = inputType)
 
     if(!is.null(whichSign)){
-        st <- st[grepl(paste(whichSign, collapse = "|"), st$functionName),]}
+        st <- st[grepl(paste(whichSign, collapse = "|"), st$signature),]}
 
     for(i in seq_len(nrow(st))){
         author <- st[i, "author"]
