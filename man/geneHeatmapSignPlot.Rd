@@ -10,7 +10,7 @@ geneHeatmapSignPlot(
   logCount = FALSE,
   splitBySign = FALSE,
   sampleAnnot = NULL,
-  splitByAnnot = FALSE,
+  splitBySampleAnnot = FALSE,
   ...
 )
 }
@@ -29,8 +29,8 @@ based on the signature's origin of the genes.}
 
 \item{sampleAnnot}{A vector containing samples annotations.}
 
-\item{splitByAnnot}{A categorical variable. Give you the possibility to split
-columns based on samples' annotations.}
+\item{splitBySampleAnnot}{A categorical variable. Give you the possibility
+to split columns based on samples' annotations.}
 
 \item{...}{Other parameters specific of the function
 \code{\link[ComplexHeatmap]{Heatmap}}.}

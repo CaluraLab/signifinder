@@ -93,8 +93,8 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #' @param splitBySign Logical. Give you the possibility to split heatmap's row
 #' based on the signature's origin of the genes.
 #' @param sampleAnnot A vector containing samples annotations.
-#' @param splitByAnnot A categorical variable. Give you the possibility to split
-#' columns based on samples' annotations.
+#' @param splitBySampleAnnot A categorical variable. Give you the possibility
+#' to split columns based on samples' annotations.
 #' @param ... Other parameters specific of the function
 #' \code{\link[ComplexHeatmap]{Heatmap}}.
 #'
@@ -108,7 +108,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #' @export
 geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
                                 splitBySign = FALSE, sampleAnnot = NULL,
-                                splitByAnnot = FALSE, ...){
+                                splitBySampleAnnot = FALSE, ...){
 
     signatureNameCheck(data, whichSign)
 
@@ -117,8 +117,8 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
     if(!is.null(sampleAnnot)){
         if(length(sampleAnnot)!=ncol(dataset)){
             stop("sampleAnnot length is different than samples dimension")}
-    } else {if(splitByAnnot){
-        stop("splitByAnnot can be TRUE only if sampleAnnot is provided")}}
+    } else {if(splitBySampleAnnot){
+        stop("splitBySampleAnnot can be TRUE only if sampleAnnot is provided")}}
 
     signval <- colData(data)[,whichSign]
     if(length(whichSign)==1){
@@ -150,7 +150,7 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
             ha <- rowAnnotation(signature = signAnnot)
             htargs$right_annotation = ha}}
 
-    if(splitByAnnot & is.character(sampleAnnot)){
+    if(splitBySampleAnnot & is.character(sampleAnnot)){
         htargs$column_split = sampleAnnot
         ht <- Heatmap(signval, name = "Score", col = mycol1,
                       column_split = sampleAnnot)
@@ -180,8 +180,10 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
 #' @param clusterBySign One ore more signatures that clusterize columns on
 #' Heatmap.
 #' @param sampleAnnot A vector containing samples annotations.
-#' @param splitByAnnot A categorical variable. Give you the possibility to split
-#' columns based on samples' annotations.
+#' @param signAnnot A character vector of signature annotations: signature,
+#' topic, tumor, tissue.
+#' @param splitBySampleAnnot A categorical variable. Give you the possibility
+#' to split columns based on samples' annotations.
 #' @param ... Other parameters specific of the function
 #' \code{\link[ComplexHeatmap]{Heatmap}}.
 #'
@@ -192,7 +194,8 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
 #'
 #' @export
 heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
-                            sampleAnnot = NULL, splitByAnnot = FALSE, ...){
+                            sampleAnnot = NULL, signAnnot = NULL,
+                            splitBySampleAnnot = FALSE, ...){
 
     if(!is.null(whichSign)){signatureNameCheck(data, whichSign)}
     if(!is.null(clusterBySign)){signatureNameCheck(data, clusterBySign)}
@@ -204,8 +207,12 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
     if(!is.null(sampleAnnot)){
         if(length(sampleAnnot)!=nrow(data)){
             stop("sampleAnnot length is different than samples dimension")}
-    } else {if(splitByAnnot){
-        stop("splitByAnnot can be TRUE only if sampleAnnot is provided")}}
+    } else {if(splitBySampleAnnot){
+        stop("splitBySampleAnnot can be TRUE only if sampleAnnot is provided")}}
+
+    if(!is.null(signAnnot)){
+        if(!(signAnnot %in% c("signature", "topic", "tumor", "tissue"))){
+            stop("signAnnot must be one of: signature, topic, tumor, tissue.")}}
 
     if(!is.null(whichSign)){
         data <- data[, intersect(c(whichSign, clusterBySign), colnames(data))]}
@@ -220,21 +227,33 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
         dots, list(name = "Scaled\nscore", show_column_names = FALSE, col = mycol))
 
     if(!is.null(sampleAnnot)){
-        if(splitByAnnot){
+        if(splitBySampleAnnot){
             htargs$column_split = sampleAnnot
         } else {
             hatop = HeatmapAnnotation(sampleAnnot = sampleAnnot)
             htargs$top_annotation = hatop}}
 
     if(is.null(clusterBySign)){
+        if(!is.null(signAnnot)){
+            whichRow <- sapply(rownames(data), grep, x = signatureTable$scoreLabel)
+            df <- as.data.frame(signatureTable[whichRow, signAnnot])
+            colnames(df) <- signAnnot
+            ha = rowAnnotation(df = df)
+            htargs$right_annotation = ha}
         htargs$matrix = data
         g <- do.call(Heatmap, htargs)
     } else {
         n <- which(rownames(data) %in% clusterBySign)
         fm <- as.matrix(data.frame(data)[n,])
         sm <- as.matrix(data.frame(data)[-n,])
+        if(!is.null(signAnnot)){
+            whichRow <- sapply(rownames(sm), grep, x = signatureTable$scoreLabel)
+            df <- as.data.frame(signatureTable[whichRow, signAnnot])
+            colnames(df) <- signAnnot
+            ha = rowAnnotation(df = df)
+            htargs$right_annotation = ha}
         htargs$matrix = sm
-        if(splitByAnnot){
+        if(splitBySampleAnnot){
             ht <- Heatmap(fm, name = "Clustered\nscore", col = mycol1,
                           column_split = sampleAnnot)
         } else {

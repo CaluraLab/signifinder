@@ -9,7 +9,8 @@ heatmapSignPlot(
   whichSign = NULL,
   clusterBySign = NULL,
   sampleAnnot = NULL,
-  splitByAnnot = FALSE,
+  signAnnot = NULL,
+  splitBySampleAnnot = FALSE,
   ...
 )
 }
@@ -25,8 +26,11 @@ Heatmap.}
 
 \item{sampleAnnot}{A vector containing samples annotations.}
 
-\item{splitByAnnot}{A categorical variable. Give you the possibility to split
-columns based on samples' annotations.}
+\item{signAnnot}{A character vector of signature annotations: signature,
+topic, tumor, tissue.}
+
+\item{splitBySampleAnnot}{A categorical variable. Give you the possibility
+to split columns based on samples' annotations.}
 
 \item{...}{Other parameters specific of the function
 \code{\link[ComplexHeatmap]{Heatmap}}.}

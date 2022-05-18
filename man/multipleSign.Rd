@@ -28,8 +28,7 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{inputType}{type of data you are using: microarray or rnaseq.}
 
-\item{whichSign}{character vector of function names of the signature
-to compute.}
+\item{whichSign}{character vector of signature names to compute.}
 
 \item{tumor}{character vector of tumor types to compute signatures
 only from a specific tumor(s) (this can also be pan-cancer).}
