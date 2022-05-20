@@ -432,7 +432,7 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
 #' @import ggplot2
-#' @importFrom ggridges geom_density_ridges
+#' @importFrom ggridges geom_density_ridges geom_density_ridges_gradient
 #' @importFrom SummarizedExperiment colData
 #'
 #' @export
