@@ -241,58 +241,6 @@ hypoxiaSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"){
 }
 
 
-#' Platinum Resistance Signature
-#'
-#' @inherit EMTSign description
-#' @inheritParams EMTSign
-#'
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
-#'
-#' @return A SummarizedExperiment object in which the Platinum Resistance scores
-#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
-#'
-#' @importFrom GSVA gsva
-#'
-#' @export
-platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
-        pvalues = FALSE, nperm = 100, ...){
-
-    consistencyCheck(nametype, "platinumResistanceSign")
-
-    sign_df <- PlatinumResistancedata
-    sign_df$Gene_Symbol <- geneIDtrans(nametype, sign_df$Gene_Symbol)
-
-    datasetm <- getMatrix(dataset)
-
-    sign_up <- sign_df[grep('PlatinumResistanceUp', sign_df$Category),]
-    sign_down <- sign_df[-grep('PlatinumResistanceUp', sign_df$Category),]
-
-    percentageOfGenesUsed("platinumResistanceSign", datasetm,
-                          sign_up$Gene_Symbol, detail = "up")
-    percentageOfGenesUsed("platinumResistanceSign", datasetm,
-                          sign_down$Gene_Symbol, detail = "down")
-
-    gene_sets <- list(PlatinumResistanceUp = sign_up$Gene_Symbol,
-                      PlatinumResistanceDown = sign_down$Gene_Symbol)
-
-    dots <- list(...)
-    args <- matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = gene_sets,
-        method = "gsva", kcdf = "Gaussian",
-        ssgsea.norm = FALSE, verbose = FALSE))
-    gsva_count <- suppressWarnings(do.call(gsva, args))
-
-    if(pvalues){
-        gsva_pval <- GSVAPvalues(
-            expr = datasetm, gset.idx.list = gene_sets,
-            gsvaResult = gsva_matrix, nperm = nperm, args = args)
-        gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
-
-    return(returnAsInput(
-        userdata = dataset, result = gsva_count, SignName = "", datasetm))
-}
-
-
 #' Immunogenic Signature
 #'
 #' @inherit EMTSign description

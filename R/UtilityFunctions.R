@@ -4,7 +4,6 @@ SignatureNames <- c(
     "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
     "LipidMetabolism_Zheng",
     "Hypoxia_Buffa",
-    "PlatinumResistanceUp", "PlatinumResistanceDown",
     "ImmunoScore_Hao", "ImmunoScore_Roh",
     "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
     "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES",
@@ -43,9 +42,6 @@ GetGenes <- function(name){
     if(name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")){
         sname <- paste0(substring(name, 10), "-like")
         g <- EMT_Miow$SYMBOL[EMT_Miow$class==sname]
-    } else if (name %in% c("PlatinumResistanceUp", "PlatinumResistanceDown")){
-        g <- PlatinumResistancedata$Gene_Symbol[
-            PlatinumResistancedata$Category==name]
     } else if(name %in% c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")){
         sname <- substring(name, 18)
         g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]

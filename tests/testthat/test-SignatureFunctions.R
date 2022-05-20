@@ -34,18 +34,6 @@ test_that("EMTSign based on Cheng's work", {
     expect_message(EMTSign(rmatrix, author = "Cheng"), "100")
 })
 
-test_that("platinumResistanceSign work", {
-    pyrnames <- c("PlatinumResistanceUp", "PlatinumResistanceDown")
-    pname <- sample(pyrnames, 1)
-    rmatrix <- signifinder:::fakeData(pname)
-    myres <- platinumResistanceSign(rmatrix)
-    expect_true(is(myres, "SummarizedExperiment"))
-    expect_true(pname %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,pname], ncol(assay(myres)))
-    expect_type(colData(myres)[,pname], "double")
-    expect_message(platinumResistanceSign(rmatrix), "100")
-})
-
 test_that("ASCSign work", {
     rmatrix  <- signifinder:::fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
