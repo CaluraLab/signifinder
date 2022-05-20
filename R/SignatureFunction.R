@@ -110,6 +110,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
 #' @return A SummarizedExperiment object in which the Pyroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @importFrom SummarizedExperiment assays
+#'
 #' @export
 pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                 author = "Ye", hgReference = "hg19"){
@@ -120,18 +122,25 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    # datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     if(author == "Ye"){
-        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference, nametype)
+        dataset <- dataTransformation(
+            dataset, datasetm, "FPKM", hgReference, nametype)
+        datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
         datasetm_n <- scale(datasetm_n)
     } else if (author == "Shao"){
-        datasetm_n <- if(inputType == "rnaseq"){
-            dataTransformation(datasetm, "FPKM", hgReference, nametype)
-        } else {datasetm}
+        if(inputType == "rnaseq"){
+            dataset <- dataTransformation(
+                dataset, datasetm, "FPKM", hgReference, nametype)
+            datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
+        } else {
+            datasetm_n <- datasetm}
     } else if (author == "Lin"){
-        datasetm_n <- dataTransformation(datasetm, "TPM", hgReference, nametype)
-    } else {datasetm_n <- datasetm}
+        dataset <- dataTransformation(
+            dataset, datasetm, "TPM", hgReference, nametype)
+        datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
+    } else {
+        datasetm_n <- datasetm}
 
     score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
 
@@ -150,6 +159,8 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 #' @return A SummarizedExperiment object in which the Ferroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @importFrom SummarizedExperiment assays
+#'
 #' @export
 ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
                     author = "Ye", hgReference = "hg19"){
@@ -160,16 +171,15 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
-    if(author == "Liu"){
-        if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(datasetm_n, "FPKM", hgReference, nametype)
-        } else {datasetm_n <- datasetm_n}
-    } else if (author == "Li"){
-        datasetm_n <- datasetm_n
+    if(author == "Liu" & inputType == "rnaseq"){
+        dataset <- dataTransformation(
+            dataset, datasetm, "FPKM", hgReference, nametype)
+        datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
+        datasetm_n <- datasetm_n[rownames(datasetm_n) %in% sign_df$SYMBOL,]
     } else {
-        datasetm_n <- datasetm_n}
+        datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
+    }
 
     score <- coeffScore(sign_df, datasetm_n, "ferroptosisSign")
 
@@ -292,6 +302,8 @@ platinumResistanceSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the Immunogenic scores will
 #' be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @importFrom SummarizedExperiment assays
+#'
 #' @export
 immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
                             inputType = "rnaseq", hgReference = "hg19"){
@@ -309,10 +321,12 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
 
         percentageOfGenesUsed("immunoScoreSign", datasetm, sign_df$SYMBOL)
 
-        datasetm_n <- datasetm[g,]
         if(inputType == "rnaseq"){
-            datasetm_n <- log2(dataTransformation(
-                datasetm_n, "FPKM", hgReference, nametype) + 0.01)}
+            dataset <- dataTransformation(
+                dataset, datasetm, "FPKM", hgReference, nametype)
+            datasetm_n <- log2(as.matrix(assays(dataset)[["FPKM"]]) + 0.01)
+            datasetm_n <- datasetm_n[g,]
+        } else {datasetm_n <- datasetm[g,]}
 
         sign_df <- sign_df[sign_df$SYMBOL %in% g,]
         columnNA <- managena(datasetm_n, g)
@@ -389,6 +403,7 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL",
 #' \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom stats sd
+#' @importFrom SummarizedExperiment assays
 #'
 #' @export
 IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
@@ -402,7 +417,6 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
     datasetm <- getMatrix(dataset)
     sample_names <- colnames(datasetm)
-    datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
 
     percentageOfGenesUsed("IPSSign", datasetm, sign_df$SYMBOL)
 
@@ -410,7 +424,10 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
     if (length(MISSING_GENES)>0) {
         cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
 
-    datasetm_n <- log2(dataTransformation(datasetm_n, "TPM", hgReference, nametype) + 1)
+    dataset <- dataTransformation(
+        dataset, datasetm, "TPM", hgReference, nametype)
+    datasetm_n <- log2(as.matrix(assays(dataset)[["TPM"]]) + 1)
+    datasetm_n <- datasetm_n[rownames(datasetm_n) %in% sign_df$SYMBOL,]
 
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
     for (i in 1:length(sample_names)) {
@@ -501,6 +518,8 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @importFrom SummarizedExperiment assays
+#'
 #' @export
 immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             author = "Rooney", hgReference = "hg19"){
@@ -510,8 +529,9 @@ immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
     datasetm <- getMatrix(dataset)
     if(author == "Rooney"){
         if(inputType == "rnaseq"){
-            datasetm_n <- dataTransformation(
-                datasetm, "TPM", hgReference, nametype)+0.01
+            dataset <- dataTransformation(
+                dataset, datasetm, "TPM", hgReference, nametype)
+            datasetm_n <- as.matrix(assays(dataset)[["TPM"]]) + 0.01
         } else {datasetm_n <- datasetm}
         score <- statScore(
             ImmuneCyt_Rooney$SYMBOL, datasetm_n,
@@ -587,17 +607,21 @@ TinflamSign <- function(dataset, nametype = "SYMBOL"){
 
     consistencyCheck(nametype, "TinflamSign")
 
+    sign_df <- Tinflam_Ayers
+    sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
+
     datasetm <- getMatrix(dataset)
     datasetm_n <- log2(datasetm + 0.01)
 
-    housekeeping <- intersect(row.names(datasetm_n),
-        Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="Housekeeping"])
-    genes_pred <- intersect(row.names(datasetm_n),
-        Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class=="TInflam"])
+    housekeeping <- intersect(
+        row.names(datasetm_n), sign_df$SYMBOL[sign_df$class=="Housekeeping"])
+    genes_pred <- intersect(
+        row.names(datasetm_n), sign_df$SYMBOL[sign_df$class=="TInflam"])
 
     housekeeping_m <- apply(datasetm_n[housekeeping, ], 2, mean)
     datasetm_n <- sweep(datasetm_n[genes_pred, ], 2, housekeeping_m, FUN = "-")
-    score <- coeffScore(Tinflam_Ayers[genes_pred,], datasetm_n, "TinflamSign")
+    score <- coeffScore(
+        sign_df[sign_df$SYMBOL %in% genes_pred,], datasetm_n, "TinflamSign")
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = "Tinflam_Ayers", datasetm))
@@ -790,6 +814,7 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
+#' @importFrom SummarizedExperiment assays
 #'
 #' @export
 PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
@@ -797,7 +822,9 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
     consistencyCheck(nametype, "PassONSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- dataTransformation(datasetm, "TPM", hgReference, nametype)
+    dataset <- dataTransformation(
+        dataset, datasetm, "TPM", hgReference, nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
 
     sign_df <- PassON_Du
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
@@ -832,6 +859,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
+#' @importFrom SummarizedExperiment assays
 #'
 #' @export
 IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
@@ -839,7 +867,9 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
     consistencyCheck(nametype, "IPRESSign")
 
     datasetm <- getMatrix(dataset)
-    datasetm_n <- log2(dataTransformation(datasetm, "CPM", hgReference, nametype))
+    dataset <- dataTransformation(
+        dataset, datasetm, "CPM", hgReference, nametype)
+    datasetm_n <- log2(as.matrix(assays(dataset)[["CPM"]]))
 
     sign_df <- IPRES_Hugo
     sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
@@ -929,6 +959,8 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Zhang"){
 #' @return A SummarizedExperiment object in which the Autophagy score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @importFrom SummarizedExperiment assays
+#'
 #' @export
 autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
                           hgReference = "hg19"){
@@ -941,7 +973,9 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
     datasetm <- getMatrix(dataset)
 
     if(author=="ChenM"){
-        datasetm_n <- dataTransformation(datasetm, "FPKM", hgReference, nametype)
+        dataset <- dataTransformation(
+            dataset, datasetm, "FPKM", hgReference, nametype)
+        datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
         OSscore <- coeffScore(
             sign_df[sign_df$class == "OS",], datasetm_n, "autophagySign", "OS")
         DFSscore <- coeffScore(

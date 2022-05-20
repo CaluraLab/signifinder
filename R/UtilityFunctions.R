@@ -144,11 +144,11 @@ returnAsInput <- function(userdata, result, SignName, datasetm){
     } else if(is.matrix(userdata) | is.data.frame(userdata)){
         if(is.vector(result)){
             result <- SummarizedExperiment::SummarizedExperiment(
-                assays = datasetm, colData = data.frame(name = result))
+                assays = list(norm_expr=datasetm), colData = data.frame(name = result))
             colnames(SummarizedExperiment::colData(result)) <- SignName
         } else {
             result <- SummarizedExperiment::SummarizedExperiment(
-                assays = datasetm, colData = t(result))
+                assays = list(norm_expr=datasetm), colData = t(result))
         }
         return(result)}
 }
@@ -252,12 +252,17 @@ managena <- function(datasetm, genes){
     return(columnNA)
 }
 
-dataTransformation <- function(data, trans, hgReference, nametype){
+dataTransformation <- function(dataset, data, trans, hgReference, nametype){
+
+    if(class(dataset) %in% c(
+        "SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
+        if(trans %in% names(SummarizedExperiment::assays(dataset))){
+            return(dataset) }}
 
     if(hgReference=="hg19"){
-    txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+        txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
     } else if(hgReference=="hg38"){
-    txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
+        txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
     } else {stop("Human reference genome must be either hg19 or hg38")}
 
     exons.db = ensembldb::exonsBy(txdb, by = "gene")
@@ -275,11 +280,19 @@ dataTransformation <- function(data, trans, hgReference, nametype){
     exons_g <- exons_g[!sapply(exons_g, is.null)]
     glen <- sapply(names(egs), function(eg){
         sum(BiocGenerics::width(IRanges::reduce( exons_g[[eg]] ))) })
-
     tdata <- DGEobj.utils::convertCounts(
         countsMatrix = data, unit = trans, geneLength = glen)
 
-    return(tdata)
+    if(class(dataset) %in% c(
+        "SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")) {
+        SummarizedExperiment::assays(dataset)[[trans]] <- tdata
+    } else if(is.matrix(dataset) | is.data.frame(dataset)){
+        assays <- list(data, tdata)
+        names(assays) <- c("norm_expr", trans)
+        dataset <- SummarizedExperiment::SummarizedExperiment(assays = assays)
+    }
+
+    return(dataset)
 }
 
 percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){

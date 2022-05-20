@@ -8,7 +8,8 @@ ridgelineSignPlot(
   data,
   whichSign = NULL,
   groupByAnnot = NULL,
-  selectByAnnot = NULL
+  selectByAnnot = NULL,
+  ...
 )
 }
 \arguments{

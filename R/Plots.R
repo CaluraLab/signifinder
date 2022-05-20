@@ -437,7 +437,7 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 #'
 #' @export
 ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
-                              selectByAnnot = NULL){
+                              selectByAnnot = NULL, ...){
 
     if(!is.null(whichSign)){signatureNameCheck(data, whichSign)}
 
@@ -451,7 +451,8 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
                 intersect, list(whichSign, SignatureNames, colnames(tmp)))}
     } else {stop("There are no signatures in data")}
 
-    tmp <- tmp[,signs]
+    tmp <- as.data.frame(tmp[,signs])
+    colnames(tmp) <- signs
     tmp <- data.frame(sapply(tmp, range01))
 
     if(!is.null(groupByAnnot)){
@@ -474,12 +475,20 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
         data.frame(signvalue=tmp[,x], signature=colnames(tmp[x]),
                    row.names = NULL)}))
 
-    g <- ggplot(tmp1, aes(x=signvalue, y=signature))
+    dots <- list(...)
+    ridgeargs <- matchArguments(
+        dots, list(alpha = 0.5, bandwidth = 0.05, scale = 1))
+
     if(is.null(groupByAnnot)){
-        g <- g + geom_density_ridges(alpha=0.5, bandwidth = 0.05, scale = 1)
+        g <- ggplot(tmp1, aes(x=signvalue, y=signature, fill=stat(x))) +
+            do.call(geom_density_ridges_gradient, ridgeargs) +
+            scale_fill_viridis_c(name = "score", option = "A")
     } else {
-        g <- g + geom_density_ridges(aes(fill = rep(groupByAnnot, n)),
-                                     alpha=0.5, bandwidth = 0.05, scale = 1)}
-    g <- g + scale_fill_discrete(name = "Group")
+        ridgeargs$mapping = aes(fill = rep(groupByAnnot, n))
+        g <- ggplot(tmp1, aes(x=signvalue, y=signature)) +
+            do.call(geom_density_ridges, ridgeargs) +
+            scale_fill_discrete(name = "Group")
+    }
+
     return(g)
 }
