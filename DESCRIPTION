@@ -16,8 +16,9 @@ Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, dplyr, ellips
         SummarizedExperiment, survminer, survival, viridis
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Depends: R (>= 4.1.0)
-Suggests: 
+Suggests: BiocStyle, knitr, rmarkdown
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr

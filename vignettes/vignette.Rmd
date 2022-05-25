@@ -1,0 +1,163 @@
+---
+title: "signifinder vignette"
+author:
+- name: Stefania Pirrotta
+  affiliation: 
+  - &id Biology Department, University of Padova, Italy
+  email: stefania.pirrotta@phd.unipd.it
+- name: Enrica Calura
+  affiliation: *id
+  email: enrica.calura@unipd.it
+package: signifinder
+abstract: >
+  Signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows computing of signatures scores providing the only gene expression values and returns a single-sample score. Further, it supports the exploration of scores trend proving functions to visualize either single scores distribution or multiple scores. Currently, signifinder contains 46 distinct signatures collected from the literature.
+output: 
+  BiocStyle::pdf_document
+vignette: >
+  %\VignetteIndexEntry{signifinder vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+Signatures are biomarkers that consider the gene expressions of multiple genes in a certain manner to provide either a continuous score or a categorical classifier [REF]. They are usually composed by the list of genes and by an algorithm that, through the use of gene expressions and eventually a set of coefficients to differently weight the gene contributions, allows the achievement of the score. Signifinder was developed to provide and easy and fast computation of several signatures.
+
+Analysis of signatures shows cancer activities in patients. The combined analysis of multiple signatures may reveal possible correlations between different tumour processes and allow patients to be stratified at a broader level of information.
+
+Several visualization functions are implemented to visualize the scores obtained with signatures. These can help in the interpretation of the results. Users can not only browse single signatures independently but also compare them with each other.
+
+# Installation
+To install this package:
+```{r eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("signifinder")
+```
+
+# Analysis
+## Signatures Computation
+In this vignettes, we use the OVse dataset. That is a subset of the ovarian cancer dataset collected inside TCGA database. Data are normalized counts.
+
+```{r}
+# loading packages
+library(MultiAssayExperiment)
+library(signifinder)
+
+load(file = "~/Scrivania/signifinder_workflow/Data_and_pdf/OV_40_samples.RData")
+sub_OVse
+```
+
+We check which signatures developed for ovary are included inside the package.
+
+```{r}
+ovary_signatures <- availableSignatures(tissue = "ovary", description = FALSE)
+knitr::kable(
+  ovary_signatures, caption = 'Signatures developed for ovary.'
+)
+```
+
+We can compute signatures one by one using the corresponding function. In some cases, we need to specify the type of input data we are using (rnaseq or microarray) and/or which is the author of the signature, For example, if we want to compute the signature for pyroptosis in ovary, we have to run: 
+```{r}
+OVse <- ferroptosisSign(dataset = sub_OVse,
+                       inputType = "rnaseq")
+```
+In this way, "Pyroptosis_Ye" is computed and added to the colData section inside OVse.
+
+Alternatively, we can compute all the signature developed for ovary and for pan-tissue at once with multipleSign().
+```{r}
+OVse <- multipleSign(dataset = sub_OVse, 
+                     inputType = "rnaseq",
+                     tissue = c("ovary", "pan-tissue"))
+```
+
+## Visualization
+### Signature distribution
+
+After the computation of a signature, we may explore the range of values of the scores. We can use oneSignPlot() to visualize both the exact scores distribution and the density distribution.
+
+```{r}
+oneSignPlot(OVse, "Hypoxia_Buffa", statistics = "quantiles")
+```
+
+### Gene Expression Heatmap
+Also, we may be interested in exploring the expression values that are involved in a signature. In this case, we can use geneHeatmapSignPlot() to visualize them. Further, we can plot gene expression from multiple signatures.
+```{r}
+geneHeatmapSignPlot(data = OVse, 
+                    whichSign = "LipidMetabolism_Zheng", 
+                    logCount = TRUE)
+
+geneHeatmapSignPlot(data = OVse, 
+                    whichSign = c("IFN_Ayers", "ExpandedImmune_Ayers"), 
+                    logCount = TRUE)
+
+geneHeatmapSignPlot(data = OVse, 
+                    whichSign = c("IFN_Ayers", "ExpandedImmune_Ayers"), 
+                    logCount = TRUE,
+                    splitBySign = T)
+```
+
+### Correlation
+To easily investigate the relation across signatures, *signifinder* has a related function to show a correlation plot (correlationSignPlot()). Here, the pairwise correlations of the signatures are compared. Cold colors represent anticorrelations while red-yellow scale is for positive correlations. Then, signatures are clustered to group together higher related ones.
+```{r}
+sign_cor <- correlationSignPlot(data = OVse)
+highest_correlated <- unique(unlist(
+    sign_cor$data[(sign_cor$data$cor>0.95 & sign_cor$data$cor<1),c(1,2)]
+    ))
+sign_cor2 <- correlationSignPlot(data = OVse,
+                                 whichSign = highest_correlated)
+```
+
+### Score Heatmap
+We can compare score trend across different signatures with hetmapSignPlot(). Scores are scaled between zero and one to be comparible across them.
+```{r}
+heatmapSignPlot(data = OVse)
+heatmapSignPlot(data = OVse, 
+                whichSign = c("Hypoxia_Buffa", "Ferroptosis_Ye", "LipidMetabolism_Zheng"))
+heatmapSignPlot(data = OVse, 
+                whichSign = c("Hypoxia_Buffa", "Ferroptosis_Ye", "LipidMetabolism_Zheng"),
+                clusterBySign = c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", 
+                                  "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"),
+                sampleAnnot = OVse$OV_subtype, signAnnot = "topic",
+                splitBySampleAnnot = TRUE)
+heatmapSignPlot(data = OVse, 
+                clusterBySign = c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", 
+                                  "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"),
+                sampleAnnot = OVse$OV_subtype,
+                splitBySampleAnnot = TRUE)
+```
+
+### Survival Plot
+```{r}
+mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
+rownames(mysurvData) <- OVse@colData@rownames
+```
+
+```{r}
+survivalSignPlot(data = OVse, 
+                 survData = mysurvData, 
+                 whichSign = "Pyroptosis_Ye", 
+                 cutpoint = "optimal")
+```
+
+### Ridgeline Plot
+Finally, we can plot 
+```{r}
+ridgelineSignPlot(OVse)
+ridgelineSignPlot(data = OVse, 
+                  whichSign = highest_correlated)
+ridgelineSignPlot(data = OVse, 
+                  whichSign = highest_correlated, 
+                  groupByAnnot = OVse$OV_subtype)
+```
+
+# Session info
+Here is the output of sessionInfo() on the system on which this document was compiled
+```{r}
+sessionInfo()
+```
+
