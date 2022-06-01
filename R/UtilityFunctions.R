@@ -281,7 +281,7 @@ dataTransformation <- function(dataset, data, trans, hgReference, nametype){
 
     if(class(dataset)[1] %in% c(
         "SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")) {
-        SummarizedExperiment::assays(dataset)[[trans]] <- tdata
+        SummarizedExperiment::assays(dataset, withDimnames = FALSE)[[trans]] <- tdata
     } else if(is.matrix(dataset) | is.data.frame(dataset)){
         assays <- list(data, tdata)
         names(assays) <- c("norm_expr", trans)
