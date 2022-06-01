@@ -172,7 +172,7 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
 
     datasetm <- getMatrix(dataset)
 
-    if(author == "Liu" & inputType == "rnaseq"){
+    if(author %in% c("Liu", "Ye") & inputType == "rnaseq"){
         dataset <- dataTransformation(
             dataset, datasetm, "FPKM", hgReference, nametype)
         datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
