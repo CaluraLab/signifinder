@@ -850,6 +850,12 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
 #' @export
 CISSign <- function(dataset, nametype = "SYMBOL"){
 
+    ## code instruction from an e-mail by Jaegil Kim:
+    ## 'We first compute "log2(fold change) = log2(expression) - log2(median
+    ## expression across samples)" for each gene and define the signature
+    ## score as "mean of log2(fold change) across CIS-up genes - mean of
+    ## log2(fold change) across CIS-down genes".'
+
     consistencyCheck(nametype, "CISSign")
 
     sign_df <- CIS_Robertson
@@ -864,8 +870,9 @@ CISSign <- function(dataset, nametype = "SYMBOL"){
     percentageOfGenesUsed("CISSign", datasetm, sign_down$SYMBOL, "down")
 
     datasetm_n <- datasetm[intersect(row.names(datasetm), sign_df$SYMBOL),]
-    score_up <- colMeans(log2(datasetm_n[sign_up$SYMBOL,] + 0.01))
-    score_down <- colMeans(log2(datasetm_n[sign_down$SYMBOL,] + 0.01))
+    datasetm_n <- log2(datasetm_n + 0.01) - log2(rowMedians(datasetm_n) + 0.01)
+    score_up <- colMeans(datasetm_n[sign_up$SYMBOL,])
+    score_down <- colMeans(datasetm_n[sign_down$SYMBOL,])
 
     score <- score_up - score_down
 
