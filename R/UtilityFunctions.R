@@ -250,7 +250,7 @@ managena <- function(datasetm, genes){
 
 dataTransformation <- function(dataset, data, trans, hgReference, nametype){
 
-    if(class(dataset) %in% c(
+    if(class(dataset)[1] %in% c(
         "SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
         if(trans %in% names(SummarizedExperiment::assays(dataset))){
             return(dataset) }}
@@ -279,7 +279,7 @@ dataTransformation <- function(dataset, data, trans, hgReference, nametype){
     tdata <- DGEobj.utils::convertCounts(
         countsMatrix = data, unit = trans, geneLength = glen)
 
-    if(class(dataset) %in% c(
+    if(class(dataset)[1] %in% c(
         "SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")) {
         SummarizedExperiment::assays(dataset)[[trans]] <- tdata
     } else if(is.matrix(dataset) | is.data.frame(dataset)){
