@@ -12,7 +12,7 @@ package: signifinder
 abstract: >
   Signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows computing of signatures scores providing the only gene expression values and returns a single-sample score. Further, it supports the exploration of scores trend proving functions to visualize either single scores distribution or multiple scores. Currently, signifinder contains 46 distinct signatures collected from the literature.
 output: 
-  BiocStyle::pdf_document
+  BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{signifinder vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,13 +24,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-Signatures are biomarkers that consider the gene expressions of multiple genes in a certain manner to provide either a continuous score or a categorical classifier [REF]. They are usually composed by the list of genes and by an algorithm that, through the use of gene expressions and eventually a set of coefficients to differently weight the gene contributions, allows the achievement of the score. Signifinder was developed to provide and easy and fast computation of several signatures.
+
+In cancer studies, transcriptional signatures are studied because of their potential to show cancer activities while happening, and they are considered potentially useful to guide therapeutic decisions and monitoring interventions. Transcriptional signatures of bulk RNA-seq experiments are also used to assess the complex relations between the tumor and its normal counterpart, named as tumor microenvironment.
+
+Transcriptional signatures are based upon the expression of a specific gene set and are summarized in a score designed to provide single sample predictions. They are usually composed by a list of genes and an algorithm that through the use of gene expressions - and eventually a set of coefficients to differently weight the gene contributions - allows the achievement of a single-sample prediction score.
 
 Analysis of signatures shows cancer activities in patients. The combined analysis of multiple signatures may reveal possible correlations between different tumour processes and allow patients to be stratified at a broader level of information.
+
+`signifinder` has been developed to provide and easy and fast computation of several published signatures.
 
 Several visualization functions are implemented to visualize the scores obtained with signatures. These can help in the interpretation of the results. Users can not only browse single signatures independently but also compare them with each other.
 
 # Installation
+
 To install this package:
 ```{r eval=FALSE}
 if (!require("BiocManager", quietly = TRUE))
@@ -40,40 +46,76 @@ BiocManager::install("signifinder")
 ```
 
 # Analysis
+
 ## Signatures Computation
 In this vignettes, we use the OVse dataset. That is a subset of the ovarian cancer dataset collected inside TCGA database. Data are normalized counts.
 
-```{r}
+```{r, message=FALSE}
 # loading packages
 library(MultiAssayExperiment)
 library(signifinder)
 
-load(file = "~/Scrivania/signifinder_workflow/Data_and_pdf/OV_40_samples.RData")
 sub_OVse
 ```
 
-We check which signatures developed for ovary are included inside the package.
+We can check the signatures available in the package with the function availableSignatures().
 
 ```{r}
-ovary_signatures <- availableSignatures(tissue = "ovary", description = FALSE)
-knitr::kable(
-  ovary_signatures, caption = 'Signatures developed for ovary.'
-)
+availSigns <- availableSignatures()
 ```
 
-We can compute signatures one by one using the corresponding function. In some cases, we need to specify the type of input data we are using (rnaseq or microarray) and/or which is the author of the signature, For example, if we want to compute the signature for pyroptosis in ovary, we have to run: 
+The function returns a data.frame with all the signatures included in the package and for each signature the following information:
+* signature: name of the signature
+* scoreLabel: label of the signature when computed and inserted inside results
+* functionName: name of the function to use to compute the signature
+* topic: general cancer topic
+* tumor: tumor type for which the signature was developed
+* tissue: tumor tissue for which the signature was developed
+* requiredInput: tumor data with which the signature was developed
+* author: first author of the work in which the signature is described
+* reference: reference of the work
+* description: brief description of the signature and how to evaluate its score
+
+```{r, echo=FALSE}
+knitr::kable(t(availSigns[1,]), caption = 'One signature fiels')
+```
+
+We can also interrogate the signature asking which signatures are available for a specific tissue (e.g. ovary).
+
+```{r}
+ovary_signatures <- availableSignatures(tissue = "ovary", 
+                                        description = FALSE)
+knitr::kable(ovary_signatures, 
+             caption = 'Signatures developed for ovary.')
+```
+
+Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in functionName of availableSignatures() ) indicating the input data in "dataset" and the type of input data (one of rnaseq or microarray) in "inputType". Data are supposed to be expression values in the form of data.frame or a matrix where rows correspond to genes and columns correspond to samples. Alternatively, an object of type SummarizedExperiment containing an assay where rows correspond to genes and columns correspond to samples.
+
 ```{r}
 OVse <- ferroptosisSign(dataset = sub_OVse,
                        inputType = "rnaseq")
 ```
-In this way, "Pyroptosis_Ye" is computed and added to the colData section inside OVse.
 
-Alternatively, we can compute all the signature developed for ovary and for pan-tissue at once with multipleSign().
+If the same argument is covered by multiple signatures, these are collected inside the same function. We can specify a specific signature indicating the author of the signature for which the signature has been developed for. For example, looking at the signatures reported inside availSigns, if we want to compute the specific signature of pyroptosis developed for the ovary, we have to run:
+
+```{r}
+sub_OVse <- pyroptosisSign(dataset = sub_OVse,
+                           inputType = "rnaseq",
+                           author = "Ye")
+```
+
+In this way, "Pyroptosis_Ye" is computed. Every time we compute a signature this is automatically added to the colData section inside OVse with a signture-specific label.
+
+We can also compute multiple signatures at once with the function multipleSign(). Suppling the dataset and the input type without any other argument all the available signatures will be computed. Otherwise we can specify a list of signatures using whichSign argument or the arguments tumor, tissue and/or topic. E.g. here below we computed all the available signature for ovary and pan-tissue:
+
 ```{r}
 OVse <- multipleSign(dataset = sub_OVse, 
                      inputType = "rnaseq",
                      tissue = c("ovary", "pan-tissue"))
 ```
+
+## Supported Identifiers
+
 
 ## Visualization
 ### Signature distribution
@@ -81,11 +123,15 @@ OVse <- multipleSign(dataset = sub_OVse,
 After the computation of a signature, we may explore the range of values of the scores. We can use oneSignPlot() to visualize both the exact scores distribution and the density distribution.
 
 ```{r}
-oneSignPlot(OVse, "Hypoxia_Buffa", statistics = "quantiles")
+oneSignPlot(data = OVse, 
+            whichSign = "Hypoxia_Buffa", 
+            statistics = "quantiles")
 ```
 
 ### Gene Expression Heatmap
+
 Also, we may be interested in exploring the expression values that are involved in a signature. In this case, we can use geneHeatmapSignPlot() to visualize them. Further, we can plot gene expression from multiple signatures.
+
 ```{r}
 geneHeatmapSignPlot(data = OVse, 
                     whichSign = "LipidMetabolism_Zheng", 
@@ -102,6 +148,7 @@ geneHeatmapSignPlot(data = OVse,
 ```
 
 ### Correlation
+
 To easily investigate the relation across signatures, *signifinder* has a related function to show a correlation plot (correlationSignPlot()). Here, the pairwise correlations of the signatures are compared. Cold colors represent anticorrelations while red-yellow scale is for positive correlations. Then, signatures are clustered to group together higher related ones.
 ```{r}
 sign_cor <- correlationSignPlot(data = OVse)
@@ -113,6 +160,7 @@ sign_cor2 <- correlationSignPlot(data = OVse,
 ```
 
 ### Score Heatmap
+
 We can compare score trend across different signatures with hetmapSignPlot(). Scores are scaled between zero and one to be comparible across them.
 ```{r}
 heatmapSignPlot(data = OVse)
@@ -132,6 +180,9 @@ heatmapSignPlot(data = OVse,
 ```
 
 ### Survival Plot
+
+We can test the survival association of the signature with the function survivalSignPlot(), submitting information about patient survival time, as we did here below.
+
 ```{r}
 mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
 rownames(mysurvData) <- OVse@colData@rownames
@@ -145,7 +196,7 @@ survivalSignPlot(data = OVse,
 ```
 
 ### Ridgeline Plot
-Finally, we can plot 
+Finally, we can plot ridge lines with one or multiple signatures, also grouping samples by annotations if needed.
 ```{r}
 ridgelineSignPlot(OVse)
 ridgelineSignPlot(data = OVse, 
@@ -156,7 +207,7 @@ ridgelineSignPlot(data = OVse,
 ```
 
 # Session info
-Here is the output of sessionInfo() on the system on which this document was compiled
+Here is the output of sessionInfo() on the system on which this document was compiled.
 ```{r}
 sessionInfo()
 ```
