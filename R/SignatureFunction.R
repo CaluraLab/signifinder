@@ -40,8 +40,10 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         EL <- sign_df[grep('Epithelial-like', sign_df$class),]
         ML <- sign_df[grep('Mesenchymal-like', sign_df$class),]
 
-        percentageOfGenesUsed("EMTSign", datasetm, EL$SYMBOL, "epithelial")
-        percentageOfGenesUsed("EMTSign", datasetm, ML$SYMBOL, "mesenchymal")
+        percentageOfGenesUsed(
+            "EMTSign", datasetm, EL$SYMBOL, "epithelial", author = author)
+        percentageOfGenesUsed(
+            "EMTSign", datasetm, ML$SYMBOL, "mesenchymal", author = author)
 
         gene_sets <- list(Epithelial = EL$SYMBOL, Mesenchymal = ML$SYMBOL)
         names(gene_sets) <- paste0("EMT_Miow_", names(gene_sets))
@@ -70,8 +72,10 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             Sign_E <- sign_df$SYMBOL[sign_df$class=="E"]
             Sign_M <- sign_df$SYMBOL[sign_df$class=="M"]
 
-            percentageOfGenesUsed("EMTSign", datasetm, Sign_E, "epithelial")
-            percentageOfGenesUsed("EMTSign", datasetm, Sign_M, "mesenchymal")
+            percentageOfGenesUsed(
+                "EMTSign", datasetm, Sign_E, "epithelial", author = author)
+            percentageOfGenesUsed(
+                "EMTSign", datasetm, Sign_M, "mesenchymal", author = author)
 
             columnNA <- managena(datasetm, genes = sign_df$SYMBOL)
             score <- colMeans(
@@ -85,7 +89,8 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
             sign_df <- EMT_Cheng
             sign_df$SYMBOL <- geneIDtrans(nametype, sign_df$SYMBOL)
 
-            percentageOfGenesUsed("EMTSign", datasetm, sign_df$SYMBOL)
+            percentageOfGenesUsed(
+                "EMTSign", datasetm, sign_df$SYMBOL, author = author)
 
             datasetm_n <- datasetm[intersect(
                 row.names(datasetm), sign_df$SYMBOL), ]
@@ -142,7 +147,7 @@ pyroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
     } else {
         datasetm_n <- datasetm}
 
-    score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign")
+    score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign", author = author)
 
     return(returnAsInput(
         userdata = dataset, result = score,
@@ -181,7 +186,7 @@ ferroptosisSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq",
         datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
     }
 
-    score <- coeffScore(sign_df, datasetm_n, "ferroptosisSign")
+    score <- coeffScore(sign_df, datasetm_n, "ferroptosisSign", author = author)
 
     if(author == "Liang" ){score <- exp(score)}
 
@@ -267,7 +272,8 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
 
         g <- intersect(row.names(datasetm), sign_df$SYMBOL)
 
-        percentageOfGenesUsed("immunoScoreSign", datasetm, sign_df$SYMBOL)
+        percentageOfGenesUsed(
+            "immunoScoreSign", datasetm, sign_df$SYMBOL, author = author)
 
         if(inputType == "rnaseq"){
             dataset <- dataTransformation(
@@ -286,8 +292,9 @@ immunoScoreSign <- function(dataset, nametype = "SYMBOL", author = "Hao",
     } else if(author == "Roh"){
         datasetm_n <- log2(datasetm+1)
         score <- statScore(
-            ImmunoScore_Roh$SYMBOL, datasetm = datasetm_n, nametype = nametype,
-            typeofstat = "meang", namesignature = "immunoScoreSign")}
+            ImmunoScore_Roh$SYMBOL, datasetm = datasetm_n,
+            nametype = nametype, typeofstat = "meang",
+            namesignature = "immunoScoreSign", author = author)}
 
     return(returnAsInput(userdata = dataset, result = score,
         SignName = paste0("ImmunoScore_", author), datasetm))
@@ -483,13 +490,13 @@ immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray"
         } else {datasetm_n <- datasetm}
         score <- statScore(
             ImmuneCyt_Rooney$SYMBOL, datasetm_n,
-            nametype, "meang", "ImmuneCytSign")
+            nametype, "meang", "ImmuneCytSign", author = author)
     } else if(author == "Davoli") {
         datasetm_n <- datasetm[row.names(datasetm)%in%ImmuneCyt_Davoli$SYMBOL,]
         datasetm_r <- apply(datasetm_n, 1, rank)
         datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
         score <- statScore(ImmuneCyt_Davoli$SYMBOL, t(datasetm_r),
-                           nametype, "meang", "ImmuneCytSign")
+                nametype, "meang", "ImmuneCytSign", author = author)
     }
     return(returnAsInput(userdata = dataset, result = score,
             SignName = paste0("ImmuneCyt_", author), datasetm))
@@ -673,13 +680,13 @@ cellCycleSign <- function(dataset, nametype = "SYMBOL",
         datasetm_n <- if(inputType == "rnaseq") {log2(datasetm + 0.01)
             } else {datasetm}
         score <- statScore(CellCycle_Lundberg$SYMBOL, datasetm_n,
-                            nametype, "sum", "cellCycleSign")
+                nametype, "sum", "cellCycleSign", author = author)
     } else if(author == "Davoli"){
         datasetm_n <- datasetm[row.names(datasetm)%in%CellCycle_Davoli$SYMBOL,]
         datasetm_r <- apply(datasetm_n, 1, rank)
         datasetm_r <- (datasetm_r - 1)/(nrow(datasetm_r) - 1)
-        score <- statScore(CellCycle_Davoli$SYMBOL, t(datasetm_r), nametype,
-                            "meang", "cellCycleSign")}
+        score <- statScore(CellCycle_Davoli$SYMBOL, t(datasetm_r),
+            nametype, "meang", "cellCycleSign", author = author)}
 
     return(returnAsInput(userdata = dataset, result = score,
                          SignName = paste0("CellCycle_", author), datasetm))
@@ -899,7 +906,7 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Zhang"){
     datasetm <- getMatrix(dataset)
     datasetm_n <- log2(datasetm + 0.01)
 
-    score <- coeffScore(sign_df, datasetm_n, "glycolysisSign")
+    score <- coeffScore(sign_df, datasetm_n, "glycolysisSign", author = author)
 
     return(returnAsInput(userdata = dataset, result = score,
         SignName = paste0("Glycolysis_", author), datasetm))
@@ -932,15 +939,17 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
             dataset, datasetm, "FPKM", hgReference, nametype)
         datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
         OSscore <- coeffScore(
-            sign_df[sign_df$class == "OS",], datasetm_n, "autophagySign", "OS")
+            sign_df[sign_df$class == "OS",], datasetm_n,
+            "autophagySign", "OS", author = author)
         DFSscore <- coeffScore(
-            sign_df[sign_df$class == "DFS",], datasetm_n, "autophagySign","DFS")
+            sign_df[sign_df$class == "DFS",], datasetm_n,
+            "autophagySign","DFS", author = author)
         score <- data.frame(OSscore, DFSscore)
         colnames(score) <- c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")
         return(returnAsInput(
             userdata = dataset, result = t(score), SignName = "", datasetm))
     } else {
-        score <- coeffScore(sign_df, datasetm, "autophagySign")
+        score <- coeffScore(sign_df, datasetm, "autophagySign", author = author)
         return(returnAsInput(userdata = dataset, result = score,
         SignName = paste0("Autophagy_", author), datasetm))}
 }

@@ -190,23 +190,10 @@ consistencyCheck <- function(nametype, functionName, author = NULL){
             stop("This author is not present for this signature")}}
 }
 
-coefficientsScore <- function(ourdata, datasetm, nametype, namesignature){
+coeffScore <- function(sdata, datasetm, namesignature,
+                       detail = NULL, author = ""){
 
-    ourdata$Gene_Symbol <- geneIDtrans(nametype, ourdata$Gene_Symbol)
-
-    percentageOfGenesUsed(namesignature, datasetm, ourdata$Gene_Symbol)
-
-    ourdata <- ourdata[ourdata$Gene_Symbol %in% row.names(datasetm), ]
-    columnNA <- managena(datasetm = datasetm, genes = ourdata$Gene_Symbol)
-    score <- colSums(datasetm[ourdata$Gene_Symbol, ] * ourdata$Coefficient,
-                     na.rm = TRUE)
-    score[columnNA > 0.9] <- NA
-    return(score)
-}
-
-coeffScore <- function(sdata, datasetm, namesignature, detail = NULL){
-
-    percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL, detail)
+    percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL, detail, author)
 
     sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
     columnNA <- managena(datasetm = datasetm, genes = sdata$SYMBOL)
@@ -221,11 +208,11 @@ meang <- function(x, na.rm){
 }
 
 statScore <- function(genes, datasetm, nametype, typeofstat = "mean",
-                      namesignature){
+                      namesignature, author = ""){
 
     genes <- geneIDtrans(nametype, genes)
 
-    percentageOfGenesUsed(namesignature, datasetm, genes)
+    percentageOfGenesUsed(namesignature, datasetm, genes, author = author)
 
     genes <- genes[genes %in% row.names(datasetm)]
 
@@ -291,17 +278,19 @@ dataTransformation <- function(dataset, data, trans, hgReference, nametype){
     return(dataset)
 }
 
-percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL){
+percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL,
+                                  author = ""){
 
     g_per <- (sum(gs %in% row.names(datasetm))/length(gs)) * 100
 
     if(is.null(detail)){
-        message(paste0(name, " function is using ", round(g_per), "% of genes"))
+        message(paste0(
+            name, author, " function is using ", round(g_per), "% of genes"))
         if(g_per < 30){
             warning("The signature is computed with less than 30% of its genes")
         }
     } else {
-        message(paste0(name, " function is using ", round(g_per),
+        message(paste0(name, author, " function is using ", round(g_per),
                        "% of ", detail, " genes"))
         if(g_per < 30){
             warning(paste(detail,"is computed with less than 30% of its genes"))

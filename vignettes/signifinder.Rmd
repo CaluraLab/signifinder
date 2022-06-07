@@ -64,7 +64,8 @@ We can check the signatures available in the package with the function available
 availSigns <- availableSignatures()
 ```
 
-The function returns a data.frame with all the signatures included in the package and for each signature the following information:
+The function returns a data.frame with all the signatures included in the package and for each signature the following information:   
+
 * signature: name of the signature
 * scoreLabel: label of the signature when computed and inserted inside results
 * functionName: name of the function to use to compute the signature
