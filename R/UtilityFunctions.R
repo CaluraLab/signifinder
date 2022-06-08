@@ -157,12 +157,12 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
     datasetGenes <- rownames(expr)
     filteredGeneSets <- lapply(gset.idx.list, y = datasetGenes, intersect)
     permutedResults <- parallel::mclapply(seq_len(nperm), function(x){
-        cat("Performing permutation number", x, "\n")
+        message("Performing permutation number", x, "\n")
         permlist <- lapply(seq_len(length(gset.idx.list)), function(i)
             sample(datasetGenes, size = lengths(filteredGeneSets)[i],
                    replace = FALSE))
         args$gset.idx.list <- permlist
-        gsva_matrix <- suppressWarnings(do.call(gsva, args))
+        gsva_matrix <- do.call(gsva, args)
         data.frame(t(gsva_matrix))}, mc.cores = 1)
     permutedResByGeneSet <- split.default(x = Reduce(cbind, permutedResults),
                                           seq_len(length(gset.idx.list)))
@@ -170,7 +170,7 @@ GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args){
         permutedResByGeneSet, function(x)data.frame(t(x)))
     finalRes <- do.call(rbind, lapply(
         seq_len(length(gset.idx.list)), function(i){
-            gspvalues <- sapply(1:ncol(expr), function(j){
+            gspvalues <- sapply(seq_len(ncol(expr)), function(j){
                 (min(c(sum(permutedResByGeneSet[[i]][,j]<=gsvaResult[i,j]),
                        sum(permutedResByGeneSet[[i]][,j]>=gsvaResult[i,j]))
                 )+1)/(nperm+1)})
@@ -251,8 +251,8 @@ dataTransformation <- function(dataset, data, trans, hgReference, nametype){
     exons.db = ensembldb::exonsBy(txdb, by = "gene")
 
     g <- rownames(data)
-    egs <- suppressMessages(mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",
-                                   keytype = nametype, multiVals = "first"))
+    egs <- mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",
+                  keytype = nametype, multiVals = "first")
     data <- data[!is.na(egs),]
     egs <- egs[!is.na(egs)]
 
@@ -284,16 +284,15 @@ percentageOfGenesUsed <- function(name, datasetm, gs, detail = NULL,
     g_per <- (sum(gs %in% row.names(datasetm))/length(gs)) * 100
 
     if(is.null(detail)){
-        message(paste0(
-            name, author, " function is using ", round(g_per), "% of genes"))
+        message(name, author, " function is using ", round(g_per), "% of genes")
         if(g_per < 30){
             warning("The signature is computed with less than 30% of its genes")
         }
     } else {
-        message(paste0(name, author, " function is using ", round(g_per),
-                       "% of ", detail, " genes"))
+        message(name, author, " function is using ", round(g_per),
+                "% of ", detail, " genes")
         if(g_per < 30){
-            warning(paste(detail,"is computed with less than 30% of its genes"))
+            warning(detail,"is computed with less than 30% of its genes")
         }
     }
 }
@@ -304,49 +303,6 @@ geneIDtrans <- function(nametype, genes){
             org.Hs.eg.db::org.Hs.eg.db, keys = genes,
             column = nametype, keytype = "SYMBOL", multiVals = "first")
     } else { genes }
-}
-
-
-#' 7 spots resolution
-#'
-#' Given a 10X Visium dataset, it reassigns to each spot the aggregation of it
-#' with the nearest.
-#'
-#' @param dataset Seurat object of a 10X Visium dataset
-#'
-#' @return NULL
-#'
-#' @importFrom GSVA gsva
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#' @importFrom Matrix Matrix
-#'
-#' @export
-GetAggregatedSpot <- function(dataset){
-    spotcoords <- data.frame(
-        row = as.vector(sapply(seq(0,76,2), function(i) rep(c(i,i+1),64) )),
-        col = rep(seq(0,127),39))
-    overlappingspots <- lapply(1:4992, function(x){
-        a <- unlist(spotcoords[x,1]) ##row
-        b <- unlist(spotcoords[x,2]) ##col
-        data.frame(row = c(a, a-1, a-1, a, a+1, a+1, a),
-                   col = c(b, b-1, b+1, b+2, b+1, b-1, b-2))})
-    counts <- as.matrix(dataset@assays$SCT@data)
-    myrows <- dataset@images$slice1@coordinates$row
-    mycols <- dataset@images$slice1@coordinates$col
-    for(x in seq_len(length(overlappingspots))){
-        ovspots <- overlappingspots[[x]]
-        if(sum(myrows==ovspots[1,"row"] & mycols==ovspots[1,"col"])){
-            ind <- unlist(sapply(1:7, function(i)
-                which(myrows==ovspots[i,"row"] & mycols==ovspots[i,"col"])))
-            if(length(ind)!=1){
-                kcount <- counts[,ind[1]]
-                for(i in 2:length(ind)){kcount <- kcount + counts[,ind[i]]}
-                counts[,ind[1]] <- kcount}}}
-    spcounts <- Matrix(data = counts, sparse = TRUE)
-    dataset@assays$Aggregated
-    ## now how to add counts to the seurat object??
-    return(dataset)
 }
 
 
@@ -374,8 +330,8 @@ availableSignatures <- function(tumor = NULL, tissue = NULL,
     if(!is.null(topic)){
         st <- st[grepl(paste(topic, collapse = "|"), st$topic),]}
     if(!is.null(requiredInput)){
-        st <- st[grepl(paste(requiredInput, collapse = "|"), st$requiredInput),]}
-    if(!description){st <- st[,1:6]}
+        st <- st[grepl(paste(requiredInput, collapse = "|"),st$requiredInput),]}
+    if(!description){st <- st[,-10]}
     return(st)
 }
 

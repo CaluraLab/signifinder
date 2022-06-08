@@ -1,6 +1,7 @@
 #' Table of all available signatures.
 #'
-#' A table containing main information of all the available signatures in the package.
+#' A table containing the main information of all the available
+#' signatures in the package.
 #'
 #' @format A data frame with 18 rows and 6 variables:
 #' \describe{

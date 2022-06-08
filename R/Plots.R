@@ -70,9 +70,8 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
                            col = "red", size = 1.2, linetype = 2) +
                 geom_vline(mapping = aes(xintercept = quantile(signval, 0.75)),
                            col = "red", size = 1.2, linetype = 2)}}
-    g1 <- g1 +
-        annotate("text", label = statistics, x = quantile(signval, 0.10),
-                 y = length(signval), size = 4, colour = "red")
+    g1 <- g1 + annotate("text", label = statistics, x = quantile(signval, 0.10),
+                        y = length(signval), size = 4, colour = "red")
 
     return(g1 + g2)
 }
@@ -143,7 +142,7 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
     } else {htargs$matrix = filtdataset}
 
     if(length(whichSign)!=1){
-        signAnnot <- geneTable$Signature[geneTable$Gene %in% rownames(filtdataset)]
+        signAnnot<-geneTable$Signature[geneTable$Gene%in%rownames(filtdataset)]
         if(splitBySign){
             htargs$row_split = signAnnot
         } else {
@@ -224,7 +223,8 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 
     dots <- list(...)
     htargs <- matchArguments(
-        dots, list(name = "scaled\nscore", show_column_names = FALSE, col = mycol))
+        dots, list(
+            name = "scaled\nscore", show_column_names = FALSE, col = mycol))
 
     if(!is.null(sampleAnnot)){
         if(splitBySampleAnnot){
@@ -235,7 +235,8 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 
     if(is.null(clusterBySign)){
         if(!is.null(signAnnot)){
-            whichRow <- sapply(rownames(data), grep, x = signatureTable$scoreLabel)
+            whichRow <- sapply(
+                rownames(data), grep, x = signatureTable$scoreLabel)
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
             ha = rowAnnotation(df = df)
@@ -247,7 +248,7 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
         fm <- as.matrix(data.frame(data)[n,])
         sm <- as.matrix(data.frame(data)[-n,])
         if(!is.null(signAnnot)){
-            whichRow <- sapply(rownames(sm), grep, x = signatureTable$scoreLabel)
+            whichRow <- sapply(rownames(sm), grep, x=signatureTable$scoreLabel)
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
             ha = rowAnnotation(df = df)
@@ -306,7 +307,8 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL,
             if(!(selectByAnnot %in% sampleAnnot)){
                 stop("selectByAnnot is not present in sampleAnnot")}
         } else {
-            stop("sampleAnnot can be used only if selectByAnnot is also provided")}
+            stop("sampleAnnot can be used only if",
+                 " selectByAnnot is also provided")}
     } else {if(!is.null(selectByAnnot)){
         stop("selectByAnnot can be used only if sampleAnnot is also provided")}}
 
@@ -361,11 +363,13 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
     signatureNameCheck(data, whichSign)
 
     if(ncol(survData)>2){
-        stop("survData should contain only two columns: survival data and status")}
+        stop("survData should contain only two",
+             " columns: survival data and status")}
 
     if(!(is.numeric(cutpoint))){
         if(!(cutpoint %in% c("mean", "median", "optimal"))){
-            stop("Cutpoint must be either a number or one of: mean, median and optimal")}}
+            stop("Cutpoint must be either a number or",
+                 " one of: mean, median and optimal")}}
 
     tmp <- intersect(rownames(colData(data)), rownames(survData))
     tmp <- as.data.frame(cbind(colData(data)[tmp,], survData[tmp,]))
@@ -386,9 +390,9 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
     } else {grp[which(tmp[,whichSign] < cutpoint)] <- "low"}
 
     if((sum(grp=="low")<length(grp)/10) | (sum(grp=="low")>length(grp)*9/10)){
-        warning(paste("groups size is non homogeneous:",
-                      sum(grp=="low"), "low and",
-                      sum(grp=="high"), "high"))}
+        warning("groups size is non homogeneous: ",
+                sum(grp=="low"), " low and ",
+                sum(grp=="high"), " high")}
 
     if(!is.null(sampleAnnot)){
         if(length(sampleAnnot)!=nrow(tmp)){
@@ -397,16 +401,15 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
             if(!(selectByAnnot %in% sampleAnnot)){
                 stop("selectByAnnot is not present in sampleAnnot")}
         } else {
-            stop("sampleAnnot can be used only if selectByAnnot is also provided")}
+            stop("sampleAnnot can be used only if",
+                 " selectByAnnot is also provided")}
     } else {if(!is.null(selectByAnnot)){
         stop("selectByAnnot can be used only if sampleAnnot is also provided")}}
 
     tmp <- cbind(tmp, grp)
     if(!is.null(sampleAnnot)){
         if(!is.null(selectByAnnot)){tmp <- tmp[sampleAnnot==selectByAnnot,]}}
-
     fit <- survival::survfit(survival::Surv(survival, status) ~ grp, data = tmp)
-
     g <- survminer::ggsurvplot(
         fit, data = tmp, risk.table = TRUE, legend.title = whichSign,
         palette = c("red", "blue"), ggtheme = ggplot2::theme_gray(15),

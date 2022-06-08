@@ -19,7 +19,8 @@ where rows correspond to genes and columns correspond to samples.}
 
 \item{hgReference}{Human reference genome: "hg19" or "hg38"}
 
-\item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}} function.}
+\item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
+function.}
 }
 \value{
 A SummarizedExperiment object in which the passON score

@@ -145,7 +145,7 @@ geneHeatmapSignPlot(data = OVse,
 geneHeatmapSignPlot(data = OVse, 
                     whichSign = c("IFN_Ayers", "ExpandedImmune_Ayers"), 
                     logCount = TRUE,
-                    splitBySign = T)
+                    splitBySign = TRUE)
 ```
 
 ### Correlation
@@ -186,7 +186,7 @@ We can test the survival association of the signature with the function survival
 
 ```{r}
 mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
-rownames(mysurvData) <- OVse@colData@rownames
+rownames(mysurvData) <- rownames(colData(OVse))
 ```
 
 ```{r}

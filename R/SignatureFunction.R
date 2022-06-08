@@ -17,12 +17,14 @@
 #' @param author first author of the specific signature publication.
 #' @param pvalues logical. It allows to compute p-values by permutations.
 #' @param nperm number of permutations.
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' function.
 #'
 #' @return A SummarizedExperiment object in which the Epithelial and Mesenchymal
 #' scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
+#' @importFrom stats prcomp
 #'
 #' @export
 EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
@@ -53,7 +55,7 @@ EMTSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
         args <- matchArguments(dots, list(
             expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
             kcdf = kcdftype, ssgsea.norm = FALSE, verbose = FALSE))
-        gsva_matrix <- suppressWarnings(do.call(gsva, args))
+        gsva_matrix <- do.call(gsva, args)
 
         if(pvalues){
             gsva_pval <- GSVAPvalues(expr = datasetm, gset.idx.list = gene_sets,
@@ -375,9 +377,10 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
 
     percentageOfGenesUsed("IPSSign", datasetm, sign_df$SYMBOL)
 
-    MISSING_GENES <- sign_df$SYMBOL[is.na(match(sign_df$SYMBOL,rownames(datasetm)))]
+    MISSING_GENES <- sign_df$SYMBOL[
+        is.na(match(sign_df$SYMBOL,rownames(datasetm)))]
     if (length(MISSING_GENES)>0) {
-        cat("Differently named or missing genes: ", MISSING_GENES, "\n")}
+        message("Differently named or missing genes: ", MISSING_GENES, "\n")}
 
     dataset <- dataTransformation(
         dataset, datasetm, "TPM", hgReference, nametype)
@@ -385,7 +388,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19"){
     datasetm_n <- datasetm_n[rownames(datasetm_n) %in% sign_df$SYMBOL,]
 
     IPS <- NULL; MHC <- NULL; CP <- NULL; EC <- NULL; SC <- NULL; AZ <- NULL
-    for (i in 1:length(sample_names)) {
+    for (i in seq_len(length(sample_names))) {
         GE <- datasetm_n[,i]
         Z1 <- (datasetm_n[match(
             sign_df$SYMBOL, row.names(datasetm_n)),i]-mean(GE))/sd(GE)
@@ -476,8 +479,8 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @export
-immuneCytSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray",
-            author = "Rooney", hgReference = "hg19"){
+immuneCytSign <- function(dataset, nametype = "SYMBOL",
+    inputType = "microarray", author = "Rooney", hgReference = "hg19"){
 
     consistencyCheck(nametype, "immuneCytSign", author)
 
@@ -701,6 +704,8 @@ cellCycleSign <- function(dataset, nametype = "SYMBOL",
 #' @return A SummarizedExperiment object in which the score will be
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @importFrom stats prcomp
+#'
 #' @export
 chemokineSign <- function(dataset, nametype = "SYMBOL",
                           inputType = "microarray"){
@@ -763,13 +768,15 @@ ASCSign <- function(dataset, nametype= "SYMBOL"){
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
 #' @param hgReference Human reference genome: "hg19" or "hg38"
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' function.
 #'
 #' @return A SummarizedExperiment object in which the passON score
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
 #' @importFrom SummarizedExperiment assays
+#' @importFrom stats weighted.mean
 #'
 #' @export
 PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
@@ -793,7 +800,7 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
         expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
         kcdf = "Poisson", ssgsea.norm = TRUE, verbose = FALSE))
 
-    gsva_matrix <- suppressWarnings(do.call(gsva, args))
+    gsva_matrix <- do.call(gsva, args)
 
     gsva_mean <- sapply(seq_len(ncol(gsva_matrix)), function(x) {
         weighted.mean(gsva_matrix[,x], lengths(sign_list))
@@ -808,7 +815,8 @@ PassONSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...){
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
 #' @param hgReference Human reference genome: "hg19" or "hg38"
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' function.
 #'
 #' @return A SummarizedExperiment object in which the passON score
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -838,7 +846,7 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
         expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
         kcdf = "Gaussian", ssgsea.norm = TRUE, verbose = FALSE))
 
-    gsva_matrix <- suppressWarnings(do.call(gsva, args))
+    gsva_matrix <- do.call(gsva, args)
 
     score <- rowMeans(sapply(as.data.frame(t(gsva_matrix)), scale))
 
@@ -853,6 +861,8 @@ IPRESSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg19", ...) {
 #'
 #' @return A SummarizedExperiment object in which the CIS score
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom matrixStats rowMedians
 #'
 #' @export
 CISSign <- function(dataset, nametype = "SYMBOL"){
@@ -884,7 +894,8 @@ CISSign <- function(dataset, nametype = "SYMBOL"){
     score <- score_up - score_down
 
     return(returnAsInput(
-        userdata = dataset, result = score, SignName = "CIS_Robertson", datasetm))
+        userdata = dataset, result = score,
+        SignName = "CIS_Robertson", datasetm))
 }
 
 #' Glycolysis Signature
@@ -958,7 +969,8 @@ autophagySign <- function(dataset, nametype = "SYMBOL", author = "Xu",
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}} function.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' function.
 #'
 #' @return A SummarizedExperiment object in which the ECM scores
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -991,7 +1003,7 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
         expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
         kcdf = "Poisson", ssgsea.norm = FALSE, verbose = FALSE))
 
-    gsva_count <- suppressWarnings(do.call(gsva, args))
+    gsva_count <- do.call(gsva, args)
 
     if(pvalues){
         gsva_pval <- GSVAPvalues(
@@ -1011,6 +1023,9 @@ ECMSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @return A SummarizedExperiment object in which the HRDS scores is
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#'
+#' @importFrom matrixStats rowMedians
+#' @importFrom stats t.test
 #'
 #' @export
 HRDSSign <- function(dataset, nametype = "SYMBOL"){
@@ -1167,7 +1182,7 @@ IPSOVSign <- function(dataset, nametype = "SYMBOL", pvalues = FALSE,
     #     expr = datasetm_n, gset.idx.list = sign_list,
     #     method = "ssgsea", kcdf = "Poisson",
     #     ssgsea.norm = FALSE, verbose = FALSE))
-    # gsva_matrix <- suppressWarnings(do.call(gsva, args))
+    # gsva_matrix <- do.call(gsva, args)
     #
     # sign_class <- unique(sign_df[,2:3])
     # score <- coeffScore(sign_class, gsva_matrix, "IPSOVSign")
