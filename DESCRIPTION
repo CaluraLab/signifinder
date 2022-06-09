@@ -15,13 +15,12 @@ License: AGPL-3
 Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, dplyr, 
         ggplot2, ggridges, grid, GSVA, IRanges, magrittr, matrixStats, maxstat, 
         org.Hs.eg.db, openair, patchwork, stats, SummarizedExperiment, 
-        survminer, survival, knitr, rmarkdown
+        survminer, survival
 Encoding: UTF-8
 RoxygenNote: 7.2.0
 Depends: R (>= 4.2.0)
 LazyData: true
-Suggests: BiocStyle,
-    testthat (>= 3.0.0)
+Suggests: BiocStyle, knitr, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 biocViews: GeneExpression
