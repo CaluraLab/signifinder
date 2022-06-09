@@ -46,3 +46,12 @@ It creates survival curves from either a formula (e.g. the
 Kaplan-Meier), a previously fitted Cox model, or a previously fitted
 accelerated failure time model.
 }
+\examples{
+mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
+rownames(mysurvData) <- rownames(colData(sub_OVse))
+OVse <- ferroptosisSign(dataset = sub_OVse)
+survivalSignPlot(data = OVse,
+                 survData = mysurvData,
+                 whichSign = "Ferroptosis_Ye")
+
+}

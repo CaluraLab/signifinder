@@ -3,7 +3,7 @@ Type: Package
 Title: A collection of signatures
 Version: 0.1.0
 Authors@R: c(person("Stefania", "Pirrotta", role = c("cre", "aut"),
-                    email = "stefania.pirrotta@phd.unipd.it"),
+                    email = "stefania.pirrotta@studenti.unipd.it"),
              person("Enrica", "Calura", role = "aut", 
                     email = "enrica.calura@unipd.it"))
 Description: signifinder is an R package for computing and exploring a 
@@ -12,12 +12,11 @@ Description: signifinder is an R package for computing and exploring a
             single-sample score. Currently, signifinder contains 46 distinct 
             signatures collected from the literature.
 License: AGPL-3
-Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, dplyr, ggplot2, 
-        ggridges, grid, GSVA, IRanges, magrittr, 
-        matrixStats, maxstat, org.Hs.eg.db, openair, patchwork, stats, 
-        SummarizedExperiment, survminer, survival, viridis, knitr, rmarkdown
+Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, dplyr, 
+        ggplot2, ggridges, grid, GSVA, IRanges, magrittr, matrixStats, maxstat, 
+        org.Hs.eg.db, openair, patchwork, stats, SummarizedExperiment, 
+        survminer, survival, viridis, knitr, rmarkdown
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.2.0
 Depends: R (>= 4.2.0)
 Suggests: BiocStyle,

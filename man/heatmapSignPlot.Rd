@@ -43,3 +43,8 @@ Given a matrix of multiple signatures, the function gives the opportunity to
 observe the trend of the signature's scores for each samples. Moreover it
 gives the possibility to order all the matrix based on a single signature.
 }
+\examples{
+OVse <- ferroptosisSign(dataset = sub_OVse)
+heatmapSignPlot(data = OVse)
+
+}

@@ -48,3 +48,8 @@ are added in the \code{\link[SummarizedExperiment]{colData}} section.
 This function computes all the signatures for a specific
 'requiredInput' and for a specific 'tissue' and/or 'topic'.
 }
+\examples{
+multipleSign(dataset = sub_OVse)
+multipleSign(dataset = sub_OVse, tissue = "ovary")
+
+}

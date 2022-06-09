@@ -30,3 +30,8 @@ A \code{\link[ggplot2]{ggplot}} object.
 The function calculates densities from the point data mapped onto the x axis,
 arranging multiple density plots of the Signatures' scores.
 }
+\examples{
+OVse <- ferroptosisSign(dataset = sub_OVse)
+ridgelineSignPlot(data = OVse)
+
+}

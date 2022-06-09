@@ -319,6 +319,9 @@ geneIDtrans <- function(nametype, genes){
 #'
 #' @return a data frame
 #'
+#' @examples
+#' availableSignatures()
+#'
 #' @export
 availableSignatures <- function(tumor = NULL, tissue = NULL,
             topic = NULL, requiredInput = NULL, description = TRUE){
@@ -361,6 +364,10 @@ availableSignatures <- function(tumor = NULL, tissue = NULL,
 #' @return A SummarizedExperiment object in which the signatures' scores
 #' are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+#' @examples
+#' multipleSign(dataset = sub_OVse)
+#' multipleSign(dataset = sub_OVse, tissue = "ovary")
+#'
 #' @export
 multipleSign <- function(dataset, nametype = "SYMBOL",
                          inputType = "rnaseq", whichSign = NULL,
@@ -391,5 +398,4 @@ multipleSign <- function(dataset, nametype = "SYMBOL",
     }
     return(dataset)
 }
-
 

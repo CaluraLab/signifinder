@@ -29,3 +29,8 @@ A correlation ellipse graph.
 Given a matrix of multiple signatures, the function gives the opportunity to
 observe signatures correlates between each other.
 }
+\examples{
+OVse <- ferroptosisSign(dataset = sub_OVse)
+correlationSignPlot(data = OVse)
+
+}

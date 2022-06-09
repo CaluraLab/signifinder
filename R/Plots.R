@@ -17,6 +17,10 @@
 #' @importFrom SummarizedExperiment colData
 #' @importFrom stats median quantile
 #'
+#' @examples
+#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' oneSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
+#'
 #' @export
 oneSignPlot <- function(data, whichSign, statistics = NULL){
 
@@ -104,6 +108,10 @@ oneSignPlot <- function(data, whichSign, statistics = NULL){
 #' @importFrom dplyr group_by summarise_all
 #' @importFrom SummarizedExperiment colData
 #'
+#' @examples
+#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' geneHeatmapSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
+#'
 #' @export
 geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
                                 splitBySign = FALSE, sampleAnnot = NULL,
@@ -190,6 +198,10 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
 #'
 #' @importFrom ComplexHeatmap Heatmap '%v%'
 #' @importFrom SummarizedExperiment colData
+#'
+#' @examples
+#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' heatmapSignPlot(data = OVse)
 #'
 #' @export
 heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
@@ -282,6 +294,10 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 #' @importFrom openair corPlot
 #' @importFrom SummarizedExperiment colData
 #'
+#' @examples
+#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' correlationSignPlot(data = OVse)
+#'
 #' @export
 correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL,
                                 selectByAnnot = NULL){
@@ -353,6 +369,14 @@ correlationSignPlot <- function(data, whichSign = NULL, sampleAnnot = NULL,
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom stats median
+#'
+#' @examples
+#' mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
+#' rownames(mysurvData) <- rownames(colData(sub_OVse))
+#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' survivalSignPlot(data = OVse,
+#'                  survData = mysurvData,
+#'                  whichSign = "Ferroptosis_Ye")
 #'
 #' @export
 survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
@@ -438,6 +462,10 @@ survivalSignPlot <- function(data, survData, whichSign, cutpoint = "mean",
 #' @importFrom ggridges geom_density_ridges geom_density_ridges_gradient
 #' @importFrom SummarizedExperiment colData
 #'
+#' @examples
+#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' ridgelineSignPlot(data = OVse)
+#'
 #' @export
 ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
                               selectByAnnot = NULL, ...){
@@ -475,7 +503,7 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
         groupByAnnot <- groupByAnnot[groupByAnnot %in% selectByAnnot]}
 
     tmp1 <- do.call(rbind, lapply(seq_len(ncol(tmp)), function(x){
-        data.frame(score=tmp[,x], signature=colnames(tmp[x]),
+        data.frame(sign_score=tmp[,x], signature=colnames(tmp[x]),
                    row.names = NULL)}))
 
     dots <- list(...)
@@ -483,12 +511,12 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
         dots, list(alpha = 0.5, bandwidth = 0.05, scale = 1))
 
     if(is.null(groupByAnnot)){
-        g <- ggplot(tmp1, aes(x=score, y=signature, fill=stat(x))) +
+        g <- ggplot(tmp1, aes(x=sign_score, y=signature, fill=stat(x))) +
             do.call(geom_density_ridges_gradient, ridgeargs) +
             scale_fill_viridis_c(name = "score", option = "A")
     } else {
         ridgeargs$mapping = aes(fill = rep(groupByAnnot, n))
-        g <- ggplot(tmp1, aes(x=score, y=signature)) +
+        g <- ggplot(tmp1, aes(x=sign_score, y=signature)) +
             do.call(geom_density_ridges, ridgeargs) +
             scale_fill_discrete(name = "Group")
     }

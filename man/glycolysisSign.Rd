@@ -28,3 +28,7 @@ This signature is computed accordingly to the reference paper,
 to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
+\examples{
+glycolysisSign(dataset = sub_OVse)
+
+}

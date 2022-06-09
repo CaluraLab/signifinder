@@ -22,3 +22,8 @@ A \code{\link[ggplot2]{ggplot}} object.
 Given signatures' scores it returns a scatterplot of patients scores and a
 barplot of the density distributions of patients scores.
 }
+\examples{
+OVse <- ferroptosisSign(dataset = sub_OVse)
+oneSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
+
+}

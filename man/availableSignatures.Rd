@@ -30,3 +30,7 @@ a data frame
 It shows a table containing all the information of the signatures collected
 in the package.
 }
+\examples{
+availableSignatures()
+
+}
