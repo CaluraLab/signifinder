@@ -19,6 +19,7 @@ Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, dplyr,
 Encoding: UTF-8
 RoxygenNote: 7.2.0
 Depends: R (>= 4.2.0)
+LazyData: true
 Suggests: BiocStyle,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

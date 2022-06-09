@@ -41,8 +41,10 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
     g1 <- ggplot() +
         geom_point(mapping = aes(signval, seq_along(signval)), size = 1) +
         labs(x = whichSign, y = "Index") +
-        theme(panel.background = element_blank(),
-              axis.line = element_line(colour = "grey50"))
+        theme(
+            panel.background = element_blank(),
+            axis.line = element_line(colour = "grey50")
+        )
     g2 <- ggplot() +
         geom_histogram(
             mapping = aes(signval, ..density..),
@@ -51,8 +53,10 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
         ) +
         geom_density(mapping = aes(signval), size = 1.5) +
         labs(x = whichSign, y = "Density") +
-        theme(panel.background = element_blank(),
-              axis.line = element_line(colour = "grey50"))
+        theme(
+            panel.background = element_blank(),
+            axis.line = element_line(colour = "grey50")
+        )
 
     if (!is.null(statistics)) {
         if (statistics == "mean") {
@@ -69,8 +73,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
                     size = 1.2,
                     linetype = 2
                 )
-        }
-        else if (statistics == "median") {
+        } else if (statistics == "median") {
             g1 <- g1 + geom_vline(
                 mapping = aes(xintercept = median(signval)),
                 col = "red",
@@ -84,8 +87,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
                     size = 1.2,
                     linetype = 2
                 )
-        }
-        else if (statistics == "quantiles") {
+        } else if (statistics == "quantiles") {
             g1 <- g1 +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.25)),
@@ -196,8 +198,9 @@ geneHeatmapSignPlot <- function(data,
     signval <- colData(data)[, whichSign]
     if (length(whichSign) == 1) {
         signval <- matrix(signval,
-                          nrow = 1,
-                          dimnames = list(whichSign, colnames(dataset)))
+            nrow = 1,
+            dimnames = list(whichSign, colnames(dataset))
+        )
     } else {
         signval <- sapply(signval, range01)
         signval <- as.matrix(t(signval))
@@ -205,11 +208,12 @@ geneHeatmapSignPlot <- function(data,
 
     geneTable <-
         as.data.frame(do.call(rbind, lapply(whichSign, GetGenes))) %>%
-        group_by(Gene) %>% summarise_all(paste, collapse = ",")
+        group_by(Gene) %>%
+        summarise_all(paste, collapse = ",")
     signatureGenes <- geneTable$Gene
 
     filtdataset <-
-        as.matrix(dataset[row.names(dataset) %in% signatureGenes,])
+        as.matrix(dataset[row.names(dataset) %in% signatureGenes, ])
 
     dots <- list(...)
     htargs <- matchArguments(
@@ -319,8 +323,10 @@ heatmapSignPlot <-
             }
         } else {
             if (splitBySampleAnnot) {
-                stop("splitBySampleAnnot can be TRUE only",
-                    " if sampleAnnot is provided")
+                stop(
+                    "splitBySampleAnnot can be TRUE only",
+                    " if sampleAnnot is provided"
+                )
             }
         }
 
@@ -341,12 +347,14 @@ heatmapSignPlot <-
         data <- as.matrix(t(data))
 
         dots <- list(...)
-        htargs <- matchArguments(dots,
-                                 list(
-                                     name = "scaled\nscore",
-                                     show_column_names = FALSE,
-                                     col = mycol
-                                 ))
+        htargs <- matchArguments(
+            dots,
+            list(
+                name = "scaled\nscore",
+                show_column_names = FALSE,
+                col = mycol
+            )
+        )
 
         if (!is.null(sampleAnnot)) {
             if (splitBySampleAnnot) {
@@ -360,7 +368,9 @@ heatmapSignPlot <-
         if (is.null(clusterBySign)) {
             if (!is.null(signAnnot)) {
                 whichRow <- sapply(
-                    rownames(data), grep, x = signatureTable$scoreLabel)
+                    rownames(data), grep,
+                    x = signatureTable$scoreLabel
+                )
                 df <- as.data.frame(signatureTable[whichRow, signAnnot])
                 colnames(df) <- signAnnot
                 ha <- rowAnnotation(df = df)
@@ -374,7 +384,9 @@ heatmapSignPlot <-
             sm <- as.matrix(data.frame(data)[-n, ])
             if (!is.null(signAnnot)) {
                 whichRow <- sapply(
-                    rownames(sm), grep, x = signatureTable$scoreLabel)
+                    rownames(sm), grep,
+                    x = signatureTable$scoreLabel
+                )
                 df <- as.data.frame(signatureTable[whichRow, signAnnot])
                 colnames(df) <- signAnnot
                 ha <- rowAnnotation(df = df)
@@ -434,8 +446,10 @@ correlationSignPlot <-
             if (is.null(whichSign)) {
                 signs <- intersect(SignatureNames, colnames(tmp))
             } else {
-                signs <- Reduce(intersect,
-                                list(whichSign, SignatureNames, colnames(tmp)))
+                signs <- Reduce(
+                    intersect,
+                    list(whichSign, SignatureNames, colnames(tmp))
+                )
             }
         } else {
             stop("There are no signatures in data")
@@ -452,13 +466,17 @@ correlationSignPlot <-
                     stop("selectByAnnot is not present in sampleAnnot")
                 }
             } else {
-                stop("sampleAnnot can be used only if",
-                     " selectByAnnot is also provided")
+                stop(
+                    "sampleAnnot can be used only if",
+                    " selectByAnnot is also provided"
+                )
             }
         } else {
             if (!is.null(selectByAnnot)) {
-                stop("selectByAnnot can be used only",
-                    " if sampleAnnot is also provided")
+                stop(
+                    "selectByAnnot can be used only",
+                    " if sampleAnnot is also provided"
+                )
             }
         }
 
@@ -516,9 +534,11 @@ correlationSignPlot <-
 #' mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
 #' rownames(mysurvData) <- rownames(colData(sub_OVse))
 #' OVse <- ferroptosisSign(dataset = sub_OVse)
-#' survivalSignPlot(data = OVse,
-#'                  survData = mysurvData,
-#'                  whichSign = "Ferroptosis_Ye")
+#' survivalSignPlot(
+#'     data = OVse,
+#'     survData = mysurvData,
+#'     whichSign = "Ferroptosis_Ye"
+#' )
 #'
 #' @export
 survivalSignPlot <-
@@ -534,21 +554,25 @@ survivalSignPlot <-
         signatureNameCheck(data, whichSign)
 
         if (ncol(survData) > 2) {
-            stop("survData should contain only two",
-                 " columns: survival data and status")
+            stop(
+                "survData should contain only two",
+                " columns: survival data and status"
+            )
         }
 
         if (!(is.numeric(cutpoint))) {
             if (!(cutpoint %in% c("mean", "median", "optimal"))) {
-                stop("Cutpoint must be either a number or",
-                     " one of: mean, median and optimal")
+                stop(
+                    "Cutpoint must be either a number or",
+                    " one of: mean, median and optimal"
+                )
             }
         }
 
         tmp <- intersect(rownames(colData(data)), rownames(survData))
         tmp <- as.data.frame(cbind(colData(data)[tmp, ], survData[tmp, ]))
 
-        grp  <- rep("high", nrow(tmp))
+        grp <- rep("high", nrow(tmp))
         names(grp) <- rownames(tmp)
         n <- ncol(tmp)
         colnames(tmp)[c(n - 1, n)] <- c("survival", "status")
@@ -588,13 +612,17 @@ survivalSignPlot <-
                     stop("selectByAnnot is not present in sampleAnnot")
                 }
             } else {
-                stop("sampleAnnot can be used only if",
-                     " selectByAnnot is also provided")
+                stop(
+                    "sampleAnnot can be used only if",
+                    " selectByAnnot is also provided"
+                )
             }
         } else {
             if (!is.null(selectByAnnot)) {
-                stop("selectByAnnot can be used only",
-                    " if sampleAnnot is also provided")
+                stop(
+                    "selectByAnnot can be used only",
+                    " if sampleAnnot is also provided"
+                )
             }
         }
 
@@ -605,7 +633,10 @@ survivalSignPlot <-
             }
         }
         fit <-
-            survival::survfit(survival::Surv(survival, status) ~ grp, data = tmp)
+            survival::survfit(
+                survival::Surv(survival, status) ~ grp,
+                data = tmp
+            )
         g <- survminer::ggsurvplot(
             fit,
             data = tmp,
@@ -666,8 +697,10 @@ ridgelineSignPlot <-
             if (is.null(whichSign)) {
                 signs <- intersect(SignatureNames, colnames(tmp))
             } else {
-                signs <- Reduce(intersect,
-                                list(whichSign, SignatureNames, colnames(tmp)))
+                signs <- Reduce(
+                    intersect,
+                    list(whichSign, SignatureNames, colnames(tmp))
+                )
             }
         } else {
             stop("There are no signatures in data")
@@ -688,8 +721,10 @@ ridgelineSignPlot <-
             }
         } else {
             if (!is.null(selectByAnnot)) {
-                stop("selectByAnnot can be used only",
-                    " if groupByAnnot is also provided")
+                stop(
+                    "selectByAnnot can be used only",
+                    " if groupByAnnot is also provided"
+                )
             }
         }
 

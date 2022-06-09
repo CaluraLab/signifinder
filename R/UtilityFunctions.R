@@ -191,9 +191,11 @@ getMatrix <- function(userdata) {
             } else {
                 userdata <- as.matrix(userdata@assays$SCT@data)
             }
-        } else if (class(userdata) %in% c("SpatialExperiment",
-                                          "SummarizedExperiment",
-                                          "SingleCellExperiment")) {
+        } else if (class(userdata) %in% c(
+            "SpatialExperiment",
+            "SummarizedExperiment",
+            "SingleCellExperiment"
+        )) {
             userdata <- as.matrix(SummarizedExperiment::assay(userdata))
         } else if (is.data.frame(userdata)) {
             userdata <- as.matrix(userdata)
@@ -215,9 +217,11 @@ returnAsInput <- function(userdata, result, SignName, datasetm) {
             } else {
                 userdata@meta.data <- cbind(userdata@meta.data, t(result))
             }
-        } else if (class(userdata) %in% c("SpatialExperiment",
-                                          "SummarizedExperiment",
-                                          "SingleCellExperiment")) {
+        } else if (class(userdata) %in% c(
+            "SpatialExperiment",
+            "SummarizedExperiment",
+            "SingleCellExperiment"
+        )) {
             names <- c(colnames(userdata@colData), SignName)
             if (is.vector(result)) {
                 userdata@colData <- cbind(userdata@colData, name = result)
@@ -238,7 +242,8 @@ returnAsInput <- function(userdata, result, SignName, datasetm) {
         } else {
             result <- SummarizedExperiment::SummarizedExperiment(
                 assays = list(norm_expr = datasetm),
-                colData = t(result))
+                colData = t(result)
+            )
         }
         return(result)
     }
@@ -271,31 +276,36 @@ GSVAPvalues <-
             parallel::mclapply(seq_len(nperm), function(x) {
                 message("Performing permutation number", x, "\n")
                 permlist <-
-                    lapply(seq_len(length(gset.idx.list)), function(i)
+                    lapply(seq_len(length(gset.idx.list)), function(i) {
                         sample(
                             datasetGenes,
                             size = lengths(filteredGeneSets)[i],
                             replace = FALSE
-                        ))
+                        )
+                    })
                 args$gset.idx.list <- permlist
                 gsva_matrix <- do.call(gsva, args)
                 data.frame(t(gsva_matrix))
             }, mc.cores = 1)
         permutedResByGeneSet <-
-            split.default(x = Reduce(cbind, permutedResults),
-                          seq_len(length(gset.idx.list)))
-        permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x)
-            data.frame(t(x)))
+            split.default(
+                x = Reduce(cbind, permutedResults),
+                seq_len(length(gset.idx.list))
+            )
+        permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x) {
+            data.frame(t(x))
+        })
         finalRes <- do.call(
             rbind, lapply(seq_len(length(gset.idx.list)), function(i) {
-            gspvalues <- sapply(seq_len(ncol(expr)), function(j) {
-                (min(c(
-                    sum(permutedResByGeneSet[[i]][, j] <= gsvaResult[i, j]),
-                    sum(permutedResByGeneSet[[i]][, j] >= gsvaResult[i, j])
-                )) + 1) / (nperm + 1)
+                gspvalues <- sapply(seq_len(ncol(expr)), function(j) {
+                    (min(c(
+                        sum(permutedResByGeneSet[[i]][, j] <= gsvaResult[i, j]),
+                        sum(permutedResByGeneSet[[i]][, j] >= gsvaResult[i, j])
+                    )) + 1) / (nperm + 1)
+                })
+                gspvalues
             })
-            gspvalues
-        }))
+        )
         colnames(finalRes) <- colnames(expr)
         rownames(finalRes) <-
             paste(names(gset.idx.list), "pval", sep = "_")
@@ -310,7 +320,8 @@ consistencyCheck <- function(nametype, functionName, author = NULL) {
     if (!is.null(author)) {
         if (!(
             author %in% signatureTable$author[
-                signatureTable$functionName == functionName])) {
+                signatureTable$functionName == functionName
+            ])) {
             stop("This author is not present for this signature")
         }
     }
@@ -323,10 +334,10 @@ coeffScore <- function(sdata,
                        author = "") {
     percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL, detail, author)
 
-    sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm),]
+    sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
     columnNA <- managena(datasetm = datasetm, genes = sdata$SYMBOL)
     score <-
-        colSums(datasetm[sdata$SYMBOL,] * sdata$coeff, na.rm = TRUE)
+        colSums(datasetm[sdata$SYMBOL, ] * sdata$coeff, na.rm = TRUE)
     score[columnNA > 0.9] <- NA
 
     return(score)
@@ -351,15 +362,17 @@ statScore <-
 
         columnNA <- managena(datasetm = datasetm, genes = genes)
         score <-
-            apply(datasetm[intersect(row.names(datasetm), genes),],
-                  2, typeofstat, na.rm = TRUE)
+            apply(datasetm[intersect(row.names(datasetm), genes), ],
+                2, typeofstat,
+                na.rm = TRUE
+            )
         score[columnNA > 0.9] <- NA
 
         return(score)
     }
 
 managena <- function(datasetm, genes) {
-    datasetm <- datasetm[row.names(datasetm) %in% genes,]
+    datasetm <- datasetm[row.names(datasetm) %in% genes, ]
     columnNA <-
         (length(genes) - colSums(!is.na(datasetm))) / length(genes)
     if (sum(columnNA > 0.9) > 0) {
@@ -379,9 +392,11 @@ dataTransformation <-
              trans,
              hgReference,
              nametype) {
-        if (class(dataset)[1] %in% c("SpatialExperiment",
-                                     "SummarizedExperiment",
-                                     "SingleCellExperiment")) {
+        if (class(dataset)[1] %in% c(
+            "SpatialExperiment",
+            "SummarizedExperiment",
+            "SingleCellExperiment"
+        )) {
             if (trans %in% names(SummarizedExperiment::assays(dataset))) {
                 return(dataset)
             }
@@ -420,15 +435,21 @@ dataTransformation <-
         glen <- sapply(names(egs), function(eg) {
             sum(BiocGenerics::width(IRanges::reduce(exons_g[[eg]])))
         })
-        tdata <- DGEobj.utils::convertCounts(countsMatrix = data,
-                                             unit = trans,
-                                             geneLength = glen)
+        tdata <- DGEobj.utils::convertCounts(
+            countsMatrix = data,
+            unit = trans,
+            geneLength = glen
+        )
 
-        if (class(dataset)[1] %in% c("SpatialExperiment",
-                                     "SummarizedExperiment",
-                                     "SingleCellExperiment")) {
+        if (class(dataset)[1] %in% c(
+            "SpatialExperiment",
+            "SummarizedExperiment",
+            "SingleCellExperiment"
+        )) {
             SummarizedExperiment::assays(
-                dataset, withDimnames = FALSE)[[trans]] <- tdata
+                dataset,
+                withDimnames = FALSE
+            )[[trans]] <- tdata
         } else if (is.matrix(dataset) | is.data.frame(dataset)) {
             assays <- list(data, tdata)
             names(assays) <- c("norm_expr", trans)
@@ -447,22 +468,26 @@ percentageOfGenesUsed <- function(name,
     g_per <- (sum(gs %in% row.names(datasetm)) / length(gs)) * 100
 
     if (is.null(detail)) {
-        message(name,
-                author,
-                " function is using ",
-                round(g_per),
-                "% of genes")
+        message(
+            name,
+            author,
+            " function is using ",
+            round(g_per),
+            "% of genes"
+        )
         if (g_per < 30) {
             warning("The signature is computed with less than 30% of its genes")
         }
     } else {
-        message(name,
-                author,
-                " function is using ",
-                round(g_per),
-                "% of ",
-                detail,
-                " genes")
+        message(
+            name,
+            author,
+            " function is using ",
+            round(g_per),
+            "% of ",
+            detail,
+            " genes"
+        )
         if (g_per < 30) {
             warning(detail, "is computed with less than 30% of its genes")
         }
