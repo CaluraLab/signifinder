@@ -248,7 +248,7 @@ dataTransformation <- function(dataset, data, trans, hgReference, nametype){
         txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
     } else {stop("Human reference genome must be either hg19 or hg38")}
 
-    exons.db = ensembldb::exonsBy(txdb, by = "gene")
+    exons.db <- ensembldb::exonsBy(txdb, by = "gene")
 
     g <- rownames(data)
     egs <- mapIds(org.Hs.eg.db, keys = g, column = "ENTREZID",

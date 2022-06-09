@@ -146,25 +146,25 @@ geneHeatmapSignPlot <- function(data, whichSign, logCount = FALSE,
         name = "gene\nexpression", show_column_names = FALSE, col = mycol,
         row_names_gp = grid::gpar(fontsize = 6)))
 
-    if(logCount){htargs$matrix = log2(filtdataset+1)
-    } else {htargs$matrix = filtdataset}
+    if(logCount){htargs$matrix <- log2(filtdataset+1)
+    } else {htargs$matrix <- filtdataset}
 
     if(length(whichSign)!=1){
         signAnnot<-geneTable$Signature[geneTable$Gene%in%rownames(filtdataset)]
         if(splitBySign){
-            htargs$row_split = signAnnot
+            htargs$row_split <- signAnnot
         } else {
             ha <- rowAnnotation(signature = signAnnot)
-            htargs$right_annotation = ha}}
+            htargs$right_annotation <- ha}}
 
     if(splitBySampleAnnot & is.character(sampleAnnot)){
-        htargs$column_split = sampleAnnot
+        htargs$column_split <- sampleAnnot
         ht <- Heatmap(signval, name = "score", col = mycol1,
                       column_split = sampleAnnot)
     } else {
         if(!is.null(sampleAnnot)){
-            hatop = HeatmapAnnotation(sampleAnnot = sampleAnnot)
-            htargs$top_annotation = hatop}
+            hatop <- HeatmapAnnotation(sampleAnnot = sampleAnnot)
+            htargs$top_annotation <- hatop}
         ht <- Heatmap(signval, name = "score", col = mycol1)}
 
     ht2 <- do.call(Heatmap, htargs)
@@ -240,10 +240,10 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
 
     if(!is.null(sampleAnnot)){
         if(splitBySampleAnnot){
-            htargs$column_split = sampleAnnot
+            htargs$column_split <- sampleAnnot
         } else {
-            hatop = HeatmapAnnotation(sampleAnnot = sampleAnnot)
-            htargs$top_annotation = hatop}}
+            hatop <- HeatmapAnnotation(sampleAnnot = sampleAnnot)
+            htargs$top_annotation <- hatop}}
 
     if(is.null(clusterBySign)){
         if(!is.null(signAnnot)){
@@ -251,9 +251,9 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
                 rownames(data), grep, x = signatureTable$scoreLabel)
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
-            ha = rowAnnotation(df = df)
-            htargs$right_annotation = ha}
-        htargs$matrix = data
+            ha <- rowAnnotation(df = df)
+            htargs$right_annotation <- ha}
+        htargs$matrix <- data
         g <- do.call(Heatmap, htargs)
     } else {
         n <- which(rownames(data) %in% clusterBySign)
@@ -263,9 +263,9 @@ heatmapSignPlot <- function(data, whichSign = NULL, clusterBySign = NULL,
             whichRow <- sapply(rownames(sm), grep, x=signatureTable$scoreLabel)
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
-            ha = rowAnnotation(df = df)
-            htargs$right_annotation = ha}
-        htargs$matrix = sm
+            ha <- rowAnnotation(df = df)
+            htargs$right_annotation <- ha}
+        htargs$matrix <- sm
         if(splitBySampleAnnot){
             ht <- Heatmap(fm, name = "clustered\nscore", col = mycol1,
                           column_split = sampleAnnot)
@@ -515,7 +515,7 @@ ridgelineSignPlot <- function(data, whichSign = NULL, groupByAnnot = NULL,
             do.call(geom_density_ridges_gradient, ridgeargs) +
             scale_fill_viridis_c(name = "score", option = "A")
     } else {
-        ridgeargs$mapping = aes(fill = rep(groupByAnnot, n))
+        ridgeargs$mapping <- aes(fill = rep(groupByAnnot, n))
         g <- ggplot(tmp1, aes(x=sign_score, y=signature)) +
             do.call(geom_density_ridges, ridgeargs) +
             scale_fill_discrete(name = "Group")
