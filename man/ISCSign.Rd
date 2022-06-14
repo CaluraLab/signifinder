@@ -29,6 +29,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-ISCSign(dataset = sub_OVse, inputType = "rnaseq")
+ISCSign(dataset = subovse, inputType = "rnaseq")
 
 }

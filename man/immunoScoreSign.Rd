@@ -39,6 +39,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-immunoScoreSign(dataset = sub_OVse)
+immunoScoreSign(dataset = subovse)
 
 }

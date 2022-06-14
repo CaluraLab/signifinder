@@ -46,6 +46,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-EMTSign(dataset = sub_OVse, inputType = "rnaseq")
+EMTSign(dataset = subovse, inputType = "rnaseq")
 
 }

@@ -28,7 +28,7 @@
 #' @importFrom stats prcomp
 #'
 #' @examples
-#' EMTSign(dataset = sub_OVse, inputType = "rnaseq")
+#' EMTSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 EMTSign <-
@@ -171,7 +171,7 @@ EMTSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' pyroptosisSign(dataset = sub_OVse)
+#' pyroptosisSign(dataset = subovse)
 #'
 #' @export
 pyroptosisSign <-
@@ -179,7 +179,7 @@ pyroptosisSign <-
              nametype = "SYMBOL",
              inputType = "rnaseq",
              author = "Ye",
-             hgReference = "hg19") {
+             hgReference = "hg38") {
         consistencyCheck(nametype, "pyroptosisSign", author)
 
         sign_df <- get(paste0("Pyroptosis_", author))
@@ -235,7 +235,7 @@ pyroptosisSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' ferroptosisSign(dataset = sub_OVse)
+#' ferroptosisSign(dataset = subovse)
 #'
 #' @export
 ferroptosisSign <-
@@ -243,7 +243,7 @@ ferroptosisSign <-
              nametype = "SYMBOL",
              inputType = "rnaseq",
              author = "Ye",
-             hgReference = "hg19") {
+             hgReference = "hg38") {
         consistencyCheck(nametype, "ferroptosisSign", author)
 
         sign_df <- get(paste0("Ferroptosis_", author))
@@ -287,7 +287,7 @@ ferroptosisSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' lipidMetabolismSign(dataset = sub_OVse)
+#' lipidMetabolismSign(dataset = subovse)
 #'
 #' @export
 lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
@@ -322,7 +322,7 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' @import org.Hs.eg.db
 #'
 #' @examples
-#' hypoxiaSign(dataset = sub_OVse, inputType = "rnaseq")
+#' hypoxiaSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 hypoxiaSign <-
@@ -370,7 +370,7 @@ hypoxiaSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' immunoScoreSign(dataset = sub_OVse)
+#' immunoScoreSign(dataset = subovse)
 #'
 #' @export
 immunoScoreSign <-
@@ -378,7 +378,7 @@ immunoScoreSign <-
              nametype = "SYMBOL",
              author = "Hao",
              inputType = "rnaseq",
-             hgReference = "hg19") {
+             hgReference = "hg38") {
         consistencyCheck(nametype, "immunoScoreSign", author)
 
         datasetm <- getMatrix(dataset)
@@ -451,7 +451,7 @@ immunoScoreSign <-
 #' @import org.Hs.eg.db
 #'
 #' @examples
-#' consensusOVSign(dataset = sub_OVse)
+#' consensusOVSign(dataset = subovse)
 #'
 #' @export
 consensusOVSign <- function(dataset,
@@ -514,13 +514,13 @@ consensusOVSign <- function(dataset,
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' IPSSign(dataset = sub_OVse)
+#' IPSSign(dataset = subovse)
 #'
 #' @export
 IPSSign <-
     function(dataset,
              nametype = "SYMBOL",
-             hgReference = "hg19") {
+             hgReference = "hg38") {
         ## code adapted from https://github.com/icbi-lab/Immunophenogram
 
         consistencyCheck(nametype, "IPSSign")
@@ -623,7 +623,7 @@ IPSSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' matrisomeSign(dataset = sub_OVse)
+#' matrisomeSign(dataset = subovse)
 #'
 #' @export
 matrisomeSign <- function(dataset, nametype = "SYMBOL") {
@@ -659,7 +659,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' mitoticIndexSign(dataset = sub_OVse)
+#' mitoticIndexSign(dataset = subovse)
 #'
 #' @export
 mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
@@ -698,14 +698,14 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' immuneCytSign(dataset = sub_OVse, inputType = "rnaseq")
+#' immuneCytSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 immuneCytSign <- function(dataset,
                           nametype = "SYMBOL",
                           inputType = "microarray",
                           author = "Rooney",
-                          hgReference = "hg19") {
+                          hgReference = "hg38") {
     consistencyCheck(nametype, "immuneCytSign", author)
 
     datasetm <- getMatrix(dataset)
@@ -758,7 +758,7 @@ immuneCytSign <- function(dataset,
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' IFNSign(dataset = sub_OVse)
+#' IFNSign(dataset = subovse)
 #'
 #' @export
 IFNSign <- function(dataset, nametype = "SYMBOL") {
@@ -789,7 +789,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' expandedImmuneSign(dataset = sub_OVse)
+#' expandedImmuneSign(dataset = subovse)
 #'
 #' @export
 expandedImmuneSign <- function(dataset, nametype = "SYMBOL") {
@@ -825,7 +825,7 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' TinflamSign(dataset = sub_OVse)
+#' TinflamSign(dataset = subovse)
 #'
 #' @export
 TinflamSign <- function(dataset, nametype = "SYMBOL") {
@@ -871,7 +871,7 @@ TinflamSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' TLSSign(dataset = sub_OVse)
+#' TLSSign(dataset = subovse)
 #'
 #' @export
 TLSSign <- function(dataset, nametype = "SYMBOL") {
@@ -903,7 +903,7 @@ TLSSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' stemCellCD49fSign(dataset = sub_OVse)
+#' stemCellCD49fSign(dataset = subovse)
 #'
 #' @export
 stemCellCD49fSign <- function(dataset, nametype = "SYMBOL") {
@@ -937,7 +937,7 @@ stemCellCD49fSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' CINSign(dataset = sub_OVse, inputType = "rnaseq")
+#' CINSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 CINSign <-
@@ -985,7 +985,7 @@ CINSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' cellCycleSign(dataset = sub_OVse, inputType = "rnaseq")
+#' cellCycleSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 cellCycleSign <- function(dataset,
@@ -1045,7 +1045,7 @@ cellCycleSign <- function(dataset,
 #' @importFrom stats prcomp
 #'
 #' @examples
-#' chemokineSign(dataset = sub_OVse, inputType = "rnaseq")
+#' chemokineSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 chemokineSign <- function(dataset,
@@ -1091,7 +1091,7 @@ chemokineSign <- function(dataset,
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' ASCSign(dataset = sub_OVse)
+#' ASCSign(dataset = subovse)
 #'
 #' @export
 ASCSign <- function(dataset, nametype = "SYMBOL") {
@@ -1140,13 +1140,13 @@ ASCSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom stats weighted.mean
 #'
 #' @examples
-#' PassONSign(dataset = sub_OVse)
+#' PassONSign(dataset = subovse)
 #'
 #' @export
 PassONSign <-
     function(dataset,
              nametype = "SYMBOL",
-             hgReference = "hg19",
+             hgReference = "hg38",
              ...) {
         consistencyCheck(nametype, "PassONSign")
 
@@ -1207,13 +1207,13 @@ PassONSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' IPRESSign(dataset = sub_OVse)
+#' IPRESSign(dataset = subovse)
 #'
 #' @export
 IPRESSign <-
     function(dataset,
              nametype = "SYMBOL",
-             hgReference = "hg19",
+             hgReference = "hg38",
              ...) {
         consistencyCheck(nametype, "IPRESSign")
 
@@ -1268,7 +1268,7 @@ IPRESSign <-
 #' @importFrom matrixStats rowMedians
 #'
 #' @examples
-#' CISSign(dataset = sub_OVse)
+#' CISSign(dataset = subovse)
 #'
 #' @export
 CISSign <- function(dataset, nametype = "SYMBOL") {
@@ -1295,8 +1295,10 @@ CISSign <- function(dataset, nametype = "SYMBOL") {
         datasetm[intersect(row.names(datasetm), sign_df$SYMBOL), ]
     datasetm_n <-
         log2(datasetm_n + 0.01) - log2(rowMedians(datasetm_n) + 0.01)
-    score_up <- colMeans(datasetm_n[sign_up$SYMBOL, ])
-    score_down <- colMeans(datasetm_n[sign_down$SYMBOL, ])
+    score_up <- colMeans(
+        datasetm_n[intersect(row.names(datasetm_n), sign_up$SYMBOL), ])
+    score_down <- colMeans(
+        datasetm_n[intersect(row.names(datasetm_n), sign_down$SYMBOL), ])
 
     score <- score_up - score_down
 
@@ -1319,7 +1321,7 @@ CISSign <- function(dataset, nametype = "SYMBOL") {
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' glycolysisSign(dataset = sub_OVse)
+#' glycolysisSign(dataset = subovse)
 #'
 #' @export
 glycolysisSign <-
@@ -1357,14 +1359,14 @@ glycolysisSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' autophagySign(dataset = sub_OVse)
+#' autophagySign(dataset = subovse)
 #'
 #' @export
 autophagySign <-
     function(dataset,
              nametype = "SYMBOL",
              author = "Xu",
-             hgReference = "hg19") {
+             hgReference = "hg38") {
         consistencyCheck(nametype, "autophagySign", author)
 
         sign_df <- get(paste0("Autophagy_", author))
@@ -1419,7 +1421,7 @@ autophagySign <-
 #' @importFrom GSVA gsva
 #'
 #' @examples
-#' ECMSign(dataset = sub_OVse)
+#' ECMSign(dataset = subovse)
 #'
 #' @export
 ECMSign <- function(dataset,
@@ -1493,7 +1495,7 @@ ECMSign <- function(dataset,
 #' @importFrom stats t.test
 #'
 #' @examples
-#' HRDSSign(dataset = sub_OVse)
+#' HRDSSign(dataset = subovse)
 #'
 #' @export
 HRDSSign <- function(dataset, nametype = "SYMBOL") {
@@ -1539,7 +1541,7 @@ HRDSSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' ISCSign(dataset = sub_OVse, inputType = "rnaseq")
+#' ISCSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 ISCSign <-
@@ -1599,7 +1601,7 @@ ISCSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' VEGFSign(dataset = sub_OVse)
+#' VEGFSign(dataset = subovse)
 #'
 #' @export
 VEGFSign <- function(dataset, nametype = "SYMBOL") {
@@ -1631,7 +1633,7 @@ VEGFSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' DNArepSign(dataset = sub_OVse, inputType = "rnaseq")
+#' DNArepSign(dataset = subovse, inputType = "rnaseq")
 #'
 #' @export
 DNArepSign <-
@@ -1688,7 +1690,7 @@ DNArepSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' IPSOVSign(dataset = sub_OVse)
+#' IPSOVSign(dataset = subovse)
 #'
 #' @export
 IPSOVSign <- function(dataset,

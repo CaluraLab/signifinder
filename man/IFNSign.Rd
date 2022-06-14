@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-IFNSign(dataset = sub_OVse)
+IFNSign(dataset = subovse)
 
 }

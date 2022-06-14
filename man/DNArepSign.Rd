@@ -29,6 +29,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-DNArepSign(dataset = sub_OVse, inputType = "rnaseq")
+DNArepSign(dataset = subovse, inputType = "rnaseq")
 
 }

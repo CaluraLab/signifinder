@@ -61,9 +61,12 @@ SignatureNames <- c(
     "IPSOV"
 )
 
+#' @importFrom viridis magma viridis
 mycol <- c("#FCFDD4", rev(viridis::magma(10)))
 mycol1 <- rev(viridis::viridis(10))
+
 my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
+
 my_colors <- colorRampPalette(my_colors)(100)
 
 GetGenes <- function(name) {
@@ -166,6 +169,7 @@ range01 <- function(x) {
     (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
 
+#' @importFrom SummarizedExperiment colData
 signatureNameCheck <- function(data, sName) {
     if (!all(sName %in% SignatureNames)) {
         stop(paste(
@@ -173,7 +177,7 @@ signatureNameCheck <- function(data, sName) {
             paste(SignatureNames, collapse = ", ")
         ))
     }
-    if (!all(sName %in% colnames(SummarizedExperiment::colData(data)))) {
+    if (!all(sName %in% colnames(colData(data)))) {
         stop("signature names must be in data")
     }
 }
@@ -183,6 +187,8 @@ matchArguments <- function(dots, defaults) {
     c(defaults, dots)
 }
 
+#' @importFrom SummarizedExperiment assay
+#' @importFrom methods is
 getMatrix <- function(userdata) {
     if (!is.matrix(userdata)) {
         if (is(userdata, "Seurat")) {
@@ -196,7 +202,7 @@ getMatrix <- function(userdata) {
             "SummarizedExperiment",
             "SingleCellExperiment"
         )) {
-            userdata <- as.matrix(SummarizedExperiment::assay(userdata))
+            userdata <- as.matrix(assay(userdata))
         } else if (is.data.frame(userdata)) {
             userdata <- as.matrix(userdata)
         } else {
@@ -206,6 +212,7 @@ getMatrix <- function(userdata) {
     return(userdata)
 }
 
+#' @importFrom SummarizedExperiment SummarizedExperiment colData
 returnAsInput <- function(userdata, result, SignName, datasetm) {
     if (!is.matrix(userdata) & !is.data.frame(userdata)) {
         if (is(userdata, "Seurat")) {
@@ -233,14 +240,13 @@ returnAsInput <- function(userdata, result, SignName, datasetm) {
         return(userdata)
     } else if (is.matrix(userdata) | is.data.frame(userdata)) {
         if (is.vector(result)) {
-            result <- SummarizedExperiment::SummarizedExperiment(
+            result <- SummarizedExperiment(
                 assays = list(norm_expr = datasetm),
                 colData = data.frame(name = result)
             )
-            colnames(SummarizedExperiment::colData(result)) <-
-                SignName
+            colnames(colData(result)) <- SignName
         } else {
-            result <- SummarizedExperiment::SummarizedExperiment(
+            result <- SummarizedExperiment(
                 assays = list(norm_expr = datasetm),
                 colData = t(result)
             )
@@ -263,6 +269,7 @@ ipsmap <- function(x) {
     }
 }
 
+#' @importFrom parallel mclapply
 GSVAPvalues <-
     function(expr,
              gset.idx.list,
@@ -273,7 +280,7 @@ GSVAPvalues <-
         filteredGeneSets <-
             lapply(gset.idx.list, y = datasetGenes, intersect)
         permutedResults <-
-            parallel::mclapply(seq_len(nperm), function(x) {
+            mclapply(seq_len(nperm), function(x) {
                 message("Performing permutation number", x, "\n")
                 permlist <-
                     lapply(seq_len(length(gset.idx.list)), function(i) {
@@ -386,6 +393,13 @@ managena <- function(datasetm, genes) {
     return(columnNA)
 }
 
+#' @importFrom SummarizedExperiment assays SummarizedExperiment assays<-
+#' @import TxDb.Hsapiens.UCSC.hg19.knownGene
+#' @import TxDb.Hsapiens.UCSC.hg38.knownGene
+#' @importFrom ensembldb exonsBy
+#' @importFrom BiocGenerics width
+#' @importFrom IRanges reduce
+#' @importFrom DGEobj.utils convertCounts
 dataTransformation <-
     function(dataset,
              data,
@@ -397,22 +411,20 @@ dataTransformation <-
             "SummarizedExperiment",
             "SingleCellExperiment"
         )) {
-            if (trans %in% names(SummarizedExperiment::assays(dataset))) {
+            if (trans %in% names(assays(dataset))) {
                 return(dataset)
             }
         }
 
         if (hgReference == "hg19") {
-            txdb <-
-                TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+            txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
         } else if (hgReference == "hg38") {
-            txdb <-
-                TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
+            txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
         } else {
             stop("Human reference genome must be either hg19 or hg38")
         }
 
-        exons.db <- ensembldb::exonsBy(txdb, by = "gene")
+        exons.db <- exonsBy(txdb, by = "gene")
 
         g <- rownames(data)
         egs <- mapIds(
@@ -433,9 +445,9 @@ dataTransformation <-
         egs <- egs[!sapply(exons_g, is.null)]
         exons_g <- exons_g[!sapply(exons_g, is.null)]
         glen <- sapply(names(egs), function(eg) {
-            sum(BiocGenerics::width(IRanges::reduce(exons_g[[eg]])))
+            sum(width(reduce(exons_g[[eg]])))
         })
-        tdata <- DGEobj.utils::convertCounts(
+        tdata <- convertCounts(
             countsMatrix = data,
             unit = trans,
             geneLength = glen
@@ -446,7 +458,7 @@ dataTransformation <-
             "SummarizedExperiment",
             "SingleCellExperiment"
         )) {
-            SummarizedExperiment::assays(
+            assays(
                 dataset,
                 withDimnames = FALSE
             )[[trans]] <- tdata
@@ -454,7 +466,7 @@ dataTransformation <-
             assays <- list(data, tdata)
             names(assays) <- c("norm_expr", trans)
             dataset <-
-                SummarizedExperiment::SummarizedExperiment(assays = assays)
+                SummarizedExperiment(assays = assays)
         }
 
         return(dataset)
@@ -489,15 +501,17 @@ percentageOfGenesUsed <- function(name,
             " genes"
         )
         if (g_per < 30) {
-            warning(detail, "is computed with less than 30% of its genes")
+            warning(detail, " is computed with less than 30% of its genes")
         }
     }
 }
 
+#' @import org.Hs.eg.db
+#' @importFrom AnnotationDbi mapIds
 geneIDtrans <- function(nametype, genes) {
     if (nametype != "SYMBOL") {
-        AnnotationDbi::mapIds(
-            org.Hs.eg.db::org.Hs.eg.db,
+        mapIds(
+            org.Hs.eg.db,
             keys = genes,
             column = nametype,
             keytype = "SYMBOL",
@@ -520,7 +534,20 @@ geneIDtrans <- function(nametype, genes) {
 #' @param requiredInput type of data required: microarray or rnaseq
 #' @param description whether to show or not the signature description
 #'
-#' @return a data frame
+#' @return A data frame with 46 rows and 10 variables:
+#' \describe{
+#'   \item{signature}{name of the signature}
+#'   \item{scoreLabel}{label of the signature when added inside results}
+#'   \item{functionName}{name of the function to use to compute the signature}
+#'   \item{topic}{main cancer topic of the signature}
+#'   \item{tumor}{tumor type for which the signature was developed}
+#'   \item{tissue}{tumor tissue for which the signature was developed}
+#'   \item{requiredInput}{tumor data with which the signature was developed}
+#'   \item{author}{first author of the work in which the signature is described}
+#'   \item{reference}{reference of the work}
+#'   \item{description}{signature description and how to evaluate its score}
+#'   ...
+#' }
 #'
 #' @examples
 #' availableSignatures()
@@ -578,8 +605,8 @@ availableSignatures <- function(tumor = NULL,
 #' are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' multipleSign(dataset = sub_OVse)
-#' multipleSign(dataset = sub_OVse, tissue = "ovary")
+#' multipleSign(dataset = subovse)
+#' multipleSign(dataset = subovse, tissue = "ovary")
 #'
 #' @export
 multipleSign <- function(dataset,

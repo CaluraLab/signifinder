@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-VEGFSign(dataset = sub_OVse)
+VEGFSign(dataset = subovse)
 
 }

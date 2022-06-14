@@ -34,6 +34,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-IPSOVSign(dataset = sub_OVse)
+IPSOVSign(dataset = subovse)
 
 }

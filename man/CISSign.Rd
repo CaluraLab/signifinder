@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-CISSign(dataset = sub_OVse)
+CISSign(dataset = subovse)
 
 }

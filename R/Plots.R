@@ -19,11 +19,14 @@
 #' @importFrom stats median quantile
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' OVse <- ferroptosisSign(dataset = subovse)
 #' oneSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
 oneSignPlot <- function(data, whichSign, statistics = NULL) {
+
+    ..density.. <- NULL
+
     if (length(whichSign) > 1) {
         stop("you must provide only one signature for this plot")
     }
@@ -168,9 +171,10 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' @importFrom magrittr '%>%'
 #' @importFrom dplyr group_by summarise_all
 #' @importFrom SummarizedExperiment colData
+#' @importFrom grid gpar
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' OVse <- ferroptosisSign(dataset = subovse)
 #' geneHeatmapSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
@@ -191,7 +195,8 @@ geneHeatmapSignPlot <- function(data,
         }
     } else {
         if (splitBySampleAnnot) {
-            stop("splitBySampleAnnot can be TRUE only if sampleAnnot is provided")
+            stop("splitBySampleAnnot can be TRUE",
+                 " only if sampleAnnot is provided")
         }
     }
 
@@ -222,7 +227,7 @@ geneHeatmapSignPlot <- function(data,
             name = "gene\nexpression",
             show_column_names = FALSE,
             col = mycol,
-            row_names_gp = grid::gpar(fontsize = 6)
+            row_names_gp = gpar(fontsize = 6)
         )
     )
 
@@ -292,7 +297,7 @@ geneHeatmapSignPlot <- function(data,
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' OVse <- ferroptosisSign(dataset = subovse)
 #' heatmapSignPlot(data = OVse)
 #'
 #' @export
@@ -427,7 +432,7 @@ heatmapSignPlot <-
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' OVse <- ferroptosisSign(dataset = subovse)
 #' correlationSignPlot(data = OVse)
 #'
 #' @export
@@ -529,11 +534,15 @@ correlationSignPlot <-
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom stats median
+#' @importFrom maxstat maxstat.test
+#' @importFrom survival Surv survfit
+#' @importFrom survminer ggsurvplot
+#' @importFrom ggplot2 theme_gray
 #'
 #' @examples
-#' mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
-#' rownames(mysurvData) <- rownames(colData(sub_OVse))
-#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' mysurvData <- cbind(subovse$os, subovse$status)
+#' rownames(mysurvData) <- rownames(colData(subovse))
+#' OVse <- ferroptosisSign(dataset = subovse)
 #' survivalSignPlot(
 #'     data = OVse,
 #'     survData = mysurvData,
@@ -581,8 +590,8 @@ survivalSignPlot <-
         } else if (cutpoint == "median") {
             grp[which(tmp[, whichSign] < median(tmp[, whichSign]))] <- "low"
         } else if (cutpoint == "optimal") {
-            optval <- maxstat::maxstat.test(
-                survival::Surv(survival, status) ~ tmp[, whichSign],
+            optval <- maxstat.test(
+                Surv(survival, status) ~ tmp[, whichSign],
                 data = tmp,
                 smethod = "LogRank",
                 pmethod = "Lau94"
@@ -633,17 +642,17 @@ survivalSignPlot <-
             }
         }
         fit <-
-            survival::survfit(
-                survival::Surv(survival, status) ~ grp,
+            survfit(
+                Surv(survival, status) ~ grp,
                 data = tmp
             )
-        g <- survminer::ggsurvplot(
+        g <- ggsurvplot(
             fit,
             data = tmp,
             risk.table = TRUE,
             legend.title = whichSign,
             palette = c("red", "blue"),
-            ggtheme = ggplot2::theme_gray(15),
+            ggtheme = theme_gray(15),
             font.legend = 15,
             font.tickslab = 15,
             font.x = 15,
@@ -669,6 +678,9 @@ survivalSignPlot <-
 #' @param groupByAnnot  A categorical variable containing samples annotations.
 #' @param selectByAnnot A character indicating the group/s defined in
 #' `groupByAnnot` to show in the plot.
+#' @param ... Other parameters specific of the functions
+#' \code{\link[ggridges]{geom_density_ridges}} and
+#' \code{\link[ggridges]{geom_density_ridges_gradient}}.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -677,7 +689,7 @@ survivalSignPlot <-
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = sub_OVse)
+#' OVse <- ferroptosisSign(dataset = subovse)
 #' ridgelineSignPlot(data = OVse)
 #'
 #' @export

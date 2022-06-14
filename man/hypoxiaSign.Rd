@@ -29,6 +29,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-hypoxiaSign(dataset = sub_OVse, inputType = "rnaseq")
+hypoxiaSign(dataset = subovse, inputType = "rnaseq")
 
 }

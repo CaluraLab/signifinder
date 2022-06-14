@@ -34,6 +34,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-ECMSign(dataset = sub_OVse)
+ECMSign(dataset = subovse)
 
 }

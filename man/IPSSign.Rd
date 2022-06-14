@@ -30,6 +30,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-IPSSign(dataset = sub_OVse)
+IPSSign(dataset = subovse)
 
 }

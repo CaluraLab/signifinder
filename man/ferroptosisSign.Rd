@@ -39,6 +39,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-ferroptosisSign(dataset = sub_OVse)
+ferroptosisSign(dataset = subovse)
 
 }

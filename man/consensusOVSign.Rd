@@ -32,6 +32,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-consensusOVSign(dataset = sub_OVse)
+consensusOVSign(dataset = subovse)
 
 }

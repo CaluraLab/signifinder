@@ -47,9 +47,9 @@ Kaplan-Meier), a previously fitted Cox model, or a previously fitted
 accelerated failure time model.
 }
 \examples{
-mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
-rownames(mysurvData) <- rownames(colData(sub_OVse))
-OVse <- ferroptosisSign(dataset = sub_OVse)
+mysurvData <- cbind(subovse$os, subovse$status)
+rownames(mysurvData) <- rownames(colData(subovse))
+OVse <- ferroptosisSign(dataset = subovse)
 survivalSignPlot(
     data = OVse,
     survData = mysurvData,

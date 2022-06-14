@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-matrisomeSign(dataset = sub_OVse)
+matrisomeSign(dataset = subovse)
 
 }
