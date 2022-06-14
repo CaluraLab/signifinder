@@ -9,7 +9,7 @@ ferroptosisSign(
   nametype = "SYMBOL",
   inputType = "rnaseq",
   author = "Ye",
-  hgReference = "hg19"
+  hgReference = "hg38"
 )
 }
 \arguments{

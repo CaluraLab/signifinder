@@ -9,7 +9,7 @@ immunoScoreSign(
   nametype = "SYMBOL",
   author = "Hao",
   inputType = "rnaseq",
-  hgReference = "hg19"
+  hgReference = "hg38"
 )
 }
 \arguments{

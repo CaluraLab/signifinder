@@ -4,7 +4,7 @@
 \alias{IPRESSign}
 \title{IPRES Signature}
 \usage{
-IPRESSign(dataset, nametype = "SYMBOL", hgReference = "hg19", ...)
+IPRESSign(dataset, nametype = "SYMBOL", hgReference = "hg38", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows

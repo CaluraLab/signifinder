@@ -24,7 +24,20 @@ availableSignatures(
 \item{description}{whether to show or not the signature description}
 }
 \value{
-a data frame
+A data frame with 46 rows and 10 variables:
+\describe{
+  \item{signature}{name of the signature}
+  \item{scoreLabel}{label of the signature when added inside results}
+  \item{functionName}{name of the function to use to compute the signature}
+  \item{topic}{main cancer topic of the signature}
+  \item{tumor}{tumor type for which the signature was developed}
+  \item{tissue}{tumor tissue for which the signature was developed}
+  \item{requiredInput}{tumor data with which the signature was developed}
+  \item{author}{first author of the work in which the signature is described}
+  \item{reference}{reference of the work}
+  \item{description}{signature description and how to evaluate its score}
+  ...
+}
 }
 \description{
 It shows a table containing all the information of the signatures collected

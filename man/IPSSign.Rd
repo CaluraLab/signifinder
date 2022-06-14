@@ -4,7 +4,7 @@
 \alias{IPSSign}
 \title{ImmunoPhenoScore Signature}
 \usage{
-IPSSign(dataset, nametype = "SYMBOL", hgReference = "hg19")
+IPSSign(dataset, nametype = "SYMBOL", hgReference = "hg38")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows

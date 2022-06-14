@@ -22,6 +22,10 @@ signatures functions.}
 
 \item{selectByAnnot}{A character indicating the group/s defined in
 `groupByAnnot` to show in the plot.}
+
+\item{...}{Other parameters specific of the functions
+\code{\link[ggridges]{geom_density_ridges}} and
+\code{\link[ggridges]{geom_density_ridges_gradient}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

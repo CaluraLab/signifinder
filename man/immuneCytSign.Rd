@@ -9,7 +9,7 @@ immuneCytSign(
   nametype = "SYMBOL",
   inputType = "microarray",
   author = "Rooney",
-  hgReference = "hg19"
+  hgReference = "hg38"
 )
 }
 \arguments{

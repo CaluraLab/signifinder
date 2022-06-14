@@ -8,7 +8,7 @@ autophagySign(
   dataset,
   nametype = "SYMBOL",
   author = "Xu",
-  hgReference = "hg19"
+  hgReference = "hg38"
 )
 }
 \arguments{

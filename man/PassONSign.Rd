@@ -4,7 +4,7 @@
 \alias{PassONSign}
 \title{passON Signature}
 \usage{
-PassONSign(dataset, nametype = "SYMBOL", hgReference = "hg19", ...)
+PassONSign(dataset, nametype = "SYMBOL", hgReference = "hg38", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows

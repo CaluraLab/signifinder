@@ -50,8 +50,10 @@ accelerated failure time model.
 mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
 rownames(mysurvData) <- rownames(colData(sub_OVse))
 OVse <- ferroptosisSign(dataset = sub_OVse)
-survivalSignPlot(data = OVse,
-                 survData = mysurvData,
-                 whichSign = "Ferroptosis_Ye")
+survivalSignPlot(
+    data = OVse,
+    survData = mysurvData,
+    whichSign = "Ferroptosis_Ye"
+)
 
 }
