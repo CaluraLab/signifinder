@@ -15,13 +15,13 @@ License: AGPL-3
 Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics, 
     ComplexHeatmap, DGEobj.utils, GSVA, IRanges, SummarizedExperiment, 
     consensusOV, dplyr, ensembldb, ggridges, grid, magrittr, matrixStats, 
-    maxstat, openair, parallel, stats, survival, survminer, viridis
+    maxstat, methods, openair, parallel, TxDb.Hsapiens.UCSC.hg19.knownGene, 
+    TxDb.Hsapiens.UCSC.hg38.knownGene, stats, survival, survminer, viridis
 Encoding: UTF-8
 RoxygenNote: 7.2.0
 Depends: R (>= 4.2.0)
 LazyData: true
-Suggests: BiocStyle, knitr, testthat (>= 3.0.0), edgeR, limma,
-    TxDb.Hsapiens.UCSC.hg19.knownGene, TxDb.Hsapiens.UCSC.hg38.knownGene
+Suggests: BiocStyle, knitr, testthat (>= 3.0.0), edgeR, limma
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 biocViews: GeneExpression

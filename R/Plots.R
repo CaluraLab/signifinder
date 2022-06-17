@@ -211,6 +211,7 @@ geneHeatmapSignPlot <- function(data,
         signval <- as.matrix(t(signval))
     }
 
+    Gene <- NULL
     geneTable <-
         as.data.frame(do.call(rbind, lapply(whichSign, GetGenes))) %>%
         group_by(Gene) %>%
@@ -298,6 +299,7 @@ geneHeatmapSignPlot <- function(data,
 #'
 #' @examples
 #' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- pyroptosisSign(dataset = OVse)
 #' heatmapSignPlot(data = OVse)
 #'
 #' @export
@@ -433,6 +435,7 @@ heatmapSignPlot <-
 #'
 #' @examples
 #' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- pyroptosisSign(dataset = OVse)
 #' correlationSignPlot(data = OVse)
 #'
 #' @export
@@ -541,7 +544,7 @@ correlationSignPlot <-
 #'
 #' @examples
 #' mysurvData <- cbind(subovse$os, subovse$status)
-#' rownames(mysurvData) <- rownames(colData(subovse))
+#' rownames(mysurvData) <- rownames(SummarizedExperiment::colData(subovse))
 #' OVse <- ferroptosisSign(dataset = subovse)
 #' survivalSignPlot(
 #'     data = OVse,
@@ -754,7 +757,7 @@ ridgelineSignPlot <-
 
         tmp1 <- do.call(rbind, lapply(seq_len(ncol(tmp)), function(x) {
             data.frame(
-                sign_score = tmp[, x],
+                score = tmp[, x],
                 signature = colnames(tmp[x]),
                 row.names = NULL
             )
@@ -768,16 +771,17 @@ ridgelineSignPlot <-
         ))
 
         if (is.null(groupByAnnot)) {
+            x <- NULL
             g <- ggplot(tmp1, aes(
-                x = sign_score,
-                y = signature,
+                x = tmp1$score,
+                y = tmp1$signature,
                 fill = stat(x)
             )) +
                 do.call(geom_density_ridges_gradient, ridgeargs) +
                 scale_fill_viridis_c(name = "score", option = "A")
         } else {
             ridgeargs$mapping <- aes(fill = rep(groupByAnnot, n))
-            g <- ggplot(tmp1, aes(x = sign_score, y = signature)) +
+            g <- ggplot(tmp1, aes(x = tmp1$score, y = tmp1$signature)) +
                 do.call(geom_density_ridges, ridgeargs) +
                 scale_fill_discrete(name = "Group")
         }

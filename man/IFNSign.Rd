@@ -2,7 +2,7 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{IFNSign}
 \alias{IFNSign}
-\title{IFN-γ Signature}
+\title{IFN-gamma Signature}
 \usage{
 IFNSign(dataset, nametype = "SYMBOL")
 }

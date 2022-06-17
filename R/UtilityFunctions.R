@@ -212,7 +212,7 @@ getMatrix <- function(userdata) {
     return(userdata)
 }
 
-#' @importFrom SummarizedExperiment SummarizedExperiment colData
+#' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
 returnAsInput <- function(userdata, result, SignName, datasetm) {
     if (!is.matrix(userdata) & !is.data.frame(userdata)) {
         if (is(userdata, "Seurat")) {

@@ -48,7 +48,7 @@ accelerated failure time model.
 }
 \examples{
 mysurvData <- cbind(subovse$os, subovse$status)
-rownames(mysurvData) <- rownames(colData(subovse))
+rownames(mysurvData) <- rownames(SummarizedExperiment::colData(subovse))
 OVse <- ferroptosisSign(dataset = subovse)
 survivalSignPlot(
     data = OVse,

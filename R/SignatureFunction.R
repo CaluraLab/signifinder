@@ -749,7 +749,7 @@ immuneCytSign <- function(dataset,
 }
 
 
-#' IFN-γ Signature
+#' IFN-gamma Signature
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
