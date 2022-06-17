@@ -52,10 +52,10 @@ In this vignettes, we use the OVse dataset. That is a subset of the ovarian canc
 
 ```{r, message=FALSE}
 # loading packages
-library(MultiAssayExperiment)
+library(SummarizedExperiment)
 library(signifinder)
 
-sub_OVse
+subovse
 ```
 
 We can check the signatures available in the package with the function availableSignatures().
@@ -93,14 +93,14 @@ knitr::kable(ovary_signatures,
 Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in functionName of availableSignatures() ) indicating the input data in "dataset" and the type of input data (one of rnaseq or microarray) in "inputType". Data are supposed to be expression values in the form of data.frame or a matrix where rows correspond to genes and columns correspond to samples. Alternatively, an object of type SummarizedExperiment containing an assay where rows correspond to genes and columns correspond to samples.
 
 ```{r}
-OVse <- ferroptosisSign(dataset = sub_OVse,
+OVse <- ferroptosisSign(dataset = subovse,
                        inputType = "rnaseq")
 ```
 
 If the same argument is covered by multiple signatures, these are collected inside the same function. We can specify a specific signature indicating the author of the signature for which the signature has been developed for. For example, looking at the signatures reported inside availSigns, if we want to compute the specific signature of pyroptosis developed for the ovary, we have to run:
 
 ```{r}
-sub_OVse <- pyroptosisSign(dataset = sub_OVse,
+subovse <- pyroptosisSign(dataset = subovse,
                            inputType = "rnaseq",
                            author = "Ye")
 ```
@@ -110,7 +110,7 @@ In this way, "Pyroptosis_Ye" is computed. Every time we compute a signature this
 We can also compute multiple signatures at once with the function multipleSign(). Suppling the dataset and the input type without any other argument all the available signatures will be computed. Otherwise we can specify a list of signatures using whichSign argument or the arguments tumor, tissue and/or topic. E.g. here below we computed all the available signature for ovary and pan-tissue:
 
 ```{r}
-OVse <- multipleSign(dataset = sub_OVse, 
+OVse <- multipleSign(dataset = subovse, 
                      inputType = "rnaseq",
                      tissue = c("ovary", "pan-tissue"))
 ```
@@ -185,7 +185,7 @@ heatmapSignPlot(data = OVse,
 We can test the survival association of the signature with the function survivalSignPlot(), submitting information about patient survival time, as we did here below.
 
 ```{r}
-mysurvData <- cbind(sub_OVse$os, sub_OVse$status)
+mysurvData <- cbind(subovse$os, subovse$status)
 rownames(mysurvData) <- rownames(colData(OVse))
 ```
 

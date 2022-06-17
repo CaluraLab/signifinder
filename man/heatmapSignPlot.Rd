@@ -45,6 +45,7 @@ gives the possibility to order all the matrix based on a single signature.
 }
 \examples{
 OVse <- ferroptosisSign(dataset = subovse)
+OVse <- pyroptosisSign(dataset = OVse)
 heatmapSignPlot(data = OVse)
 
 }

@@ -31,6 +31,7 @@ observe signatures correlates between each other.
 }
 \examples{
 OVse <- ferroptosisSign(dataset = subovse)
+OVse <- pyroptosisSign(dataset = OVse)
 correlationSignPlot(data = OVse)
 
 }
