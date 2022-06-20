@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-expandedImmuneSign(dataset = subovse)
+expandedImmuneSign(dataset = ovse)
 
 }

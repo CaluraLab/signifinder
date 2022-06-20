@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-HRDSSign(dataset = subovse)
+HRDSSign(dataset = ovse)
 
 }

@@ -35,7 +35,7 @@ The function calculates densities from the point data mapped onto the x axis,
 arranging multiple density plots of the Signatures' scores.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = subovse)
+OVse <- ferroptosisSign(dataset = ovse)
 ridgelineSignPlot(data = OVse)
 
 }

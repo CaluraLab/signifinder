@@ -44,7 +44,7 @@ observe the trend of the signature's scores for each samples. Moreover it
 gives the possibility to order all the matrix based on a single signature.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = subovse)
+OVse <- ferroptosisSign(dataset = ovse)
 OVse <- pyroptosisSign(dataset = OVse)
 heatmapSignPlot(data = OVse)
 

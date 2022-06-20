@@ -39,6 +39,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-immuneCytSign(dataset = subovse, inputType = "rnaseq")
+immuneCytSign(dataset = ovse, inputType = "rnaseq")
 
 }

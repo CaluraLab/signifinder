@@ -29,6 +29,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-CINSign(dataset = subovse, inputType = "rnaseq")
+CINSign(dataset = ovse, inputType = "rnaseq")
 
 }

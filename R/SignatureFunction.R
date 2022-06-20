@@ -28,7 +28,7 @@
 #' @importFrom stats prcomp
 #'
 #' @examples
-#' EMTSign(dataset = subovse, inputType = "rnaseq")
+#' EMTSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 EMTSign <-
@@ -171,7 +171,7 @@ EMTSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' pyroptosisSign(dataset = subovse)
+#' pyroptosisSign(dataset = ovse)
 #'
 #' @export
 pyroptosisSign <-
@@ -235,7 +235,7 @@ pyroptosisSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' ferroptosisSign(dataset = subovse)
+#' ferroptosisSign(dataset = ovse)
 #'
 #' @export
 ferroptosisSign <-
@@ -287,7 +287,7 @@ ferroptosisSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' lipidMetabolismSign(dataset = subovse)
+#' lipidMetabolismSign(dataset = ovse)
 #'
 #' @export
 lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
@@ -319,7 +319,7 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' hypoxiaSign(dataset = subovse, inputType = "rnaseq")
+#' hypoxiaSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 hypoxiaSign <-
@@ -367,7 +367,7 @@ hypoxiaSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' immunoScoreSign(dataset = subovse)
+#' immunoScoreSign(dataset = ovse)
 #'
 #' @export
 immunoScoreSign <-
@@ -446,7 +446,7 @@ immunoScoreSign <-
 #' @importFrom consensusOV get.subtypes
 #'
 #' @examples
-#' consensusOVSign(dataset = subovse)
+#' consensusOVSign(dataset = ovse)
 #'
 #' @export
 consensusOVSign <- function(dataset,
@@ -509,7 +509,7 @@ consensusOVSign <- function(dataset,
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' IPSSign(dataset = subovse)
+#' IPSSign(dataset = ovse)
 #'
 #' @export
 IPSSign <-
@@ -618,7 +618,7 @@ IPSSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' matrisomeSign(dataset = subovse)
+#' matrisomeSign(dataset = ovse)
 #'
 #' @export
 matrisomeSign <- function(dataset, nametype = "SYMBOL") {
@@ -654,7 +654,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' mitoticIndexSign(dataset = subovse)
+#' mitoticIndexSign(dataset = ovse)
 #'
 #' @export
 mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
@@ -693,7 +693,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' immuneCytSign(dataset = subovse, inputType = "rnaseq")
+#' immuneCytSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 immuneCytSign <- function(dataset,
@@ -753,7 +753,7 @@ immuneCytSign <- function(dataset,
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' IFNSign(dataset = subovse)
+#' IFNSign(dataset = ovse)
 #'
 #' @export
 IFNSign <- function(dataset, nametype = "SYMBOL") {
@@ -784,7 +784,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' expandedImmuneSign(dataset = subovse)
+#' expandedImmuneSign(dataset = ovse)
 #'
 #' @export
 expandedImmuneSign <- function(dataset, nametype = "SYMBOL") {
@@ -820,7 +820,7 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' TinflamSign(dataset = subovse)
+#' TinflamSign(dataset = ovse)
 #'
 #' @export
 TinflamSign <- function(dataset, nametype = "SYMBOL") {
@@ -866,7 +866,7 @@ TinflamSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' TLSSign(dataset = subovse)
+#' TLSSign(dataset = ovse)
 #'
 #' @export
 TLSSign <- function(dataset, nametype = "SYMBOL") {
@@ -898,7 +898,7 @@ TLSSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' stemCellCD49fSign(dataset = subovse)
+#' stemCellCD49fSign(dataset = ovse)
 #'
 #' @export
 stemCellCD49fSign <- function(dataset, nametype = "SYMBOL") {
@@ -932,7 +932,7 @@ stemCellCD49fSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' CINSign(dataset = subovse, inputType = "rnaseq")
+#' CINSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 CINSign <-
@@ -980,7 +980,7 @@ CINSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' cellCycleSign(dataset = subovse, inputType = "rnaseq")
+#' cellCycleSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 cellCycleSign <- function(dataset,
@@ -1040,7 +1040,7 @@ cellCycleSign <- function(dataset,
 #' @importFrom stats prcomp
 #'
 #' @examples
-#' chemokineSign(dataset = subovse, inputType = "rnaseq")
+#' chemokineSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 chemokineSign <- function(dataset,
@@ -1086,7 +1086,7 @@ chemokineSign <- function(dataset,
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' ASCSign(dataset = subovse)
+#' ASCSign(dataset = ovse)
 #'
 #' @export
 ASCSign <- function(dataset, nametype = "SYMBOL") {
@@ -1135,7 +1135,7 @@ ASCSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom stats weighted.mean
 #'
 #' @examples
-#' PassONSign(dataset = subovse)
+#' PassONSign(dataset = ovse)
 #'
 #' @export
 PassONSign <-
@@ -1202,7 +1202,7 @@ PassONSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' IPRESSign(dataset = subovse)
+#' IPRESSign(dataset = ovse)
 #'
 #' @export
 IPRESSign <-
@@ -1263,7 +1263,7 @@ IPRESSign <-
 #' @importFrom matrixStats rowMedians
 #'
 #' @examples
-#' CISSign(dataset = subovse)
+#' CISSign(dataset = ovse)
 #'
 #' @export
 CISSign <- function(dataset, nametype = "SYMBOL") {
@@ -1316,7 +1316,7 @@ CISSign <- function(dataset, nametype = "SYMBOL") {
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' glycolysisSign(dataset = subovse)
+#' glycolysisSign(dataset = ovse)
 #'
 #' @export
 glycolysisSign <-
@@ -1354,7 +1354,7 @@ glycolysisSign <-
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
-#' autophagySign(dataset = subovse)
+#' autophagySign(dataset = ovse)
 #'
 #' @export
 autophagySign <-
@@ -1416,7 +1416,7 @@ autophagySign <-
 #' @importFrom GSVA gsva
 #'
 #' @examples
-#' ECMSign(dataset = subovse)
+#' ECMSign(dataset = ovse)
 #'
 #' @export
 ECMSign <- function(dataset,
@@ -1490,7 +1490,7 @@ ECMSign <- function(dataset,
 #' @importFrom stats t.test
 #'
 #' @examples
-#' HRDSSign(dataset = subovse)
+#' HRDSSign(dataset = ovse)
 #'
 #' @export
 HRDSSign <- function(dataset, nametype = "SYMBOL") {
@@ -1536,7 +1536,7 @@ HRDSSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' ISCSign(dataset = subovse, inputType = "rnaseq")
+#' ISCSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 ISCSign <-
@@ -1596,7 +1596,7 @@ ISCSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' VEGFSign(dataset = subovse)
+#' VEGFSign(dataset = ovse)
 #'
 #' @export
 VEGFSign <- function(dataset, nametype = "SYMBOL") {
@@ -1628,7 +1628,7 @@ VEGFSign <- function(dataset, nametype = "SYMBOL") {
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' DNArepSign(dataset = subovse, inputType = "rnaseq")
+#' DNArepSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
 DNArepSign <-
@@ -1685,7 +1685,7 @@ DNArepSign <-
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' IPSOVSign(dataset = subovse)
+#' IPSOVSign(dataset = ovse)
 #'
 #' @export
 IPSOVSign <- function(dataset,

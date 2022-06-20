@@ -48,14 +48,14 @@ BiocManager::install("signifinder")
 # Analysis
 
 ## Signatures Computation
-In this vignettes, we use the OVse dataset. That is a subset of the ovarian cancer dataset collected inside TCGA database. Data are normalized counts.
+In this vignettes, we use a subset of the ovarian cancer dataset collected inside TCGA database. Data are normalized counts.
 
 ```{r, message=FALSE}
 # loading packages
 library(SummarizedExperiment)
 library(signifinder)
 
-subovse
+ovse
 ```
 
 We can check the signatures available in the package with the function availableSignatures().
@@ -92,25 +92,25 @@ knitr::kable(ovary_signatures,
 
 Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in functionName of availableSignatures() ) indicating the input data in "dataset" and the type of input data (one of rnaseq or microarray) in "inputType". Data are supposed to be expression values in the form of data.frame or a matrix where rows correspond to genes and columns correspond to samples. Alternatively, an object of type SummarizedExperiment containing an assay where rows correspond to genes and columns correspond to samples.
 
-```{r}
-OVse <- ferroptosisSign(dataset = subovse,
-                       inputType = "rnaseq")
+```{r eval=FALSE}
+ovse <- ferroptosisSign(dataset = ovse,
+                        inputType = "rnaseq")
 ```
 
 If the same argument is covered by multiple signatures, these are collected inside the same function. We can specify a specific signature indicating the author of the signature for which the signature has been developed for. For example, looking at the signatures reported inside availSigns, if we want to compute the specific signature of pyroptosis developed for the ovary, we have to run:
 
-```{r}
-subovse <- pyroptosisSign(dataset = subovse,
-                           inputType = "rnaseq",
-                           author = "Ye")
+```{r eval=FALSE}
+ovse <- pyroptosisSign(dataset = ovse,
+                       inputType = "rnaseq",
+                       author = "Ye")
 ```
 
-In this way, "Pyroptosis_Ye" is computed. Every time we compute a signature this is automatically added to the colData section inside OVse with a signture-specific label.
+In this way, "Pyroptosis_Ye" is computed. Every time we compute a signature this is automatically added to the colData section inside ovse with a signture-specific label.
 
 We can also compute multiple signatures at once with the function multipleSign(). Suppling the dataset and the input type without any other argument all the available signatures will be computed. Otherwise we can specify a list of signatures using whichSign argument or the arguments tumor, tissue and/or topic. E.g. here below we computed all the available signature for ovary and pan-tissue:
 
-```{r}
-OVse <- multipleSign(dataset = subovse, 
+```{r eval=FALSE}
+ovse <- multipleSign(dataset = ovse, 
                      inputType = "rnaseq",
                      tissue = c("ovary", "pan-tissue"))
 ```
@@ -124,7 +124,7 @@ OVse <- multipleSign(dataset = subovse,
 After the computation of a signature, we may explore the range of values of the scores. We can use oneSignPlot() to visualize both the exact scores distribution and the density distribution.
 
 ```{r}
-oneSignPlot(data = OVse, 
+oneSignPlot(data = ovse, 
             whichSign = "Hypoxia_Buffa", 
             statistics = "quantiles")
 ```
@@ -134,49 +134,35 @@ oneSignPlot(data = OVse,
 Also, we may be interested in exploring the expression values that are involved in a signature. In this case, we can use geneHeatmapSignPlot() to visualize them. Further, we can plot gene expression from multiple signatures.
 
 ```{r}
-geneHeatmapSignPlot(data = OVse, 
+geneHeatmapSignPlot(data = ovse, 
                     whichSign = "LipidMetabolism_Zheng", 
                     logCount = TRUE)
 
-geneHeatmapSignPlot(data = OVse, 
-                    whichSign = c("IFN_Ayers", "ExpandedImmune_Ayers"), 
+geneHeatmapSignPlot(data = ovse, 
+                    whichSign = c("IFN_Ayers", "Tinflam_Ayers"), 
                     logCount = TRUE)
-
-geneHeatmapSignPlot(data = OVse, 
-                    whichSign = c("IFN_Ayers", "ExpandedImmune_Ayers"), 
-                    logCount = TRUE,
-                    splitBySign = TRUE)
 ```
 
 ### Correlation
 
 To easily investigate the relation across signatures, *signifinder* has a related function to show a correlation plot (correlationSignPlot()). Here, the pairwise correlations of the signatures are compared. Cold colors represent anticorrelations while red-yellow scale is for positive correlations. Then, signatures are clustered to group together higher related ones.
 ```{r}
-sign_cor <- correlationSignPlot(data = OVse)
+sign_cor <- correlationSignPlot(data = ovse)
 highest_correlated <- unique(unlist(
     sign_cor$data[(sign_cor$data$cor>0.95 & sign_cor$data$cor<1),c(1,2)]
     ))
-sign_cor2 <- correlationSignPlot(data = OVse,
-                                 whichSign = highest_correlated)
 ```
 
 ### Score Heatmap
 
 We can compare score trend across different signatures with hetmapSignPlot(). Scores are scaled between zero and one to be comparible across them.
 ```{r}
-heatmapSignPlot(data = OVse)
-heatmapSignPlot(data = OVse, 
-                whichSign = c("Hypoxia_Buffa", "Ferroptosis_Ye", "LipidMetabolism_Zheng"))
-heatmapSignPlot(data = OVse, 
-                whichSign = c("Hypoxia_Buffa", "Ferroptosis_Ye", "LipidMetabolism_Zheng"),
-                clusterBySign = c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", 
-                                  "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"),
-                sampleAnnot = OVse$OV_subtype, signAnnot = "topic",
-                splitBySampleAnnot = TRUE)
-heatmapSignPlot(data = OVse, 
-                clusterBySign = c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", 
-                                  "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"),
-                sampleAnnot = OVse$OV_subtype,
+heatmapSignPlot(data = ovse)
+heatmapSignPlot(data = ovse, 
+                whichSign = highest_correlated)
+heatmapSignPlot(data = ovse, 
+                clusterBySign = paste0("ConsensusOV_Chen_", c("IMR","DIF","PRO","MES")),
+                sampleAnnot = ovse$OV_subtype, signAnnot = "topic",
                 splitBySampleAnnot = TRUE)
 ```
 
@@ -185,12 +171,12 @@ heatmapSignPlot(data = OVse,
 We can test the survival association of the signature with the function survivalSignPlot(), submitting information about patient survival time, as we did here below.
 
 ```{r}
-mysurvData <- cbind(subovse$os, subovse$status)
-rownames(mysurvData) <- rownames(colData(OVse))
+mysurvData <- cbind(ovse$os, ovse$status)
+rownames(mysurvData) <- rownames(colData(ovse))
 ```
 
 ```{r}
-survivalSignPlot(data = OVse, 
+survivalSignPlot(data = ovse, 
                  survData = mysurvData, 
                  whichSign = "Pyroptosis_Ye", 
                  cutpoint = "optimal")
@@ -199,12 +185,11 @@ survivalSignPlot(data = OVse,
 ### Ridgeline Plot
 Finally, we can plot ridge lines with one or multiple signatures, also grouping samples by annotations if needed.
 ```{r}
-ridgelineSignPlot(OVse)
-ridgelineSignPlot(data = OVse, 
+ridgelineSignPlot(data = ovse, 
                   whichSign = highest_correlated)
-ridgelineSignPlot(data = OVse, 
+ridgelineSignPlot(data = ovse, 
                   whichSign = highest_correlated, 
-                  groupByAnnot = OVse$OV_subtype)
+                  groupByAnnot = ovse$OV_subtype)
 ```
 
 # Session info

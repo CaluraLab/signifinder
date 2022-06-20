@@ -19,7 +19,7 @@
 #' @importFrom stats median quantile
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- ferroptosisSign(dataset = ovse)
 #' oneSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
@@ -174,7 +174,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' @importFrom grid gpar
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- ferroptosisSign(dataset = ovse)
 #' geneHeatmapSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
@@ -298,7 +298,7 @@ geneHeatmapSignPlot <- function(data,
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- ferroptosisSign(dataset = ovse)
 #' OVse <- pyroptosisSign(dataset = OVse)
 #' heatmapSignPlot(data = OVse)
 #'
@@ -434,7 +434,7 @@ heatmapSignPlot <-
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- ferroptosisSign(dataset = ovse)
 #' OVse <- pyroptosisSign(dataset = OVse)
 #' correlationSignPlot(data = OVse)
 #'
@@ -542,9 +542,9 @@ correlationSignPlot <-
 #' @importFrom survminer ggsurvplot
 #'
 #' @examples
-#' mysurvData <- cbind(subovse$os, subovse$status)
-#' rownames(mysurvData) <- rownames(SummarizedExperiment::colData(subovse))
-#' OVse <- ferroptosisSign(dataset = subovse)
+#' mysurvData <- cbind(ovse$os, ovse$status)
+#' rownames(mysurvData) <- rownames(SummarizedExperiment::colData(ovse))
+#' OVse <- ferroptosisSign(dataset = ovse)
 #' survivalSignPlot(
 #'     data = OVse,
 #'     survData = mysurvData,
@@ -691,7 +691,7 @@ survivalSignPlot <-
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = subovse)
+#' OVse <- ferroptosisSign(dataset = ovse)
 #' ridgelineSignPlot(data = OVse)
 #'
 #' @export

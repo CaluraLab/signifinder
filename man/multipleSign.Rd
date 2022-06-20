@@ -49,7 +49,7 @@ This function computes all the signatures for a specific
 'requiredInput' and for a specific 'tissue' and/or 'topic'.
 }
 \examples{
-multipleSign(dataset = subovse)
-multipleSign(dataset = subovse, tissue = "ovary")
+multipleSign(dataset = ovse)
+multipleSign(dataset = ovse, tissue = "ovary")
 
 }

@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-lipidMetabolismSign(dataset = subovse)
+lipidMetabolismSign(dataset = ovse)
 
 }

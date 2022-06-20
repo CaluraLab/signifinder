@@ -30,7 +30,7 @@ Given a matrix of multiple signatures, the function gives the opportunity to
 observe signatures correlates between each other.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = subovse)
+OVse <- ferroptosisSign(dataset = ovse)
 OVse <- pyroptosisSign(dataset = OVse)
 correlationSignPlot(data = OVse)
 

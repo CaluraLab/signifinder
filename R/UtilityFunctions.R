@@ -597,8 +597,8 @@ availableSignatures <- function(tumor = NULL,
 #' are added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @examples
-#' multipleSign(dataset = subovse)
-#' multipleSign(dataset = subovse, tissue = "ovary")
+#' multipleSign(dataset = ovse)
+#' multipleSign(dataset = ovse, tissue = "ovary")
 #'
 #' @export
 multipleSign <- function(dataset,

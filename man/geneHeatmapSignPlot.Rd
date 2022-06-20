@@ -44,7 +44,7 @@ observe the trend of the signature's scores based on the expression of the
 genes included in each of them.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = subovse)
+OVse <- ferroptosisSign(dataset = ovse)
 geneHeatmapSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
 
 }

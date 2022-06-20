@@ -36,6 +36,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-autophagySign(dataset = subovse)
+autophagySign(dataset = ovse)
 
 }

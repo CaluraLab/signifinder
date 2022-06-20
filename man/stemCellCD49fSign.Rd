@@ -27,6 +27,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-stemCellCD49fSign(dataset = subovse)
+stemCellCD49fSign(dataset = ovse)
 
 }

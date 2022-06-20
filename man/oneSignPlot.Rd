@@ -23,7 +23,7 @@ Given signatures' scores it returns a scatterplot of patients scores and a
 barplot of the density distributions of patients scores.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = subovse)
+OVse <- ferroptosisSign(dataset = ovse)
 oneSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
 
 }

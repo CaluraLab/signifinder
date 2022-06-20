@@ -36,6 +36,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-cellCycleSign(dataset = subovse, inputType = "rnaseq")
+cellCycleSign(dataset = ovse, inputType = "rnaseq")
 
 }

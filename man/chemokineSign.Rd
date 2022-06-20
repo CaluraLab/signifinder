@@ -29,6 +29,6 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
-chemokineSign(dataset = subovse, inputType = "rnaseq")
+chemokineSign(dataset = ovse, inputType = "rnaseq")
 
 }
