@@ -318,9 +318,6 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' @return A SummarizedExperiment object in which the Hypoxia scores is
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
-#'
 #' @examples
 #' hypoxiaSign(dataset = subovse, inputType = "rnaseq")
 #'
@@ -447,8 +444,6 @@ immunoScoreSign <-
 #' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom consensusOV get.subtypes
-#' @importFrom AnnotationDbi mapIds
-#' @import org.Hs.eg.db
 #'
 #' @examples
 #' consensusOVSign(dataset = subovse)
@@ -463,8 +458,8 @@ consensusOVSign <- function(dataset,
     datasetm <- getMatrix(dataset)
 
     if (nametype != "ENTREZID") {
-        genename <- mapIds(
-            org.Hs.eg.db,
+        genename <- AnnotationDbi::mapIds(
+            org.Hs.eg.db::org.Hs.eg.db,
             keys = row.names(datasetm),
             column = "ENTREZID",
             keytype = nametype,

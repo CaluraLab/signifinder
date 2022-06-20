@@ -540,7 +540,6 @@ correlationSignPlot <-
 #' @importFrom maxstat maxstat.test
 #' @importFrom survival Surv survfit
 #' @importFrom survminer ggsurvplot
-#' @importFrom ggplot2 theme_gray
 #'
 #' @examples
 #' mysurvData <- cbind(subovse$os, subovse$status)

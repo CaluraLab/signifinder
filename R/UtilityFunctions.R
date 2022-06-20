@@ -394,18 +394,11 @@ managena <- function(datasetm, genes) {
 }
 
 #' @importFrom SummarizedExperiment assays SummarizedExperiment assays<-
-#' @import TxDb.Hsapiens.UCSC.hg19.knownGene
-#' @import TxDb.Hsapiens.UCSC.hg38.knownGene
-#' @importFrom ensembldb exonsBy
 #' @importFrom BiocGenerics width
 #' @importFrom IRanges reduce
 #' @importFrom DGEobj.utils convertCounts
 dataTransformation <-
-    function(dataset,
-             data,
-             trans,
-             hgReference,
-             nametype) {
+    function(dataset, data, trans, hgReference, nametype) {
         if (class(dataset)[1] %in% c(
             "SpatialExperiment",
             "SummarizedExperiment",
@@ -417,40 +410,41 @@ dataTransformation <-
         }
 
         if (hgReference == "hg19") {
-            txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+            txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
         } else if (hgReference == "hg38") {
-            txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+            txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
         } else {
             stop("Human reference genome must be either hg19 or hg38")
         }
 
-        exons.db <- exonsBy(txdb, by = "gene")
+        exons.db <- ensembldb::exonsBy(txdb, by = "gene")
 
         g <- rownames(data)
-        egs <- mapIds(
-            org.Hs.eg.db,
+        egs <- AnnotationDbi::mapIds(
+            org.Hs.eg.db::org.Hs.eg.db,
             keys = g,
             column = "ENTREZID",
             keytype = nametype,
             multiVals = "first"
         )
-        data <- data[!is.na(egs), ]
-        egs <- egs[!is.na(egs)]
+        use <- !is.na(egs)
 
-        # glen <- getGeneLengthAndGCContent(id = eg, org = "hsa")
-        exons_g <- lapply(egs, function(eg) {
+        exons_g <- NULL
+        exons_g[use] <- lapply(egs[use], function(eg) {
             exons.db[[eg]]
         })
-        data <- data[!sapply(exons_g, is.null), ]
-        egs <- egs[!sapply(exons_g, is.null)]
-        exons_g <- exons_g[!sapply(exons_g, is.null)]
-        glen <- sapply(names(egs), function(eg) {
+        names(exons_g) <- names(egs)
+        use <- !sapply(exons_g, is.null)
+
+        glen <- NULL
+        glen[use] <- sapply(names(egs[use]), function(eg) {
             sum(width(reduce(exons_g[[eg]])))
         })
-        tdata <- convertCounts(
-            countsMatrix = data,
+        tdata <- matrix(NA, nrow = nrow(data), ncol = ncol(data))
+        tdata[use,] <- convertCounts(
+            countsMatrix = data[use,],
             unit = trans,
-            geneLength = glen
+            geneLength = glen[use]
         )
 
         if (class(dataset)[1] %in% c(
@@ -506,12 +500,10 @@ percentageOfGenesUsed <- function(name,
     }
 }
 
-#' @import org.Hs.eg.db
-#' @importFrom AnnotationDbi mapIds
 geneIDtrans <- function(nametype, genes) {
     if (nametype != "SYMBOL") {
-        mapIds(
-            org.Hs.eg.db,
+        AnnotationDbi::mapIds(
+            org.Hs.eg.db::org.Hs.eg.db,
             keys = genes,
             column = nametype,
             keytype = "SYMBOL",
