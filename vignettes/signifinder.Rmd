@@ -33,7 +33,7 @@ Analysis of signatures shows cancer activities in patients. The combined analysi
 
 `signifinder` has been developed to provide and easy and fast computation of several published signatures.
 
-Several visualization functions are implemented to visualize the scores obtained with signatures. These can help in the interpretation of the results. Users can not only browse single signatures independently but also compare them with each other.
+Several visualization functions are implemented to visualize the scores obtained from signatures. These can help in the interpretation of the results. Users can not only browse single signatures independently but also compare them with each other.
 
 # Installation
 
@@ -46,9 +46,19 @@ BiocManager::install("signifinder")
 ```
 
 # Analysis
+## Input
+The dataset in input must be normalized RNA-Seq counts (or normalized arrays) in the form of matrix, data frame or SummarizedExperiment. Regardless of the input type, the output data is a SummarizedExperiment with the signature scores added in the `colData` section.
+
+Gene name identifiers accepted in `signifinder` are SYMBOL, ENTREZID or ENSEMBL. Gene lists of signatures reported in literature are tipically symbols, but users can say which of the three identifiers they use to let the package convert the signature gene lists ('nametype' argument inside the signature functions).
+When a signature is computed a message is shown that says the percentage of genes used for the calculation of the signature compared to the original list. There is no minimum threshold of genes for signatures to be computed, but a `warning` will be given if there are less than the 30% of signature genes.
+After a signature has been calculated it is possible to visually inspect gene expression of genes used to compute it using `geneHeatmapSignPlot` (see [Gene Expression Heatmap](#gene-expression-heatmap)).
+
+In the original works, each signature is constructed starting from a specific type of expression value (e.g. normalised value, TPM (transcript per million), log(TPM), etc…). Therefore, when we want to compute a signature, data has to be structured as reported in the original work. When using `signifinder`, users must supply the input data in the form of *normalised counts* (or *normalised arrays*) and, for the signatures which require this, a data transformation step will be automatically performed inside the signature function to turn the normalised data in the type of data needed to compute that signature. That is why, for the signatures which require this, it is crucially important to specify the type of data used: microarray or rnaseq ('inputType' argument inside the signature functions). The transformed data matrix will be included in the output as an additional assay and the name of the assay will be the name of the conversion (i.e. 'TPM', 'CPM' or 'FPKM').
+Alternatively, if the input data is a SummarizedExperiment object that contains (in addition to the normalized count) also an assay of the transformed data, this will be used directly. Note that in order to be used, this assay must be called 'TPM', 'CPM' or 'FPKM'. Also note that this assay should contain only the direct value conversion and if the signature requires an additional transformation step (e.g. logarithmic transformation or others) it will be automatically performed inside the function.
+
 
 ## Signatures Computation
-In this vignettes, we use a subset of the ovarian cancer dataset collected inside TCGA database. Data are normalized counts.
+In this vignette, we use an example dataset of ovarian cancer patients.
 
 ```{r, message=FALSE}
 # loading packages
@@ -58,13 +68,13 @@ library(signifinder)
 ovse
 ```
 
-We can check the signatures available in the package with the function availableSignatures().
+We can check all the signatures available in the package with the function `availableSignatures`.
 
 ```{r}
 availSigns <- availableSignatures()
 ```
 
-The function returns a data.frame with all the signatures included in the package and for each signature the following information:   
+The function returns a data frame with all the signatures included in the package and for each signature the following information:   
 
 * signature: name of the signature
 * scoreLabel: label of the signature when computed and inserted inside results
@@ -81,7 +91,7 @@ The function returns a data.frame with all the signatures included in the packag
 knitr::kable(t(availSigns[1,]), caption = 'One signature fiels')
 ```
 
-We can also interrogate the signature asking which signatures are available for a specific tissue (e.g. ovary).
+We can also interrogate the table asking which signatures are available for a specific tissue (e.g. ovary).
 
 ```{r}
 ovary_signatures <- availableSignatures(tissue = "ovary", 
@@ -90,24 +100,25 @@ knitr::kable(ovary_signatures,
              caption = 'Signatures developed for ovary.')
 ```
 
-Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in functionName of availableSignatures() ) indicating the input data in "dataset" and the type of input data (one of rnaseq or microarray) in "inputType". Data are supposed to be expression values in the form of data.frame or a matrix where rows correspond to genes and columns correspond to samples. Alternatively, an object of type SummarizedExperiment containing an assay where rows correspond to genes and columns correspond to samples.
+Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in functionName of `availableSignatures` ) indicating the input data in 'dataset' and the type of input data (one of rnaseq or microarray) in 'inputType'. Data are supposed to be expression values in the form of data frame or a matrix where rows correspond to genes and columns correspond to samples. Alternatively, an object of type SummarizedExperiment containing an assay where rows correspond to genes and columns correspond to samples.
 
 ```{r eval=FALSE}
 ovse <- ferroptosisSign(dataset = ovse,
                         inputType = "rnaseq")
 ```
 
-If the same argument is covered by multiple signatures, these are collected inside the same function. We can specify a specific signature indicating the author of the signature for which the signature has been developed for. For example, looking at the signatures reported inside availSigns, if we want to compute the specific signature of pyroptosis developed for the ovary, we have to run:
+There are some signatures that discuss the same cancer topic. However, they might deal with different cancer types and also their final scores might be based on different computation approaches. Those signatures are implemented inside the same function. We can choose the one we are interested in by stating the author of the signature. E.g., currently, there are three different signatures tha discuss the epithelial to mesenchymal transition (EMT). These are all implemented inside `EMTSign` function and we can choose which one to compute stating the 'author' argument ("Miow", "Mak" or "Cheng" are the ones for `EMTSign`).
+We can look at the information reported inside availSigns to check the right author. If we want to compute the specific signature of EMT developed for the ovary, we see that it is the one developed by Miow et. al. and, therefore, we have to run:
 
 ```{r eval=FALSE}
-ovse <- pyroptosisSign(dataset = ovse,
-                       inputType = "rnaseq",
-                       author = "Ye")
+ovse <- EMTSign(dataset = ovse,
+                inputType = "rnaseq",
+                author = "Miow")
 ```
 
-In this way, "Pyroptosis_Ye" is computed. Every time we compute a signature this is automatically added to the colData section inside ovse with a signture-specific label.
+In this way, "EMT_Miow" is computed. Every time we compute a signature, the scores are automatically added to the `colData` section with a signture-specific label.
 
-We can also compute multiple signatures at once with the function multipleSign(). Suppling the dataset and the input type without any other argument all the available signatures will be computed. Otherwise we can specify a list of signatures using whichSign argument or the arguments tumor, tissue and/or topic. E.g. here below we computed all the available signature for ovary and pan-tissue:
+We can also compute multiple signatures at once with the function `multipleSign`. Suppling the dataset and the input type without any other argument, all the available signatures will be computed. Otherwise, we can specify a sub-group of signatures setting the arguments 'tissue', 'tumor' and/or 'topic'. Alternatively, we can state exactly a list of signatures using 'whichSign' argument. E.g. here below we computed all the available signature for ovary and pan-tissue:
 
 ```{r eval=FALSE}
 ovse <- multipleSign(dataset = ovse, 
@@ -115,23 +126,19 @@ ovse <- multipleSign(dataset = ovse,
                      tissue = c("ovary", "pan-tissue"))
 ```
 
-## Supported Identifiers
-
-
 ## Visualization
 ### Signature distribution
 
-After the computation of a signature, we may explore the range of values of the scores. We can use oneSignPlot() to visualize both the exact scores distribution and the density distribution.
+After the computation of a signature, we may explore the range of values of the scores. We can use `oneSignPlot` to visualize both the scores distribution and the density distribution.
 
 ```{r}
 oneSignPlot(data = ovse, 
-            whichSign = "Hypoxia_Buffa", 
-            statistics = "quantiles")
+            whichSign = "Hypoxia_Buffa")
 ```
 
 ### Gene Expression Heatmap
 
-Also, we may be interested in exploring the expression values that are involved in a signature. In this case, we can use geneHeatmapSignPlot() to visualize them. Further, we can plot gene expression from multiple signatures.
+We may be interested in visually exploring the expression values of the genes involved in a signature. In this case, we can use `geneHeatmapSignPlot` to visualize them. It generates a heatmap of the expression values with genes on rows and samples on columns. Further, the function is not restricted to only one signature, and we can plot gene expression values for multiple signatures.
 
 ```{r}
 geneHeatmapSignPlot(data = ovse, 
@@ -145,7 +152,7 @@ geneHeatmapSignPlot(data = ovse,
 
 ### Correlation
 
-To easily investigate the relation across signatures, *signifinder* has a related function to show a correlation plot (correlationSignPlot()). Here, the pairwise correlations of the signatures are compared. Cold colors represent anticorrelations while red-yellow scale is for positive correlations. Then, signatures are clustered to group together higher related ones.
+To easily investigate the relation across signatures, `signifinder` has a related function to show a correlation plot (`correlationSignPlot`). Here, the pairwise correlations of the signatures are compared. Green-blue colors represent anticorrelations while orange-red scale is for positive correlations. Then, signatures are clustered to group together higher related ones.
 ```{r}
 sign_cor <- correlationSignPlot(data = ovse)
 highest_correlated <- unique(unlist(
@@ -154,25 +161,30 @@ highest_correlated <- unique(unlist(
 ```
 
 ### Score Heatmap
-
-We can compare score trend across different signatures with hetmapSignPlot(). Scores are scaled between zero and one to be comparible across them.
+We can compare score trend across different signatures with `hetmapSignPlot`. Scores are scaled between zero and one to be comparable across them.
+The 'whichSign' argument could be setted to specify which signatures should be plotted. When it is not stated all signatures inside data are used.
 ```{r}
 heatmapSignPlot(data = ovse)
 heatmapSignPlot(data = ovse, 
                 whichSign = highest_correlated)
+```
+
+We may also be interested in seeing how signatures are sorted in relation to only one of them (or few). In this case, we can pass one (or few) signature to 'clusterBySign' argument that will be used to cluster samples.
+
+Further, we can set some annotation on samples (passed by the user) or on signatures (among "signature", "topic", "tumor", "tissue").
+```{r}
 heatmapSignPlot(data = ovse, 
                 clusterBySign = paste0("ConsensusOV_Chen_", c("IMR","DIF","PRO","MES")),
-                sampleAnnot = ovse$OV_subtype, signAnnot = "topic",
-                splitBySampleAnnot = TRUE)
+                sampleAnnot = ovse$OV_subtype, signAnnot = "topic")
 ```
 
 ### Survival Plot
-
-We can test the survival association of the signature with the function survivalSignPlot(), submitting information about patient survival time, as we did here below.
+We can test the survival association of the signature with the function `survivalSignPlot`, submitting information about patient survival time, as we do here below.
 
 ```{r}
 mysurvData <- cbind(ovse$os, ovse$status)
 rownames(mysurvData) <- rownames(colData(ovse))
+head(mysurvData)
 ```
 
 ```{r}

@@ -43,7 +43,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 
     g1 <- ggplot() +
         geom_point(mapping = aes(signval, seq_along(signval)), size = 1) +
-        labs(x = whichSign, y = "Index") +
+        labs(x = whichSign, y = "Sample") +
         theme(
             panel.background = element_blank(),
             axis.line = element_line(colour = "grey50")
@@ -754,6 +754,8 @@ ridgelineSignPlot <-
                 groupByAnnot[groupByAnnot %in% selectByAnnot]
         }
 
+        score = NULL
+        signature = NULL
         tmp1 <- do.call(rbind, lapply(seq_len(ncol(tmp)), function(x) {
             data.frame(
                 score = tmp[, x],
@@ -772,15 +774,15 @@ ridgelineSignPlot <-
         if (is.null(groupByAnnot)) {
             x <- NULL
             g <- ggplot(tmp1, aes(
-                x = tmp1$score,
-                y = tmp1$signature,
+                x = score,
+                y = signature,
                 fill = stat(x)
             )) +
                 do.call(geom_density_ridges_gradient, ridgeargs) +
                 scale_fill_viridis_c(name = "score", option = "A")
         } else {
             ridgeargs$mapping <- aes(fill = rep(groupByAnnot, n))
-            g <- ggplot(tmp1, aes(x = tmp1$score, y = tmp1$signature)) +
+            g <- ggplot(tmp1, aes(x = score, y = signature)) +
                 do.call(geom_density_ridges, ridgeargs) +
                 scale_fill_discrete(name = "Group")
         }
