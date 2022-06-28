@@ -322,37 +322,33 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' hypoxiaSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
-hypoxiaSign <-
-    function(dataset,
-             nametype = "SYMBOL",
-             inputType = "microarray") {
-        consistencyCheck(nametype, "hypoxiaSign")
+hypoxiaSign <- function(
+        dataset, nametype = "SYMBOL", inputType = "microarray") {
+    consistencyCheck(nametype, "hypoxiaSign")
 
-        datasetm <- getMatrix(dataset)
-        datasetm_n <-
-            if (inputType == "rnaseq") {
-                log2(datasetm + 0.01)
-            } else {
-                datasetm
-            }
-        score <-
-            statScore(
-                Hypoxia_Buffa$SYMBOL,
-                datasetm = abs(datasetm_n),
-                nametype = nametype,
-                typeofstat = "median",
-                namesignature = "hypoxiaSign"
-            )
-
-        return(
-            returnAsInput(
-                userdata = dataset,
-                result = as.vector(scale(score)),
-                SignName = "Hypoxia_Buffa",
-                datasetm
-            )
+    datasetm <- getMatrix(dataset)
+    datasetm_n <-
+        if (inputType == "rnaseq") {
+            log2(datasetm + 0.01)
+        } else { datasetm }
+    score <-
+        statScore(
+            Hypoxia_Buffa$SYMBOL,
+            datasetm = abs(datasetm_n),
+            nametype = nametype,
+            typeofstat = "median",
+            namesignature = "hypoxiaSign"
         )
-    }
+
+    return(
+        returnAsInput(
+            userdata = dataset,
+            result = as.vector(scale(score)),
+            SignName = "Hypoxia_Buffa",
+            datasetm
+        )
+    )
+}
 
 
 #' Immunogenic Signature
@@ -527,17 +523,6 @@ IPSSign <-
         sample_names <- colnames(datasetm)
 
         percentageOfGenesUsed("IPSSign", datasetm, sign_df$SYMBOL)
-
-        MISSING_GENES <- sign_df$SYMBOL[
-            is.na(match(sign_df$SYMBOL, rownames(datasetm)))
-        ]
-        if (length(MISSING_GENES) > 0) {
-            message(
-                "Differently named or missing genes: ",
-                MISSING_GENES,
-                "\n"
-            )
-        }
 
         dataset <- dataTransformation(
             dataset, datasetm, "TPM", hgReference, nametype

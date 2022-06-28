@@ -75,8 +75,7 @@ GetGenes <- function(name) {
         g <- EMT_Miow$SYMBOL[EMT_Miow$class == sname]
     } else if (name %in% c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")) {
         sname <- substring(name, 18)
-        g <-
-            ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
+        g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
     } else if (name %in% c(
         "ConsensusOV_Chen_IMR",
         "ConsensusOV_Chen_DIF",
@@ -91,8 +90,7 @@ GetGenes <- function(name) {
         "IPS_Charoentong_EC",
         "IPS_Charoentong_SC"
     )) {
-        g <-
-            IPS_Charoentong$SYMBOL[IPS_Charoentong$class == substring(name, 17)]
+        g <-IPS_Charoentong$SYMBOL[IPS_Charoentong$class == substring(name, 17)]
     } else if (name %in% c("CIN_Carter_25", "CIN_Carter_70")) {
         g <- if (name == "CIN_Carter_25") {
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
@@ -106,8 +104,7 @@ GetGenes <- function(name) {
         "ISC_MerlosSuarez_Prolif"
     )) {
         sname <- substring(name, 18)
-        g <-
-            ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == sname]
+        g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == sname]
     } else if (name == "Tinflam_Ayers") {
         g <- Tinflam_Ayers$SYMBOL[Tinflam_Ayers$class == "TInflam"]
     } else if (name %in% c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")) {
@@ -440,9 +437,12 @@ dataTransformation <-
         glen[use] <- sapply(names(egs[use]), function(eg) {
             sum(width(reduce(exons_g[[eg]])))
         })
+
+        usec <- colSums(datasetm[use,])>0
+
         tdata <- matrix(NA, nrow = nrow(data), ncol = ncol(data))
-        tdata[use,] <- convertCounts(
-            countsMatrix = data[use,],
+        tdata[use,usec] <- convertCounts(
+            countsMatrix = data[use,usec],
             unit = trans,
             geneLength = glen[use]
         )
@@ -466,34 +466,19 @@ dataTransformation <-
         return(dataset)
     }
 
-percentageOfGenesUsed <- function(name,
-                                  datasetm,
-                                  gs,
-                                  detail = NULL,
-                                  author = "") {
+percentageOfGenesUsed <- function(
+        name, datasetm, gs, detail = NULL, author = "") {
     g_per <- (sum(gs %in% row.names(datasetm)) / length(gs)) * 100
 
     if (is.null(detail)) {
         message(
-            name,
-            author,
-            " function is using ",
-            round(g_per),
-            "% of genes"
-        )
+            name, author, " is using ", round(g_per), "% of genes")
         if (g_per < 30) {
             warning("The signature is computed with less than 30% of its genes")
         }
     } else {
         message(
-            name,
-            author,
-            " function is using ",
-            round(g_per),
-            "% of ",
-            detail,
-            " genes"
-        )
+            name, author, " is using ", round(g_per), "% of ", detail, " genes")
         if (g_per < 30) {
             warning(detail, " is computed with less than 30% of its genes")
         }
