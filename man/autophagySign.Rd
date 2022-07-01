@@ -25,11 +25,12 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 \item{author}{character string saying the first author of the signature
 publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
-\item{hgReference}{Human reference genome: "hg19" or "hg38"}
+\item{hgReference}{character string saying the human reference genome.
+Either one of "hg19" or "hg38".}
 }
 \value{
-A SummarizedExperiment object in which the Autophagy score
-is added in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

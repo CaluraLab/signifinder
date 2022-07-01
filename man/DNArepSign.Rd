@@ -21,8 +21,8 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 Either one of "microarray" or "rnaseq".}
 }
 \value{
-A SummarizedExperiment object in which the Angiogenesis score will be
-added in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

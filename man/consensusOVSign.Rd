@@ -21,8 +21,8 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 \code{\link[consensusOV]{get.subtypes}}.}
 }
 \value{
-A SummarizedExperiment object in which the COnsensusOV scores
-will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

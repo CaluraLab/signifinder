@@ -17,12 +17,12 @@ Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{hgReference}{Human reference genome: "hg19" or "hg38"}
+\item{hgReference}{character string saying the human reference genome.
+Either one of "hg19" or "hg38".}
 }
 \value{
-A SummarizedExperiment object in which the
-IPS, MHC, CP, EC and SC scores will be added in the
-\code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

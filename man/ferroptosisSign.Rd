@@ -33,8 +33,8 @@ publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 Either one of "hg19" or "hg38".}
 }
 \value{
-A SummarizedExperiment object in which the Ferroptosis score
-is added in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

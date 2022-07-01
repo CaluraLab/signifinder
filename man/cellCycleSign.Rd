@@ -29,8 +29,8 @@ publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 Either one of "microarray" or "rnaseq".}
 }
 \value{
-A SummarizedExperiment object in which the score will be
-added in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

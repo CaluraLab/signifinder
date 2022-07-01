@@ -230,8 +230,7 @@ pyroptosisSign <-
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the Ferroptosis score
-#' is added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom SummarizedExperiment assays
 #'
@@ -282,10 +281,9 @@ ferroptosisSign <-
 #' Lipid Metabolism Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the Lipid scores is
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' lipidMetabolismSign(dataset = ovse)
@@ -314,10 +312,9 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' Hypoxia Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the Hypoxia scores is
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' hypoxiaSign(dataset = ovse, inputType = "rnaseq")
@@ -355,11 +352,9 @@ hypoxiaSign <- function(
 #' Immunogenic Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the Immunogenic scores will
-#' be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom SummarizedExperiment assays
 #'
@@ -432,12 +427,11 @@ immunoScoreSign <-
 #' ConsensusOV Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #' @param ... optional parameters to be passed to
 #' \code{\link[consensusOV]{get.subtypes}}.
 #'
-#' @return A SummarizedExperiment object in which the COnsensusOV scores
-#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom consensusOV get.subtypes
 #'
@@ -492,12 +486,9 @@ consensusOVSign <- function(dataset,
 #' ImmunoPhenoScore Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the
-#' IPS, MHC, CP, EC and SC scores will be added in the
-#' \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom stats sd
 #' @importFrom SummarizedExperiment assays
@@ -595,10 +586,9 @@ IPSSign <-
 #' Core Matrisome Gene signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' matrisomeSign(dataset = ovse)
@@ -631,10 +621,9 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 #' Mitotic Index
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' mitoticIndexSign(dataset = ovse)
@@ -667,11 +656,9 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' Immune Cytolytic Activity Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom SummarizedExperiment assays
 #'
@@ -730,10 +717,9 @@ immuneCytSign <- function(dataset,
 #' IFN-gamma Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' IFNSign(dataset = ovse)
@@ -761,10 +747,9 @@ IFNSign <- function(dataset, nametype = "SYMBOL") {
 #' ExpandedImmune Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' expandedImmuneSign(dataset = ovse)
@@ -797,10 +782,9 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL") {
 #' TinflamSign Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' TinflamSign(dataset = ovse)
@@ -843,10 +827,9 @@ TinflamSign <- function(dataset, nametype = "SYMBOL") {
 #' Tertiary Lymphoid Structures (TLS) Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' TLSSign(dataset = ovse)
@@ -875,10 +858,9 @@ TLSSign <- function(dataset, nametype = "SYMBOL") {
 #' CD49fHi Basal Stem Cell Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' stemCellCD49fSign(dataset = ovse)
@@ -909,10 +891,9 @@ stemCellCD49fSign <- function(dataset, nametype = "SYMBOL") {
 #' Chromosomal instability Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' CINSign(dataset = ovse, inputType = "rnaseq")
@@ -957,10 +938,9 @@ CINSign <-
 #' Cell-cycle Signature classifier
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' cellCycleSign(dataset = ovse, inputType = "rnaseq")
@@ -1015,10 +995,9 @@ cellCycleSign <- function(dataset,
 #' Chemokine Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom stats prcomp
 #'
@@ -1063,10 +1042,9 @@ chemokineSign <- function(dataset,
 #' Adult Stem Cell Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' ASCSign(dataset = ovse)
@@ -1105,13 +1083,11 @@ ASCSign <- function(dataset, nametype = "SYMBOL") {
 #' passON Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
-#' @return A SummarizedExperiment object in which the passON score
-#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom GSVA gsva
 #' @importFrom SummarizedExperiment assays
@@ -1173,13 +1149,11 @@ PassONSign <-
 #' IPRES Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
-#' @return A SummarizedExperiment object in which the passON score
-#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom GSVA gsva
 #' @importFrom SummarizedExperiment assays
@@ -1238,10 +1212,9 @@ IPRESSign <-
 #'  CIS (carcinoma-in situ) Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the CIS score
-#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom matrixStats rowMedians
 #'
@@ -1293,10 +1266,9 @@ CISSign <- function(dataset, nametype = "SYMBOL") {
 #' Glycolysis Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the glycolysis score
-#' is added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' glycolysisSign(dataset = ovse)
@@ -1328,11 +1300,9 @@ glycolysisSign <-
 #' Autophagy Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the Autophagy score
-#' is added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom SummarizedExperiment assays
 #'
@@ -1389,12 +1359,11 @@ autophagySign <-
 #' Extracellular Matrix Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
-#' @return A SummarizedExperiment object in which the ECM scores
-#' will be added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom GSVA gsva
 #'
@@ -1464,10 +1433,9 @@ ECMSign <- function(dataset,
 #' Homologous Recombination Deficiency Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the HRDS scores is
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom matrixStats rowMedians
 #' @importFrom stats t.test
@@ -1513,10 +1481,9 @@ HRDSSign <- function(dataset, nametype = "SYMBOL") {
 #' Adult Intestinal Stem Cell Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the ISC scores will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' ISCSign(dataset = ovse, inputType = "rnaseq")
@@ -1573,10 +1540,9 @@ ISCSign <-
 #' VEGF Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the VEGF score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' VEGFSign(dataset = ovse)
@@ -1605,10 +1571,9 @@ VEGFSign <- function(dataset, nametype = "SYMBOL") {
 #' DNA Repair Signature
 #'
 ##' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the Angiogenesis score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' DNArepSign(dataset = ovse, inputType = "rnaseq")
@@ -1662,10 +1627,9 @@ DNArepSign <-
 #' IPSOV Signature
 #'
 ##' @inherit EMTSign description
-#' @inheritParams EMTSign
+#' @inheritParams pyroptosisSign
 #'
-#' @return A SummarizedExperiment object in which the IPSOV score will be
-#' added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @examples
 #' IPSOVSign(dataset = ovse)
