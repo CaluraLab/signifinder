@@ -9,15 +9,15 @@ ECMSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
 correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment},
+Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \code{\link[SingleCellExperiment]{SingleCellExperiment}},
 \code{\link[SpatialExperiment]{SpatialExperiment}} or
-\code{\link[SeuratObject]{SeuratObject}} containing an assay
-where rows correspond to genes and columns correspond to samples.}
+\code{\link[SeuratObject]{SeuratObject}}.}
 
-\item{nametype}{gene name ID of your dataset (row names).}
+\item{nametype}{character string saying the type of gene name ID (row names
+in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{pvalues}{logical. It allows to compute p-values by permutations.}
+\item{pvalues}{logical. If TRUE it computes p-values of GSVA by permutations.}
 
 \item{nperm}{number of permutations.}
 

@@ -17,19 +17,21 @@ EMTSign(
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
 correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment},
+Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \code{\link[SingleCellExperiment]{SingleCellExperiment}},
 \code{\link[SpatialExperiment]{SpatialExperiment}} or
-\code{\link[SeuratObject]{SeuratObject}} containing an assay
-where rows correspond to genes and columns correspond to samples.}
+\code{\link[SeuratObject]{SeuratObject}}.}
 
-\item{nametype}{gene name ID of your dataset (row names).}
+\item{nametype}{character string saying the type of gene name ID (row names
+in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{inputType}{type of data you are using: microarray or rnaseq.}
+\item{inputType}{character string saying the type of data you are using.
+Either one of "microarray" or "rnaseq".}
 
-\item{author}{first author of the specific signature publication.}
+\item{author}{character string saying the first author of the signature
+publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
-\item{pvalues}{logical. It allows to compute p-values by permutations.}
+\item{pvalues}{logical. If TRUE it computes p-values of GSVA by permutations.}
 
 \item{nperm}{number of permutations.}
 
@@ -37,8 +39,8 @@ where rows correspond to genes and columns correspond to samples.}
 function.}
 }
 \value{
-A SummarizedExperiment object in which the Epithelial and Mesenchymal
-scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
+A SummarizedExperiment object in which scores are added in
+the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,

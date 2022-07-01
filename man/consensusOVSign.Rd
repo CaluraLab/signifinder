@@ -4,20 +4,18 @@
 \alias{consensusOVSign}
 \title{ConsensusOV Signature}
 \usage{
-consensusOVSign(dataset, nametype = "SYMBOL", method = "consensusOV", ...)
+consensusOVSign(dataset, nametype = "SYMBOL", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
 correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment},
+Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \code{\link[SingleCellExperiment]{SingleCellExperiment}},
 \code{\link[SpatialExperiment]{SpatialExperiment}} or
-\code{\link[SeuratObject]{SeuratObject}} containing an assay
-where rows correspond to genes and columns correspond to samples.}
+\code{\link[SeuratObject]{SeuratObject}}.}
 
-\item{nametype}{gene name ID of your dataset (row names).}
-
-\item{method}{the subtyping method to use. Default is "consensusOV".}
+\item{nametype}{character string saying the type of gene name ID (row names
+in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{...}{optional parameters to be passed to
 \code{\link[consensusOV]{get.subtypes}}.}

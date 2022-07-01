@@ -8,21 +8,23 @@
 #'
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' Alternatively, an object of type \linkS4class{SummarizedExperiment},
 #' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
 #' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param inputType type of data you are using: microarray or rnaseq.
-#' @param author first author of the specific signature publication.
-#' @param pvalues logical. It allows to compute p-values by permutations.
+#' \code{\link[SeuratObject]{SeuratObject}}.
+#' @param nametype character string saying the type of gene name ID (row names
+#' in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
+#' @param inputType character string saying the type of data you are using.
+#' Either one of "microarray" or "rnaseq".
+#' @param author character string saying the first author of the signature
+#' publication. Check it in \code{\link[signifinder]{availableSignatures}}.
+#' @param pvalues logical. If TRUE it computes p-values of GSVA by permutations.
 #' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
-#' @return A SummarizedExperiment object in which the Epithelial and Mesenchymal
-#' scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return A SummarizedExperiment object in which scores are added in
+#' the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
 #' @importFrom stats prcomp
@@ -163,10 +165,10 @@ EMTSign <-
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @param hgReference character string saying the human reference genome.
+#' Either one of "hg19" or "hg38".
 #'
-#' @return A SummarizedExperiment object in which the Pyroptosis score
-#' is added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' @inherit EMTSign return
 #'
 #' @importFrom SummarizedExperiment assays
 #'
@@ -226,8 +228,7 @@ pyroptosisSign <-
 #' Ferroptosis Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams EMTSign
-#' @param hgReference Human reference genome: "hg19" or "hg38"
+#' @inheritParams pyroptosisSign
 #'
 #' @return A SummarizedExperiment object in which the Ferroptosis score
 #' is added in the \code{\link[SummarizedExperiment]{colData}} section.
@@ -432,7 +433,6 @@ immunoScoreSign <-
 #'
 #' @inherit EMTSign description
 #' @inheritParams EMTSign
-#' @param method the subtyping method to use. Default is "consensusOV".
 #' @param ... optional parameters to be passed to
 #' \code{\link[consensusOV]{get.subtypes}}.
 #'
@@ -447,7 +447,6 @@ immunoScoreSign <-
 #' @export
 consensusOVSign <- function(dataset,
                             nametype = "SYMBOL",
-                            method = "consensusOV",
                             ...) {
     consistencyCheck(nametype, "consensusOVSign")
 
@@ -474,7 +473,6 @@ consensusOVSign <- function(dataset,
         get.subtypes(
             expression.dataset = datasetm_n,
             entrez.ids = genename,
-            method = method,
             ...
         )
     scores <- consensus_subtypes$rf.probs

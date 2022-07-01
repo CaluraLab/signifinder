@@ -438,7 +438,7 @@ dataTransformation <-
             sum(width(reduce(exons_g[[eg]])))
         })
 
-        usec <- colSums(datasetm[use,])>0
+        usec <- colSums(data[use,])>0
 
         tdata <- matrix(NA, nrow = nrow(data), ncol = ncol(data))
         tdata[use,usec] <- convertCounts(
