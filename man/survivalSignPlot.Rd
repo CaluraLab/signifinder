@@ -14,44 +14,40 @@ survivalSignPlot(
 )
 }
 \arguments{
-\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
-signatures functions.}
+\item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
+the signatures functions.}
 
-\item{survData}{A dataframe where each row represents a samples (equal to
-the names in the expression matrix) and two columns: the first holding
-survival data of time, indicating the follow up time of the samples; the
-second holding data of the survival status, an indicator normally 0=alive and
-1=dead. For interval censored data, the status indicator is 0=right censored,
-1=event at time, 2=left censored, 3=interval censored.}
+\item{survData}{a dataframe with samples on rows and two columns. The first
+column holds survival data of time, indicating the follow up times; the
+second holds data of the survival status, normally 0=alive and 1=dead. For
+further details check \code{\link[survival]{Surv}} function.}
 
-\item{whichSign}{The signatures to test in the plot.}
+\item{whichSign}{character string saying the signature to plot.}
 
-\item{cutpoint}{A character between "median", "mean" and "optimal" or a
-numeric value, which divide samples between high values and low values. The
-function computes the value with the method indicated or employs the values
-directly supplied by the user, and based on that number it divides samples in
-higher and lower to compare them as the two groups of the survival plot.}
+\item{cutpoint}{a character string (one of: "median", "mean" and "optimal")
+or a numeric value, which divide samples between high scores and low scores.
+The function computes the threshold with the method indicated or employs the
+values directly supplied by the user. Based on that number, it divides
+samples.}
 
-\item{sampleAnnot}{A categorical variable containing samples annotations
+\item{sampleAnnot}{a categorical vector containing samples' annotations
 named with samples names equal to the row names used in `survData`.}
 
-\item{selectByAnnot}{A group from `sampleAnnot` used to compute the
-survival analysis.}
+\item{selectByAnnot}{character string saying the subgroup from `sampleAnnot`
+used to compute the survival analysis.}
 }
 \value{
-A Survival plot and the statistics computed on data.
+A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-It creates survival curves from either a formula (e.g. the
-Kaplan-Meier), a previously fitted Cox model, or a previously fitted
-accelerated failure time model.
+Given a signature and samples survival data, the function plots survival
+curves for that signature.
 }
 \examples{
 mysurvData <- cbind(ovse$os, ovse$status)
 rownames(mysurvData) <- rownames(SummarizedExperiment::colData(ovse))
-OVse <- ferroptosisSign(dataset = ovse)
 survivalSignPlot(
-    data = OVse,
+    data = ovse,
     survData = mysurvData,
     whichSign = "Ferroptosis_Ye"
 )

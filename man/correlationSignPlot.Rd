@@ -12,26 +12,24 @@ correlationSignPlot(
 )
 }
 \arguments{
-\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
-signatures functions.}
+\item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
+the signatures functions.}
 
-\item{whichSign}{The signatures to show in the plot.}
+\item{whichSign}{character vector saying the signatures to plot. If not
+specified, all the signatures inside data will be plotted.}
 
-\item{sampleAnnot}{A categorical variable containing samples annotations.}
+\item{sampleAnnot}{character vector containing samples' annotations.}
 
-\item{selectByAnnot}{A subgroup from `sampleAnnot` to use to construct the
-correlation plot}
+\item{selectByAnnot}{character string saying the subgroup from `sampleAnnot`
+used to compute the correlation plot.}
 }
 \value{
-A correlation ellipse graph.
+An object of class "openair".
 }
 \description{
-Given a matrix of multiple signatures, the function gives the opportunity to
-observe signatures correlates between each other.
+Given multiple signatures, the function plots signatures correlations.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = ovse)
-OVse <- pyroptosisSign(dataset = OVse)
-correlationSignPlot(data = OVse)
+correlationSignPlot(data = ovse)
 
 }

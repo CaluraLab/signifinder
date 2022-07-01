@@ -2,14 +2,14 @@
 
 #' Scatterplot for a single signature
 #'
-#' Given signatures' scores it returns a scatterplot of patients scores and a
-#' barplot of the density distributions of patients scores.
+#' Given signatures' scores, it returns a scatterplot of samples' scores and a
+#' barplot of the density distributions of samples' scores.
 #'
-#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
-#' signatures functions.
-#' @param whichSign The signature function to plot.
-#' @param statistics The statistics to be plot in the graph. It should be a
-#' pre-defined character between "mean", "median" or "quantiles".
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param whichSign character string saying the signature to plot.
+#' @param statistics character string saying the statistics to be plotted in the
+#' graph. Either one of "mean", "median" or "quantiles".
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -19,8 +19,7 @@
 #' @importFrom stats median quantile
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = ovse)
-#' oneSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
+#' oneSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
 oneSignPlot <- function(data, whichSign, statistics = NULL) {
@@ -145,24 +144,20 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 }
 
 
-#' Gene's Signatures' Heatmap
+#' Genes' Signatures' Heatmap
 #'
-#' Given one or multiple signatures, the function gives the opportunity to
-#' observe the trend of the signature's scores based on the expression of the
-#' genes included in each of them.
+#' Given one or multiple signatures, the function returns a heatmap of the
+#' expression values of the genes included in each of them.
 #'
-#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
-#' signatures functions.
-#' @param whichSign The signatures to show in the plot. This will automatically
-#' select corresponding genes to show in the plot.
-#' @param logCount Logical. Give the opportunity to compute logarithm for the
-#' expression values in the dataset.
-#' @param splitBySign Logical. Give you the possibility to split heatmap's row
-#' based on the signature's origin of the genes.
-#' @param sampleAnnot A vector containing samples annotations.
-#' @param splitBySampleAnnot A categorical variable. Give you the possibility
-#' to split columns based on samples' annotations.
-#' @param ... Other parameters specific of the function
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param whichSign character vector saying the signatures to plot.
+#' @param logCount logical. If TRUE it shows logarithms of expression values.
+#' @param splitBySign logical. If TRUE it splits rows by signatures.
+#' @param sampleAnnot vector containing samples' annotations.
+#' @param splitBySampleAnnot logical. If TRUE it splits columns by samples'
+#' annotations.
+#' @param ... other parameters specific of the function
 #' \code{\link[ComplexHeatmap]{Heatmap}}.
 #'
 #' @return A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
@@ -174,8 +169,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' @importFrom grid gpar
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = ovse)
-#' geneHeatmapSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
+#' geneHeatmapSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
 geneHeatmapSignPlot <- function(data,
@@ -274,22 +268,20 @@ geneHeatmapSignPlot <- function(data,
 
 #' Global Heatmap of Signatures' scores.
 #'
-#' Given a matrix of multiple signatures, the function gives the opportunity to
-#' observe the trend of the signature's scores for each samples. Moreover it
-#' gives the possibility to order all the matrix based on a single signature.
+#' Given one or multiple signatures, the function returns a heatmap of scores.
 #'
-#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
-#' signatures functions. Th function takes as input a matrix where each
-#' row represents a signature and each column represent a samples.
-#' @param whichSign The signatures to show in the plot.
-#' @param clusterBySign One ore more signatures that clusterize columns on
-#' Heatmap.
-#' @param sampleAnnot A vector containing samples annotations.
-#' @param signAnnot A character vector of signature annotations: signature,
-#' topic, tumor, tissue.
-#' @param splitBySampleAnnot A categorical variable. Give you the possibility
-#' to split columns based on samples' annotations.
-#' @param ... Other parameters specific of the function
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param whichSign character vector saying the signatures to plot. If not
+#' specified, all the signatures inside data will be plotted.
+#' @param clusterBySign character vector saying one or more signatures to use to
+#' cluster columns.
+#' @param sampleAnnot vector containing samples' annotations.
+#' @param signAnnot character vector of signature's annotations. One or more
+#' between: "signature", "topic", "tumor", "tissue".
+#' @param splitBySampleAnnot logical. If TRUE it splits columns by samples'
+#' annotations.
+#' @param ... other parameters specific of the function
 #' \code{\link[ComplexHeatmap]{Heatmap}}.
 #'
 #' @return A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
@@ -298,9 +290,7 @@ geneHeatmapSignPlot <- function(data,
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = ovse)
-#' OVse <- pyroptosisSign(dataset = OVse)
-#' heatmapSignPlot(data = OVse)
+#' heatmapSignPlot(data = ovse)
 #'
 #' @export
 heatmapSignPlot <-
@@ -418,25 +408,23 @@ heatmapSignPlot <-
 
 #' Correlation Plot
 #'
-#' Given a matrix of multiple signatures, the function gives the opportunity to
-#' observe signatures correlates between each other.
+#' Given multiple signatures, the function plots signatures correlations.
 #'
-#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
-#' signatures functions.
-#' @param whichSign The signatures to show in the plot.
-#' @param sampleAnnot A categorical variable containing samples annotations.
-#' @param selectByAnnot A subgroup from `sampleAnnot` to use to construct the
-#' correlation plot
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param whichSign character vector saying the signatures to plot. If not
+#' specified, all the signatures inside data will be plotted.
+#' @param sampleAnnot character vector containing samples' annotations.
+#' @param selectByAnnot character string saying the subgroup from `sampleAnnot`
+#' used to compute the correlation plot.
 #'
-#' @return A correlation ellipse graph.
+#' @return An object of class "openair".
 #'
 #' @importFrom openair corPlot
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = ovse)
-#' OVse <- pyroptosisSign(dataset = OVse)
-#' correlationSignPlot(data = OVse)
+#' correlationSignPlot(data = ovse)
 #'
 #' @export
 correlationSignPlot <-
@@ -510,30 +498,27 @@ correlationSignPlot <-
 
 #' Survival Plot
 #'
-#' It creates survival curves from either a formula (e.g. the
-#' Kaplan-Meier), a previously fitted Cox model, or a previously fitted
-#' accelerated failure time model.
+#' Given a signature and samples survival data, the function plots survival
+#' curves for that signature.
 #'
-#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
-#' signatures functions.
-#' @param survData A dataframe where each row represents a samples (equal to
-#' the names in the expression matrix) and two columns: the first holding
-#' survival data of time, indicating the follow up time of the samples; the
-#' second holding data of the survival status, an indicator normally 0=alive and
-#' 1=dead. For interval censored data, the status indicator is 0=right censored,
-#' 1=event at time, 2=left censored, 3=interval censored.
-#' @param whichSign The signatures to test in the plot.
-#' @param cutpoint A character between "median", "mean" and "optimal" or a
-#' numeric value, which divide samples between high values and low values. The
-#' function computes the value with the method indicated or employs the values
-#' directly supplied by the user, and based on that number it divides samples in
-#' higher and lower to compare them as the two groups of the survival plot.
-#' @param sampleAnnot A categorical variable containing samples annotations
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param survData a dataframe with samples on rows and two columns. The first
+#' column holds survival data of time, indicating the follow up times; the
+#' second holds data of the survival status, normally 0=alive and 1=dead. For
+#' further details check \code{\link[survival]{Surv}} function.
+#' @param whichSign character string saying the signature to plot.
+#' @param cutpoint a character string (one of: "median", "mean" and "optimal")
+#' or a numeric value, which divide samples between high scores and low scores.
+#' The function computes the threshold with the method indicated or employs the
+#' values directly supplied by the user. Based on that number, it divides
+#' samples.
+#' @param sampleAnnot a categorical vector containing samples' annotations
 #' named with samples names equal to the row names used in `survData`.
-#' @param selectByAnnot A group from `sampleAnnot` used to compute the
-#' survival analysis.
+#' @param selectByAnnot character string saying the subgroup from `sampleAnnot`
+#' used to compute the survival analysis.
 #'
-#' @return A Survival plot and the statistics computed on data.
+#' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom stats median
@@ -544,9 +529,8 @@ correlationSignPlot <-
 #' @examples
 #' mysurvData <- cbind(ovse$os, ovse$status)
 #' rownames(mysurvData) <- rownames(SummarizedExperiment::colData(ovse))
-#' OVse <- ferroptosisSign(dataset = ovse)
 #' survivalSignPlot(
-#'     data = OVse,
+#'     data = ovse,
 #'     survData = mysurvData,
 #'     whichSign = "Ferroptosis_Ye"
 #' )
@@ -671,16 +655,16 @@ survivalSignPlot <-
 
 #' Ridgeline Plot
 #'
-#' The function calculates densities from the point data mapped onto the x axis,
-#' arranging multiple density plots of the Signatures' scores.
+#' Given multiple signatures, the function plots densities scores.
 #'
-#' @param data An object of type \linkS4class{SummarizedExperiment} coming from
-#' signatures functions.
-#' @param whichSign The signatures to test in the ridgeline plot.
-#' @param groupByAnnot  A categorical variable containing samples annotations.
-#' @param selectByAnnot A character indicating the group/s defined in
-#' `groupByAnnot` to show in the plot.
-#' @param ... Other parameters specific of the functions
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param whichSign character vector saying the signatures to plot. If not
+#' specified, all the signatures inside data will be plotted.
+#' @param groupByAnnot character vector containing samples' annotations.
+#' @param selectByAnnot character string saying the subgroup from `groupByAnnot`
+#' used to compute the ridgeline plot.
+#' @param ... other parameters specific of the functions
 #' \code{\link[ggridges]{geom_density_ridges}} and
 #' \code{\link[ggridges]{geom_density_ridges_gradient}}.
 #'
@@ -691,8 +675,7 @@ survivalSignPlot <-
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
-#' OVse <- ferroptosisSign(dataset = ovse)
-#' ridgelineSignPlot(data = OVse)
+#' ridgelineSignPlot(data = ovse)
 #'
 #' @export
 ridgelineSignPlot <-

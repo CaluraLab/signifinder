@@ -2,7 +2,7 @@
 % Please edit documentation in R/Plots.R
 \name{geneHeatmapSignPlot}
 \alias{geneHeatmapSignPlot}
-\title{Gene's Signatures' Heatmap}
+\title{Genes' Signatures' Heatmap}
 \usage{
 geneHeatmapSignPlot(
   data,
@@ -15,36 +15,31 @@ geneHeatmapSignPlot(
 )
 }
 \arguments{
-\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
-signatures functions.}
+\item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
+the signatures functions.}
 
-\item{whichSign}{The signatures to show in the plot. This will automatically
-select corresponding genes to show in the plot.}
+\item{whichSign}{character vector saying the signatures to plot.}
 
-\item{logCount}{Logical. Give the opportunity to compute logarithm for the
-expression values in the dataset.}
+\item{logCount}{logical. If TRUE it shows logarithms of expression values.}
 
-\item{splitBySign}{Logical. Give you the possibility to split heatmap's row
-based on the signature's origin of the genes.}
+\item{splitBySign}{logical. If TRUE it splits rows by signatures.}
 
-\item{sampleAnnot}{A vector containing samples annotations.}
+\item{sampleAnnot}{vector containing samples' annotations.}
 
-\item{splitBySampleAnnot}{A categorical variable. Give you the possibility
-to split columns based on samples' annotations.}
+\item{splitBySampleAnnot}{logical. If TRUE it splits columns by samples'
+annotations.}
 
-\item{...}{Other parameters specific of the function
+\item{...}{other parameters specific of the function
 \code{\link[ComplexHeatmap]{Heatmap}}.}
 }
 \value{
 A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 }
 \description{
-Given one or multiple signatures, the function gives the opportunity to
-observe the trend of the signature's scores based on the expression of the
-genes included in each of them.
+Given one or multiple signatures, the function returns a heatmap of the
+expression values of the genes included in each of them.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = ovse)
-geneHeatmapSignPlot(data = OVse, whichSign = "Ferroptosis_Ye")
+geneHeatmapSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 
 }

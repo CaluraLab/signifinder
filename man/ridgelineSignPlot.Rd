@@ -13,17 +13,18 @@ ridgelineSignPlot(
 )
 }
 \arguments{
-\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
-signatures functions.}
+\item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
+the signatures functions.}
 
-\item{whichSign}{The signatures to test in the ridgeline plot.}
+\item{whichSign}{character vector saying the signatures to plot. If not
+specified, all the signatures inside data will be plotted.}
 
-\item{groupByAnnot}{A categorical variable containing samples annotations.}
+\item{groupByAnnot}{character vector containing samples' annotations.}
 
-\item{selectByAnnot}{A character indicating the group/s defined in
-`groupByAnnot` to show in the plot.}
+\item{selectByAnnot}{character string saying the subgroup from `groupByAnnot`
+used to compute the ridgeline plot.}
 
-\item{...}{Other parameters specific of the functions
+\item{...}{other parameters specific of the functions
 \code{\link[ggridges]{geom_density_ridges}} and
 \code{\link[ggridges]{geom_density_ridges_gradient}}.}
 }
@@ -31,11 +32,9 @@ signatures functions.}
 A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-The function calculates densities from the point data mapped onto the x axis,
-arranging multiple density plots of the Signatures' scores.
+Given multiple signatures, the function plots densities scores.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = ovse)
-ridgelineSignPlot(data = OVse)
+ridgelineSignPlot(data = ovse)
 
 }

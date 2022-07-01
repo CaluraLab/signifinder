@@ -15,37 +15,33 @@ heatmapSignPlot(
 )
 }
 \arguments{
-\item{data}{An object of type \linkS4class{SummarizedExperiment} coming from
-signatures functions. Th function takes as input a matrix where each
-row represents a signature and each column represent a samples.}
+\item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
+the signatures functions.}
 
-\item{whichSign}{The signatures to show in the plot.}
+\item{whichSign}{character vector saying the signatures to plot. If not
+specified, all the signatures inside data will be plotted.}
 
-\item{clusterBySign}{One ore more signatures that clusterize columns on
-Heatmap.}
+\item{clusterBySign}{character vector saying one or more signatures to use to
+cluster columns.}
 
-\item{sampleAnnot}{A vector containing samples annotations.}
+\item{sampleAnnot}{vector containing samples' annotations.}
 
-\item{signAnnot}{A character vector of signature annotations: signature,
-topic, tumor, tissue.}
+\item{signAnnot}{character vector of signature's annotations. One or more
+between: "signature", "topic", "tumor", "tissue".}
 
-\item{splitBySampleAnnot}{A categorical variable. Give you the possibility
-to split columns based on samples' annotations.}
+\item{splitBySampleAnnot}{logical. If TRUE it splits columns by samples'
+annotations.}
 
-\item{...}{Other parameters specific of the function
+\item{...}{other parameters specific of the function
 \code{\link[ComplexHeatmap]{Heatmap}}.}
 }
 \value{
 A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 }
 \description{
-Given a matrix of multiple signatures, the function gives the opportunity to
-observe the trend of the signature's scores for each samples. Moreover it
-gives the possibility to order all the matrix based on a single signature.
+Given one or multiple signatures, the function returns a heatmap of scores.
 }
 \examples{
-OVse <- ferroptosisSign(dataset = ovse)
-OVse <- pyroptosisSign(dataset = OVse)
-heatmapSignPlot(data = OVse)
+heatmapSignPlot(data = ovse)
 
 }
