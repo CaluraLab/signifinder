@@ -13,15 +13,19 @@ availableSignatures(
 )
 }
 \arguments{
-\item{tumor}{type of tumor for which the signature is developed}
+\item{tumor}{character string saying the type of tumor for which signatures
+are developed. Used to filter the signatures to show in the table.}
 
-\item{tissue}{type of tissue for which the signature is developed}
+\item{tissue}{character string saying the type of tissue for which signatures
+are developed. Used to filter the signatures to show in the table.}
 
-\item{topic}{filter for signature topic}
+\item{topic}{character string saying the signature topic filter to apply to
+the table. Used to filter the signatures to show in the table.}
 
-\item{requiredInput}{type of data required: microarray or rnaseq}
+\item{requiredInput}{character string saying the type of data required.
+Either one of "microarray" or "rnaseq"}
 
-\item{description}{whether to show or not the signature description}
+\item{description}{logical. If TRUE it shows the signature description.}
 }
 \value{
 A data frame with 46 rows and 10 variables:
@@ -32,7 +36,7 @@ A data frame with 46 rows and 10 variables:
   \item{topic}{main cancer topic of the signature}
   \item{tumor}{tumor type for which the signature was developed}
   \item{tissue}{tumor tissue for which the signature was developed}
-  \item{requiredInput}{tumor data with which the signature was developed}
+  \item{requiredInput}{type of data with which the signature was developed}
   \item{author}{first author of the work in which the signature is described}
   \item{reference}{reference of the work}
   \item{description}{signature description and how to evaluate its score}

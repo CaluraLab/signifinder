@@ -18,25 +18,27 @@ multipleSign(
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
 correspond to genes and columns correspond to samples.
-Alternatively an object of type \linkS4class{SummarizedExperiment},
+Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \code{\link[SingleCellExperiment]{SingleCellExperiment}},
 \code{\link[SpatialExperiment]{SpatialExperiment}} or
-\code{\link[SeuratObject]{SeuratObject}} containing an assay
-where rows correspond to genes and columns correspond to samples.}
+\code{\link[SeuratObject]{SeuratObject}}.}
 
-\item{nametype}{gene name ID of your dataset (row names).}
+\item{nametype}{character string saying the type of gene name ID (row names
+in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{inputType}{type of data you are using: microarray or rnaseq.}
+\item{inputType}{character string saying the type of data you are using.
+Either one of "microarray" or "rnaseq".}
 
-\item{whichSign}{character vector of signature names to compute.}
+\item{whichSign}{character vector saying the signatures to compute.}
 
-\item{tumor}{character vector of tumor types to compute signatures
+\item{tumor}{character vector saying the tumor types to compute signatures
 only from a specific tumor(s) (this can also be pan-cancer).}
 
-\item{tissue}{character vector of tumor tissue to compute signatures
+\item{tissue}{character vector saying the tumor tissue to compute signatures
 only from a specific tissue (this can also be pan-tissue).}
 
-\item{topic}{compute signatures only from a specific cancer topic.}
+\item{topic}{character vector saying the signatures to compute, based on a
+specific cancer topic.}
 
 \item{...}{other arguments passed on to the signature functions.}
 }

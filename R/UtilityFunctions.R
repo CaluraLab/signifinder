@@ -498,11 +498,15 @@ geneIDtrans <- function(nametype, genes) {
 #' It shows a table containing all the information of the signatures collected
 #' in the package.
 #'
-#' @param tumor type of tumor for which the signature is developed
-#' @param tissue type of tissue for which the signature is developed
-#' @param topic filter for signature topic
-#' @param requiredInput type of data required: microarray or rnaseq
-#' @param description whether to show or not the signature description
+#' @param tumor character string saying the type of tumor for which signatures
+#' are developed. Used to filter the signatures to show in the table.
+#' @param tissue character string saying the type of tissue for which signatures
+#' are developed. Used to filter the signatures to show in the table.
+#' @param topic character string saying the signature topic filter to apply to
+#' the table. Used to filter the signatures to show in the table.
+#' @param requiredInput character string saying the type of data required.
+#' Either one of "microarray" or "rnaseq"
+#' @param description logical. If TRUE it shows the signature description.
 #'
 #' @return A data frame with 46 rows and 10 variables:
 #' \describe{
@@ -512,7 +516,7 @@ geneIDtrans <- function(nametype, genes) {
 #'   \item{topic}{main cancer topic of the signature}
 #'   \item{tumor}{tumor type for which the signature was developed}
 #'   \item{tissue}{tumor tissue for which the signature was developed}
-#'   \item{requiredInput}{tumor data with which the signature was developed}
+#'   \item{requiredInput}{type of data with which the signature was developed}
 #'   \item{author}{first author of the work in which the signature is described}
 #'   \item{reference}{reference of the work}
 #'   \item{description}{signature description and how to evaluate its score}
@@ -556,19 +560,21 @@ availableSignatures <- function(tumor = NULL,
 #'
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
-#' Alternatively an object of type \linkS4class{SummarizedExperiment},
+#' Alternatively, an object of type \linkS4class{SummarizedExperiment},
 #' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
 #' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}} containing an assay
-#' where rows correspond to genes and columns correspond to samples.
-#' @param nametype gene name ID of your dataset (row names).
-#' @param inputType type of data you are using: microarray or rnaseq.
-#' @param whichSign character vector of signature names to compute.
-#' @param tumor character vector of tumor types to compute signatures
+#' \code{\link[SeuratObject]{SeuratObject}}.
+#' @param nametype character string saying the type of gene name ID (row names
+#' in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
+#' @param inputType character string saying the type of data you are using.
+#' Either one of "microarray" or "rnaseq".
+#' @param whichSign character vector saying the signatures to compute.
+#' @param tumor character vector saying the tumor types to compute signatures
 #' only from a specific tumor(s) (this can also be pan-cancer).
-#' @param tissue character vector of tumor tissue to compute signatures
+#' @param tissue character vector saying the tumor tissue to compute signatures
 #' only from a specific tissue (this can also be pan-tissue).
-#' @param topic compute signatures only from a specific cancer topic.
+#' @param topic character vector saying the signatures to compute, based on a
+#' specific cancer topic.
 #' @param ... other arguments passed on to the signature functions.
 #'
 #' @return A SummarizedExperiment object in which the signatures' scores
