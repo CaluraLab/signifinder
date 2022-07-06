@@ -2,7 +2,7 @@
 % Please edit documentation in R/UtilityFunctions.R
 \name{availableSignatures}
 \alias{availableSignatures}
-\title{Show available signatures}
+\title{Show Available Signatures}
 \usage{
 availableSignatures(
   tumor = NULL,
@@ -13,25 +13,26 @@ availableSignatures(
 )
 }
 \arguments{
-\item{tumor}{character string saying the type of tumor for which signatures
-are developed. Used to filter the signatures to show in the table.}
+\item{tumor}{character vector saying the type of tumors for which signatures
+are developed. Used to filter the signatures in the table.}
 
-\item{tissue}{character string saying the type of tissue for which signatures
-are developed. Used to filter the signatures to show in the table.}
+\item{tissue}{character vector saying the type of tissues for which signatures
+are developed. Used to filter the signatures in the table.}
 
-\item{topic}{character string saying the signature topic filter to apply to
-the table. Used to filter the signatures to show in the table.}
+\item{topic}{character vector saying the signature topics. Used to filter
+the signatures in the table.}
 
-\item{requiredInput}{character string saying the type of data required.
-Either one of "microarray" or "rnaseq"}
+\item{requiredInput}{character string saying the type of data required in
+input by the signature. Either one of "microarray" or "rnaseq". Used to
+filter the signatures in the table.}
 
-\item{description}{logical. If TRUE it shows the signature description.}
+\item{description}{logical. If TRUE it shows the signature's description.}
 }
 \value{
 A data frame with 46 rows and 10 variables:
 \describe{
   \item{signature}{name of the signature}
-  \item{scoreLabel}{label of the signature when added inside results}
+  \item{scoreLabel}{label of the signature when added inside colData section}
   \item{functionName}{name of the function to use to compute the signature}
   \item{topic}{main cancer topic of the signature}
   \item{tumor}{tumor type for which the signature was developed}

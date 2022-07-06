@@ -1,4 +1,4 @@
-#' Ovarian cancer expression data.
+#' Example expression data.
 #'
 #' A dataset containing gene expression values (in normalized counts, TPM, CPM,
 #' and FPKM) of 40 ovarian cancer patients.

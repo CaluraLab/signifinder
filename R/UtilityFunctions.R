@@ -493,25 +493,26 @@ geneIDtrans <- function(nametype, genes) {
 }
 
 
-#' Show available signatures
+#' Show Available Signatures
 #'
 #' It shows a table containing all the information of the signatures collected
 #' in the package.
 #'
-#' @param tumor character string saying the type of tumor for which signatures
-#' are developed. Used to filter the signatures to show in the table.
-#' @param tissue character string saying the type of tissue for which signatures
-#' are developed. Used to filter the signatures to show in the table.
-#' @param topic character string saying the signature topic filter to apply to
-#' the table. Used to filter the signatures to show in the table.
-#' @param requiredInput character string saying the type of data required.
-#' Either one of "microarray" or "rnaseq"
-#' @param description logical. If TRUE it shows the signature description.
+#' @param tumor character vector saying the type of tumors for which signatures
+#' are developed. Used to filter the signatures in the table.
+#' @param tissue character vector saying the type of tissues for which signatures
+#' are developed. Used to filter the signatures in the table.
+#' @param topic character vector saying the signature topics. Used to filter
+#' the signatures in the table.
+#' @param requiredInput character string saying the type of data required in
+#' input by the signature. Either one of "microarray" or "rnaseq". Used to
+#' filter the signatures in the table.
+#' @param description logical. If TRUE it shows the signature's description.
 #'
 #' @return A data frame with 46 rows and 10 variables:
 #' \describe{
 #'   \item{signature}{name of the signature}
-#'   \item{scoreLabel}{label of the signature when added inside results}
+#'   \item{scoreLabel}{label of the signature when added inside colData section}
 #'   \item{functionName}{name of the function to use to compute the signature}
 #'   \item{topic}{main cancer topic of the signature}
 #'   \item{tumor}{tumor type for which the signature was developed}
@@ -527,11 +528,9 @@ geneIDtrans <- function(nametype, genes) {
 #' availableSignatures()
 #'
 #' @export
-availableSignatures <- function(tumor = NULL,
-                                tissue = NULL,
-                                topic = NULL,
-                                requiredInput = NULL,
-                                description = TRUE) {
+availableSignatures <- function(
+        tumor = NULL, tissue = NULL, topic = NULL,
+        requiredInput = NULL, description = TRUE) {
     st <- signatureTable
     if (!is.null(tumor)) {
         st <- st[grepl(paste(tumor, collapse = "|"), st$tumor), ]
@@ -553,10 +552,11 @@ availableSignatures <- function(tumor = NULL,
 }
 
 
-#' Multiple Signature Computation
+#' Multiple Signatures Computation
 #'
 #' @description This function computes all the signatures for a specific
-#' 'requiredInput' and for a specific 'tissue' and/or 'topic'.
+#' 'inputType'. Further, it is possible to select specific signatures
+#' setting the 'tumor', the 'tissue' and/or the 'topic'.
 #'
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
@@ -569,12 +569,12 @@ availableSignatures <- function(tumor = NULL,
 #' @param inputType character string saying the type of data you are using.
 #' Either one of "microarray" or "rnaseq".
 #' @param whichSign character vector saying the signatures to compute.
-#' @param tumor character vector saying the tumor types to compute signatures
-#' only from a specific tumor(s) (this can also be pan-cancer).
-#' @param tissue character vector saying the tumor tissue to compute signatures
-#' only from a specific tissue (this can also be pan-tissue).
-#' @param topic character vector saying the signatures to compute, based on a
-#' specific cancer topic.
+#' @param tumor character vector saying the tumor types. Signatures from that
+#' tumors will be computed (this can also be "pan-cancer").
+#' @param tissue character vector saying the tumor tissues. Signatures from
+#' that tissues will be computed (this can also be "pan-tissue").
+#' @param topic character vector saying signatures topics. Signatures having
+#' that topics will be computed.
 #' @param ... other arguments passed on to the signature functions.
 #'
 #' @return A SummarizedExperiment object in which the signatures' scores
@@ -585,14 +585,9 @@ availableSignatures <- function(tumor = NULL,
 #' multipleSign(dataset = ovse, tissue = "ovary")
 #'
 #' @export
-multipleSign <- function(dataset,
-                         nametype = "SYMBOL",
-                         inputType = "rnaseq",
-                         whichSign = NULL,
-                         tumor = NULL,
-                         tissue = NULL,
-                         topic = NULL,
-                         ...) {
+multipleSign <- function(
+        dataset, nametype = "SYMBOL", inputType = "rnaseq",
+        whichSign = NULL, tumor = NULL, tissue = NULL, topic = NULL, ...) {
     argg <- c(as.list(environment()), list(...))
     st <- availableSignatures(
         tumor = tumor,

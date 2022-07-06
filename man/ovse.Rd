@@ -3,7 +3,7 @@
 \docType{data}
 \name{ovse}
 \alias{ovse}
-\title{Ovarian cancer expression data.}
+\title{Example expression data.}
 \format{
 An object of class \linkS4class{SummarizedExperiment}.
 }

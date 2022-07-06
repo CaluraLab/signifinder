@@ -2,7 +2,7 @@
 % Please edit documentation in R/UtilityFunctions.R
 \name{multipleSign}
 \alias{multipleSign}
-\title{Multiple Signature Computation}
+\title{Multiple Signatures Computation}
 \usage{
 multipleSign(
   dataset,
@@ -31,14 +31,14 @@ Either one of "microarray" or "rnaseq".}
 
 \item{whichSign}{character vector saying the signatures to compute.}
 
-\item{tumor}{character vector saying the tumor types to compute signatures
-only from a specific tumor(s) (this can also be pan-cancer).}
+\item{tumor}{character vector saying the tumor types. Signatures from that
+tumors will be computed (this can also be "pan-cancer").}
 
-\item{tissue}{character vector saying the tumor tissue to compute signatures
-only from a specific tissue (this can also be pan-tissue).}
+\item{tissue}{character vector saying the tumor tissues. Signatures from
+that tissues will be computed (this can also be "pan-tissue").}
 
-\item{topic}{character vector saying the signatures to compute, based on a
-specific cancer topic.}
+\item{topic}{character vector saying signatures topics. Signatures having
+that topics will be computed.}
 
 \item{...}{other arguments passed on to the signature functions.}
 }
@@ -48,7 +48,8 @@ are added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This function computes all the signatures for a specific
-'requiredInput' and for a specific 'tissue' and/or 'topic'.
+'inputType'. Further, it is possible to select specific signatures
+setting the 'tumor', the 'tissue' and/or the 'topic'.
 }
 \examples{
 multipleSign(dataset = ovse)
