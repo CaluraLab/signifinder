@@ -163,7 +163,14 @@ GetGenes <- function(name) {
 }
 
 range01 <- function(x) {
-    (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+    if(!var(x, na.rm = TRUE)){
+        y <- rep(0.5, length(x))
+        y[is.na(y)] <- NA
+        y[is.nan(y)] <- NaN
+        y
+    } else {
+        (x-min(x, na.rm = TRUE))/(max(x, na.rm = TRUE)-min(x, na.rm = TRUE))
+    }
 }
 
 #' @importFrom SummarizedExperiment colData
