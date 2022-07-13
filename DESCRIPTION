@@ -1,7 +1,7 @@
 Package: signifinder
 Type: Package
 Title: A collection of signatures
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: c(person("Stefania", "Pirrotta", role = c("cre", "aut"),
                     email = "stefania.pirrotta@phd.unipd.it"),
              person("Enrica", "Calura", role = "aut", 
