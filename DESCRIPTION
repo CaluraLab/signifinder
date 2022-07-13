@@ -3,7 +3,7 @@ Type: Package
 Title: A collection of signatures
 Version: 0.99.0
 Authors@R: c(person("Stefania", "Pirrotta", role = c("cre", "aut"),
-                    email = "stefania.pirrotta@studenti.unipd.it"),
+                    email = "stefania.pirrotta@phd.unipd.it"),
              person("Enrica", "Calura", role = "aut", 
                     email = "enrica.calura@unipd.it"))
 Description: signifinder is an R package for computing and exploring a 
