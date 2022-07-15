@@ -369,11 +369,11 @@ statScore <-
 
         percentageOfGenesUsed(namesignature, datasetm, genes, author = author)
 
-        genes <- genes[genes %in% row.names(datasetm)]
+        genes <- intersect(row.names(datasetm), genes)
 
         columnNA <- managena(datasetm = datasetm, genes = genes)
         score <-
-            apply(datasetm[intersect(row.names(datasetm), genes), ],
+            apply(datasetm[genes, , drop = FALSE],
                 2, typeofstat,
                 na.rm = TRUE
             )
@@ -485,6 +485,7 @@ percentageOfGenesUsed <- function(
                     " is computed with less than 30% of its genes")
         }
     }
+    # return(g_per==0)
 }
 
 geneIDtrans <- function(nametype, genes) {
@@ -625,7 +626,9 @@ multipleSign <- function(
         dataset <- tryCatch(
             do.call(signFunc, matchedArg),
             error = function(e){
-                message(signName, author, " raised an error and it was omitted")
+                message(signName, author, " raised an error:\n",
+                        e$message,
+                        "\nTherefore it was omitted")
                 return(dataset)
             })
         argg$dataset <- dataset
