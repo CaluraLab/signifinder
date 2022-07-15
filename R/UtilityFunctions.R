@@ -474,13 +474,15 @@ percentageOfGenesUsed <- function(
         message(
             name, author, " is using ", round(g_per), "% of genes")
         if (g_per < 30) {
-            warning("The signature is computed with less than 30% of its genes")
+            warning(name, author,
+                    " is computed with less than 30% of its genes")
         }
     } else {
         message(
             name, author, " is using ", round(g_per), "% of ", detail, " genes")
         if (g_per < 30) {
-            warning(detail, " is computed with less than 30% of its genes")
+            warning(name, author, detail,
+                    " is computed with less than 30% of its genes")
         }
     }
 }
@@ -620,7 +622,12 @@ multipleSign <- function(
         matchedArg <- c(argg_i, signFuncArg)
         matchedArg[names(matchedArg) == "..."] <- NULL
 
-        dataset <- do.call(signFunc, matchedArg)
+        dataset <- tryCatch(
+            do.call(signFunc, matchedArg),
+            error = function(e){
+                message(signName, author, " raised an error and it was omitted")
+                return(dataset)
+            })
         argg$dataset <- dataset
     }
     return(dataset)
