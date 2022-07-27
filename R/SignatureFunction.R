@@ -157,7 +157,7 @@ pyroptosisSign <- function(
         dataset <- dataTransformation(
             dataset, datasetm, "TPM", hgReference, nametype)
         datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
-    }
+    } else { datasetm_n <- datasetm}
 
     score <- coeffScore(sign_df, datasetm_n, "pyroptosisSign", author = author)
 
