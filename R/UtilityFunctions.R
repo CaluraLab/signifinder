@@ -195,23 +195,14 @@ matchArguments <- function(dots, defaults) {
 #' @importFrom methods is
 getMatrix <- function(userdata) {
     if (!is.matrix(userdata)) {
-        if (is(userdata, "Seurat")) {
-            if (length(userdata@assays) == 1) {
-                userdata <- as.matrix(userdata@assays$RNA@data)
-            } else {
-                userdata <- as.matrix(userdata@assays$SCT@data)
-            }
-        } else if (class(userdata) %in% c(
+        if (class(userdata) %in% c(
             "SpatialExperiment",
             "SummarizedExperiment",
-            "SingleCellExperiment"
-        )) {
+            "SingleCellExperiment")) {
             userdata <- as.matrix(assay(userdata))
         } else if (is.data.frame(userdata)) {
             userdata <- as.matrix(userdata)
-        } else {
-            stop("This dataset type is not supported")
-        }
+        } else { stop("This dataset type is not supported") }
     }
     return(userdata)
 }
@@ -219,20 +210,10 @@ getMatrix <- function(userdata) {
 #' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
 returnAsInput <- function(userdata, result, SignName, datasetm) {
     if (!is.matrix(userdata) & !is.data.frame(userdata)) {
-        if (is(userdata, "Seurat")) {
-            if (is.vector(result)) {
-                names <- c(colnames(userdata@meta.data), SignName)
-                userdata@meta.data <-
-                    cbind(userdata@meta.data, name = result)
-                colnames(userdata@meta.data) <- names
-            } else {
-                userdata@meta.data <- cbind(userdata@meta.data, t(result))
-            }
-        } else if (class(userdata) %in% c(
+        if (class(userdata) %in% c(
             "SpatialExperiment",
             "SummarizedExperiment",
-            "SingleCellExperiment"
-        )) {
+            "SingleCellExperiment")) {
             names <- c(colnames(userdata@colData), SignName)
             if (is.vector(result)) {
                 userdata@colData <- cbind(userdata@colData, name = result)
@@ -585,9 +566,8 @@ availableSignatures <- function(
 #' @param dataset Expression values. A data frame or a matrix where rows
 #' correspond to genes and columns correspond to samples.
 #' Alternatively, an object of type \linkS4class{SummarizedExperiment},
-#' \code{\link[SingleCellExperiment]{SingleCellExperiment}},
-#' \code{\link[SpatialExperiment]{SpatialExperiment}} or
-#' \code{\link[SeuratObject]{SeuratObject}}.
+#' \code{\link[SingleCellExperiment]{SingleCellExperiment}} or
+#' \code{\link[SpatialExperiment]{SpatialExperiment}}.
 #' @param nametype character string saying the type of gene name ID (row names
 #' in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
 #' @param inputType character string saying the type of data you are using.

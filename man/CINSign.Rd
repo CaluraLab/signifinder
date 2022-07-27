@@ -10,9 +10,8 @@ CINSign(dataset, nametype = "SYMBOL", inputType = "microarray")
 \item{dataset}{Expression values. A data frame or a matrix where rows
 correspond to genes and columns correspond to samples.
 Alternatively, an object of type \linkS4class{SummarizedExperiment},
-\code{\link[SingleCellExperiment]{SingleCellExperiment}},
-\code{\link[SpatialExperiment]{SpatialExperiment}} or
-\code{\link[SeuratObject]{SeuratObject}}.}
+\code{\link[SingleCellExperiment]{SingleCellExperiment}} or
+\code{\link[SpatialExperiment]{SpatialExperiment}}.}
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
