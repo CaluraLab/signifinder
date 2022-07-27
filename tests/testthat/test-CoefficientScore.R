@@ -24,7 +24,7 @@ test_that("FerroptosysSign work", {
         "Ferroptosis_Liu", "Ferroptosis_Ye"
     )
     fname <- sample(ferrnames, 1)
-    rmatrix <- signifinder:::fakeData(fname)
+    rmatrix <- fakeData(fname)
     myres <- ferroptosisSign(rmatrix, author = substring(fname, 13))
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(fname %in% colnames(colData(myres)))
@@ -74,7 +74,7 @@ test_that("glycolysisSign works", {
 test_that("autophagySign works", {
     pnames <- c("Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH")
     pname <- sample(pnames, 1)
-    rmatrix <- signifinder:::fakeData(pname)
+    rmatrix <- fakeData(pname)
     myres <- autophagySign(rmatrix, author = substring(pname, 11))
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
@@ -89,7 +89,7 @@ test_that("autophagySign works", {
 test_that("autophagySign ChenM works", {
     pnames <- c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")
     pname <- sample(pnames, 1)
-    rmatrix <- signifinder:::fakeData(pname)
+    rmatrix <- fakeData(pname)
     myres <- autophagySign(rmatrix, author = "ChenM")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))

@@ -35,7 +35,7 @@ test_that("EMTSign based on Cheng's work", {
 })
 
 test_that("ASCSign work", {
-    rmatrix <- signifinder:::fakeData("ASC_Smith")
+    rmatrix <- fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ASC_Smith" %in% colnames(colData(myres)))
@@ -55,7 +55,7 @@ test_that("chemokineSign work", {
 })
 
 test_that("PassONSign work", {
-    rmatrix <- signifinder:::fakeData("PassON_Du")
+    rmatrix <- fakeData("PassON_Du")
     myres <- PassONSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("PassON_Du" %in% colnames(colData(myres)))
@@ -65,7 +65,7 @@ test_that("PassONSign work", {
 })
 
 test_that("CISSign work", {
-    rmatrix <- signifinder:::fakeData("CIS_Robertson")
+    rmatrix <- fakeData("CIS_Robertson")
     myres <- CISSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CIS_Robertson" %in% colnames(colData(myres)))
@@ -75,7 +75,7 @@ test_that("CISSign work", {
 })
 
 test_that("HRDSSign work", {
-    rmatrix <- signifinder:::fakeData("HRDS_Lu")
+    rmatrix <- fakeData("HRDS_Lu")
     myres <- HRDSSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("HRDS_Lu" %in% colnames(colData(myres)))
@@ -85,7 +85,7 @@ test_that("HRDSSign work", {
 })
 
 test_that("DNArepSign work", {
-    rmatrix <- signifinder:::fakeData("DNArep_Kang")
+    rmatrix <- fakeData("DNArep_Kang")
     myres <- DNArepSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("DNArep_Kang" %in% colnames(colData(myres)))
@@ -107,7 +107,7 @@ test_that("IPRESSign work", {
 test_that("ECM work", {
     pyrnames <- c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")
     pname <- sample(pyrnames, 1)
-    rmatrix <- signifinder:::fakeData(pname)
+    rmatrix <- fakeData(pname)
     myres <- ECMSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
