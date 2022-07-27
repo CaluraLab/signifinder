@@ -24,3 +24,4 @@ Suggests: BiocStyle, knitr, testthat (>= 3.0.0), edgeR, limma
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 biocViews: GeneExpression
+BugReports: https://github.com/CaluraLab/signifinder
