@@ -20,7 +20,6 @@ Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics,
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 Depends: R (>= 4.2.0)
-LazyData: true
 Suggests: BiocStyle, knitr, testthat (>= 3.0.0), edgeR, limma
 Config/testthat/edition: 3
 VignetteBuilder: knitr
