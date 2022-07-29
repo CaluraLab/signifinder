@@ -4,7 +4,7 @@ library(testthat)
 suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("TLSSign works", {
-    rmatrix <- fakeData("TLS_Cabrita")
+    rmatrix <- .fakeData("TLS_Cabrita")
     myres <- TLSSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("TLS_Cabrita" %in% colnames(colData(myres)))
@@ -14,7 +14,7 @@ test_that("TLSSign works", {
 })
 
 test_that("ExpandedImmuneSign works", {
-    rmatrix <- fakeData("ExpandedImmune_Ayers")
+    rmatrix <- .fakeData("ExpandedImmune_Ayers")
     myres <- expandedImmuneSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ExpandedImmune_Ayers" %in% colnames(colData(myres)))
@@ -24,7 +24,7 @@ test_that("ExpandedImmuneSign works", {
 })
 
 test_that("IFNSign works", {
-    rmatrix <- fakeData("IFN_Ayers")
+    rmatrix <- .fakeData("IFN_Ayers")
     myres <- IFNSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("IFN_Ayers" %in% colnames(colData(myres)))
@@ -34,7 +34,7 @@ test_that("IFNSign works", {
 })
 
 test_that("immuneCytSign based on Rooney's work", {
-    rmatrix <- fakeData("ImmuneCyt_Rooney")
+    rmatrix <- .fakeData("ImmuneCyt_Rooney")
     myres <- immuneCytSign(rmatrix, author = "Rooney")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmuneCyt_Rooney" %in% colnames(colData(myres)))
@@ -44,7 +44,7 @@ test_that("immuneCytSign based on Rooney's work", {
 })
 
 test_that("MitoticIndexSign works", {
-    rmatrix <- fakeData("MitoticIndex_Yang")
+    rmatrix <- .fakeData("MitoticIndex_Yang")
     myres <- mitoticIndexSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("MitoticIndex_Yang" %in% colnames(colData(myres)))
@@ -54,7 +54,7 @@ test_that("MitoticIndexSign works", {
 })
 
 test_that("MatrisomeSign works", {
-    rmatrix <- fakeData("Matrisome_Yuzhalin")
+    rmatrix <- .fakeData("Matrisome_Yuzhalin")
     myres <- matrisomeSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("Matrisome_Yuzhalin" %in% colnames(colData(myres)))
@@ -64,7 +64,7 @@ test_that("MatrisomeSign works", {
 })
 
 test_that("immunoScoreSign based on Roh's work", {
-    rmatrix <- fakeData("ImmunoScore_Roh")
+    rmatrix <- .fakeData("ImmunoScore_Roh")
     myres <- immunoScoreSign(rmatrix, author = "Roh")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmunoScore_Roh" %in% colnames(colData(myres)))
@@ -76,7 +76,7 @@ test_that("immunoScoreSign based on Roh's work", {
 test_that("CINSign works", {
     n <- c("CIN_Carter_25", "CIN_Carter_70")
     pname <- sample(n, 1)
-    rmatrix <- fakeData(pname)
+    rmatrix <- .fakeData(pname)
     myres <- CINSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(all(c("CIN_Carter_25", "CIN_Carter_70") %in% colnames(colData(myres))))
@@ -86,7 +86,7 @@ test_that("CINSign works", {
 })
 
 test_that("hypoxiaSign works", {
-    rmatrix <- fakeData("Hypoxia_Buffa")
+    rmatrix <- .fakeData("Hypoxia_Buffa")
     myres <- hypoxiaSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("Hypoxia_Buffa" %in% colnames(colData(myres)))
@@ -96,7 +96,7 @@ test_that("hypoxiaSign works", {
 })
 
 test_that("cellCycleSign based on Lundberg's work", {
-    rmatrix <- fakeData("CellCycle_Lundberg")
+    rmatrix <- .fakeData("CellCycle_Lundberg")
     myres <- cellCycleSign(rmatrix, author = "Lundberg")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CellCycle_Lundberg" %in% colnames(colData(myres)))
@@ -106,7 +106,7 @@ test_that("cellCycleSign based on Lundberg's work", {
 })
 
 test_that("cellCycleSign based on Davoli's work", {
-    rmatrix <- fakeData("CellCycle_Davoli")
+    rmatrix <- .fakeData("CellCycle_Davoli")
     myres <- cellCycleSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CellCycle_Davoli" %in% colnames(colData(myres)))
@@ -116,7 +116,7 @@ test_that("cellCycleSign based on Davoli's work", {
 })
 
 test_that("VEGFSign works", {
-    rmatrix <- fakeData("VEGF_Hu")
+    rmatrix <- .fakeData("VEGF_Hu")
     myres <- VEGFSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("VEGF_Hu" %in% colnames(colData(myres)))
@@ -126,7 +126,7 @@ test_that("VEGFSign works", {
 })
 
 test_that("immuneCytSign based on Davoli's work", {
-    rmatrix <- fakeData("ImmuneCyt_Davoli")
+    rmatrix <- .fakeData("ImmuneCyt_Davoli")
     myres <- immuneCytSign(rmatrix, author = "Davoli")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ImmuneCyt_Davoli" %in% colnames(colData(myres)))

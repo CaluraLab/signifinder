@@ -69,7 +69,7 @@ my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
 
 my_colors <- colorRampPalette(my_colors)(100)
 
-GetGenes <- function(name) {
+.GetGenes <- function(name) {
     if (name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")) {
         sname <- paste0(substring(name, 10), "-like")
         g <- EMT_Miow$SYMBOL[EMT_Miow$class == sname]
@@ -162,7 +162,7 @@ GetGenes <- function(name) {
     return(res)
 }
 
-range01 <- function(x) {
+.range01 <- function(x) {
     if(!var(x, na.rm = TRUE)){
         y <- rep(0.5, length(x))
         y[is.na(y)] <- NA
@@ -174,7 +174,7 @@ range01 <- function(x) {
 }
 
 #' @importFrom SummarizedExperiment colData
-signatureNameCheck <- function(data, sName) {
+.signatureNameCheck <- function(data, sName) {
     if (!all(sName %in% SignatureNames)) {
         stop(paste(
             "signatures must be among:",
@@ -186,14 +186,14 @@ signatureNameCheck <- function(data, sName) {
     }
 }
 
-matchArguments <- function(dots, defaults) {
+.matchArguments <- function(dots, defaults) {
     defaults[names(defaults) %in% names(dots)] <- NULL
     c(defaults, dots)
 }
 
 #' @importFrom SummarizedExperiment assay
 #' @importFrom methods is
-getMatrix <- function(userdata) {
+.getMatrix <- function(userdata) {
     if (!is.matrix(userdata)) {
         if (class(userdata) %in% c(
             "SpatialExperiment",
@@ -208,7 +208,7 @@ getMatrix <- function(userdata) {
 }
 
 #' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
-returnAsInput <- function(userdata, result, SignName, datasetm) {
+.returnAsInput <- function(userdata, result, SignName, datasetm) {
     if (!is.matrix(userdata) & !is.data.frame(userdata)) {
         if (class(userdata) %in% c(
             "SpatialExperiment",
@@ -240,7 +240,7 @@ returnAsInput <- function(userdata, result, SignName, datasetm) {
     }
 }
 
-ipsmap <- function(x) {
+.ipsmap <- function(x) {
     if (is.na(x)) {
         NA
     } else {
@@ -249,121 +249,78 @@ ipsmap <- function(x) {
         } else if (x >= 3) {
             10
         } else {
-            round(x * 10 / 3, digits = 0)
-        }
-    }
+            round(x*10/3, digits = 0) }}
 }
 
 #' @importFrom parallel mclapply
-GSVAPvalues <-
-    function(expr,
-             gset.idx.list,
-             gsvaResult,
-             nperm,
-             args) {
-        datasetGenes <- rownames(expr)
-        filteredGeneSets <-
-            lapply(gset.idx.list, y = datasetGenes, intersect)
-        permutedResults <-
-            mclapply(seq_len(nperm), function(x) {
-                message("Performing permutation number", x, "\n")
-                permlist <-
-                    lapply(seq_len(length(gset.idx.list)), function(i) {
-                        sample(
-                            datasetGenes,
-                            size = lengths(filteredGeneSets)[i],
-                            replace = FALSE
-                        )
-                    })
-                args$gset.idx.list <- permlist
-                gsva_matrix <- do.call(gsva, args)
-                data.frame(t(gsva_matrix))
-            }, mc.cores = 1)
-        permutedResByGeneSet <-
-            split.default(
-                x = Reduce(cbind, permutedResults),
-                seq_len(length(gset.idx.list))
-            )
-        permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x) {
-            data.frame(t(x))
-        })
-        finalRes <- do.call(
-            rbind, lapply(seq_len(length(gset.idx.list)), function(i) {
-                gspvalues <- sapply(seq_len(ncol(expr)), function(j) {
-                    (min(c(
-                        sum(permutedResByGeneSet[[i]][, j] <= gsvaResult[i, j]),
-                        sum(permutedResByGeneSet[[i]][, j] >= gsvaResult[i, j])
-                    )) + 1) / (nperm + 1)
-                })
-                gspvalues
-            })
-        )
-        colnames(finalRes) <- colnames(expr)
-        rownames(finalRes) <-
-            paste(names(gset.idx.list), "pval", sep = "_")
-        return(finalRes)
-    }
-
-consistencyCheck <- function(nametype, functionName, author = NULL) {
-    if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
-        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")
-    }
-
-    if (!is.null(author)) {
-        if (!(
-            author %in% signatureTable$author[
-                signatureTable$functionName == functionName
-            ])) {
-            stop("This author is not present for this signature")
-        }
-    }
+.GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args) {
+    datasetGenes <- rownames(expr)
+    filteredGeneSets <- lapply(gset.idx.list, y = datasetGenes, intersect)
+    permutedResults <- mclapply(seq_len(nperm), function(x) {
+        message("Performing permutation number", x, "\n")
+        permlist <- lapply(seq_len(length(gset.idx.list)), function(i) {
+            sample(
+                datasetGenes,
+                size = lengths(filteredGeneSets)[i],
+                replace = FALSE) })
+        args$gset.idx.list <- permlist
+        gsva_matrix <- do.call(gsva, args)
+        data.frame(t(gsva_matrix))
+    }, mc.cores = 1)
+    permutedResByGeneSet <- split.default(x = Reduce(
+        cbind, permutedResults), seq_len(length(gset.idx.list)))
+    permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x) {
+        data.frame(t(x)) })
+    finalRes <- do.call(
+        rbind, lapply(seq_len(length(gset.idx.list)), function(i) {
+            gspvalues <- sapply(seq_len(ncol(expr)), function(j) {
+                (min(c(
+                    sum(permutedResByGeneSet[[i]][, j] <= gsvaResult[i, j]),
+                    sum(permutedResByGeneSet[[i]][, j] >= gsvaResult[i, j])
+                )) + 1) / (nperm + 1) })
+            gspvalues })
+    )
+    colnames(finalRes) <- colnames(expr)
+    rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
+    return(finalRes)
 }
 
-coeffScore <- function(sdata,
-                       datasetm,
-                       namesignature,
-                       detail = NULL,
-                       author = "") {
-    percentageOfGenesUsed(namesignature, datasetm, sdata$SYMBOL, detail, author)
+.consistencyCheck <- function(nametype, functionName, author = NULL) {
+    if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
+        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
+    if (!is.null(author)) {
+        if (!(author %in% signatureTable$author[
+            signatureTable$functionName==functionName])) {
+            stop("This author is not present for this signature")}}
+}
 
+.coeffScore <- function(
+        sdata, datasetm, namesignature, detail = NULL, author = "") {
+    .percentageOfGenesUsed(
+        namesignature, datasetm, sdata$SYMBOL, detail, author)
     sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
-    columnNA <- managena(datasetm = datasetm, genes = sdata$SYMBOL)
-    score <-
-        colSums(datasetm[sdata$SYMBOL, ] * sdata$coeff, na.rm = TRUE)
+    columnNA <- .managena(datasetm = datasetm, genes = sdata$SYMBOL)
+    score <- colSums(datasetm[sdata$SYMBOL, ] * sdata$coeff, na.rm = TRUE)
     score[columnNA > 0.9] <- NA
-
     return(score)
 }
 
-meang <- function(x, na.rm) {
-    exp(mean(log(x[x > 0]), na.rm = na.rm))
+.meang <- function(x, na.rm) { exp(mean(log(x[x > 0]), na.rm = na.rm)) }
+
+.statScore <- function(
+        genes, datasetm, nametype, typeofstat = "mean",
+        namesignature, author = "") {
+    genes <- .geneIDtrans(nametype, genes)
+    .percentageOfGenesUsed(namesignature, datasetm, genes, author = author)
+    genes <- intersect(row.names(datasetm), genes)
+
+    columnNA <- .managena(datasetm = datasetm, genes = genes)
+    score <- apply(datasetm[genes,,drop = FALSE], 2, typeofstat, na.rm = TRUE)
+    score[columnNA > 0.9] <- NA
+    return(score)
 }
 
-statScore <-
-    function(genes,
-             datasetm,
-             nametype,
-             typeofstat = "mean",
-             namesignature,
-             author = "") {
-        genes <- geneIDtrans(nametype, genes)
-
-        percentageOfGenesUsed(namesignature, datasetm, genes, author = author)
-
-        genes <- intersect(row.names(datasetm), genes)
-
-        columnNA <- managena(datasetm = datasetm, genes = genes)
-        score <-
-            apply(datasetm[genes, , drop = FALSE],
-                2, typeofstat,
-                na.rm = TRUE
-            )
-        score[columnNA > 0.9] <- NA
-
-        return(score)
-    }
-
-managena <- function(datasetm, genes) {
+.managena <- function(datasetm, genes) {
     datasetm <- datasetm[row.names(datasetm) %in% genes, ]
     columnNA <- (length(genes) - colSums(!is.na(datasetm))) / length(genes)
     if (sum(columnNA > 0.9) > 0) {
@@ -375,117 +332,83 @@ managena <- function(datasetm, genes) {
 #' @importFrom BiocGenerics width
 #' @importFrom IRanges reduce
 #' @importFrom DGEobj.utils convertCounts
-dataTransformation <-
-    function(dataset, data, trans, hgReference, nametype) {
-        if (class(dataset)[1] %in% c(
-            "SpatialExperiment",
-            "SummarizedExperiment",
-            "SingleCellExperiment"
-        )) {
-            if (trans %in% names(assays(dataset))) {
-                return(dataset)
-            }
-        }
+.dataTransformation <- function(dataset, data, trans, hgReference, nametype) {
+    if (class(dataset)[1] %in% c(
+        "SpatialExperiment",
+        "SummarizedExperiment",
+        "SingleCellExperiment"
+    )) { if (trans %in% names(assays(dataset))) { return(dataset) } }
 
-        if (hgReference == "hg19") {
-            txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
-        } else if (hgReference == "hg38") {
-            txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
-        } else {
-            stop("Human reference genome must be either hg19 or hg38")
-        }
+    if (hgReference == "hg19") {
+        txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+    } else if (hgReference == "hg38") {
+        txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
+    } else { stop("Human reference genome must be either hg19 or hg38") }
 
-        exons.db <- ensembldb::exonsBy(txdb, by = "gene")
+    exons.db <- ensembldb::exonsBy(txdb, by = "gene")
 
-        g <- rownames(data)
-        egs <- AnnotationDbi::mapIds(
-            org.Hs.eg.db::org.Hs.eg.db,
-            keys = g,
-            column = "ENTREZID",
-            keytype = nametype,
-            multiVals = "first"
-        )
-        use <- !is.na(egs)
+    g <- rownames(data)
+    egs <- AnnotationDbi::mapIds(
+        org.Hs.eg.db::org.Hs.eg.db, keys = g, column = "ENTREZID",
+        keytype = nametype, multiVals = "first")
+    use <- !is.na(egs)
 
-        exons_g <- NULL
-        exons_g[use] <- lapply(egs[use], function(eg) {
-            exons.db[[eg]]
-        })
-        names(exons_g) <- names(egs)
-        use <- !sapply(exons_g, is.null)
+    exons_g <- NULL
+    exons_g[use] <- lapply(egs[use], function(eg) { exons.db[[eg]] })
+    names(exons_g) <- names(egs)
+    use <- !sapply(exons_g, is.null)
 
-        glen <- NULL
-        glen[use] <- sapply(names(egs[use]), function(eg) {
-            sum(width(reduce(exons_g[[eg]])))
-        })
+    glen <- NULL
+    glen[use] <- sapply(names(egs[use]), function(eg) {
+        sum(width(reduce(exons_g[[eg]])))
+    })
 
-        usec <- colSums(data[use,])>0
+    usec <- colSums(data[use,])>0
 
-        tdata <- matrix(NA, nrow = nrow(data), ncol = ncol(data))
-        tdata[use,usec] <- convertCounts(
-            countsMatrix = data[use,usec],
-            unit = trans,
-            geneLength = glen[use]
-        )
+    tdata <- matrix(NA, nrow = nrow(data), ncol = ncol(data))
+    tdata[use,usec] <- convertCounts(
+        countsMatrix = data[use,usec],
+        unit = trans, geneLength = glen[use])
 
-        if (class(dataset)[1] %in% c(
-            "SpatialExperiment",
-            "SummarizedExperiment",
-            "SingleCellExperiment"
-        )) {
-            assays(
-                dataset,
-                withDimnames = FALSE
-            )[[trans]] <- tdata
-        } else if (is.matrix(dataset) | is.data.frame(dataset)) {
-            assays <- list(data, tdata)
-            names(assays) <- c("norm_expr", trans)
-            dataset <-
-                SummarizedExperiment(assays = assays)
-        }
+    if (class(dataset)[1] %in% c(
+        "SpatialExperiment",
+        "SummarizedExperiment",
+        "SingleCellExperiment"
+    )) { assays(dataset, withDimnames = FALSE)[[trans]] <- tdata
+    } else if (is.matrix(dataset) | is.data.frame(dataset)) {
+        assays <- list(data, tdata)
+        names(assays) <- c("norm_expr", trans)
+        dataset <- SummarizedExperiment(assays = assays)}
 
-        return(dataset)
-    }
+    return(dataset)
+}
 
-percentageOfGenesUsed <- function(
+.percentageOfGenesUsed <- function(
         name, datasetm, gs, detail = NULL, author = "") {
     g_per <- (sum(gs %in% row.names(datasetm)) / length(gs)) * 100
 
-    if (is.null(detail)) {
-        message(
-            name, author, " is using ", round(g_per), "% of genes")
-        if (g_per < 30) {
-            warning(name, author,
-                    " is computed with less than 30% of its genes")
-        }
-    } else {
-        message(
-            name, author, " is using ", round(g_per), "% of ", detail, " genes")
-        if (g_per < 30) {
-            warning(name, author, detail,
-                    " is computed with less than 30% of its genes")
-        }
-    }
+    if (is.null(detail)) { message(
+        name, author, " is using ", round(g_per), "% of genes")
+        if (g_per < 30) { warning(
+            name, author, " is computed with less than 30% of its genes")}
+    } else { message(
+        name, author, " is using ", round(g_per), "% of ", detail, " genes")
+        if (g_per < 30) { warning(
+            name, author, detail,
+            " is computed with less than 30% of its genes")}}
     # return(g_per==0)
 }
 
-geneIDtrans <- function(nametype, genes) {
-    if (nametype != "SYMBOL") {
-        AnnotationDbi::mapIds(
-            org.Hs.eg.db::org.Hs.eg.db,
-            keys = genes,
-            column = nametype,
-            keytype = "SYMBOL",
-            multiVals = "first"
-        )
-    } else {
-        genes
-    }
+.geneIDtrans <- function(nametype, genes) {
+    if (nametype != "SYMBOL") { AnnotationDbi::mapIds(
+        org.Hs.eg.db::org.Hs.eg.db, keys = genes, column = nametype,
+        keytype = "SYMBOL", multiVals = "first")
+    } else { genes }
 }
 
 #' @importFrom stats rpois rnorm
-fakeData <- function(sname, input = "rnaseq") {
-    g <- GetGenes(sname)
+.fakeData <- function(sname, input = "rnaseq") {
+    g <- .GetGenes(sname)
     g <- g[, 1]
     n <- length(g) * 5
     if (input == "rnaseq") {

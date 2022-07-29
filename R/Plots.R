@@ -30,7 +30,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
         stop("you must provide only one signature for this plot")
     }
 
-    signatureNameCheck(data, whichSign)
+    .signatureNameCheck(data, whichSign)
 
     if (!(is.null(statistics))) {
         if (!(statistics %in% c("mean", "median", "quantiles"))) {
@@ -179,9 +179,9 @@ geneHeatmapSignPlot <- function(data,
                                 sampleAnnot = NULL,
                                 splitBySampleAnnot = FALSE,
                                 ...) {
-    signatureNameCheck(data, whichSign)
+    .signatureNameCheck(data, whichSign)
 
-    dataset <- getMatrix(data)
+    dataset <- .getMatrix(data)
 
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != ncol(dataset)) {
@@ -201,13 +201,13 @@ geneHeatmapSignPlot <- function(data,
             dimnames = list(whichSign, colnames(dataset))
         )
     } else {
-        signval <- sapply(signval, range01)
+        signval <- sapply(signval, .range01)
         signval <- as.matrix(t(signval))
     }
 
     Gene <- NULL
     geneTable <-
-        as.data.frame(do.call(rbind, lapply(whichSign, GetGenes))) %>%
+        as.data.frame(do.call(rbind, lapply(whichSign, .GetGenes))) %>%
         group_by(Gene) %>%
         summarise_all(paste, collapse = ",")
     signatureGenes <- geneTable$Gene
@@ -216,7 +216,7 @@ geneHeatmapSignPlot <- function(data,
         as.matrix(dataset[row.names(dataset) %in% signatureGenes, ])
 
     dots <- list(...)
-    htargs <- matchArguments(
+    htargs <- .matchArguments(
         dots,
         list(
             name = "gene\nexpression",
@@ -302,10 +302,10 @@ heatmapSignPlot <-
              splitBySampleAnnot = FALSE,
              ...) {
         if (!is.null(whichSign)) {
-            signatureNameCheck(data, whichSign)
+            .signatureNameCheck(data, whichSign)
         }
         if (!is.null(clusterBySign)) {
-            signatureNameCheck(data, clusterBySign)
+            .signatureNameCheck(data, clusterBySign)
         }
 
         if (sum(colnames(colData(data)) %in% SignatureNames) > 0) {
@@ -339,12 +339,12 @@ heatmapSignPlot <-
         }
         keepnames <- rownames(data)
 
-        data <- sapply(data, range01)
+        data <- sapply(data, .range01)
         row.names(data) <- keepnames
         data <- as.matrix(t(data))
 
         dots <- list(...)
-        htargs <- matchArguments(
+        htargs <- .matchArguments(
             dots,
             list(
                 name = "scaled\nscore",
@@ -433,7 +433,7 @@ correlationSignPlot <-
              sampleAnnot = NULL,
              selectByAnnot = NULL) {
         if (!is.null(whichSign)) {
-            signatureNameCheck(data, whichSign)
+            .signatureNameCheck(data, whichSign)
         }
 
         tmp <- colData(data)
@@ -482,7 +482,7 @@ correlationSignPlot <-
             }
         }
 
-        SignMatrix <- sapply(tmp, range01)
+        SignMatrix <- sapply(tmp, .range01)
 
         g <- corPlot(
             as.data.frame(SignMatrix),
@@ -546,7 +546,7 @@ survivalSignPlot <-
         if (length(whichSign) > 1) {
             stop("you must provide only one signature for this plot")
         }
-        signatureNameCheck(data, whichSign)
+        .signatureNameCheck(data, whichSign)
 
         if (ncol(survData) > 2) {
             stop(
@@ -685,7 +685,7 @@ ridgelineSignPlot <-
              selectByAnnot = NULL,
              ...) {
         if (!is.null(whichSign)) {
-            signatureNameCheck(data, whichSign)
+            .signatureNameCheck(data, whichSign)
         }
 
         tmp <- colData(data)
@@ -705,7 +705,7 @@ ridgelineSignPlot <-
 
         tmp <- as.data.frame(tmp[, signs])
         colnames(tmp) <- signs
-        tmp <- data.frame(sapply(tmp, range01))
+        tmp <- data.frame(sapply(tmp, .range01))
 
         if (!is.null(groupByAnnot)) {
             if (length(groupByAnnot) != nrow(tmp)) {
@@ -748,7 +748,7 @@ ridgelineSignPlot <-
         }))
 
         dots <- list(...)
-        ridgeargs <- matchArguments(dots, list(
+        ridgeargs <- .matchArguments(dots, list(
             alpha = 0.5,
             bandwidth = 0.05,
             scale = 1

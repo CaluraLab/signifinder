@@ -5,7 +5,7 @@ suppressPackageStartupMessages(library(SummarizedExperiment))
 test_that("EMTSign based on Miow's work", {
     pyrnames <- c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")
     pname <- sample(pyrnames, 1)
-    rmatrix <- fakeData(pname)
+    rmatrix <- .fakeData(pname)
     myres <- EMTSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
@@ -15,7 +15,7 @@ test_that("EMTSign based on Miow's work", {
 })
 
 test_that("EMTSign based on Mak's work", {
-    rmatrix <- fakeData("EMT_Mak")
+    rmatrix <- .fakeData("EMT_Mak")
     myresMak <- EMTSign(rmatrix, author = "Mak")
     expect_true(is(myresMak, "SummarizedExperiment"))
     expect_true("EMT_Mak" %in% colnames(colData(myresMak)))
@@ -25,7 +25,7 @@ test_that("EMTSign based on Mak's work", {
 })
 
 test_that("EMTSign based on Cheng's work", {
-    rmatrix <- fakeData("EMT_Cheng")
+    rmatrix <- .fakeData("EMT_Cheng")
     myres <- EMTSign(rmatrix, author = "Cheng")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("EMT_Cheng" %in% colnames(colData(myres)))
@@ -35,7 +35,7 @@ test_that("EMTSign based on Cheng's work", {
 })
 
 test_that("ASCSign work", {
-    rmatrix <- fakeData("ASC_Smith")
+    rmatrix <- .fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("ASC_Smith" %in% colnames(colData(myres)))
@@ -45,7 +45,7 @@ test_that("ASCSign work", {
 })
 
 test_that("chemokineSign work", {
-    rmatrix <- fakeData("Chemokines_Messina")
+    rmatrix <- .fakeData("Chemokines_Messina")
     myres <- chemokineSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("Chemokines_Messina" %in% colnames(colData(myres)))
@@ -55,7 +55,7 @@ test_that("chemokineSign work", {
 })
 
 test_that("PassONSign work", {
-    rmatrix <- fakeData("PassON_Du")
+    rmatrix <- .fakeData("PassON_Du")
     myres <- PassONSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("PassON_Du" %in% colnames(colData(myres)))
@@ -65,7 +65,7 @@ test_that("PassONSign work", {
 })
 
 test_that("CISSign work", {
-    rmatrix <- fakeData("CIS_Robertson")
+    rmatrix <- .fakeData("CIS_Robertson")
     myres <- CISSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("CIS_Robertson" %in% colnames(colData(myres)))
@@ -75,7 +75,7 @@ test_that("CISSign work", {
 })
 
 test_that("HRDSSign work", {
-    rmatrix <- fakeData("HRDS_Lu")
+    rmatrix <- .fakeData("HRDS_Lu")
     myres <- HRDSSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("HRDS_Lu" %in% colnames(colData(myres)))
@@ -85,7 +85,7 @@ test_that("HRDSSign work", {
 })
 
 test_that("DNArepSign work", {
-    rmatrix <- fakeData("DNArep_Kang")
+    rmatrix <- .fakeData("DNArep_Kang")
     myres <- DNArepSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("DNArep_Kang" %in% colnames(colData(myres)))
@@ -95,7 +95,7 @@ test_that("DNArepSign work", {
 })
 
 test_that("IPRESSign work", {
-    rmatrix <- fakeData("IPRES_Hugo")
+    rmatrix <- .fakeData("IPRES_Hugo")
     myres <- IPRESSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("IPRES_Hugo" %in% colnames(colData(myres)))
@@ -107,7 +107,7 @@ test_that("IPRESSign work", {
 test_that("ECM work", {
     pyrnames <- c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")
     pname <- sample(pyrnames, 1)
-    rmatrix <- fakeData(pname)
+    rmatrix <- .fakeData(pname)
     myres <- ECMSign(rmatrix)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
@@ -117,7 +117,7 @@ test_that("ECM work", {
 })
 
 # test_that("IPSOV work", {
-#     rmatrix  <- fakeData("IPSOV")
+#     rmatrix  <- .fakeData("IPSOV")
 #     myres <- IPSOVSign(rmatrix)
 #     expect_true(is(myres, "SummarizedExperiment"))
 #     expect_true("IPSOV" %in% colnames(colData(myres)))
