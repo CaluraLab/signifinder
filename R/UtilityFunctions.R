@@ -470,8 +470,8 @@ availableSignatures <- function(
         st <- st[grepl(paste(topic, collapse = "|"), st$topic), ]
     }
     if (!is.null(requiredInput)) {
-        st <-
-            st[grepl(paste(requiredInput, collapse = "|"), st$requiredInput), ]
+        st <- st[grepl(
+            paste(requiredInput, collapse = "|"), st$requiredInput), ]
     }
     if (!description) {
         st <- st[, -10]

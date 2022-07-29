@@ -194,8 +194,7 @@ ferroptosisSign <- function(
         dataset <- .dataTransformation(
             dataset, datasetm, "FPKM", hgReference, nametype)
         datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
-        datasetm_n <-
-            datasetm_n[rownames(datasetm_n) %in% sign_df$SYMBOL, ]
+        datasetm_n <- datasetm_n[rownames(datasetm_n) %in% sign_df$SYMBOL, ]
     } else {
         datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL, ]
     }
@@ -255,9 +254,8 @@ hypoxiaSign <- function(
     .consistencyCheck(nametype, "hypoxiaSign")
 
     datasetm <- .getMatrix(dataset)
-    datasetm_n <-
-        if (inputType == "rnaseq") {
-            log2(datasetm + 1)
+    datasetm_n <- if (inputType == "rnaseq") {
+        log2(datasetm + 1)
         } else { datasetm }
     score <- .statScore(
         Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n), nametype = nametype,
