@@ -1,6 +1,6 @@
 Package: signifinder
 Type: Package
-Title: A collection of signatures
+Title: A collection of implementation of transcriptional cancer signatures.
 Version: 0.99.2
 Authors@R: c(person("Stefania", "Pirrotta", role = c("cre", "aut"),
                     email = "stefania.pirrotta@phd.unipd.it"),
