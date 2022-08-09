@@ -12,6 +12,7 @@ Description: signifinder is an R package for computing and exploring a
             single-sample score. Currently, signifinder contains 46 distinct 
             signatures collected from the literature.
 License: AGPL-3
+biocViews: GeneExpression, GeneTarget, ImmunoOncology, BiomedicalInformatics, RNASeq, Microarray, ReportWriting, Visualization
 Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics, 
     ComplexHeatmap, DGEobj.utils, GSVA, IRanges, SummarizedExperiment, 
     consensusOV, dplyr, ensembldb, ggridges, grid, magrittr, matrixStats, 
