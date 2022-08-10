@@ -6,6 +6,8 @@
 \alias{signifinder-package}
 \title{signifinder: Implementations of transcriptional cancer signatures}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows computing signatures scores providing the only gene expression values and returns a single-sample score. Currently, signifinder contains 46 distinct signatures collected from the literature.
 }
 \seealso{
