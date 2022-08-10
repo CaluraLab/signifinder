@@ -148,14 +148,10 @@ my_colors <- colorRampPalette(my_colors)(100)
         "CellCycle_Lundberg",
         "IPRES_Hugo",
         "CIS_Robertson",
-        "TLS_Cabrita"
+        "TLS_Cabrita",
+        "IPSOV_Shen"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
-    } else {
-        datavar <- eval(parse(text = paste0(name, "data")))
-        if (name %in% c("IPSOV")) {
-            g <- datavar[, 1]
-        }
     }
     res <- cbind(g, rep(name, length(g)))
     colnames(res) <- c("Gene", "Signature")
