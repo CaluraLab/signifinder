@@ -87,7 +87,7 @@ The function returns a data frame with all the signatures included in the packag
 * reference: reference of the work
 * description: brief description of the signature and how to evaluate its score
 
-```{r, echo=FALSE}
+```{r}
 knitr::kable(t(availSigns[1,]), caption = 'One signature fiels')
 ```
 
