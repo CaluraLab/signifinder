@@ -624,8 +624,8 @@ ridgelineSignPlot <- function(
         groupByAnnot <- groupByAnnot[groupByAnnot %in% selectByAnnot]
     }
 
-    score = NULL
-    signature = NULL
+    score <- NULL
+    signature <- NULL
     tmp1 <- do.call(rbind, lapply(seq_len(ncol(tmp)), function(x) {
         data.frame(
             score = tmp[, x], signature = colnames(tmp[x]), row.names = NULL)
