@@ -210,12 +210,10 @@ my_colors <- colorRampPalette(my_colors)(100)
             "SpatialExperiment",
             "SummarizedExperiment",
             "SingleCellExperiment")) {
-            names <- c(colnames(userdata@colData), SignName)
             if (is.vector(result)) {
-                userdata@colData <- cbind(userdata@colData, name = result)
-                colnames(userdata@colData) <- names
+                userdata@colData[, SignName] <- result
             } else {
-                userdata@colData <- cbind(userdata@colData, t(result))
+                userdata@colData[, colnames(t(result))] <- t(result)
             }
         }
         return(userdata)
