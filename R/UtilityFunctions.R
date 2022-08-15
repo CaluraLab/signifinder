@@ -158,6 +158,7 @@ my_colors <- colorRampPalette(my_colors)(100)
     return(res)
 }
 
+#' @importFrom stats var
 .range01 <- function(x) {
     if(!var(x, na.rm = TRUE)){
         y <- rep(0.5, length(x))

@@ -1062,6 +1062,8 @@ autophagySign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
+#' @param pvalues logical. If TRUE it computes p-values of GSVA by permutations.
+#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
@@ -1270,6 +1272,10 @@ DNArepSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
+#' @param pvalues logical. If TRUE it computes p-values of GSVA by permutations.
+#' @param nperm number of permutations.
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' function.
 #'
 #' @inherit EMTSign return
 #'

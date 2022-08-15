@@ -16,6 +16,10 @@ Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
+\item{pvalues}{logical. If TRUE it computes p-values of GSVA by permutations.}
+
+\item{nperm}{number of permutations.}
+
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
 function.}
 }
