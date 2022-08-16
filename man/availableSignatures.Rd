@@ -29,7 +29,7 @@ filter the signatures in the table.}
 \item{description}{logical. If TRUE it shows the signature's description.}
 }
 \value{
-A data frame with 46 rows and 10 variables:
+A data frame with 46 rows and 11 variables:
 \describe{
   \item{signature}{name of the signature}
   \item{scoreLabel}{label of the signature when added inside colData section}
@@ -38,6 +38,8 @@ A data frame with 46 rows and 10 variables:
   \item{tumor}{tumor type for which the signature was developed}
   \item{tissue}{tumor tissue for which the signature was developed}
   \item{requiredInput}{type of data with which the signature was developed}
+  \item{transformationStep}{data transformation step performed inside the
+  function starting from the user's 'normArray' or 'normCounts' data}
   \item{author}{first author of the work in which the signature is described}
   \item{reference}{reference of the work}
   \item{description}{signature description and how to evaluate its score}

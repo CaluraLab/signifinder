@@ -645,13 +645,15 @@ TinflamSign <- function(dataset, nametype = "SYMBOL") {
 #' TLSSign(dataset = ovse)
 #'
 #' @export
-TLSSign <- function(dataset, nametype = "SYMBOL") {
+TLSSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq") {
 
     .consistencyCheck(nametype, "TLSSign")
 
     datasetm <- .getMatrix(dataset)
+    datasetm_n <- if (inputType == "rnaseq") {
+        log2(datasetm + 1) } else { datasetm }
     score <- .statScore(
-        TLS_Cabrita$SYMBOL, datasetm, nametype, "mean", "TLSSign")
+        TLS_Cabrita$SYMBOL, datasetm_n, nametype, "mean", "TLSSign")
 
     return(.returnAsInput(
         userdata = dataset, result = score,

@@ -4,7 +4,7 @@
 \alias{TLSSign}
 \title{Tertiary Lymphoid Structures (TLS) Signature}
 \usage{
-TLSSign(dataset, nametype = "SYMBOL")
+TLSSign(dataset, nametype = "SYMBOL", inputType = "rnaseq")
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -15,6 +15,9 @@ Alternatively, an object of type \linkS4class{SummarizedExperiment},
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
+
+\item{inputType}{character string saying the type of data you are using.
+Either one of "microarray" or "rnaseq".}
 }
 \value{
 A SummarizedExperiment object in which scores are added in
