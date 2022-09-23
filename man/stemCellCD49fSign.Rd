@@ -29,6 +29,7 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
+data(ovse)
 stemCellCD49fSign(dataset = ovse)
 
 }

@@ -23,6 +23,7 @@ Given signatures' scores, it returns a scatterplot of samples' scores and a
 barplot of the density distributions of samples' scores.
 }
 \examples{
+data(ovse)
 oneSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 
 }

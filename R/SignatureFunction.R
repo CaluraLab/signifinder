@@ -32,6 +32,7 @@
 #' @importFrom stats prcomp
 #'
 #' @examples
+#' data(ovse)
 #' EMTSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -130,6 +131,7 @@ EMTSign <- function(
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' pyroptosisSign(dataset = ovse)
 #'
 #' @export
@@ -179,6 +181,7 @@ pyroptosisSign <- function(
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' ferroptosisSign(dataset = ovse)
 #'
 #' @export
@@ -221,6 +224,7 @@ ferroptosisSign <- function(
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' lipidMetabolismSign(dataset = ovse)
 #'
 #' @export
@@ -248,6 +252,7 @@ lipidMetabolismSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' hypoxiaSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -280,6 +285,7 @@ hypoxiaSign <- function(
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' immunoScoreSign(dataset = ovse)
 #'
 #' @export
@@ -339,6 +345,7 @@ immunoScoreSign <- function(
 #' @importFrom consensusOV get.subtypes
 #'
 #' @examples
+#' data(ovse)
 #' consensusOVSign(dataset = ovse)
 #'
 #' @export
@@ -385,6 +392,7 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", ...) {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' IPSSign(dataset = ovse)
 #'
 #' @export
@@ -460,6 +468,7 @@ IPSSign <- function(dataset, nametype = "SYMBOL", hgReference = "hg38") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' matrisomeSign(dataset = ovse)
 #'
 #' @export
@@ -486,6 +495,7 @@ matrisomeSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' mitoticIndexSign(dataset = ovse)
 #'
 #' @export
@@ -514,6 +524,7 @@ mitoticIndexSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' immuneCytSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -556,6 +567,7 @@ immuneCytSign <- function(
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' IFNSign(dataset = ovse)
 #'
 #' @export
@@ -581,6 +593,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' expandedImmuneSign(dataset = ovse)
 #'
 #' @export
@@ -608,6 +621,7 @@ expandedImmuneSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' TinflamSign(dataset = ovse)
 #'
 #' @export
@@ -645,6 +659,7 @@ TinflamSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' TLSSign(dataset = ovse)
 #'
 #' @export
@@ -672,6 +687,7 @@ TLSSign <- function(dataset, nametype = "SYMBOL", inputType = "rnaseq") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' stemCellCD49fSign(dataset = ovse)
 #'
 #' @export
@@ -700,6 +716,7 @@ stemCellCD49fSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' CINSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -736,6 +753,7 @@ CINSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' cellCycleSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -779,6 +797,7 @@ cellCycleSign <- function(
 #' @importFrom stats prcomp
 #'
 #' @examples
+#' data(ovse)
 #' chemokineSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -816,6 +835,7 @@ chemokineSign <- function(
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' ASCSign(dataset = ovse)
 #'
 #' @export
@@ -856,6 +876,7 @@ ASCSign <- function(dataset, nametype = "SYMBOL") {
 #' @importFrom stats weighted.mean
 #'
 #' @examples
+#' data(ovse)
 #' PassONSign(dataset = ovse)
 #'
 #' @export
@@ -905,6 +926,7 @@ PassONSign <- function(
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' IPRESSign(dataset = ovse)
 #'
 #' @export
@@ -949,6 +971,7 @@ IPRESSign <- function(
 #' @importFrom matrixStats rowMedians
 #'
 #' @examples
+#' data(ovse)
 #' CISSign(dataset = ovse)
 #'
 #' @export
@@ -995,6 +1018,7 @@ CISSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' glycolysisSign(dataset = ovse)
 #'
 #' @export
@@ -1026,6 +1050,7 @@ glycolysisSign <- function(dataset, nametype = "SYMBOL", author = "Zhang") {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' data(ovse)
 #' autophagySign(dataset = ovse)
 #'
 #' @export
@@ -1077,6 +1102,7 @@ autophagySign <- function(
 #' @importFrom GSVA gsva
 #'
 #' @examples
+#' data(ovse)
 #' ECMSign(dataset = ovse)
 #'
 #' @export
@@ -1129,6 +1155,7 @@ ECMSign <- function(
 #' @importFrom stats t.test
 #'
 #' @examples
+#' data(ovse)
 #' HRDSSign(dataset = ovse)
 #'
 #' @export
@@ -1166,6 +1193,7 @@ HRDSSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' ISCSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -1211,6 +1239,7 @@ ISCSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' VEGFSign(dataset = ovse)
 #'
 #' @export
@@ -1237,6 +1266,7 @@ VEGFSign <- function(dataset, nametype = "SYMBOL") {
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' DNArepSign(dataset = ovse, inputType = "rnaseq")
 #'
 #' @export
@@ -1285,6 +1315,7 @@ DNArepSign <- function(
 #' @inherit EMTSign return
 #'
 #' @examples
+#' data(ovse)
 #' IPSOVSign(dataset = ovse)
 #'
 #' @export
@@ -1295,7 +1326,7 @@ IPSOVSign <- function(
     .consistencyCheck(nametype, "IPSOVSign")
 
     datasetm <- .getMatrix(dataset)
-    datasetm_n <- if (inputType == "rnaseq") { log2(datasetm_n + 1)
+    datasetm_n <- if (inputType == "rnaseq") { log2(datasetm + 1)
         } else { datasetm }
     datasetm_n <- scale(datasetm, center = TRUE, scale = TRUE)
 

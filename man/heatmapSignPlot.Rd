@@ -42,6 +42,7 @@ A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 Given one or multiple signatures, the function returns a heatmap of scores.
 }
 \examples{
+data(ovse)
 heatmapSignPlot(data = ovse)
 
 }

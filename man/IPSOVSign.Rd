@@ -46,6 +46,7 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
+data(ovse)
 IPSOVSign(dataset = ovse)
 
 }

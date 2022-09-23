@@ -32,6 +32,7 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
+data(ovse)
 hypoxiaSign(dataset = ovse, inputType = "rnaseq")
 
 }

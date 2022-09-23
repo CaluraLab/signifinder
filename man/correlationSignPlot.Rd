@@ -30,6 +30,7 @@ An object of class "openair".
 Given multiple signatures, the function plots signatures correlations.
 }
 \examples{
+data(ovse)
 correlationSignPlot(data = ovse)
 
 }

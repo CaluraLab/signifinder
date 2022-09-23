@@ -44,6 +44,7 @@ Given a signature and samples survival data, the function plots survival
 curves for that signature.
 }
 \examples{
+data(ovse)
 mysurvData <- cbind(ovse$os, ovse$status)
 rownames(mysurvData) <- rownames(SummarizedExperiment::colData(ovse))
 survivalSignPlot(

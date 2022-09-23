@@ -40,6 +40,7 @@ Given one or multiple signatures, the function returns a heatmap of the
 expression values of the genes included in each of them.
 }
 \examples{
+data(ovse)
 geneHeatmapSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 
 }

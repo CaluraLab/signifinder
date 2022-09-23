@@ -35,6 +35,7 @@ A \code{\link[ggplot2]{ggplot}} object.
 Given multiple signatures, the function plots densities scores.
 }
 \examples{
+data(ovse)
 ridgelineSignPlot(data = ovse)
 
 }

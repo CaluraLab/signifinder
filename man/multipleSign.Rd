@@ -51,6 +51,7 @@ This function computes all the signatures for a specific
 setting the 'tumor', the 'tissue' and/or the 'topic'.
 }
 \examples{
+data(ovse)
 multipleSign(dataset = ovse)
 multipleSign(dataset = ovse, tissue = "ovary")
 

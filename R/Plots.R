@@ -19,6 +19,7 @@
 #' @importFrom stats median quantile
 #'
 #' @examples
+#' data(ovse)
 #' oneSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
@@ -155,6 +156,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' @importFrom grid gpar
 #'
 #' @examples
+#' data(ovse)
 #' geneHeatmapSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
@@ -274,6 +276,7 @@ geneHeatmapSignPlot <- function(data,
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
+#' data(ovse)
 #' heatmapSignPlot(data = ovse)
 #'
 #' @export
@@ -391,6 +394,7 @@ heatmapSignPlot <- function(
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
+#' data(ovse)
 #' correlationSignPlot(data = ovse)
 #'
 #' @export
@@ -469,6 +473,7 @@ correlationSignPlot <- function(
 #' @importFrom survminer ggsurvplot
 #'
 #' @examples
+#' data(ovse)
 #' mysurvData <- cbind(ovse$os, ovse$status)
 #' rownames(mysurvData) <- rownames(SummarizedExperiment::colData(ovse))
 #' survivalSignPlot(
@@ -577,6 +582,7 @@ survivalSignPlot <- function(
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
+#' data(ovse)
 #' ridgelineSignPlot(data = ovse)
 #'
 #' @export

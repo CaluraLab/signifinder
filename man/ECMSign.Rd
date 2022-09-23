@@ -36,6 +36,7 @@ to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
+data(ovse)
 ECMSign(dataset = ovse)
 
 }
