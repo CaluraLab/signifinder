@@ -22,10 +22,13 @@ Signifinder is an R package that collects and implements 46 expression-based sig
 
 ## Installation
 
-You can install the current version of signifinder from GitHub with:
+To install signifinder:
 
-```{r, eval = FALSE, message = FALSE}
-BiocManager::install("CaluraLab/signifinder", dependencies = TRUE, build_vignettes = TRUE)
+```{r eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("signifinder")
 ```
 
 <img src=./vignettes/figures/signifinder_visualization.jpg />

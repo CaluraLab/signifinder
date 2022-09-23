@@ -13,10 +13,13 @@ conditions, such as hypoxia or the activity of the immune response.
 
 ## Installation
 
-You can install the current version of signifinder from GitHub with:
+To install signifinder:
 
 ``` r
-BiocManager::install("CaluraLab/signifinder", dependencies = TRUE, build_vignettes = TRUE)
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("signifinder")
 ```
 
 <img src=./vignettes/figures/signifinder_visualization.jpg />
