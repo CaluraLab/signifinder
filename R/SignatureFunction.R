@@ -22,8 +22,11 @@
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
-#' @return A SummarizedExperiment object in which scores are added in
-#' the \code{\link[SummarizedExperiment]{colData}} section.
+#' @return If dataset is a \linkS4class{SummarizedExperiment} object, then
+#' scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
+#' If dataset is a data frame or a matrix, then a
+#' \linkS4class{SummarizedExperiment} object is created in which scores are
+#' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
 #' @importFrom GSVA gsva
 #' @importFrom stats prcomp

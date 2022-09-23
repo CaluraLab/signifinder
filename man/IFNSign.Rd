@@ -17,8 +17,11 @@ Alternatively, an object of type \linkS4class{SummarizedExperiment},
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 }
 \value{
-A SummarizedExperiment object in which scores are added in
-the \code{\link[SummarizedExperiment]{colData}} section.
+If dataset is a \linkS4class{SummarizedExperiment} object, then
+scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
+If dataset is a data frame or a matrix, then a
+\linkS4class{SummarizedExperiment} object is created in which scores are
+added in the \code{\link[SummarizedExperiment]{colData}} section.
 }
 \description{
 This signature is computed accordingly to the reference paper,
