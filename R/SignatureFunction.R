@@ -17,8 +17,6 @@
 #' Either one of "microarray" or "rnaseq".
 #' @param author character string saying the first author of the signature
 #' publication. Check it in \code{\link[signifinder]{availableSignatures}}.
-#' @param pvalues logical. If TRUE it computes p-values of GSVA by permutations.
-#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
@@ -38,7 +36,7 @@
 #' @export
 EMTSign <- function(
         dataset, nametype = "SYMBOL", inputType = "microarray",
-        author = "Miow", pvalues = FALSE, nperm = 100, ...) {
+        author = "Miow", ...) {
 
     .consistencyCheck(nametype, "EMTSign", author)
 
@@ -65,12 +63,6 @@ EMTSign <- function(
             expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
             kcdf = kcdftype, ssgsea.norm = FALSE, verbose = FALSE))
         gsva_matrix <- do.call(gsva, args)
-
-        if (pvalues) {
-            gsva_pval <- .GSVAPvalues(
-                expr = datasetm, gset.idx.list = gene_sets,
-                gsvaResult = gsva_matrix, nperm = nperm, args = args)
-            gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
         return(.returnAsInput(
             userdata = dataset, result = gsva_matrix,
@@ -904,8 +896,9 @@ PassONSign <- function(
 
     gsva_matrix <- do.call(gsva, args)
 
-    gsva_mean <- sapply(seq_len(ncol(gsva_matrix)), function(x) {
-        weighted.mean(gsva_matrix[, x], lengths(sign_list))})
+    gsva_mean <- vapply(seq_len(ncol(gsva_matrix)), function(x) {
+        weighted.mean(gsva_matrix[, x], lengths(sign_list))},
+        double(1))
 
     return(.returnAsInput(
         userdata = dataset, result = gsva_mean,
@@ -953,7 +946,8 @@ IPRESSign <- function(
         kcdf = "Gaussian", ssgsea.norm = TRUE, verbose = FALSE))
 
     gsva_matrix <- do.call(gsva, args)
-    score <- rowMeans(sapply(as.data.frame(t(gsva_matrix)), scale))
+    score <- rowMeans(vapply(as.data.frame(t(gsva_matrix)), scale,
+                             double(ncol(gsva_matrix))))
 
     return(.returnAsInput(
         userdata = dataset, result = score,
@@ -1092,8 +1086,6 @@ autophagySign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param pvalues logical. If TRUE it computes p-values of GSVA by permutations.
-#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
@@ -1106,8 +1098,7 @@ autophagySign <- function(
 #' ECMSign(dataset = ovse)
 #'
 #' @export
-ECMSign <- function(
-        dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...) {
+ECMSign <- function(dataset, nametype = "SYMBOL", ...) {
 
     .consistencyCheck(nametype, "ECMSign")
 
@@ -1132,12 +1123,6 @@ ECMSign <- function(
         kcdf = "Poisson", ssgsea.norm = FALSE, verbose = FALSE))
 
     gsva_count <- do.call(gsva, args)
-
-    if (pvalues) {
-        gsva_pval <- .GSVAPvalues(
-            expr = datasetm, gset.idx.list = gene_sets,
-            gsvaResult = gsva_matrix, nperm = nperm, args = args)
-        gsva_matrix <- rbind(gsva_matrix, gsva_pval)}
 
     return(.returnAsInput(
         userdata = dataset, result = gsva_count, SignName = "", datasetm))
@@ -1220,10 +1205,10 @@ ISCSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray") {
     .percentageOfGenesUsed(
         "ISCSign", datasetm_n, sign_list$`Prolif`, "Prolif")
 
-    scores <- sapply(sign_list, function(x) {
+    scores <- vapply(sign_list, function(x) {
         colMeans(datasetm_n[intersect(
             x, row.names(datasetm_n - colMeans(datasetm_n))), ])
-    })
+    }, integer(1))
     colnames(scores) <- paste0("ISC_MerlosSuarez_", colnames(scores))
 
     return(.returnAsInput(
@@ -1307,8 +1292,6 @@ DNArepSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param pvalues logical. If TRUE it computes p-values of GSVA by permutations.
-#' @param nperm number of permutations.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
@@ -1320,8 +1303,7 @@ DNArepSign <- function(
 #'
 #' @export
 IPSOVSign <- function(
-        dataset, nametype = "SYMBOL", inputType = "microarray",
-        pvalues = FALSE, nperm = 100, ...) {
+        dataset, nametype = "SYMBOL", inputType = "microarray", ...) {
 
     .consistencyCheck(nametype, "IPSOVSign")
 

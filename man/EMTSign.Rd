@@ -9,8 +9,6 @@ EMTSign(
   nametype = "SYMBOL",
   inputType = "microarray",
   author = "Miow",
-  pvalues = FALSE,
-  nperm = 100,
   ...
 )
 }
@@ -29,10 +27,6 @@ Either one of "microarray" or "rnaseq".}
 
 \item{author}{character string saying the first author of the signature
 publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
-
-\item{pvalues}{logical. If TRUE it computes p-values of GSVA by permutations.}
-
-\item{nperm}{number of permutations.}
 
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
 function.}

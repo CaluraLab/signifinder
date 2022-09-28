@@ -189,7 +189,7 @@ geneHeatmapSignPlot <- function(data,
             dimnames = list(whichSign, colnames(dataset))
         )
     } else {
-        signval <- sapply(signval, .range01)
+        signval <- vapply(signval, .range01, integer(nrow(signval)))
         signval <- as.matrix(t(signval))
     }
 
@@ -309,7 +309,7 @@ heatmapSignPlot <- function(
     }
     keepnames <- rownames(data)
 
-    data <- sapply(data, .range01)
+    data <- vapply(data, .range01, double(nrow(data)))
     row.names(data) <- keepnames
     data <- as.matrix(t(data))
 
@@ -334,10 +334,10 @@ heatmapSignPlot <- function(
 
     if (is.null(clusterBySign)) {
         if (!is.null(signAnnot)) {
-            whichRow <- sapply(
+            whichRow <- vapply(
                 rownames(data), grep,
-                x = signatureTable$scoreLabel
-            )
+                x = signatureTable$scoreLabel,
+                FUN.VALUE = integer(1))
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
             ha <- rowAnnotation(df = df)
@@ -350,10 +350,10 @@ heatmapSignPlot <- function(
         fm <- as.matrix(data.frame(data)[n, ])
         sm <- as.matrix(data.frame(data)[-n, ])
         if (!is.null(signAnnot)) {
-            whichRow <- sapply(
+            whichRow <- vapply(
                 rownames(sm), grep,
-                x = signatureTable$scoreLabel
-            )
+                x = signatureTable$scoreLabel,
+                FUN.VALUE = integer(1))
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
             ha <- rowAnnotation(df = df)
@@ -432,7 +432,7 @@ correlationSignPlot <- function(
         if (!is.null(selectByAnnot)) {
             tmp <- tmp[sampleAnnot == selectByAnnot, ] }}
 
-    SignMatrix <- sapply(tmp, .range01)
+    SignMatrix <- vapply(tmp, .range01, double(nrow(tmp)))
 
     g <- corPlot(
         as.data.frame(SignMatrix), cluster = TRUE,
@@ -610,7 +610,7 @@ ridgelineSignPlot <- function(
 
     tmp <- as.data.frame(tmp[, signs])
     colnames(tmp) <- signs
-    tmp <- data.frame(sapply(tmp, .range01))
+    tmp <- data.frame(vapply(tmp, .range01, integer(nrow(tmp))))
 
     if (!is.null(groupByAnnot)) {
         if (length(groupByAnnot) != nrow(tmp)) {

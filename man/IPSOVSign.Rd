@@ -4,14 +4,7 @@
 \alias{IPSOVSign}
 \title{IPSOV Signature}
 \usage{
-IPSOVSign(
-  dataset,
-  nametype = "SYMBOL",
-  inputType = "microarray",
-  pvalues = FALSE,
-  nperm = 100,
-  ...
-)
+IPSOVSign(dataset, nametype = "SYMBOL", inputType = "microarray", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -25,10 +18,6 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
-
-\item{pvalues}{logical. If TRUE it computes p-values of GSVA by permutations.}
-
-\item{nperm}{number of permutations.}
 
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
 function.}

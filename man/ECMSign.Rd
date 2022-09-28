@@ -4,7 +4,7 @@
 \alias{ECMSign}
 \title{Extracellular Matrix Signature}
 \usage{
-ECMSign(dataset, nametype = "SYMBOL", pvalues = FALSE, nperm = 100, ...)
+ECMSign(dataset, nametype = "SYMBOL", ...)
 }
 \arguments{
 \item{dataset}{Expression values. A data frame or a matrix where rows
@@ -15,10 +15,6 @@ Alternatively, an object of type \linkS4class{SummarizedExperiment},
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
-
-\item{pvalues}{logical. If TRUE it computes p-values of GSVA by permutations.}
-
-\item{nperm}{number of permutations.}
 
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
 function.}

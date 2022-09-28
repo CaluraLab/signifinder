@@ -247,39 +247,6 @@ my_colors <- colorRampPalette(my_colors)(100)
             round(x*10/3, digits = 0) }}
 }
 
-#' @importFrom parallel mclapply
-.GSVAPvalues <- function(expr, gset.idx.list, gsvaResult, nperm, args) {
-    datasetGenes <- rownames(expr)
-    filteredGeneSets <- lapply(gset.idx.list, y = datasetGenes, intersect)
-    permutedResults <- mclapply(seq_len(nperm), function(x) {
-        message("Performing permutation number", x, "\n")
-        permlist <- lapply(seq_len(length(gset.idx.list)), function(i) {
-            sample(
-                datasetGenes,
-                size = lengths(filteredGeneSets)[i],
-                replace = FALSE) })
-        args$gset.idx.list <- permlist
-        gsva_matrix <- do.call(gsva, args)
-        data.frame(t(gsva_matrix))
-    }, mc.cores = 1)
-    permutedResByGeneSet <- split.default(x = Reduce(
-        cbind, permutedResults), seq_len(length(gset.idx.list)))
-    permutedResByGeneSet <- lapply(permutedResByGeneSet, function(x) {
-        data.frame(t(x)) })
-    finalRes <- do.call(
-        rbind, lapply(seq_len(length(gset.idx.list)), function(i) {
-            gspvalues <- sapply(seq_len(ncol(expr)), function(j) {
-                (min(c(
-                    sum(permutedResByGeneSet[[i]][, j] <= gsvaResult[i, j]),
-                    sum(permutedResByGeneSet[[i]][, j] >= gsvaResult[i, j])
-                )) + 1) / (nperm + 1) })
-            gspvalues })
-    )
-    colnames(finalRes) <- colnames(expr)
-    rownames(finalRes) <- paste(names(gset.idx.list), "pval", sep = "_")
-    return(finalRes)
-}
-
 .consistencyCheck <- function(nametype, functionName, author = NULL) {
     if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
@@ -351,12 +318,12 @@ my_colors <- colorRampPalette(my_colors)(100)
     exons_g <- NULL
     exons_g[use] <- lapply(egs[use], function(eg) { exons.db[[eg]] })
     names(exons_g) <- names(egs)
-    use <- !sapply(exons_g, is.null)
+    use <- !vapply(exons_g, is.null, logical(1))
 
     glen <- NULL
-    glen[use] <- sapply(names(egs[use]), function(eg) {
+    glen[use] <- vapply(names(egs[use]), function(eg) {
         sum(width(reduce(exons_g[[eg]])))
-    })
+    }, numeric(1))
 
     usec <- colSums(data[use,])>0
 
