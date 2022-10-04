@@ -58,7 +58,7 @@ SignatureNames <- c(
     "ISC_MerlosSuarez_Prolif",
     "VEGF_Hu",
     "DNArep_Kang",
-    "IPSOV"
+    "IPSOV_Shen"
 )
 
 #' @importFrom viridis magma viridis

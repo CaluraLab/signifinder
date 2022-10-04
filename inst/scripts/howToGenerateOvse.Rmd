@@ -1,0 +1,136 @@
+---
+title: "How we generate ovse object"
+author: "Stefania Pirrotta"
+date: '2022-10-03'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+In this workflow, we present all the steps, along with the code, to generate the `ovse` object: from sample collection and filtering to signature computation.
+
+# Method
+## Sample Collection
+RNA sequencing Ovarian Cancer (OVC) data are retrieved from The Cancer Genome Atlas (TCGA) database using `curatedTCGAData` package. It returns a `MultiAssayExperiment`, from which we extract a `SummarizedExperiment.` Data are then normalized with the `betweenLaneNormalization` function.
+
+```{r}
+library(curatedTCGAData)
+library(MultiAssayExperiment)
+library(signifinder)
+
+## Download data from TCGA
+OVmae <- curatedTCGAData(diseaseCode = "OV", assays = "RNASeqGene", 
+                         version = "2.0.1", dry.run = FALSE)
+OVcolData <- colData(OVmae)
+OVse <- OVmae[[1]]
+colnames(OVse) <- substr(colnames(OVse), 1, 12)
+OVse <- OVse[,!duplicated(colnames(OVse))]
+
+## Normalize counts
+assay(OVse) <- EDASeq::betweenLaneNormalization(as.matrix(assay(OVse)), 
+                                                which = "median")
+```
+
+Then, we compute the scores for the ovarian subgroups using the `consensusOVSign` function from `signifinder`, and we assign to each sample the subgroup with the highest score, following the procedure suggested by Chen et al, 2018, Clinical Cancer Research.
+```{r}
+## Compute consensusOV
+OVse <- consensusOVSign(OVse)
+
+cons_names <- c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", 
+                "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES")
+OV_subtype <- sapply(1:296, function(x){
+    names(which.max(as.vector(as.data.frame(colData(OVse))[x, cons_names])))})
+OV_subtype <- substring(OV_subtype, 18)
+names(OV_subtype) <- colnames(OVse)
+```
+
+## Sample and Gene Filtering
+We select the 10 samples with the highest scores for each subgroup and filter out all the other samples.
+```{r}
+## Select few samples with the highest scores
+selected_names <- c()
+for(i in c("IMR", "DIF", "PRO", "MES")){
+    sub_ov <- colData(OVse)[,paste0("ConsensusOV_Chen_", i)][OV_subtype==i]
+    names(sub_ov) <- names(OV_subtype[OV_subtype==i])
+    selected_names <- c(selected_names, 
+                        names(sort(sub_ov, decreasing = T)[1:10]))
+}
+ovse <- OVse[, selected_names]
+OV_subtype <- OV_subtype[selected_names]
+```
+
+To speed up the computation of the signatures, we keep only the genes included in the signatures' lists and filter out all the other genes.
+```{r}
+## Select genes included in the signatures
+genes_to_keep <- c()
+genes_to_keep <- c(genes_to_keep, signifinder:::Tinflam_Ayers$SYMBOL)
+for(x in signifinder:::SignatureNames){
+    genes_to_keep <- c(genes_to_keep, signifinder:::.GetGenes(x)[,1])}
+genes_to_keep <- unique(genes_to_keep)
+
+## Filter genes
+ovse <- ovse[rownames(ovse) %in% genes_to_keep,]
+```
+
+Finally, we add the survival data inside the `ovse` object.
+```{r}
+## Add survival information
+colData(ovse) <- colData(ovse)[,-c(1,2,3,4)]
+colData(ovse) <- cbind(colData(ovse), OV_subtype)
+
+os <- NULL
+os_indx <- !is.na(OVmae$days_to_death)
+os[os_indx] <- OVmae$days_to_death[os_indx]
+os_indx <- !is.na(OVmae$days_to_last_followup)
+os[os_indx] <- OVmae$days_to_last_followup[os_indx]
+os <- os[OVmae@colData@rownames %in% ovse@colData@rownames]
+status <- OVmae$vital_status
+status <- status[OVmae@colData@rownames %in% ovse@colData@rownames]
+colData(ovse) <- cbind(colData(ovse), os, status)
+```
+
+## Signatures computation
+To compute the signatures, we firstly transform normalized counts into TPM, CPM and FPKM and add these data inside the `ovse` object.
+```{r}
+## Compute TPM, CPM and FPKM
+data <- signifinder:::.getMatrix(ovse)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+exons.db <- ensembldb::exonsBy(txdb, by = "gene")
+g <- rownames(ovse)
+egs <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = g, 
+    column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
+data <- data[!is.na(egs), ]
+egs <- egs[!is.na(egs)]
+
+exons_g <- lapply(egs, function(eg) { exons.db[[eg]] })
+data <- data[!sapply(exons_g, is.null), ]
+egs <- egs[!sapply(exons_g, is.null)]
+exons_g <- exons_g[!sapply(exons_g, is.null)]
+glen <- sapply(names(egs), function(eg) {
+    sum(width(reduce(exons_g[[eg]])))})
+
+tdata_TPM <- DGEobj.utils::convertCounts(countsMatrix = data, unit = "TPM", geneLength = glen)
+tdata_CPM <- DGEobj.utils::convertCounts(countsMatrix = data, unit = "CPM", geneLength = glen)
+tdata_FPKM <- DGEobj.utils::convertCounts(countsMatrix = data, unit = "FPKM", geneLength = glen)
+ovse <- ovse[rownames(data),]
+
+assays(ovse, withDimnames = FALSE)[["TPM"]] <- tdata_TPM
+assays(ovse, withDimnames = FALSE)[["CPM"]] <- tdata_CPM
+assays(ovse, withDimnames = FALSE)[["FPKM"]] <- tdata_FPKM
+```
+
+We can now compute the signatures. Specifically, we compute all the signatures available for OVC plus all the pan-cancer signatures.
+```{r}
+## Compute signatures
+ovse <- multipleSign(dataset = ovse, nametype = "SYMBOL", 
+                     inputType = "rnaseq", tissue = c("ovary", "pan-tissue"))
+
+## Change sample names
+colnames(ovse) <- paste0("sample", 1:40)
+
+ovse
+```
+
+And this is the `ovse` object inside signifinder/data.
