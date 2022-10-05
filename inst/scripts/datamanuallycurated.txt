@@ -1,0 +1,14 @@
+## Information on 'sysdata.rda' generation ##
+
+For each signature collected inside signifinder, it was necessary to retrieve the correspondent list of genes in order to compute the signature scores.
+More specifically, each signature has its own type of information needed for the computation. This could be:
+- a list of genes;
+- a list of genes and their coefficients;
+- a list of genes and their class belonging;
+- a list of genes, their coefficients and their class belonging;
+- a list of genes and a specific type of information.
+
+For each signature, we manually retrieved all the information from the original public work. Secondly, we checked gene ids and keeped only those genes that have a correspondent entrez id. Then, we constructed a data frame that contains the SYMBOL ids as the first column and the additional columns when it was required.
+All these data frames are collected inside R/sysdata.rda.
+
+Further, a table called 'signatureTable' is also included inside R/sysdata.rda. This is a data frame collecting all the main information about the signatures. This table can be easily explored using the function 'availableSignatures()', that also has a fully description of this table inside its documentation.
