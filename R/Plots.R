@@ -610,7 +610,7 @@ ridgelineSignPlot <- function(
 
     tmp <- as.data.frame(tmp[, signs])
     colnames(tmp) <- signs
-    tmp <- data.frame(vapply(tmp, .range01, integer(nrow(tmp))))
+    tmp <- data.frame(vapply(tmp, .range01, double(nrow(tmp))))
 
     if (!is.null(groupByAnnot)) {
         if (length(groupByAnnot) != nrow(tmp)) {
