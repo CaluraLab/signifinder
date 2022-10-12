@@ -189,7 +189,7 @@ geneHeatmapSignPlot <- function(data,
             dimnames = list(whichSign, colnames(dataset))
         )
     } else {
-        signval <- vapply(signval, .range01, integer(nrow(signval)))
+        signval <- vapply(signval, .range01, double(nrow(signval)))
         signval <- as.matrix(t(signval))
     }
 
