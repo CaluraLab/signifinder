@@ -13,7 +13,8 @@ signifinder is an R package for computing and exploring a compendium of tumor si
 \seealso{
 Useful links:
 \itemize{
-  \item Report bugs at \url{https://github.com/CaluraLab/signifinder}
+  \item \url{https://github.com/CaluraLab/signifinder}
+  \item Report bugs at \url{https://github.com/CaluraLab/signifinder/issues}
 }
 
 }
