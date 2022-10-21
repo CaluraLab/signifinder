@@ -6,11 +6,12 @@
 #' to have more details explore the function
 #'  \code{\link[signifinder]{availableSignatures}}.
 #'
-#' @param dataset Expression values. A data frame or a matrix where rows
-#' correspond to genes and columns correspond to samples.
+#' @param dataset Normalized expression values. A data frame or a matrix
+#' where rows correspond to genes and columns correspond to samples.
 #' Alternatively, an object of type \linkS4class{SummarizedExperiment},
 #' \code{\link[SingleCellExperiment]{SingleCellExperiment}} or
-#' \code{\link[SpatialExperiment]{SpatialExperiment}}.
+#' \code{\link[SpatialExperiment]{SpatialExperiment}} where the normalized
+#' expression values should be in an assay called 'norm_expr'.
 #' @param nametype character string saying the type of gene name ID (row names
 #' in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
 #' @param inputType character string saying the type of data you are using.
@@ -335,6 +336,8 @@ immunoScoreSign <- function(
 #' @inherit EMTSign return
 #'
 #' @importFrom consensusOV get.subtypes
+#' @importFrom AnnotationDbi mapIds
+#' @importFrom org.Hs.eg.db org.Hs.eg.db
 #'
 #' @examples
 #' data(ovse)
@@ -347,8 +350,8 @@ consensusOVSign <- function(dataset, nametype = "SYMBOL", ...) {
     datasetm <- .getMatrix(dataset)
 
     if (nametype != "ENTREZID") {
-        genename <- AnnotationDbi::mapIds(
-            org.Hs.eg.db::org.Hs.eg.db,
+        genename <- mapIds(
+            org.Hs.eg.db,
             keys = row.names(datasetm),
             column = "ENTREZID",
             keytype = nametype,
@@ -1208,7 +1211,7 @@ ISCSign <- function(dataset, nametype = "SYMBOL", inputType = "microarray") {
     scores <- vapply(sign_list, function(x) {
         colMeans(datasetm_n[intersect(
             x, row.names(datasetm_n - colMeans(datasetm_n))), ])
-    }, integer(1))
+    }, double(ncol(datasetm_n)))
     colnames(scores) <- paste0("ISC_MerlosSuarez_", colnames(scores))
 
     return(.returnAsInput(

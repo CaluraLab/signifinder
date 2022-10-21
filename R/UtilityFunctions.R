@@ -62,10 +62,11 @@ SignatureNames <- c(
 )
 
 #' @importFrom viridis magma viridis
-mycol <- c("#FCFDD4", rev(viridis::magma(10)))
-mycol1 <- rev(viridis::viridis(10))
+mycol <- c("#FCFDD4", rev(magma(10)))
+mycol1 <- rev(viridis(10))
 
-my_colors <- RColorBrewer::brewer.pal(5, "Spectral")
+#' @importFrom RColorBrewer brewer.pal
+my_colors <- brewer.pal(5, "Spectral")
 
 my_colors <- colorRampPalette(my_colors)(100)
 
@@ -188,15 +189,19 @@ my_colors <- colorRampPalette(my_colors)(100)
     c(defaults, dots)
 }
 
-#' @importFrom SummarizedExperiment assay
+#' @importFrom SummarizedExperiment assays
 #' @importFrom methods is
 .getMatrix <- function(userdata) {
     if (!is.matrix(userdata)) {
-        if (class(userdata) %in% c(
+        if (is(userdata)[1] %in% c(
             "SpatialExperiment",
             "SummarizedExperiment",
             "SingleCellExperiment")) {
-            userdata <- as.matrix(assay(userdata))
+            if(!"norm_expr" %in% names(assays(userdata))) {
+                stop(paste("Normalized expression values should be in an assay",
+                           "called 'norm_expr'. Consider changing the name",
+                           "using 'names(assays(mydata))'.")) }
+            userdata <- as.matrix(assays(userdata)[["norm_expr"]])
         } else if (is.data.frame(userdata)) {
             userdata <- as.matrix(userdata)
         } else { stop("This dataset type is not supported") }
@@ -207,7 +212,7 @@ my_colors <- colorRampPalette(my_colors)(100)
 #' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
 .returnAsInput <- function(userdata, result, SignName, datasetm) {
     if (!is.matrix(userdata) & !is.data.frame(userdata)) {
-        if (class(userdata) %in% c(
+        if (is(userdata)[1] %in% c(
             "SpatialExperiment",
             "SummarizedExperiment",
             "SingleCellExperiment")) {
@@ -284,7 +289,11 @@ my_colors <- colorRampPalette(my_colors)(100)
 
 .managena <- function(datasetm, genes) {
     datasetm <- datasetm[row.names(datasetm) %in% genes, ]
-    columnNA <- (length(genes) - colSums(!is.na(datasetm))) / length(genes)
+    columnNA <- if(length(genes)==1){
+        is.na(datasetm)
+    } else {
+        (length(genes) - colSums(!is.na(datasetm))) / length(genes)
+    }
     if (sum(columnNA > 0.9) > 0) {
         warning("Some samples have more than 90% NA values")}
     return(columnNA)
@@ -294,24 +303,29 @@ my_colors <- colorRampPalette(my_colors)(100)
 #' @importFrom BiocGenerics width
 #' @importFrom IRanges reduce
 #' @importFrom DGEobj.utils convertCounts
+#' @importFrom AnnotationDbi mapIds
+#' @importFrom ensembldb exonsBy
+#' @importFrom org.Hs.eg.db org.Hs.eg.db
+#' @importFrom TxDb.Hsapiens.UCSC.hg19.knownGene TxDb.Hsapiens.UCSC.hg19.knownGene
+#' @importFrom TxDb.Hsapiens.UCSC.hg38.knownGene TxDb.Hsapiens.UCSC.hg38.knownGene
 .dataTransformation <- function(dataset, data, trans, hgReference, nametype) {
-    if (class(dataset)[1] %in% c(
+    if (is(dataset)[1] %in% c(
         "SpatialExperiment",
         "SummarizedExperiment",
         "SingleCellExperiment"
     )) { if (trans %in% names(assays(dataset))) { return(dataset) } }
 
     if (hgReference == "hg19") {
-        txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
+        txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
     } else if (hgReference == "hg38") {
-        txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene::TxDb.Hsapiens.UCSC.hg38.knownGene
+        txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
     } else { stop("Human reference genome must be either hg19 or hg38") }
 
-    exons.db <- ensembldb::exonsBy(txdb, by = "gene")
+    exons.db <- exonsBy(txdb, by = "gene")
 
     g <- rownames(data)
-    egs <- AnnotationDbi::mapIds(
-        org.Hs.eg.db::org.Hs.eg.db, keys = g, column = "ENTREZID",
+    egs <- mapIds(
+        org.Hs.eg.db, keys = g, column = "ENTREZID",
         keytype = nametype, multiVals = "first")
     use <- !is.na(egs)
 
@@ -332,7 +346,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         countsMatrix = data[use,usec],
         unit = trans, geneLength = glen[use])
 
-    if (class(dataset)[1] %in% c(
+    if (is(dataset)[1] %in% c(
         "SpatialExperiment",
         "SummarizedExperiment",
         "SingleCellExperiment"
@@ -361,9 +375,11 @@ my_colors <- colorRampPalette(my_colors)(100)
     # return(g_per==0)
 }
 
+#' @importFrom AnnotationDbi mapIds
+#' @importFrom org.Hs.eg.db org.Hs.eg.db
 .geneIDtrans <- function(nametype, genes) {
-    if (nametype != "SYMBOL") { AnnotationDbi::mapIds(
-        org.Hs.eg.db::org.Hs.eg.db, keys = genes, column = nametype,
+    if (nametype != "SYMBOL") { mapIds(
+        org.Hs.eg.db, keys = genes, column = nametype,
         keytype = "SYMBOL", multiVals = "first")
     } else { genes }
 }
