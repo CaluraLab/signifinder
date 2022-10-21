@@ -13,11 +13,12 @@ immuneCytSign(
 )
 }
 \arguments{
-\item{dataset}{Expression values. A data frame or a matrix where rows
-correspond to genes and columns correspond to samples.
+\item{dataset}{Normalized expression values. A data frame or a matrix
+where rows correspond to genes and columns correspond to samples.
 Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \code{\link[SingleCellExperiment]{SingleCellExperiment}} or
-\code{\link[SpatialExperiment]{SpatialExperiment}}.}
+\code{\link[SpatialExperiment]{SpatialExperiment}} where the normalized
+expression values should be in an assay called 'norm_expr'.}
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}

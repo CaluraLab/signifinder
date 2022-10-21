@@ -28,7 +28,8 @@ further details check \code{\link[survival]{Surv}} function.}
 or a numeric value, which divide samples between high scores and low scores.
 The function computes the threshold with the method indicated or employs the
 values directly supplied by the user. Based on that number, it divides
-samples.}
+samples. In case of "optimal" the \code{\link[maxstat]{maxstat.test}}
+function will be used to estimate the cutpoint which separates samples best.}
 
 \item{sampleAnnot}{a categorical vector containing samples' annotations
 named with samples names equal to the row names used in `survData`.}
@@ -40,8 +41,14 @@ used to compute the survival analysis.}
 A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Given a signature and samples survival data, the function plots survival
-curves for that signature.
+Given a signature and samples' survival data, the function plots survival
+curves for that signature. This is a wrapper around
+\code{\link[survival]{survfit}}, that creates survival curves from a model
+formula. Here, the response variable in the formula is a survival object
+created by \code{\link[survival]{Surv}}. Survival curves are then passed to
+the \code{\link[survminer]{ggsurvplot}} function.
+For details about the statistics see
+\code{\link[survival]{survfit}} and \code{\link[survival]{Surv}}.
 }
 \examples{
 data(ovse)
