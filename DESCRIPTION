@@ -16,7 +16,7 @@ biocViews: GeneExpression, GeneTarget, ImmunoOncology, BiomedicalInformatics, RN
 Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics, 
     ComplexHeatmap, DGEobj.utils, GSVA, IRanges, SummarizedExperiment, 
     consensusOV, dplyr, ensembldb, ggridges, grid, magrittr, matrixStats, 
-    maxstat, methods, openair, TxDb.Hsapiens.UCSC.hg19.knownGene, 
+    maxstat, methods, openair, RColorBrewer, TxDb.Hsapiens.UCSC.hg19.knownGene, 
     TxDb.Hsapiens.UCSC.hg38.knownGene, stats, survival, survminer, viridis
 Encoding: UTF-8
 RoxygenNote: 7.2.1
@@ -25,4 +25,5 @@ LazyData: false
 Suggests: BiocStyle, knitr, testthat (>= 3.0.0), edgeR, limma
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-BugReports: https://github.com/CaluraLab/signifinder
+BugReports: https://github.com/CaluraLab/signifinder/issues
+URL: https://github.com/CaluraLab/signifinder
