@@ -119,6 +119,7 @@ ovse <- ovse[rownames(data),]
 assays(ovse, withDimnames = FALSE)[["TPM"]] <- tdata_TPM
 assays(ovse, withDimnames = FALSE)[["CPM"]] <- tdata_CPM
 assays(ovse, withDimnames = FALSE)[["FPKM"]] <- tdata_FPKM
+names(ovse@assays@data@listData)[1] <- "norm_expr"
 ```
 
 We can now compute the signatures. Specifically, we compute all the signatures available for OVC plus all the pan-cancer signatures.
