@@ -160,13 +160,9 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' geneHeatmapSignPlot(data = ovse, whichSign = "Ferroptosis_Ye")
 #'
 #' @export
-geneHeatmapSignPlot <- function(data,
-                                whichSign,
-                                logCount = FALSE,
-                                splitBySign = FALSE,
-                                sampleAnnot = NULL,
-                                splitBySampleAnnot = FALSE,
-                                ...) {
+geneHeatmapSignPlot <- function(
+        data, whichSign, logCount = FALSE, splitBySign = FALSE,
+        sampleAnnot = NULL, splitBySampleAnnot = FALSE, ...) {
     .signatureNameCheck(data, whichSign)
 
     dataset <- .getMatrix(data)
@@ -444,8 +440,14 @@ correlationSignPlot <- function(
 
 #' Survival Plot
 #'
-#' Given a signature and samples survival data, the function plots survival
-#' curves for that signature.
+#' Given a signature and samples' survival data, the function plots survival
+#' curves for that signature. This is a wrapper around
+#' \code{\link[survival]{survfit}}, that creates survival curves from a model
+#' formula. Here, the response variable in the formula is a survival object
+#' created by \code{\link[survival]{Surv}}. Survival curves are then passed to
+#' the \code{\link[survminer]{ggsurvplot}} function.
+#' For details about the statistics see
+#' \code{\link[survival]{survfit}} and \code{\link[survival]{Surv}}.
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
@@ -458,7 +460,8 @@ correlationSignPlot <- function(
 #' or a numeric value, which divide samples between high scores and low scores.
 #' The function computes the threshold with the method indicated or employs the
 #' values directly supplied by the user. Based on that number, it divides
-#' samples.
+#' samples. In case of "optimal" the \code{\link[maxstat]{maxstat.test}}
+#' function will be used to estimate the cutpoint which separates samples best.
 #' @param sampleAnnot a categorical vector containing samples' annotations
 #' named with samples names equal to the row names used in `survData`.
 #' @param selectByAnnot character string saying the subgroup from `sampleAnnot`
