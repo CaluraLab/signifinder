@@ -364,11 +364,12 @@ my_colors <- colorRampPalette(my_colors)(100)
     g_per <- (sum(gs %in% row.names(datasetm)) / length(gs)) * 100
 
     if (is.null(detail)) { message(
-        name, author, " is using ", round(g_per), "% of genes")
+        name, author, " is using ", round(g_per), "% of signature genes")
         if (g_per < 30) { warning(
             name, author, " is computed with less than 30% of its genes")}
     } else { message(
-        name, author, " is using ", round(g_per), "% of ", detail, " genes")
+        name, author, " is using ", round(g_per),
+        "% of ", detail, " signature genes")
         if (g_per < 30) { warning(
             name, author, detail,
             " is computed with less than 30% of its genes")}}

@@ -64,6 +64,7 @@ In the following we use an example expression dataset of ovarian cancer to show 
 # loading packages
 library(SummarizedExperiment)
 library(signifinder)
+library(dplyr)
 data(ovse)
 ovse
 ```
@@ -98,7 +99,9 @@ We can also interrogate the table asking which signatures are available for a sp
 ovary_signatures <- availableSignatures(tissue = "ovary", 
                                         description = FALSE)
 knitr::kable(ovary_signatures, 
-             caption = 'Signatures developed for ovary.')
+             caption = 'Signatures developed for ovary.') %>% 
+    kableExtra::kable_paper() %>% 
+    kableExtra::scroll_box(width = "82%", height = "500px")
 ```
 
 Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in the `functionName` field of `availableSignatures` table). All the signature functions require the expression data and to indicate the type of input data (`inputType` equal to “rnaseq” or “microarray”). Data are supposed to be the normalized expression values in the form of a data frame or a matrix with genes in rows samples in columns. Alternatively, an `SummarizedExperiment` object containing an assay called 'norm_expr' where rows correspond to genes and columns correspond to samples.
@@ -202,6 +205,9 @@ ridgelineSignPlot(data = ovse,
                   whichSign = highest_correlated, 
                   groupByAnnot = ovse$OV_subtype)
 ```
+
+# Adding new signatures
+Please contact us if you have a gene expression cancer signature that you would like to see added to this package. The only requirement is that the signature has publicly available gene list and method to compute it. The more difficult/custom the implementation, the better, as its inclusion in this package will provide more value for other users in the R/Bioconductor community.
 
 # Session info
 Here is the output of sessionInfo() on the system on which this document was compiled.

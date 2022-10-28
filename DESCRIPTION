@@ -22,7 +22,7 @@ Encoding: UTF-8
 RoxygenNote: 7.2.1
 Depends: R (>= 4.2.0)
 LazyData: false
-Suggests: BiocStyle, knitr, testthat (>= 3.0.0), edgeR, limma
+Suggests: BiocStyle, knitr, kableExtra, testthat (>= 3.0.0), edgeR, limma
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 BugReports: https://github.com/CaluraLab/signifinder/issues
