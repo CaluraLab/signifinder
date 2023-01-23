@@ -19,7 +19,7 @@ Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics,
     maxstat, methods, openair, RColorBrewer, TxDb.Hsapiens.UCSC.hg19.knownGene, 
     TxDb.Hsapiens.UCSC.hg38.knownGene, stats, survival, survminer, viridis
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Depends: R (>= 4.2.0)
 LazyData: false
 Suggests: BiocStyle, knitr, kableExtra, testthat (>= 3.0.0), edgeR, limma
