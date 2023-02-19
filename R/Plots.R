@@ -657,3 +657,155 @@ ridgelineSignPlot <- function(
     }
         return(g)
 }
+
+
+#' Evaluation Plot
+#'
+#' Given multiple signatures, it returns a multipanel plot that shows: (i)
+#' the percentage of genes from the signature gene list that are actually
+#' available in the dataset; (ii) the log2 average expressions of these genes;
+#' (iii) the percentage of zero values in them; (iv) the correlation between
+#' scores and total read counts; (v) the correlation between scores and the
+#' percentage of total zero values.
+#'
+#' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
+#' the signatures functions.
+#' @param nametype character string saying the type of gene name ID (row names
+#' in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
+#' @param whichSign character vector saying the signatures to plot. If not
+#' specified, all the signatures inside data will be plotted.
+#' @param groupByAnnot character vector containing samples' annotations.
+#' @param selectByAnnot character string saying the subgroup from `groupByAnnot`
+#' used to compute the evaluation plot.
+#'
+#' @return A \code{\link[ggplot2]{ggplot}} object.
+#'
+#' @import ggplot2
+#' @importFrom SummarizedExperiment colData
+#' @importFrom cowplot plot_grid
+#'
+#' @examples
+#' data(ovse)
+#' evaluationSignPlot(data = ovse)
+#'
+#' @export
+evaluationSignPlot <- function(
+        data, nametype = "SYMBOL", whichSign = NULL,
+        sampleAnnot = NULL, selectByAnnot = NULL){
+
+    if (!is.null(whichSign)) { .signatureNameCheck(data, whichSign) }
+
+    if (!is.null(sampleAnnot)) {
+        if (length(sampleAnnot) != ncol(data)) { stop(
+            "sampleAnnot length is different than samples dimension")}
+        if (!is.null(selectByAnnot)) {
+            if (!(selectByAnnot %in% sampleAnnot)) { stop(
+                "selectByAnnot is not present in sampleAnnot")}
+        } else { stop(
+            "sampleAnnot can be used only if",
+            " selectByAnnot is also provided")}
+    } else {
+        if (!is.null(selectByAnnot)) { stop(
+            "selectByAnnot can be used only",
+            " if sampleAnnot is also provided")}}
+
+    if (!is.null(sampleAnnot)) {
+        if (!is.null(selectByAnnot)) {
+            data <- data[, sampleAnnot == selectByAnnot] }}
+
+    dataset <- .getMatrix(data)
+
+    if (sum(colnames(colData(data)) %in% SignatureNames) > 0) {
+        if (is.null(whichSign)) {
+            signs <- intersect(SignatureNames, colnames(colData(data)))
+        } else {
+            signs <- Reduce(
+                intersect,
+                list(whichSign, SignatureNames, colnames(colData(data)))) }
+    } else { stop("There are no signatures in data") }
+
+    n_sign <- length(signs)
+
+    dataset_genes <- rownames(dataset)
+    coverage_conte <- colSums(dataset)
+    percentage_zeros <- apply(dataset, 2, function(x){sum(x==0)/length(x)})
+
+    res <- lapply(signs, function(x) {
+
+        sign_genes <- .GetGenes(x)[,"Gene"]
+        sign_genes <- .geneIDtrans(nametype, sign_genes)
+        shared <- intersect(dataset_genes, sign_genes)
+        n_shared <- length(shared)
+        n_all <- length(sign_genes)
+        perc_genes <- n_shared/n_all*100
+        perc_zero <- (apply(dataset[shared,]==0, 2, sum) / n_shared) * 100
+
+        score <- colData(data)[,x]
+
+        c_conte <- coverage_conte[!is.na(score)]
+        z_conte <- percentage_zeros[!is.na(score)]
+        i <- score[!is.na(score)]
+        coverage_cor <- cor(x = c_conte, i)
+        zeros_cor <- cor(x = z_conte, i)
+
+        coverage_sign <- log2(colMeans(dataset[shared,]) + 1)
+
+        list(perc_genes, perc_zero, coverage_cor, zeros_cor, coverage_sign)
+    })
+    names(res) <- signs
+
+    perc_genes <- unlist(lapply(res, function(x) round(x[[1]], 2) ))
+    matrix_percent_zeros <- do.call(rbind, lapply(
+        seq_along(signs), function(x)
+            data.frame(p_zeros = res[[x]][[2]], signature = signs[x]) ))
+    coverage_cor <- unlist(lapply(res, function(x) round(x[[3]], 2) ))
+    zeros_cor <- unlist(lapply(res, function(x) round(x[[4]], 2) ))
+    matrix_coverage_sign <- do.call(rbind, lapply(
+        seq_along(signs), function(x)
+            data.frame(coverage = res[[x]][[5]], signature = signs[x]) ))
+
+    g1 <- ggplot(mapping = aes(x = perc_genes, y = names(perc_genes))) +
+        geom_bar(stat = "identity", fill = "#a0d83c") +
+        geom_text(aes(
+            x = 8, y = names(perc_genes), label = paste0(
+                as.character(round(perc_genes)), "%"), hjust = 0)) +
+        xlim(0, 100) +
+        labs(x = "% of signature genes\nin the dataset") +
+        theme_light() +
+        theme(axis.title.y = element_blank(), axis.ticks.y = element_blank())
+
+    g2 <- ggplot(matrix_coverage_sign, aes(x = coverage, y = signature)) +
+        geom_boxplot(outlier.size = 1, fill = "grey90") +
+        labs(x = "log average expression\nof signature genes") +
+        theme_light() +
+        theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
+                axis.ticks.y=element_blank())
+
+    g3 <- ggplot(matrix_percent_zeros, aes(x = p_zeros, y = signature)) +
+        geom_boxplot(outlier.size = 1, fill = "grey90") +
+        labs(x = "% of zero values\nof signature genes") + xlim(0, 100) +
+        theme_light() +
+        theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
+                axis.ticks.y=element_blank())
+
+    color_point <- c("coverage" = "#D83CA0", "zeros" = "#3CA0D8")
+    g4 <- ggplot() +
+        geom_vline(xintercept = 0, linetype = "dashed") +
+        geom_point(aes(x = coverage_cor, y = names(coverage_cor),
+                        color = "coverage"), size = 2) +
+        geom_point(aes(x = zeros_cor, y = names(zeros_cor),
+                        color = "zeros"), size = 2) +
+        xlim(-1, 1) +
+        labs(x = "correlation") +
+        scale_color_manual(
+            values = color_point,
+            labels = c("total expression", "total percentage\nof zeros"),
+            name = "correlation between\nsignature score and") +
+        theme_light() +
+        theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
+                axis.ticks.y=element_blank())
+
+    g <- plot_grid(g1, g2, g3, g4, rel_widths = c(1.3, 1, 1, 1),
+                    nrow = 1, align = "h", axis = "b")
+    return(g)
+}
