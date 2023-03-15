@@ -1,0 +1,23 @@
+citHeader("To cite signifinder in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "signifinder enables the identification of tumor cell states and cancer expression signatures in bulk, single-cell and spatial transcriptomic data",
+  author   = personList(as.person("Stefania Pirrotta"),
+                        as.person("Laura Masatti"),
+                        as.person("Anna Corrà"),
+                        as.person("Fabiola Pedrini"),
+                        as.person("Giovanni Esposito"),
+                        as.person("Paolo Martini"),
+                        as.person("Davide Risso"),
+                        as.person("Chiara Romualdi"),
+                        as.person("Enrica Calura")),
+  journal  = "bioRxiv",
+  year     = 2023,
+  url      = "https://doi.org/10.1101/2023.03.07.530940",
+  textVersion = paste("Pirrotta S, Masatti L et al. (2023): signifinder",
+                      "enables the identification of tumor cell states and",
+                      "cancer expression signatures in bulk, single-cell and",
+                      "spatial transcriptomic data. bioRxiv,",
+                      "https://doi.org/10.1101/2023.03.07.530940")
+)
