@@ -6,6 +6,7 @@
 \usage{
 geneHeatmapSignPlot(
   data,
+  nametype = "SYMBOL",
   whichSign,
   logCount = FALSE,
   splitBySign = FALSE,
@@ -17,6 +18,9 @@ geneHeatmapSignPlot(
 \arguments{
 \item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
 the signatures functions.}
+
+\item{nametype}{character string saying the type of gene name ID (row names
+in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{whichSign}{character vector saying the signatures to plot.}
 

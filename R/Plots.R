@@ -138,6 +138,8 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
+#' @param nametype character string saying the type of gene name ID (row names
+#' in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
 #' @param whichSign character vector saying the signatures to plot.
 #' @param logCount logical. If TRUE it shows logarithms of expression values.
 #' @param splitBySign logical. If TRUE it splits rows by signatures.
@@ -161,85 +163,71 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #'
 #' @export
 geneHeatmapSignPlot <- function(
-        data, whichSign, logCount = FALSE, splitBySign = FALSE,
-        sampleAnnot = NULL, splitBySampleAnnot = FALSE, ...) {
+        data, nametype = "SYMBOL", whichSign, logCount = FALSE,
+        splitBySign = FALSE, sampleAnnot = NULL,
+        splitBySampleAnnot = FALSE, ...) {
+
     .signatureNameCheck(data, whichSign)
+
+    if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
+        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
 
     dataset <- .getMatrix(data)
 
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != ncol(dataset)) {
-            stop("sampleAnnot length is different than samples dimension")
-        }
+            stop("sampleAnnot length is different than samples dimension")}
     } else {
         if (splitBySampleAnnot) {
             stop("splitBySampleAnnot can be TRUE",
-                 " only if sampleAnnot is provided")
-        }
-    }
+                " only if sampleAnnot is provided")}}
 
     signval <- colData(data)[, whichSign]
-    if (length(whichSign) == 1) {
-        signval <- matrix(signval,
-            nrow = 1,
-            dimnames = list(whichSign, colnames(dataset))
-        )
+    if (length(whichSign)==1) {
+        signval <- matrix(
+            signval, nrow = 1,
+            dimnames = list(whichSign, colnames(dataset)))
     } else {
         signval <- vapply(signval, .range01, double(nrow(signval)))
-        signval <- as.matrix(t(signval))
-    }
+        signval <- as.matrix(t(signval))}
 
     Gene <- NULL
     geneTable <- as.data.frame(do.call(rbind, lapply(whichSign, .GetGenes))) %>%
         group_by(Gene) %>%
         summarise_all(paste, collapse = ",")
-    signatureGenes <- geneTable$Gene
+    geneTable$Gene <- .geneIDtrans(nametype, geneTable$Gene)
 
-    filtdataset <- as.matrix(dataset[row.names(dataset) %in% signatureGenes, ])
+    filtdataset <- as.matrix(dataset[row.names(dataset) %in% geneTable$Gene, ])
+    geneTable <- geneTable[geneTable$Gene %in% rownames(filtdataset),]
+    geneTable <- geneTable[match(rownames(filtdataset), geneTable$Gene),]
 
     dots <- list(...)
     htargs <- .matchArguments(
-        dots,
-        list(
-            name = "gene\nexpression",
-            show_column_names = FALSE,
-            col = mycol,
-            row_names_gp = gpar(fontsize = 6)
-        )
-    )
+        dots, list(
+            name = "gene\nexpression", show_column_names = FALSE, col = mycol))
 
-    if (logCount) {
-        htargs$matrix <- log2(filtdataset + 1)
-    } else {
-        htargs$matrix <- filtdataset
-    }
+    if (logCount) {htargs$matrix <- log2(filtdataset + 1)
+    } else {htargs$matrix <- filtdataset}
+
+    htargs_top <- c(
+        list(matrix = signval, name = "score", col = mycol1),
+        htargs[ !(names(htargs) %in% c("matrix", "name", "col")) ])
 
     if (length(whichSign) != 1) {
-        signAnnot <- geneTable$Signature[
-            geneTable$Gene %in% rownames(filtdataset)]
-        if (splitBySign) {
-            htargs$row_split <- signAnnot
+        if (splitBySign) { htargs$row_split <- geneTable$Signature
         } else {
-            ha <- rowAnnotation(signature = signAnnot)
-            htargs$right_annotation <- ha
-        }
-    }
+            ha <- rowAnnotation(signature = geneTable$Signature)
+            htargs$right_annotation <- ha}}
 
     if (splitBySampleAnnot & is.character(sampleAnnot)) {
         htargs$column_split <- sampleAnnot
-        ht <- Heatmap(
-            signval,
-            name = "score",
-            col = mycol1,
-            column_split = sampleAnnot
-        )
+        htargs_top$column_split <- sampleAnnot
+        ht <- do.call(Heatmap, htargs_top)
     } else {
         if (!is.null(sampleAnnot)) {
             hatop <- HeatmapAnnotation(sampleAnnot = sampleAnnot)
-            htargs$top_annotation <- hatop
-        }
-        ht <- Heatmap(signval, name = "score", col = mycol1)
-    }
+            htargs$top_annotation <- hatop}
+        ht <- do.call(Heatmap, htargs_top)}
 
     ht2 <- do.call(Heatmap, htargs)
     g <- ht %v% ht2
@@ -358,9 +346,7 @@ heatmapSignPlot <- function(
         htargs$matrix <- sm
         if (splitBySampleAnnot) {
             ht <- Heatmap(
-                fm,
-                name = "clustered\nscore",
-                col = mycol1,
+                fm, name = "clustered\nscore", col = mycol1,
                 column_split = sampleAnnot
             )
         } else {
@@ -674,8 +660,8 @@ ridgelineSignPlot <- function(
 #' in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
 #' @param whichSign character vector saying the signatures to plot. If not
 #' specified, all the signatures inside data will be plotted.
-#' @param groupByAnnot character vector containing samples' annotations.
-#' @param selectByAnnot character string saying the subgroup from `groupByAnnot`
+#' @param sampleAnnot character vector containing samples' annotations.
+#' @param selectByAnnot character string saying the subgroup from `sampleAnnot`
 #' used to compute the evaluation plot.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
@@ -683,6 +669,7 @@ ridgelineSignPlot <- function(
 #' @import ggplot2
 #' @importFrom SummarizedExperiment colData
 #' @importFrom cowplot plot_grid
+#' @importFrom stats cor
 #'
 #' @examples
 #' data(ovse)
@@ -694,6 +681,9 @@ evaluationSignPlot <- function(
         sampleAnnot = NULL, selectByAnnot = NULL){
 
     if (!is.null(whichSign)) { .signatureNameCheck(data, whichSign) }
+
+    if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
+        stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
 
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != ncol(data)) { stop(
@@ -738,7 +728,11 @@ evaluationSignPlot <- function(
         n_shared <- length(shared)
         n_all <- length(sign_genes)
         perc_genes <- n_shared/n_all*100
-        perc_zero <- (apply(dataset[shared,]==0, 2, sum) / n_shared) * 100
+        if (n_shared==1){
+            perc_zero <- ifelse(dataset[shared,]==0, 100, 0)
+        } else {
+            perc_zero <- (apply(dataset[shared,]==0, 2, sum) / n_shared) * 100
+        }
 
         score <- colData(data)[,x]
 
@@ -748,7 +742,12 @@ evaluationSignPlot <- function(
         coverage_cor <- cor(x = c_conte, i)
         zeros_cor <- cor(x = z_conte, i)
 
-        coverage_sign <- log2(colMeans(dataset[shared,]) + 1)
+        if (n_shared==1){
+            coverage_sign <- log2(dataset[shared,] + 1)
+        } else {
+            coverage_sign <- log2(colMeans(dataset[shared,]) + 1)
+        }
+
 
         list(perc_genes, perc_zero, coverage_cor, zeros_cor, coverage_sign)
     })
@@ -774,14 +773,17 @@ evaluationSignPlot <- function(
         theme_light() +
         theme(axis.title.y = element_blank(), axis.ticks.y = element_blank())
 
-    g2 <- ggplot(matrix_coverage_sign, aes(x = coverage, y = signature)) +
+    g2 <- ggplot(matrix_coverage_sign, aes(
+        x = matrix_coverage_sign$coverage,
+        y = matrix_coverage_sign$signature)) +
         geom_boxplot(outlier.size = 1, fill = "grey90") +
         labs(x = "log average expression\nof signature genes") +
         theme_light() +
         theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
                 axis.ticks.y=element_blank())
 
-    g3 <- ggplot(matrix_percent_zeros, aes(x = p_zeros, y = signature)) +
+    g3 <- ggplot(matrix_percent_zeros, aes(
+        x = matrix_percent_zeros$p_zeros, y = matrix_percent_zeros$signature)) +
         geom_boxplot(outlier.size = 1, fill = "grey90") +
         labs(x = "% of zero values\nof signature genes") + xlim(0, 100) +
         theme_light() +

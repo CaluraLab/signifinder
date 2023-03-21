@@ -22,10 +22,10 @@ in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 \item{whichSign}{character vector saying the signatures to plot. If not
 specified, all the signatures inside data will be plotted.}
 
-\item{selectByAnnot}{character string saying the subgroup from `groupByAnnot`
-used to compute the evaluation plot.}
+\item{sampleAnnot}{character vector containing samples' annotations.}
 
-\item{groupByAnnot}{character vector containing samples' annotations.}
+\item{selectByAnnot}{character string saying the subgroup from `sampleAnnot`
+used to compute the evaluation plot.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.
