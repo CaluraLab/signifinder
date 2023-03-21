@@ -10,7 +10,7 @@ author:
   email: enrica.calura@unipd.it
 package: signifinder
 abstract: >
-  Signifinder is an R package for computing and exploring single-sample tumor signatures. Signifinder computes a variety of signature scores using the only gene expression values. Further, it supports the exploration of score trends proving functions to visualize single or multiple signatures. Currently, signifinder contains 46 distinct signatures collected from the literature relating to multiple tumors and cancer processes.
+  signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows to compute a variety of signature scores based on gene expression values. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains 46 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
 output: 
   BiocStyle::html_document
 vignette: >
@@ -24,15 +24,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-In cancer studies, transcriptional signatures are studied because of their potential to show cancer activities while happening, and they are considered potentially useful to guide therapeutic decisions and monitoring interventions. Transcriptional signatures of bulk RNA-seq experiments are also used to assess the complex relations between the tumor and its microenvironment.
+In cancer studies, transcriptional signatures are studied as good indicators of cancer phenotypes, for their potential to show cancer ongoing activities and can be used for patient stratification. For these reasons, they are considered potentially useful to guide therapeutic decisions and monitoring interventions. Moreover, transcriptional signatures of RNA-seq experiments are also used to assess the complex relations between the tumor and its microenvironment. In recent years, the new technologies for transcriptome detection (single-cell RNA-seq and spatial transcriptomics) highlighted the highly heterogeneous behaviour of this disease and, as a result, the need to dissect its complexity. To better achieve this result, the combined analysis of multiple signatures may reveal possible correlations between different tumor processes and allow patients (or cells or spots) to be stratified at a broader level of information.
 
-Transcriptional signatures are based upon the expression of a specific gene set and are summarized in a score designed to provide single-sample predictions. They are usually composed by a list of genes and an algorithm that through the use of gene expressions - and eventually a set of coefficients to differently weight the gene contributions - allows the computation of a single-sample prediction score.
+Transcriptional signatures are based upon a specific gene set - and eventually a set of coefficients to differently weight the gene contributions - whose expression levels are combined in a score designed to provide a single-sample (-cell, -spot) prediction. Hence, signatures consist not only of a list of genes but also of an algorithm that defines the computation of the single-sample prediction score. Despite much evidence that computational implementations are useful to improve data reproducibility, applicability and dissemination, the vast majority of signatures are not published along with their computational code and only few of them have been implemented in a software, virtuous examples are: the R package `consensusOV`, dedicated to the TCGA ovarian cancer signature; and the R package `genefu` which hosts some of the most popular signatures of breast cancer.
 
-Signatures show cancer activities in patients and can be used for patient stratification. The combined analysis of multiple signatures may reveal possible correlations between different tumor processes and allow patients to be stratified at a broader level of information. However, despite much evidence that computational implementations are useful to improve data reproducibility, applicability and dissemination, the vast majority of signatures are not published along with their computational code and only few of them have been implemented in a software, virtuous examples are: the R package `consensusOV`, dedicated to the TCGA ovarian cancer signature; and the R package `genefu` which hosts some of the most popular signatures of breast cancer.
+`signifinder` has been developed to provide an easy and fast computation of several published signatures. Thanks to the compatibility with the Bioconductor data structures and procedures, `signifinder` can easily integrate the most popular expression data analysis packages to complement the results and improve data interpretations.
 
-`signifinder` has been developed to provide an easy and fast computation of several published signatures. Thanks to the compatibility with the Bioconductor data structures and procedures, `signifinder` can be easily used after the most popular expression data analysis packages to complement the results and improve data interpretations.
-
-Several visualization functions are implemented to visualize the scores obtained from signatures. These can help in the result interpretations: users can not only browse single signatures independently but also compare them with each other.
+Also, several visualization functions are implemented to visualize the scores obtained from signatures. These can help in the result interpretations: users can not only browse single signatures independently but also compare them with each other.
 
 # Installation
 To install this package:
@@ -44,21 +42,23 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("signifinder")
 ```
 
-# Criteria for gene expression signature inclusion 
-Stringent criteria for the inclusion of the signatures were established: (i) signatures are all based on a cancer topic, developed and used on cancer samples; (ii) all the signatures include the gene list and the method to calculate an expression-based score; (iii) signatures are based exclusively on transcriptomic data (exceptions have been made in case of combination of transcriptomic data and survival or histopathological data); all signatures have been developed for bulk tumor expression experiments. Additionally, the included signatures clearly state the method, the type of input data and the set of the considered genes. Signature genes have an official gene symbol (Hugo consortium) or an unequivocal translation versus this kind of annotation. Genes without an official gene symbol were removed and signatures with a total amount of untranslatable gene names greater than the 5% were not included.
+# Criteria for gene expression signature inclusion
+
+Stringent criteria for the inclusion of the signatures were established: (i) signatures should rely on cancer topics, and be developed and used on cancer samples; (ii) signatures should exclusively use transcriptomic data, though exceptions have been made in case of combination of gene expression and signature-related gene weights; (iii) signatures must release a clear gene list used for the signature definition, where all genes have an official gene symbol (Hugo consortium) or an unambiguous translation (genes without an official gene symbol are removed); (iv) the method to calculate expression-based scores should be unambiguously described; (v) additional clarity about the type of expression in the input (e.g., counts, log counts, FPKM, or others) may also be required.
+In the current release of `signifinder`, all the included signatures rely on bulk tumor expression experiments, even if the package infrastructure could potentially store and manage signatures derived by single-cell and spatial transcriptomics. Further, while it may not ever be possible to include all cancer signatures proposed in the literature, our package makes easy the addition of new signatures (by us or by others via “pull requests”, see [Adding new signatures](#adding-new-signatures)).
 
 # How to use signifinder R package
 ## The Input Expression Data
-The input expression dataset must be normalized RNA-Seq counts (or normalized data matrix from microarrays) and they can be provided in the form of matrix, data frame or SummarizedExperiment. Regardless of the input type, the output data is a SummarizedExperiment with the computed signature scores added in the `colData` section.
+The input expression dataset must be normalized RNA-Seq counts (or normalized data matrix from microarrays) of bulk transcriptomics data, single-cell transcriptomics data or spatial transcriptomics data. They should be provided in the form of a matrix, a data frame or a SummarizedExperiment (and respectively SingleCellExperiment/SpatialExperiment). In the last case, the name of the assay containing the normalized values must be "norm_expr". Regardless of the input type, the output data is a SummarizedExperiment (SingleCellExperiment/SpatialExperiment) where the scores computed are put in the `colData` section.
 
-Gene lists of signatures reported in literature are typically symbols, but `signifinder` can either use gene symbols, NCBI entrez or ensembl gene IDs. Users can say which of the three identifiers they use (SYMBOL, ENTREZID or ENSEMBL) to let the package convert the signature gene lists for the matching of gene data (`nametype` argument inside the signature functions).
+Gene lists of signatures reported in literature are typically in symbol IDs, but `signifinder` can either use gene symbols, NCBI entrez or ensembl gene IDs. Users can say which of the three identifiers they use (SYMBOL, ENTREZID or ENSEMBL) to let the package convert the signature gene lists for the matching of gene data (`nametype` argument inside the signature functions).
 When a signature is computed a message is shown that says the percentage of genes used for the calculation of the signature compared to the original list. There is no minimum threshold of genes for signatures to be computed, but a `warning` will be given if there are less than the 30% of signature genes. After a signature has been calculated it is possible to visually inspect signature gene expressions using `geneHeatmapSignPlot` (see [Gene Expression Heatmap](#gene-expression-heatmap)).
 
-Furthermore, providing the signatures the original works also specify the type of expression value (e.g. normalized value, TPM (transcript per million), log(TPM), etc…) that should be used to compute the signature. Therefore, during signature computation, data type should be eventually converted as reported in the original work. When using `signifinder`, users must supply the input data in the form of *normalised counts* (or *normalised arrays*) and, for the signatures which require this, a data transformation step will be automatically performed. The transformed data matrix will be included in the output as an additional assay and the name of the assay will be the name of the conversion (i.e. “TPM”, “CPM” or “FPKM”). Additionally, crucially important is to specify the type of data used: “microarray” or “rnaseq” (`inputType` argument inside the signature functions). Finally, included signatures have been developed both from array and RNA-seq data. In `signifinder`, signatures for microarray can be applied to RNA-seq data but not vice versa due to input type conversions.
-Alternatively, if the input data is a `SummarizedExperiment` object that contains (in addition to the normalized count) also an assay of the transformed data, this will be used directly. Note that in order to be used they must be called “TPM”, “CPM” or “FPKM”.
+Furthermore, the original works, that provide the signatures, also specify the type of expression value (e.g. normalized value, TPM (transcript per million), log(TPM), etc…) that should be used to compute the signature. Therefore, during signature computation, data type should be eventually converted as reported in the original work. When using `signifinder`, users must supply the input data in the form of *normalised counts* (or *normalised arrays*) and, for the signatures which require this, a data transformation step will be automatically performed. The transformed data matrix will be included in the output as an additional assay and the name of the assay will be the name of the conversion (i.e. “TPM”, “CPM” or “FPKM”). Alternatively, if the input data is a `SummarizedExperiment` object that already contains (in addition to the normalized count) also an assay of the transformed data, this will be used directly. Note that in order to be used they must be called “TPM”, “CPM” or “FPKM”. Finally, included signatures have been developed both from array and RNA-seq data, therefore it is crucially important for users to specify the type of data used: “microarray” or “rnaseq” (`inputType` argument inside the signature functions). In `signifinder`, signatures for microarray can be applied to RNA-seq data but not vice versa due to input type conversions.
 
-## Computation of the Signatures
-In the following we use an example expression dataset of ovarian cancer to show how to use `signifinder` with a standard workflow.
+
+## Computation of the Signatures Scores
+In the following section, we use an example bulk expression dataset of ovarian cancer to show how to use `signifinder` with a standard workflow.
 
 ```{r, message=FALSE}
 # loading packages
@@ -90,7 +90,7 @@ The function returns a data frame with all the signatures included in the packag
 * description: brief description of the signature and how to evaluate its score
 
 ```{r}
-knitr::kable(t(availSigns[1,]), caption = 'One signature fiels')
+knitr::kable(t(availSigns[1,]))
 ```
 
 We can also interrogate the table asking which signatures are available for a specific tissue (e.g. ovary).
@@ -104,14 +104,14 @@ knitr::kable(ovary_signatures,
     kableExtra::scroll_box(width = "82%", height = "500px")
 ```
 
-Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in the `functionName` field of `availableSignatures` table). All the signature functions require the expression data and to indicate the type of input data (`inputType` equal to “rnaseq” or “microarray”). Data are supposed to be the normalized expression values in the form of a data frame or a matrix with genes in rows samples in columns. Alternatively, an `SummarizedExperiment` object containing an assay called 'norm_expr' where rows correspond to genes and columns correspond to samples.
+Once we have found a signature of interest, we can compute it by using the corresponding function (indicated in the `functionName` field of `availableSignatures` table). All the signature functions require the expression data and to indicate the type of input data (`inputType` equal to “rnaseq” or “microarray”). Data are supposed to be the normalized expression values in the form of a data frame or a matrix with genes in rows and samples in columns. Alternatively, a `SummarizedExperiment` object containing an assay called 'norm_expr' where rows correspond to genes and columns correspond to samples.
 
 ```{r}
 ovse <- ferroptosisSign(dataset = ovse,
                         inputType = "rnaseq")
 ```
 
-Signatures are often grouped in the same function by cancer topic even if they deal with different cancer types and computation approaches. We can unequivocally choose the one we are interested in by stating the first author of the signature (indicated in the `author` field of `availableSignatures` table). E.g., currently, there are three different epithelial to mesenchymal transition (EMT) signatures implemented inside the `EMTSign` function ("Miow", "Mak" or "Cheng"). We can choose which one to compute stating the `author` argument:
+Signatures are often grouped in the same function by cancer topic even if they deal with different cancer types and computation approaches. We can unequivocally choose the one we are interested in by stating the first author of the signature (indicated in the `author` field of `availableSignatures` table). E.g., currently, there are three different epithelial-to-mesenchymal transition (EMT) signatures implemented inside the `EMTSign` function ("Miow", "Mak" or "Cheng"). We can choose which one to compute stating the `author` argument:
 
 ```{r}
 ovse <- EMTSign(dataset = ovse,
@@ -130,16 +130,24 @@ ovse <- multipleSign(dataset = ovse,
 ```
 
 ## Visualization of the Signatures
-### The Signature Distribution Plot
-Every single signature computed can be explored using the `oneSignPlot` function to visualize both the score and the density distribution.
+
+### Evaluation Plot
+As a first step, we can visualize some signature's technical parameters to evaluate their reliability for our analysis. Thus, the `evaluationSignPlot` function returns a multipanel plot that shows for each signature: (i) the percentage of genes from the signature gene list that are actually available in the dataset; (ii) the log2 average expressions of these genes (iii) the percentage of zero values in them; (iv) the correlation between scores and total read counts; (v) the correlation between scores and the percentage of total zero values.
+
+```{r}
+evaluationSignPlot(data = ovse)
+```
+
+### Signature Scores Distribution Plot
+Each signature computed can be explored using the `oneSignPlot` function to visualize both the score and the density distribution.
 
 ```{r}
 oneSignPlot(data = ovse, 
             whichSign = "Hypoxia_Buffa")
 ```
 
-### The Gene Expression Heatmap
-Users may be also interested in visually exploring the expression values of the genes involved in a signature. In this case, we can use `geneHeatmapSignPlot` to visualize them. It generates a heatmap of the expression values with genes on the rows and samples on the columns. Further, the function is not restricted to the visualization of only one signature, and we can also plot the expression values of genes of multiple signatures also evaluating the gene list intersections.
+### Gene Expression Heatmap
+Users may be also interested in visually exploring the expression values of the genes involved in a signature. In this case, we can use `geneHeatmapSignPlot` to visualize them. It generates a heatmap of the expression values with genes on the rows and samples on the columns. Further, the function is not restricted to the visualization of only one signature, and we can also plot the expression values of genes from multiple signatures, also evaluating the gene list intersections.
 
 ```{r}
 geneHeatmapSignPlot(data = ovse, 
@@ -151,7 +159,7 @@ geneHeatmapSignPlot(data = ovse,
                     logCount = TRUE)
 ```
 
-### The Correlation Plot
+### Signature Scores Correlation Plot
 To easily investigate the relation across multiple signatures, `signifinder` provides the function to easily show the pairwise correlations of the signatures (`correlationSignPlot`). The `whichSign` argument could be set to specify which signatures should be plotted. When it is not stated all signatures inside the `SummarizedExperiment` data are used. Green-blue colors represent anticorrelations while orange-red scale is for positive correlations. Then, signatures are clustered to group together higher related ones.
 
 ```{r}
@@ -161,7 +169,7 @@ highest_correlated <- unique(unlist(
     ))
 ```
 
-### The Score Heatmap
+### Signature Scores Heatmap
 We can compare scores across different signatures with the `hetmapSignPlot` function. Scores are scaled between zero and one to be comparable to each other. The `whichSign` argument could be set to specify which signatures should be plotted. When it is not stated all signatures inside the `SummarizedExperiment` data are used.
 
 ```{r}
@@ -170,7 +178,7 @@ heatmapSignPlot(data = ovse,
                 whichSign = highest_correlated)
 ```
 
-Users may also be interested in seeing how signatures are sorted in relation to only one or few of them . In this case, we can pass one or few signatures to the `clusterBySign` argument that will be used to cluster samples.
+Users may also be interested in seeing how signatures are sorted in relation to only one or few of them. In this case, we can pass one or few signatures to the `clusterBySign` argument that will be used to cluster samples.
 Furthermore, users can add to the plot external sample annotations or plot the internal signature annotations ("signature", "topic", "tumor" or "tissue").
 
 ```{r}
@@ -179,8 +187,8 @@ heatmapSignPlot(data = ovse,
                 sampleAnnot = ovse$OV_subtype, signAnnot = "topic")
 ```
 
-### The Survival Plot
-Using the function `survivalSignPlot` we can test the association with survival of a  signature. The function needs the `summarizedExperiment` with the signature values in the `colData` and the patient survival time data. `survivalSignPlot` uses a Kaplan-Meier curve to test if patients with high or low values of the signature have differences in survival time. Different cut points of the signature score can be indicated through the argument `cutpoint` to define the two patient groups.
+### Survival Plot
+Using the function `survivalSignPlot` we can test the association with survival of a signature. The function needs the `summarizedExperiment` with the signature values in the `colData` and the patient survival time data. `survivalSignPlot` uses a Kaplan-Meier curve to test if patients with high or low values of the signature have differences in survival time. Different cut points of the signature score can be indicated through the argument `cutpoint` to define the two patient groups.
 
 ```{r}
 mysurvData <- cbind(ovse$os, ovse$status)
@@ -195,7 +203,7 @@ survivalSignPlot(data = ovse,
                  cutpoint = "optimal")
 ```
 
-### The Ridgeline Plot
+### Signature Scores Ridgeline Plot
 Finally, we can plot ridge lines with one or multiple signatures, also grouping samples by external annotations if needed.
 
 ```{r}
@@ -205,6 +213,21 @@ ridgelineSignPlot(data = ovse,
                   whichSign = highest_correlated, 
                   groupByAnnot = ovse$OV_subtype)
 ```
+
+## Other Examples
+Here, we present the results obtained with other two example datasets; one for single-cell transcriptomics and one for spatial transcriptomics.
+
+### Single-Cell Transcriptomics
+We report here the results obtained using the single-cell transcriptomics dataset coming from a glioblastoma tissue of Darmanis et al. (GEO ID: GSE84465, Darmanis, S. et al. Single-Cell RNA-Seq Analysis of Infiltrating Neoplastic Cells at the Migrating Front of Human Glioblastoma. Cell Rep 21, 1399–1410 (2017)). We focused on the cells coming from the BT_S2 patient, that were labeled as immune cells, neoplastic or oligodendrocyte precursor cells (OPC) and that come from both the core and the periphery of the tumor.
+
+We computed all the signatures for “brain” and “pan-tissue” that are available in signifinder running the command `multipleSign` setting `inputType = "rnaseq"` and `tissue = c("brain", "pan-tissue")`. Then, we performed a t-SNE and plotted the signature scores. Here, we can see the ridge plot and the t-SNE colored by some of the signatures computed, all cells or separately for different cell types.
+
+<img src=./figures/vignette_sc.png />
+
+### Spatial Transcriptomics
+We used the spatial transcriptomic dataset “Human Breast Cancer: Ductal Carcinoma In Situ, Invasive Carcinoma (FFPE)”, included in the 10x Genomics Visium Spatial Gene Expression data, from the 10x website (https://www.10xgenomics.com). A manual annotation of the tissue area was performed and used to annotate the spots. We computed all the signatures for “breast” and “pan-tissue” cancers available in signifinder running the command `multipleSign` setting `inputType = "rnaseq"` and `tissue = c("breast", "pan-tissue")`. Here, we show the ridge plot and the spatial distribution of scores obtained for the Hipoxia_Buffa signature.
+
+<img src=./figures/vignette_st.png width="370px" height="193px" class="center" />
 
 # Adding new signatures
 Please contact us if you have a gene expression cancer signature that you would like to see added to this package. The only requirement is that the signature has publicly available gene list and method to compute it. The more difficult/custom the implementation, the better, as its inclusion in this package will provide more value for other users in the R/Bioconductor community.
