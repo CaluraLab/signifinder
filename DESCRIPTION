@@ -7,12 +7,14 @@ Authors@R: c(person("Stefania", "Pirrotta", role = c("cre", "aut"),
              person("Enrica", "Calura", role = "aut", 
                     email = "enrica.calura@unipd.it"))
 Description: signifinder is an R package for computing and exploring a 
-            compendium of tumor signatures. It allows computing signatures
-            scores providing the only gene expression values and returns a
-            single-sample score. Currently, signifinder contains 46 distinct 
-            signatures collected from the literature.
+            compendium of tumor signatures. It allows to compute a variety of
+            signatures, based on gene expression values, and return
+            single-sample scores. Currently, signifinder contains 46 distinct 
+            signatures collected from the literature, relating to multiple 
+            tumors and multiple cancer processes.
 License: AGPL-3
-biocViews: GeneExpression, GeneTarget, ImmunoOncology, BiomedicalInformatics, RNASeq, Microarray, ReportWriting, Visualization
+biocViews: GeneExpression, GeneTarget, ImmunoOncology, BiomedicalInformatics, 
+    RNASeq, Microarray, ReportWriting, Visualization, SingleCell, Spatial
 Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics, 
     ComplexHeatmap, cowplot, DGEobj.utils, GSVA, IRanges, SummarizedExperiment, 
     consensusOV, dplyr, ensembldb, ggridges, grid, magrittr, matrixStats, 
