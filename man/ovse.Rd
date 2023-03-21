@@ -8,7 +8,7 @@
 An object of class \linkS4class{SummarizedExperiment}.
 }
 \usage{
-ovse
+data(ovse)
 }
 \description{
 This is an example dataset containing gene expression values (in normalized
