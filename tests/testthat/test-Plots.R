@@ -39,3 +39,15 @@ test_that("survivalSignPlot returns a ggsurvplot", {
     expect_true(is(res, "ggsurv"))
     expect_true(is(res, "list"))
 })
+
+test_that("ridgelineSignPlot returns a ggplot", {
+    res <- ridgelineSignPlot(data = ovse)
+    expect_true(is(res, "gg"))
+    expect_true(is(res, "ggplot"))
+})
+
+test_that("evaluationSignPlot returns a ggplot", {
+    res <- evaluationSignPlot(data = ovse)
+    expect_true(is(res, "gg"))
+    expect_true(is(res, "ggplot"))
+})
