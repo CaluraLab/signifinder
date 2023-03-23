@@ -25,7 +25,7 @@
 #' @export
 oneSignPlot <- function(data, whichSign, statistics = NULL) {
 
-    ..density.. <- NULL
+    density <- NULL
 
     if (length(whichSign) > 1) {
         stop("you must provide only one signature for this plot")
@@ -50,7 +50,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
         )
     g2 <- ggplot() +
         geom_histogram(
-            mapping = aes(signval, ..density..),
+            mapping = aes(signval, after_stat(density)),
             colour = "white",
             fill = "skyblue2"
         ) +
