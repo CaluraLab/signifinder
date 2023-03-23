@@ -3,9 +3,11 @@ Type: Package
 Title: Implementations of transcriptional cancer signatures
 Version: 1.1.0
 Authors@R: c(person("Stefania", "Pirrotta", role = c("cre", "aut"),
-                    email = "stefania.pirrotta@phd.unipd.it"),
+                    email = "stefania.pirrotta@phd.unipd.it",
+                    comment = c(ORCID = "0009-0004-0030-217X")),
              person("Enrica", "Calura", role = "aut", 
-                    email = "enrica.calura@unipd.it"))
+                    email = "enrica.calura@unipd.it",
+                    comment = c(ORCID = "0000-0001-8463-2432")))
 Description: signifinder is an R package for computing and exploring a 
             compendium of tumor signatures. It allows to compute a variety of
             signatures, based on gene expression values, and return

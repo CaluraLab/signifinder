@@ -19,11 +19,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Stefania Pirrotta \email{stefania.pirrotta@phd.unipd.it}
+\strong{Maintainer}: Stefania Pirrotta \email{stefania.pirrotta@phd.unipd.it} (\href{https://orcid.org/0009-0004-0030-217X}{ORCID})
 
 Authors:
 \itemize{
-  \item Enrica Calura \email{enrica.calura@unipd.it}
+  \item Enrica Calura \email{enrica.calura@unipd.it} (\href{https://orcid.org/0000-0001-8463-2432}{ORCID})
 }
 
 }
