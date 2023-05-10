@@ -27,7 +27,7 @@ test_that("heatmapSignPlot returns a Heatmap", {
 
 test_that("correlationSignPlot returns a list", {
     res <- correlationSignPlot(data = ovse)
-    expect_true(is(res, "list"))
+    expect_true(is(res, "openair"))
 })
 
 test_that("survivalSignPlot returns a ggsurvplot", {
