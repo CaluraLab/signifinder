@@ -8,6 +8,7 @@ multipleSign(
   dataset,
   nametype = "SYMBOL",
   inputType = "rnaseq",
+  whichAssay = "norm_expr",
   whichSign = NULL,
   tumor = NULL,
   tissue = NULL,
@@ -27,6 +28,9 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 
 \item{whichSign}{character vector saying the signatures to compute.}
 

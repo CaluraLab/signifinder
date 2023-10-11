@@ -4,7 +4,12 @@
 \alias{CINSign}
 \title{Chromosomal instability Signature}
 \usage{
-CINSign(dataset, nametype = "SYMBOL", inputType = "microarray")
+CINSign(
+  dataset,
+  nametype = "SYMBOL",
+  inputType = "microarray",
+  whichAssay = "norm_expr"
+)
 }
 \arguments{
 \item{dataset}{Normalized expression values. A data frame or a matrix
@@ -19,6 +24,9 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 }
 \value{
 If dataset is a \linkS4class{SummarizedExperiment} object, then

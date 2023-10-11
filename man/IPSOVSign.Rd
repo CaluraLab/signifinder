@@ -4,7 +4,13 @@
 \alias{IPSOVSign}
 \title{IPSOV Signature}
 \usage{
-IPSOVSign(dataset, nametype = "SYMBOL", inputType = "microarray", ...)
+IPSOVSign(
+  dataset,
+  nametype = "SYMBOL",
+  inputType = "microarray",
+  whichAssay = "norm_expr",
+  ...
+)
 }
 \arguments{
 \item{dataset}{Normalized expression values. A data frame or a matrix
@@ -19,6 +25,9 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
 function.}

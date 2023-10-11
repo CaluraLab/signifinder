@@ -8,7 +8,8 @@ cellCycleSign(
   dataset,
   nametype = "SYMBOL",
   author = "Lundberg",
-  inputType = "microarray"
+  inputType = "microarray",
+  whichAssay = "norm_expr"
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 }
 \value{
 If dataset is a \linkS4class{SummarizedExperiment} object, then

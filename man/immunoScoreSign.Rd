@@ -9,6 +9,7 @@ immunoScoreSign(
   nametype = "SYMBOL",
   author = "Hao",
   inputType = "rnaseq",
+  whichAssay = "norm_expr",
   hgReference = "hg38"
 )
 }
@@ -28,6 +29,9 @@ publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}

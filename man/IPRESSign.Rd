@@ -4,7 +4,13 @@
 \alias{IPRESSign}
 \title{IPRES Signature}
 \usage{
-IPRESSign(dataset, nametype = "SYMBOL", hgReference = "hg38", ...)
+IPRESSign(
+  dataset,
+  nametype = "SYMBOL",
+  whichAssay = "norm_expr",
+  hgReference = "hg38",
+  ...
+)
 }
 \arguments{
 \item{dataset}{Normalized expression values. A data frame or a matrix
@@ -16,6 +22,9 @@ expression values should be in an assay called 'norm_expr'.}
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}

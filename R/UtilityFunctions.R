@@ -173,14 +173,11 @@ my_colors <- colorRampPalette(my_colors)(100)
 
 #' @importFrom SummarizedExperiment colData
 .signatureNameCheck <- function(data, sName) {
-    if (!all(sName %in% SignatureNames)) {
-        stop(paste(
-            "signatures must be among:",
-            paste(SignatureNames, collapse = ", ")
-        ))
+    if (!any(sName %in% SignatureNames)) {
+        stop("There are no signatures computed with signifinder in whichSign")
     }
     if (!all(sName %in% colnames(colData(data)))) {
-        stop("signature names must be in data")
+        stop("all signature names in whichSign must be in the colData of data")
     }
 }
 
@@ -189,67 +186,87 @@ my_colors <- colorRampPalette(my_colors)(100)
     c(defaults, dots)
 }
 
-#' @importFrom SummarizedExperiment assays
+#' @importFrom SummarizedExperiment assay
 #' @importFrom methods is
-.getMatrix <- function(userdata) {
-    if (!is.matrix(userdata)) {
-        if (is(userdata)[1] %in% c(
-            "SpatialExperiment",
-            "SummarizedExperiment",
-            "SingleCellExperiment")) {
-            if(!"norm_expr" %in% names(assays(userdata))) {
-                stop(paste("Normalized expression values should be in an assay",
-                           "called 'norm_expr'. Consider changing the name",
-                           "using 'names(assays(mydata))'.")) }
-            userdata <- as.matrix(assays(userdata)[["norm_expr"]])
-        } else if (is.data.frame(userdata)) {
-            userdata <- as.matrix(userdata)
-        } else { stop("This dataset type is not supported") }
-    }
-    return(userdata)
-}
+#' @import SpatialExperiment
+setMethod(".getMatrix", "matrix", function(userdata, ...){return(userdata)})
+setMethod(".getMatrix", "data.frame", function(userdata, ...){
+    userdata <- as.matrix(userdata)
+    return(userdata)})
+setMethod(".getMatrix", "SummarizedExperiment", function(userdata, whichAssay){
+    userdata <- as.matrix(assay(userdata, whichAssay))
+    return(userdata)})
+setMethod(".getMatrix", "SingleCellExperiment", function(userdata, whichAssay){
+    userdata <- as.matrix(assay(userdata, whichAssay))
+    return(userdata)})
+setMethod(".getMatrix", "SpatialExperiment", function(userdata, whichAssay){
+    userdata <- as.matrix(assay(userdata, whichAssay))
+    return(userdata)})
 
 #' @importFrom SummarizedExperiment SummarizedExperiment colData colData<-
-.returnAsInput <- function(userdata, result, SignName, datasetm) {
-    if (!is.matrix(userdata) & !is.data.frame(userdata)) {
-        if (is(userdata)[1] %in% c(
-            "SpatialExperiment",
-            "SummarizedExperiment",
-            "SingleCellExperiment")) {
-            if (is.vector(result)) {
-                userdata@colData[, SignName] <- result
-            } else {
-                userdata@colData[, colnames(t(result))] <- t(result)
-            }
-        }
-        return(userdata)
-    } else if (is.matrix(userdata) | is.data.frame(userdata)) {
-        if (is.vector(result)) {
-            result <- SummarizedExperiment(
-                assays = list(norm_expr = datasetm),
-                colData = data.frame(name = result)
-            )
-            colnames(colData(result)) <- SignName
-        } else {
-            result <- SummarizedExperiment(
-                assays = list(norm_expr = datasetm),
-                colData = t(result)
-            )
-        }
-        return(result)
-    }
-}
+setMethod(".returnAsInput", signature(userdata = "matrix", result = "vector"),
+    function(userdata, result, SignName, datasetm){
+        result <- SummarizedExperiment(
+            assays = list(norm_expr = datasetm),
+            colData = data.frame(name = result))
+        colnames(colData(result)) <- SignName
+        return(result) })
+setMethod(".returnAsInput", signature(userdata ="data.frame", result ="vector"),
+          function(userdata, result, SignName, datasetm){
+              result <- SummarizedExperiment(
+                  assays = list(norm_expr = datasetm),
+                  colData = data.frame(name = result))
+              colnames(colData(result)) <- SignName
+              return(result) })
+setMethod(".returnAsInput", signature(userdata ="matrix", result ="matrix"),
+    function(userdata, result, SignName, datasetm){
+        result <- SummarizedExperiment(
+            assays = list(norm_expr = datasetm),
+            colData = t(result))
+        return(result) })
+setMethod(".returnAsInput",signature(userdata="data.frame",result="matrix"),
+          function(userdata, result, SignName, datasetm){
+              result <- SummarizedExperiment(
+                  assays = list(norm_expr = datasetm),
+                  colData = t(result))
+              return(result) })
+setMethod(".returnAsInput",
+    signature(userdata = "SummarizedExperiment", result = "vector"),
+    function(userdata, result, SignName, datasetm){
+        userdata@colData[, SignName] <- result
+        return(userdata) })
+setMethod(".returnAsInput",
+          signature(userdata = "SingleCellExperiment", result = "vector"),
+          function(userdata, result, SignName, datasetm){
+              userdata@colData[, SignName] <- result
+              return(userdata) })
+setMethod(".returnAsInput",
+          signature(userdata = "SpatialExperiment", result = "vector"),
+          function(userdata, result, SignName, datasetm){
+              userdata@colData[, SignName] <- result
+              return(userdata) })
+setMethod(".returnAsInput",
+    signature(userdata = "SummarizedExperiment", result = "matrix"),
+    function(userdata, result, SignName, datasetm){
+        userdata@colData[, colnames(t(result))] <- t(result)
+        return(userdata) })
+setMethod(".returnAsInput",
+          signature(userdata = "SingleCellExperiment", result = "matrix"),
+          function(userdata, result, SignName, datasetm){
+              userdata@colData[, colnames(t(result))] <- t(result)
+              return(userdata) })
+setMethod(".returnAsInput",
+          signature(userdata = "SpatialExperiment", result = "matrix"),
+          function(userdata, result, SignName, datasetm){
+              userdata@colData[, colnames(t(result))] <- t(result)
+              return(userdata) })
 
 .ipsmap <- function(x) {
-    if (is.na(x)) {
-        NA
+    if (is.na(x)) { NA
     } else {
-        if (x <= 0) {
-            0
-        } else if (x >= 3) {
-            10
-        } else {
-            round(x*10/3, digits = 0) }}
+        if (x <= 0) { 0
+        } else if (x >= 3) { 10
+        } else { round(x*10/3, digits = 0) }}
 }
 
 .consistencyCheck <- function(nametype, functionName, author = NULL) {
@@ -393,8 +410,7 @@ my_colors <- colorRampPalette(my_colors)(100)
     if (input == "rnaseq") {
         rmatrix <- matrix(rpois(n, 100), ncol = 5)
     } else if (input == "microarray") {
-        rmatrix <- matrix(rnorm(n, 100, 50), ncol = 5)
-    }
+        rmatrix <- matrix(rnorm(n, 100, 50), ncol = 5)}
     rownames(rmatrix) <- g
     return(rmatrix)
 }
@@ -476,6 +492,8 @@ availableSignatures <- function(
 #' in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
 #' @param inputType character string saying the type of data you are using.
 #' Either one of "microarray" or "rnaseq".
+#' @param whichAssay integer scalar or string indicating which assay of
+#' dataset to use.
 #' @param whichSign character vector saying the signatures to compute.
 #' @param tumor character vector saying the tumor types. Signatures from that
 #' tumors will be computed (this can also be "pan-cancer").
@@ -496,7 +514,8 @@ availableSignatures <- function(
 #' @export
 multipleSign <- function(
         dataset, nametype = "SYMBOL", inputType = "rnaseq",
-        whichSign = NULL, tumor = NULL, tissue = NULL, topic = NULL, ...) {
+        whichAssay = "norm_expr", whichSign = NULL, tumor = NULL,
+        tissue = NULL, topic = NULL, ...) {
     argg <- c(as.list(environment()), list(...))
     st <- availableSignatures(
         tumor = tumor,

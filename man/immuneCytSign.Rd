@@ -9,6 +9,7 @@ immuneCytSign(
   nametype = "SYMBOL",
   inputType = "microarray",
   author = "Rooney",
+  whichAssay = "norm_expr",
   hgReference = "hg38"
 )
 }
@@ -28,6 +29,9 @@ Either one of "microarray" or "rnaseq".}
 
 \item{author}{character string saying the first author of the signature
 publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}

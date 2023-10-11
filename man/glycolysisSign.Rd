@@ -4,7 +4,12 @@
 \alias{glycolysisSign}
 \title{Glycolysis Signature}
 \usage{
-glycolysisSign(dataset, nametype = "SYMBOL", author = "Zhang")
+glycolysisSign(
+  dataset,
+  nametype = "SYMBOL",
+  author = "Zhang",
+  whichAssay = "norm_expr"
+)
 }
 \arguments{
 \item{dataset}{Normalized expression values. A data frame or a matrix
@@ -19,6 +24,9 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
 \item{author}{character string saying the first author of the signature
 publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+dataset to use.}
 }
 \value{
 If dataset is a \linkS4class{SummarizedExperiment} object, then
