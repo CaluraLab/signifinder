@@ -8,6 +8,7 @@ evaluationSignPlot(
   data,
   nametype = "SYMBOL",
   whichSign = NULL,
+  whichAssay = "norm_expr",
   sampleAnnot = NULL,
   selectByAnnot = NULL
 )
@@ -19,8 +20,12 @@ the signatures functions.}
 \item{nametype}{character string saying the type of gene name ID (row names
 in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{whichSign}{character vector saying the signatures to plot. If not
-specified, all the signatures inside data will be plotted.}
+\item{whichSign}{character vector saying the signatures to plot. These must
+be signatures computed with signifinder. If not specified, all the
+signatures inside data will be plotted.}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+data to use.}
 
 \item{sampleAnnot}{character vector containing samples' annotations.}
 

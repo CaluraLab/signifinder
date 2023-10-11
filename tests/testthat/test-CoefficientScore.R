@@ -3,8 +3,7 @@ suppressPackageStartupMessages(library(SummarizedExperiment))
 
 test_that("PyroptosisSign works", {
     pyrnames <- c(
-        "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li"
-    )
+        "Pyroptosis_Ye", "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li")
     pname <- sample(pyrnames, 1)
     rmatrix <- .fakeData(pname)
     myres <- pyroptosisSign(rmatrix, author = substring(pname, 12))
@@ -19,8 +18,7 @@ test_that("PyroptosisSign works", {
 test_that("FerroptosysSign work", {
     ferrnames <- c(
         "Ferroptosis_Liang", "Ferroptosis_Li",
-        "Ferroptosis_Liu", "Ferroptosis_Ye"
-    )
+        "Ferroptosis_Liu", "Ferroptosis_Ye")
     fname <- sample(ferrnames, 1)
     rmatrix <- .fakeData(fname)
     myres <- ferroptosisSign(rmatrix, author = substring(fname, 13))

@@ -22,7 +22,8 @@ column holds survival data of time, indicating the follow up times; the
 second holds data of the survival status, normally 0=alive and 1=dead. For
 further details check \code{\link[survival]{Surv}} function.}
 
-\item{whichSign}{character string saying the signature to plot.}
+\item{whichSign}{character string saying the signature to plot. This must
+be a signature computed with signifinder.}
 
 \item{cutpoint}{a character string (one of: "median", "mean" and "optimal")
 or a numeric value, which divide samples between high scores and low scores.

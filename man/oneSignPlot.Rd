@@ -10,7 +10,8 @@ oneSignPlot(data, whichSign, statistics = NULL)
 \item{data}{an object of type \linkS4class{SummarizedExperiment}. Output of
 the signatures functions.}
 
-\item{whichSign}{character string saying the signature to plot.}
+\item{whichSign}{character string saying the signature to plot. This must
+be a signature computed with signifinder.}
 
 \item{statistics}{character string saying the statistics to be plotted in the
 graph. Either one of "mean", "median" or "quantiles".}

@@ -9,6 +9,7 @@ geneHeatmapSignPlot(
   nametype = "SYMBOL",
   whichSign,
   logCount = FALSE,
+  whichAssay = "norm_expr",
   splitBySign = FALSE,
   sampleAnnot = NULL,
   splitBySampleAnnot = FALSE,
@@ -22,9 +23,13 @@ the signatures functions.}
 \item{nametype}{character string saying the type of gene name ID (row names
 in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{whichSign}{character vector saying the signatures to plot.}
+\item{whichSign}{character vector saying the signatures to plot. These must
+be signatures computed with signifinder.}
 
 \item{logCount}{logical. If TRUE it shows logarithms of expression values.}
+
+\item{whichAssay}{integer scalar or string indicating which assay of
+data to use.}
 
 \item{splitBySign}{logical. If TRUE it splits rows by signatures.}
 

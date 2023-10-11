@@ -16,7 +16,9 @@ correlationSignPlot(
 the signatures functions.}
 
 \item{whichSign}{character vector saying the signatures to plot. If not
-specified, all the signatures inside data will be plotted.}
+specified, all the signatures inside data will be plotted. Other signatures
+not computed with signifinder can be added in the vector if they are also
+included in che colData section of data.}
 
 \item{sampleAnnot}{character vector containing samples' annotations.}
 

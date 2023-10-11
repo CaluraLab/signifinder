@@ -7,7 +7,8 @@
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
-#' @param whichSign character string saying the signature to plot.
+#' @param whichSign character string saying the signature to plot. This must
+#' be a signature computed with signifinder.
 #' @param statistics character string saying the statistics to be plotted in the
 #' graph. Either one of "mean", "median" or "quantiles".
 #'
@@ -28,16 +29,13 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
     density <- NULL
 
     if (length(whichSign) > 1) {
-        stop("you must provide only one signature for this plot")
-    }
+        stop("you must provide only one signature for this plot")}
 
     .signatureNameCheck(data, whichSign)
 
     if (!(is.null(statistics))) {
         if (!(statistics %in% c("mean", "median", "quantiles"))) {
-            stop("statistics must be one of: mean, median and quantiles.")
-        }
-    }
+            stop("statistics must be one of: mean, median and quantiles.")}}
 
     signval <- sort(data.frame(colData(data))[, whichSign])
 
@@ -46,83 +44,53 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
         labs(x = whichSign, y = "Sample") +
         theme(
             panel.background = element_blank(),
-            axis.line = element_line(colour = "grey50")
-        )
+            axis.line = element_line(colour = "grey50"))
     g2 <- ggplot() +
         geom_histogram(
             mapping = aes(signval, after_stat(density)),
-            colour = "white",
-            fill = "skyblue2"
-        ) +
-        geom_density(mapping = aes(signval), size = 1.5) +
+            colour = "white", fill = "skyblue2") +
+        geom_density(mapping = aes(signval), linewidth = 1.5) +
         labs(x = whichSign, y = "Density") +
         theme(
             panel.background = element_blank(),
-            axis.line = element_line(colour = "grey50")
-        )
+            axis.line = element_line(colour = "grey50"))
 
     if (!is.null(statistics)) {
         if (statistics == "mean") {
             g1 <- g1 + geom_vline(
                 mapping = aes(xintercept = mean(signval)),
-                col = "red",
-                size = 1.2,
-                linetype = 2
-            )
+                col = "red", linewidth = 1.2, linetype = 2)
             g2 <- g2 + geom_vline(
                 mapping = aes(xintercept = mean(signval)),
-                col = "red", size = 1.2, linetype = 2)
+                col = "red", linewidth = 1.2, linetype = 2)
         } else if (statistics == "median") {
             g1 <- g1 + geom_vline(
                 mapping = aes(xintercept = median(signval)),
-                col = "red",
-                size = 1.2,
-                linetype = 2
-            )
+                col = "red", linewidth = 1.2, linetype = 2)
             g2 <- g2 + geom_vline(
                 mapping = aes(xintercept = median(signval)),
-                col = "red", size = 1.2, linetype = 2)
+                col = "red", linewidth = 1.2, linetype = 2)
         } else if (statistics == "quantiles") {
             g1 <- g1 +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.25)),
-                    col = "red",
-                    size = 1.2,
-                    linetype = 2
-                ) +
+                    col = "red", linewidth = 1.2, linetype = 2) +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.50)),
-                    col = "red",
-                    size = 1.2,
-                    linetype = 2
-                ) +
+                    col = "red", linewidth = 1.2, linetype = 2) +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.75)),
-                    col = "red",
-                    size = 1.2,
-                    linetype = 2
-                )
+                    col = "red", linewidth = 1.2, linetype = 2)
             g2 <- g2 +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.25)),
-                    col = "red",
-                    size = 1.2,
-                    linetype = 2
-                ) +
+                    col = "red", linewidth = 1.2, linetype = 2) +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.50)),
-                    col = "red",
-                    size = 1.2,
-                    linetype = 2
-                ) +
+                    col = "red", linewidth = 1.2, linetype = 2) +
                 geom_vline(
                     mapping = aes(xintercept = quantile(signval, 0.75)),
-                    col = "red",
-                    size = 1.2,
-                    linetype = 2
-                )
-        }
-    }
+                    col = "red", linewidth = 1.2, linetype = 2)}}
     g1 <- g1 + annotate(
         "text", label = statistics, x = quantile(signval, 0.10),
         y = length(signval), size = 4, colour = "red")
@@ -140,8 +108,11 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' the signatures functions.
 #' @param nametype character string saying the type of gene name ID (row names
 #' in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
-#' @param whichSign character vector saying the signatures to plot.
+#' @param whichSign character vector saying the signatures to plot. These must
+#' be signatures computed with signifinder.
 #' @param logCount logical. If TRUE it shows logarithms of expression values.
+#' @param whichAssay integer scalar or string indicating which assay of
+#' data to use.
 #' @param splitBySign logical. If TRUE it splits rows by signatures.
 #' @param sampleAnnot vector containing samples' annotations.
 #' @param splitBySampleAnnot logical. If TRUE it splits columns by samples'
@@ -164,15 +135,19 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #' @export
 geneHeatmapSignPlot <- function(
         data, nametype = "SYMBOL", whichSign, logCount = FALSE,
-        splitBySign = FALSE, sampleAnnot = NULL,
+        whichAssay = "norm_expr", splitBySign = FALSE, sampleAnnot = NULL,
         splitBySampleAnnot = FALSE, ...) {
 
+    if (!all(whichSign %in% SignatureNames)) {
+        stop(paste(
+            "signatures must be among:",
+            paste(SignatureNames, collapse = ", ")))}
     .signatureNameCheck(data, whichSign)
 
     if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
 
-    dataset <- .getMatrix(data)
+    dataset <- .getMatrix(data, whichAssay)
 
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != ncol(dataset)) {
@@ -243,7 +218,9 @@ geneHeatmapSignPlot <- function(
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
 #' @param whichSign character vector saying the signatures to plot. If not
-#' specified, all the signatures inside data will be plotted.
+#' specified, all the signatures inside data will be plotted. Other signatures
+#' not computed with signifinder can be added in the vector if they are also
+#' included in che colData section of data.
 #' @param clusterBySign character vector saying one or more signatures to use to
 #' cluster columns.
 #' @param sampleAnnot vector containing samples' annotations.
@@ -267,30 +244,30 @@ geneHeatmapSignPlot <- function(
 heatmapSignPlot <- function(
         data, whichSign = NULL, clusterBySign = NULL, sampleAnnot = NULL,
         signAnnot = NULL, splitBySampleAnnot = FALSE, ...) {
+
     if (!is.null(whichSign)) { .signatureNameCheck(data, whichSign) }
-    if (!is.null(clusterBySign)) { .signatureNameCheck(data, clusterBySign) }
+    if (!all(clusterBySign %in% colnames(colData(data)))) {
+        stop("all signatures in clusterBySign must be in the colData of data")}
 
     if (sum(colnames(colData(data)) %in% SignatureNames) > 0) {
-        data <- colData(data)[, colnames(colData(data)) %in% SignatureNames]
-    } else { stop("There are no signatures in data") }
+        data <- colData(data)[, colnames(
+            colData(data)) %in% unique(c(
+                SignatureNames, whichSign, clusterBySign))]
+    } else { stop("There are no signatures computed with signifinder in data")}
 
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != nrow(data)) {
             stop("sampleAnnot length is different than samples dimension")}
     } else {
         if (splitBySampleAnnot) { stop(
-            "splitBySampleAnnot can be TRUE only",
-            " if sampleAnnot is provided")}}
+            "splitBySampleAnnot can be TRUE only if sampleAnnot is provided")}}
 
     if (!is.null(signAnnot)) {
         if (!(signAnnot %in% c("signature", "topic", "tumor", "tissue"))) {
-            stop("signAnnot must be one of: signature, topic, tumor, tissue.")
-        }
-    }
+            stop("signAnnot must be one of: signature, topic, tumor, tissue.")}}
 
     if (!is.null(whichSign)) {
-        data <- data[, intersect(c(whichSign, clusterBySign), colnames(data))]
-    }
+        data <- data[, intersect(c(whichSign, clusterBySign), colnames(data))]}
     keepnames <- rownames(data)
 
     data <- vapply(data, .range01, double(nrow(data)))
@@ -299,22 +276,15 @@ heatmapSignPlot <- function(
 
     dots <- list(...)
     htargs <- .matchArguments(
-        dots,
-        list(
-            name = "scaled\nscore",
-            show_column_names = FALSE,
-            col = mycol
-        )
-    )
+        dots, list(
+            name = "scaled\nscore", show_column_names = FALSE, col = mycol))
 
     if (!is.null(sampleAnnot)) {
         if (splitBySampleAnnot) {
             htargs$column_split <- sampleAnnot
         } else {
             hatop <- HeatmapAnnotation(sampleAnnot = sampleAnnot)
-            htargs$top_annotation <- hatop
-        }
-    }
+            htargs$top_annotation <- hatop}}
 
     if (is.null(clusterBySign)) {
         if (!is.null(signAnnot)) {
@@ -325,8 +295,7 @@ heatmapSignPlot <- function(
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
             ha <- rowAnnotation(df = df)
-            htargs$right_annotation <- ha
-        }
+            htargs$right_annotation <- ha}
         htargs$matrix <- data
         g <- do.call(Heatmap, htargs)
     } else {
@@ -341,17 +310,14 @@ heatmapSignPlot <- function(
             df <- as.data.frame(signatureTable[whichRow, signAnnot])
             colnames(df) <- signAnnot
             ha <- rowAnnotation(df = df)
-            htargs$right_annotation <- ha
-        }
+            htargs$right_annotation <- ha}
         htargs$matrix <- sm
         if (splitBySampleAnnot) {
             ht <- Heatmap(
                 fm, name = "clustered\nscore", col = mycol1,
-                column_split = sampleAnnot
-            )
+                column_split = sampleAnnot)
         } else {
-            ht <- Heatmap(fm, name = "clustered\nscore", col = mycol1)
-        }
+            ht <- Heatmap(fm, name = "clustered\nscore", col = mycol1)}
         g <- ht %v% do.call(Heatmap, htargs)
     }
     return(g)
@@ -365,7 +331,9 @@ heatmapSignPlot <- function(
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
 #' @param whichSign character vector saying the signatures to plot. If not
-#' specified, all the signatures inside data will be plotted.
+#' specified, all the signatures inside data will be plotted. Other signatures
+#' not computed with signifinder can be added in the vector if they are also
+#' included in che colData section of data.
 #' @param sampleAnnot character vector containing samples' annotations.
 #' @param selectByAnnot character string saying the subgroup from `sampleAnnot`
 #' used to compute the correlation plot.
@@ -389,10 +357,9 @@ correlationSignPlot <- function(
     if (sum(colnames(tmp) %in% SignatureNames) > 0) {
         if (is.null(whichSign)) {
             signs <- intersect(SignatureNames, colnames(tmp))
-        } else { signs <- Reduce(
-            intersect, list(whichSign, SignatureNames, colnames(tmp)))
-        }
-    } else { stop("There are no signatures in data") }
+        } else {
+            signs <- intersect(whichSign, colnames(tmp))}
+    } else {stop("There are no signatures computed with signifinder in data")}
 
     tmp <- tmp[, signs]
 
@@ -441,7 +408,8 @@ correlationSignPlot <- function(
 #' column holds survival data of time, indicating the follow up times; the
 #' second holds data of the survival status, normally 0=alive and 1=dead. For
 #' further details check \code{\link[survival]{Surv}} function.
-#' @param whichSign character string saying the signature to plot.
+#' @param whichSign character string saying the signature to plot. This must
+#' be a signature computed with signifinder.
 #' @param cutpoint a character string (one of: "median", "mean" and "optimal")
 #' or a numeric value, which divide samples between high scores and low scores.
 #' The function computes the threshold with the method indicated or employs the
@@ -476,8 +444,7 @@ survivalSignPlot <- function(
         data, survData, whichSign, cutpoint = "mean",
         sampleAnnot = NULL, selectByAnnot = NULL) {
     if (length(whichSign) > 1) {
-        stop("you must provide only one signature for this plot")
-    }
+        stop("you must provide only one signature for this plot")}
     .signatureNameCheck(data, whichSign)
 
     if (ncol(survData) > 2) { stop(
@@ -507,21 +474,18 @@ survivalSignPlot <- function(
             data = tmp, smethod = "LogRank", pmethod = "Lau94")
         grp[which(tmp[, whichSign] < optval$estimate)] <- "low"
     } else {
-        grp[which(tmp[, whichSign] < cutpoint)] <- "low"
-    }
+        grp[which(tmp[, whichSign] < cutpoint)] <- "low"}
 
     if ((sum(grp == "low") < length(grp) / 10) |
         (sum(grp == "low") > length(grp) * 9 / 10)) {
         warning(
             "groups size is non homogeneous: ",
             sum(grp == "low"), " low and ",
-            sum(grp == "high"), " high")
-    }
+            sum(grp == "high"), " high")}
 
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != nrow(tmp)) {
-            stop("sampleAnnot length is different than samples dimension")
-        }
+            stop("sampleAnnot length is different than samples dimension")}
         if (!is.null(selectByAnnot)) {
             if (!(selectByAnnot %in% sampleAnnot)) {
                 stop("selectByAnnot is not present in sampleAnnot")}
@@ -531,8 +495,7 @@ survivalSignPlot <- function(
     } else {
         if (!is.null(selectByAnnot)) { stop(
             "selectByAnnot can be used only",
-            " if sampleAnnot is also provided")}
-    }
+            " if sampleAnnot is also provided")}}
 
     tmp <- cbind(tmp, grp)
     if (!is.null(sampleAnnot)) {
@@ -556,7 +519,9 @@ survivalSignPlot <- function(
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
 #' @param whichSign character vector saying the signatures to plot. If not
-#' specified, all the signatures inside data will be plotted.
+#' specified, all the signatures inside data will be plotted. Other signatures
+#' not computed with signifinder can be added in the vector if they are also
+#' included in che colData section of data.
 #' @param groupByAnnot character vector containing samples' annotations.
 #' @param selectByAnnot character string saying the subgroup from `groupByAnnot`
 #' used to compute the ridgeline plot.
@@ -578,9 +543,8 @@ survivalSignPlot <- function(
 ridgelineSignPlot <- function(
         data, whichSign = NULL, groupByAnnot = NULL,
         selectByAnnot = NULL, ...) {
-    if (!is.null(whichSign)) {
-        .signatureNameCheck(data, whichSign)
-    }
+
+    if (!is.null(whichSign)) {.signatureNameCheck(data, whichSign)}
 
     tmp <- colData(data)
 
@@ -588,14 +552,8 @@ ridgelineSignPlot <- function(
         if (is.null(whichSign)) {
             signs <- intersect(SignatureNames, colnames(tmp))
         } else {
-            signs <- Reduce(
-                intersect,
-                list(whichSign, SignatureNames, colnames(tmp))
-            )
-        }
-    } else {
-        stop("There are no signatures in data")
-    }
+            signs <- intersect(whichSign, colnames(tmp))}
+    } else {stop("There are no signatures computed with signifinder in data")}
 
     tmp <- as.data.frame(tmp[, signs])
     colnames(tmp) <- signs
@@ -616,8 +574,7 @@ ridgelineSignPlot <- function(
 
     if (!is.null(selectByAnnot)) {
         tmp <- tmp[groupByAnnot %in% selectByAnnot, ]
-        groupByAnnot <- groupByAnnot[groupByAnnot %in% selectByAnnot]
-    }
+        groupByAnnot <- groupByAnnot[groupByAnnot %in% selectByAnnot]}
 
     score <- NULL
     signature <- NULL
@@ -632,15 +589,14 @@ ridgelineSignPlot <- function(
 
     if (is.null(groupByAnnot)) {
         x <- NULL
-        g <- ggplot(tmp1, aes(x = score, y = signature, fill = stat(x))) +
+        g <- ggplot(tmp1, aes(x = score, y = signature, fill = after_stat(x))) +
             do.call(geom_density_ridges_gradient, ridgeargs) +
             scale_fill_viridis_c(name = "score", option = "A")
     } else {
         ridgeargs$mapping <- aes(fill = rep(groupByAnnot, n))
         g <- ggplot(tmp1, aes(x = score, y = signature)) +
             do.call(geom_density_ridges, ridgeargs) +
-            scale_fill_discrete(name = "Group")
-    }
+            scale_fill_discrete(name = "Group")}
         return(g)
 }
 
@@ -658,8 +614,11 @@ ridgelineSignPlot <- function(
 #' the signatures functions.
 #' @param nametype character string saying the type of gene name ID (row names
 #' in data). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
-#' @param whichSign character vector saying the signatures to plot. If not
-#' specified, all the signatures inside data will be plotted.
+#' @param whichSign character vector saying the signatures to plot. These must
+#' be signatures computed with signifinder. If not specified, all the
+#' signatures inside data will be plotted.
+#' @param whichAssay integer scalar or string indicating which assay of
+#' data to use.
 #' @param sampleAnnot character vector containing samples' annotations.
 #' @param selectByAnnot character string saying the subgroup from `sampleAnnot`
 #' used to compute the evaluation plot.
@@ -677,10 +636,15 @@ ridgelineSignPlot <- function(
 #'
 #' @export
 evaluationSignPlot <- function(
-        data, nametype = "SYMBOL", whichSign = NULL,
+        data, nametype = "SYMBOL", whichSign = NULL, whichAssay = "norm_expr",
         sampleAnnot = NULL, selectByAnnot = NULL){
 
-    if (!is.null(whichSign)) { .signatureNameCheck(data, whichSign) }
+    if (!is.null(whichSign)) {
+        if (!all(whichSign %in% SignatureNames)) {
+            stop(paste(
+                "signatures must be among:",
+                paste(SignatureNames, collapse = ", ")))}
+        .signatureNameCheck(data, whichSign) }
 
     if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
@@ -703,7 +667,7 @@ evaluationSignPlot <- function(
         if (!is.null(selectByAnnot)) {
             data <- data[, sampleAnnot == selectByAnnot] }}
 
-    dataset <- .getMatrix(data)
+    dataset <- .getMatrix(data, whichAssay)
 
     if (sum(colnames(colData(data)) %in% SignatureNames) > 0) {
         if (is.null(whichSign)) {
@@ -712,7 +676,7 @@ evaluationSignPlot <- function(
             signs <- Reduce(
                 intersect,
                 list(whichSign, SignatureNames, colnames(colData(data)))) }
-    } else { stop("There are no signatures in data") }
+    } else {stop("There are no signatures computed with signifinder in data")}
 
     n_sign <- length(signs)
 
@@ -731,8 +695,7 @@ evaluationSignPlot <- function(
         if (n_shared==1){
             perc_zero <- ifelse(dataset[shared,]==0, 100, 0)
         } else {
-            perc_zero <- (apply(dataset[shared,]==0, 2, sum) / n_shared) * 100
-        }
+            perc_zero <- (apply(dataset[shared,]==0, 2, sum) / n_shared) * 100}
 
         score <- colData(data)[,x]
 
@@ -745,9 +708,7 @@ evaluationSignPlot <- function(
         if (n_shared==1){
             coverage_sign <- log2(dataset[shared,] + 1)
         } else {
-            coverage_sign <- log2(colMeans(dataset[shared,]) + 1)
-        }
-
+            coverage_sign <- log2(colMeans(dataset[shared,]) + 1)}
 
         list(perc_genes, perc_zero, coverage_cor, zeros_cor, coverage_sign)
     })
