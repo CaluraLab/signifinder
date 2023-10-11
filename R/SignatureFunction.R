@@ -1368,3 +1368,41 @@ IPSOVSign <- function(
 
     return(dataset)
 }
+
+
+#' Glioblastoma Cellular States Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#' glioCellStateSign(dataset = ovse)
+#'
+#' @export
+glioCellStateSign <- function(
+        dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+        hgReference = "hg38") {
+
+    .consistencyCheck(nametype, "glioCellStateSign")
+
+    datasetm <- .getMatrix(dataset, whichAssay)
+    dataset <- .dataTransformation(
+        dataset, datasetm, "TPM", hgReference, nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
+
+    sign_df <- glioCellState_Neftel
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+
+    #### CODICE SIGNATURE
+    ## devi ottenere un dataframe che chiamiamo scores, deve avere i nomi
+    ## colonna che sono i nomi delle signatures
+
+    return(.returnAsInput(
+        userdata = dataset, result = t(scores), SignName = "", datasetm))
+}
+
