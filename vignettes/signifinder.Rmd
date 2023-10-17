@@ -10,7 +10,7 @@ author:
   email: enrica.calura@unipd.it
 package: signifinder
 abstract: >
-  signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows to compute a variety of signature scores based on gene expression values. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains 46 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
+  signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows to compute a variety of signature scores based on gene expression values. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains 47 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
 output: 
   BiocStyle::html_document:
       toc: true
@@ -86,6 +86,7 @@ The function returns a data frame with all the signatures included in the packag
 * topic: general cancer topic
 * tumor: tumor type for which the signature was developed
 * tissue: tumor tissue for which the signature was developed
+* cellType: cell type for which the signature was developed
 * requiredInput: tumor data with which the signature was developed
 * transformationStep: data transformation step performed inside the function starting from the user's 'normArray' or 'normCounts' data
 * author: first author of the work in which the signature is described
@@ -247,7 +248,7 @@ knitr::include_graphics("figures/vignette_st.png")
 ```
 
 # Adding new signatures
-Please contact us if you have a gene expression cancer signature that you would like to see added to this package. The only requirement is that the signature has publicly available gene list and method to compute it. The more difficult/custom the implementation, the better, as its inclusion in this package will provide more value for other users in the R/Bioconductor community.
+Please contact us if you have a gene expression signature that you would like to see added to the `signifinder` package. You can write us an email or open an issue in https://github.com/CaluraLab/signifinder/issues. We only have few criteria for the inclusion of the signatures: (i) they should rely on cancer topics, and be developed and used on cancer samples; (ii) signatures should exclusively use transcriptomic data, or combination of gene expression and signature-related gene weights; (iii) authors of the signature must release a clear gene list used for the signature definition, where all genes have an official gene symbol (Hugo consortium) or an unambiguous translation (genes without an official gene symbol are removed); (iv) the method to calculate expression-based scores should be unambiguously described in the paper; (v) additional clarity about the type of expression in the input (e.g., counts, log counts, FPKM, or others) is also required. The more difficult/custom the implementation, the better, as its inclusion in this package will provide more value for other users in the R/Bioconductor community.
 
 # Session info
 Here is the output of sessionInfo() on the system on which this document was compiled.
