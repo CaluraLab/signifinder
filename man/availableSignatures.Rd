@@ -16,8 +16,8 @@ availableSignatures(
 \item{tumor}{character vector saying the type of tumors for which signatures
 are developed. Used to filter the signatures in the table.}
 
-\item{tissue}{character vector saying the type of tissues for which signatures
-are developed. Used to filter the signatures in the table.}
+\item{tissue}{character vector saying the type of tissues for which
+signatures are developed. Used to filter the signatures in the table.}
 
 \item{topic}{character vector saying the signature topics. Used to filter
 the signatures in the table.}
@@ -29,7 +29,7 @@ filter the signatures in the table.}
 \item{description}{logical. If TRUE it shows the signature's description.}
 }
 \value{
-A data frame with 46 rows and 11 variables:
+A data frame with 47 rows and 12 variables:
 \describe{
   \item{signature}{name of the signature}
   \item{scoreLabel}{label of the signature when added inside colData section}
@@ -37,6 +37,7 @@ A data frame with 46 rows and 11 variables:
   \item{topic}{main cancer topic of the signature}
   \item{tumor}{tumor type for which the signature was developed}
   \item{tissue}{tumor tissue for which the signature was developed}
+  \item{cellType}{cell type for which the signature was developed}
   \item{requiredInput}{type of data with which the signature was developed}
   \item{transformationStep}{data transformation step performed inside the
   function starting from the user's 'normArray' or 'normCounts' data}

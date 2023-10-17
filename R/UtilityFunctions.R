@@ -58,7 +58,13 @@ SignatureNames <- c(
     "ISC_MerlosSuarez_Prolif",
     "VEGF_Hu",
     "DNArep_Kang",
-    "IPSOV_Shen"
+    "IPSOV_Shen",
+    "GlioCellState_Neftel_MES2",
+    "GlioCellState_Neftel_MES1",
+    "GlioCellState_Neftel_AC",
+    "GlioCellState_Neftel_OPC",
+    "GlioCellState_Neftel_NPC1",
+    "GlioCellState_Neftel_NPC2"
 )
 
 #' @importFrom viridis magma viridis
@@ -78,31 +84,30 @@ my_colors <- colorRampPalette(my_colors)(100)
         sname <- substring(name, 18)
         g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
     } else if (name %in% c(
-        "ConsensusOV_Chen_IMR",
-        "ConsensusOV_Chen_DIF",
-        "ConsensusOV_Chen_PRO",
-        "ConsensusOV_Chen_MES"
+        "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
+        "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"
     )) {
         sname <- substring(name, 18)
         g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class == sname]
     } else if (name %in% c(
-        "IPS_Charoentong_MHC",
-        "IPS_Charoentong_CP",
-        "IPS_Charoentong_EC",
-        "IPS_Charoentong_SC"
+        "GlioCellState_Neftel_MES2", "GlioCellState_Neftel_MES1",
+        "GlioCellState_Neftel_AC", "GlioCellState_Neftel_OPC",
+        "GlioCellState_Neftel_NPC1", "GlioCellState_Neftel_NPC2"
+    )) {
+        sname <- substring(name, 22)
+        g <- GlioCellState_Neftel$SYMBOL[GlioCellState_Neftel$class == sname]
+    } else if (name %in% c(
+        "IPS_Charoentong_MHC", "IPS_Charoentong_CP",
+        "IPS_Charoentong_EC", "IPS_Charoentong_SC"
     )) {
         g <-IPS_Charoentong$SYMBOL[IPS_Charoentong$class == substring(name, 17)]
     } else if (name %in% c("CIN_Carter_25", "CIN_Carter_70")) {
         g <- if (name == "CIN_Carter_25") {
             CIN_Carter$SYMBOL[CIN_Carter$class == "CIN25"]
-        } else {
-            CIN_Carter$SYMBOL
-        }
+        } else { CIN_Carter$SYMBOL }
     } else if (name %in% c(
-        "ISC_MerlosSuarez_ISCEphB2",
-        "ISC_MerlosSuarez_LateTA",
-        "ISC_MerlosSuarez_ISCLgr5",
-        "ISC_MerlosSuarez_Prolif"
+        "ISC_MerlosSuarez_ISCEphB2", "ISC_MerlosSuarez_LateTA",
+        "ISC_MerlosSuarez_ISCLgr5", "ISC_MerlosSuarez_Prolif"
     )) {
         sname <- substring(name, 18)
         g <- ISC_MerlosSuarez$SYMBOL[ISC_MerlosSuarez$class == sname]
@@ -112,45 +117,18 @@ my_colors <- colorRampPalette(my_colors)(100)
         sname <- substring(name, 17)
         g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == sname]
     } else if (name %in% c(
-        "EMT_Mak",
-        "EMT_Cheng",
-        "Pyroptosis_Ye",
-        "Pyroptosis_Shao",
-        "Pyroptosis_Lin",
-        "Pyroptosis_Li",
-        "Ferroptosis_Liang",
-        "Ferroptosis_Li",
-        "Ferroptosis_Liu",
-        "Ferroptosis_Ye",
-        "LipidMetabolism_Zheng",
-        "Hypoxia_Buffa",
-        "Matrisome_Yuzhalin",
-        "Chemokines_Messina",
-        "ImmunoScore_Hao",
-        "ImmunoScore_Roh",
-        "ImmuneCyt_Rooney",
-        "ImmuneCyt_Davoli",
-        "IFN_Ayers",
-        "HRDS_Lu",
-        "ExpandedImmune_Ayers",
-        "CellCycle_Davoli",
-        "PassON_Du",
-        "VEGF_Hu",
-        "DNArep_Kang",
-        "ASC_Smith",
-        "IPS_Charoentong",
-        "StemCellCD49f_Smith",
-        "Glycolysis_Zhang",
-        "Glycolysis_Xu",
-        "MitoticIndex_Yang",
-        "Autophagy_Xu",
-        "Autophagy_Wang",
-        "Autophagy_ChenH",
-        "CellCycle_Lundberg",
-        "IPRES_Hugo",
-        "CIS_Robertson",
-        "TLS_Cabrita",
-        "IPSOV_Shen"
+        "EMT_Mak", "EMT_Cheng", "Pyroptosis_Ye", "Pyroptosis_Shao",
+        "Pyroptosis_Lin", "Pyroptosis_Li", "Ferroptosis_Liang",
+        "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
+        "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
+        "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
+        "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
+        "ExpandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
+        "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
+        "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
+        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
+        "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
+        "TLS_Cabrita", "IPSOV_Shen"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
@@ -423,8 +401,8 @@ setMethod(".returnAsInput",
 #'
 #' @param tumor character vector saying the type of tumors for which signatures
 #' are developed. Used to filter the signatures in the table.
-#' @param tissue character vector saying the type of tissues for which signatures
-#' are developed. Used to filter the signatures in the table.
+#' @param tissue character vector saying the type of tissues for which
+#' signatures are developed. Used to filter the signatures in the table.
 #' @param topic character vector saying the signature topics. Used to filter
 #' the signatures in the table.
 #' @param requiredInput character string saying the type of data required in
@@ -432,7 +410,7 @@ setMethod(".returnAsInput",
 #' filter the signatures in the table.
 #' @param description logical. If TRUE it shows the signature's description.
 #'
-#' @return A data frame with 46 rows and 11 variables:
+#' @return A data frame with 47 rows and 12 variables:
 #' \describe{
 #'   \item{signature}{name of the signature}
 #'   \item{scoreLabel}{label of the signature when added inside colData section}
@@ -440,6 +418,7 @@ setMethod(".returnAsInput",
 #'   \item{topic}{main cancer topic of the signature}
 #'   \item{tumor}{tumor type for which the signature was developed}
 #'   \item{tissue}{tumor tissue for which the signature was developed}
+#'   \item{cellType}{cell type for which the signature was developed}
 #'   \item{requiredInput}{type of data with which the signature was developed}
 #'   \item{transformationStep}{data transformation step performed inside the
 #'   function starting from the user's 'normArray' or 'normCounts' data}
@@ -471,7 +450,7 @@ availableSignatures <- function(
             paste(requiredInput, collapse = "|"), st$requiredInput), ]
     }
     if (!description) {
-        st <- st[, -11]
+        st <- st[, -which(colnames(st)=="description")]
     }
     return(st)
 }

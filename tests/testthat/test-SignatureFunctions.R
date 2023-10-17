@@ -61,7 +61,6 @@ test_that("PassONSign work", {
     expect_true("PassON_Du" %in% colnames(colData(myres)))
     expect_length(colData(myres)[, "PassON_Du"], ncol(assay(myres)))
     expect_type(colData(myres)[, "PassON_Du"], "double")
-    expect_message(PassONSign(rmatrix), "100")
 })
 
 test_that("CISSign work", {
@@ -101,7 +100,6 @@ test_that("IPRESSign work", {
     expect_true("IPRES_Hugo" %in% colnames(colData(myres)))
     expect_length(colData(myres)[, "IPRES_Hugo"], ncol(assay(myres)))
     expect_type(colData(myres)[, "IPRES_Hugo"], "double")
-    expect_message(IPRESSign(rmatrix), "100")
 })
 
 test_that("ECM work", {
@@ -124,4 +122,16 @@ test_that("IPSOVSign work", {
     expect_length(colData(myres)[,"IPSOV_Shen"], ncol(assay(myres)))
     expect_type(colData(myres)[,"IPSOV_Shen"], "double")
     expect_message(IPSOVSign(rmatrix), "100")
+})
+
+test_that("glioCellStateSign work", {
+    rmatrix <- data.frame()
+    for(i in SignatureNames){
+        rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+    malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+    myres <- glioCellStateSign(rmatrix, isMalignant = malign)
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("GlioCellState_Neftel_OPC" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"GlioCellState_Neftel_AC"],ncol(assay(myres)))
+    expect_type(colData(myres)[,"GlioCellState_Neftel_MES1"], "double")
 })

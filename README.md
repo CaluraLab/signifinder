@@ -3,7 +3,7 @@ signifinder R package
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-`signifinder` is an R package that collects and implements 46
+`signifinder` is an R package that collects and implements 47
 expression-based signatures from cancer literature. Through the analysis
 of expression data with the collected signatures, `signifinder` can
 attribute to each sample a score per signature that summarizes many
