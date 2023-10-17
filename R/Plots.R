@@ -656,12 +656,10 @@ evaluationSignPlot <- function(
             if (!(selectByAnnot %in% sampleAnnot)) { stop(
                 "selectByAnnot is not present in sampleAnnot")}
         } else { stop(
-            "sampleAnnot can be used only if",
-            " selectByAnnot is also provided")}
+            "sampleAnnot can be used only if selectByAnnot is also provided")}
     } else {
         if (!is.null(selectByAnnot)) { stop(
-            "selectByAnnot can be used only",
-            " if sampleAnnot is also provided")}}
+            "selectByAnnot can be used only if sampleAnnot is also provided")}}
 
     if (!is.null(sampleAnnot)) {
         if (!is.null(selectByAnnot)) {

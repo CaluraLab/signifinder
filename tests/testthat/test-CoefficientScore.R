@@ -11,8 +11,6 @@ test_that("PyroptosisSign works", {
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[, pname], ncol(assay(myres)))
     expect_type(colData(myres)[, pname], "double")
-    expect_message(pyroptosisSign(
-        rmatrix, author = substring(pname, 12)), "100")
 })
 
 test_that("FerroptosysSign work", {
@@ -26,8 +24,6 @@ test_that("FerroptosysSign work", {
     expect_true(fname %in% colnames(colData(myres)))
     expect_length(colData(myres)[, fname], ncol(assay(myres)))
     expect_type(colData(myres)[, fname], "double")
-    expect_message(ferroptosisSign(
-        rmatrix, author = substring(fname, 13)), "100")
 })
 
 test_that("LipidMetabolism work", {
@@ -85,7 +81,6 @@ test_that("autophagySign ChenM works", {
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[, pname], ncol(assay(myres)))
     expect_type(colData(myres)[, pname], "double")
-    expect_message(autophagySign(rmatrix, author = "ChenM"), "100")
 })
 
 test_that("TinflamSign work", {

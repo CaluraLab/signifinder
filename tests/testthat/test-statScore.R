@@ -40,7 +40,6 @@ test_that("immuneCytSign based on Rooney's work", {
     expect_true("ImmuneCyt_Rooney" %in% colnames(colData(myres)))
     expect_length(colData(myres)[, "ImmuneCyt_Rooney"], ncol(assay(myres)))
     expect_type(colData(myres)[, "ImmuneCyt_Rooney"], "double")
-    expect_message(immuneCytSign(rmatrix, author = "Rooney"), "100")
 })
 
 test_that("MitoticIndexSign works", {

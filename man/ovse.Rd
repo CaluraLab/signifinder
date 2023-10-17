@@ -5,10 +5,13 @@
 \alias{ovse}
 \title{Example expression data.}
 \format{
-An object of class \linkS4class{SummarizedExperiment}.
+An object of class \code{SummarizedExperiment} with 1456 rows and 40 columns.
 }
 \usage{
 data(ovse)
+}
+\value{
+An object of class \linkS4class{SummarizedExperiment}.
 }
 \description{
 This is an example dataset containing gene expression values (in normalized
