@@ -7,6 +7,9 @@
   cellular states defined by Neftel C. et al. Cell (2019).
   \item Add \code{whichAssay} argument to signature functions to allow the
   user to specify which assay to use for the signature computation.
+  \item Users can now plot also other signatures not computed with signifinder
+  when using the heatmapSignPlot, correlationSignPlot and ridgelineSignPlot
+  functions to compare them with the signatures computed with signifinder.
  }
 }
 
