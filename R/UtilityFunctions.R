@@ -118,7 +118,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         sname <- substring(name, 17)
         g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == sname]
     } else if (name %in% c(
-        "EMT_Mak", "EMT_Cheng", "Pyroptosis_Ye", "Pyroptosis_Shao",
+        "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye", "Pyroptosis_Shao",
         "Pyroptosis_Lin", "Pyroptosis_Li", "Ferroptosis_Liang",
         "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
         "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
