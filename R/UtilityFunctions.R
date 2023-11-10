@@ -3,6 +3,7 @@ SignatureNames <- c(
     "EMT_Miow_Mesenchymal",
     "EMT_Mak",
     "EMT_Cheng",
+    "EMT_Thompson",
     "Pyroptosis_Ye",
     "Pyroptosis_Shao",
     "Pyroptosis_Lin",
