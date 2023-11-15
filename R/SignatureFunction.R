@@ -118,10 +118,12 @@ EMTSign <- function(
             .percentageOfGenesUsed(
               "EMTSign", datasetm, Sign_M, "mesenchymal", author = author)
             
-            t_dataset<-t(datasetm)
-            epi<-rowSums(scale(log2(t_dataset[ ,intersect(Sign_E, colnames(t_dataset))]+1)))
-            mes<-rowSums(scale(log2(t_dataset[ ,intersect(Sign_M, colnames(t_dataset))]+1)))
-            score<-mes-epi
+            t_dataset <- t(datasetm)
+            epi <- scale(t_dataset[ ,intersect(Sign_E, colnames(t_dataset))])
+            mes <- scale(t_dataset[ ,intersect(Sign_M, colnames(t_dataset))])
+            epi <- rowSums(log2(epi-min(epi)+1))
+            mes <- rowSums(log2(mes-min(mes)+1))
+            score <- mes-epi
             }
         return(.returnAsInput(
             userdata = dataset, result = score,
