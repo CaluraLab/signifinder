@@ -110,8 +110,8 @@ EMTSign <- function(
             sign_df <- EMT_Thompson
             sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
             
-            Sign_E <- sign_df$SYMBOL[sign_df$class == "E"]
-            Sign_M <- sign_df$SYMBOL[sign_df$class == "M"]
+            Sign_E <- sign_df$SYMBOL[sign_df$class == "epithelial"]
+            Sign_M <- sign_df$SYMBOL[sign_df$class == "mesenchymal"]
             
             .percentageOfGenesUsed(
               "EMTSign", datasetm, Sign_E, "epithelial", author = author)
