@@ -34,6 +34,16 @@ test_that("EMTSign based on Cheng's work", {
     expect_message(EMTSign(rmatrix, author = "Cheng"), "100")
 })
 
+test_that("EMTSign based on Thompson's work", {
+  rmatrix <- .fakeData("EMT_Thompson")
+  myres <- EMTSign(rmatrix, author = "Thompson")
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("EMT_Thompson" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "EMT_Thompson"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "EMT_Thompson"], "double")
+  expect_message(EMTSign(rmatrix, author = "Thompson"), "100")
+})
+
 test_that("ASCSign work", {
     rmatrix <- .fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
