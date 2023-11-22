@@ -106,7 +106,25 @@ EMTSign <- function(
 
             score <- prcomp(t(datasetm_n))$x[, 1]
             score[columnNA > 0.9] <- NA
-        }
+        } else if (author == "Thompson") {
+            sign_df <- EMT_Thompson
+            sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+            
+            Sign_E <- sign_df$SYMBOL[sign_df$class == "epithelial"]
+            Sign_M <- sign_df$SYMBOL[sign_df$class == "mesenchymal"]
+            
+            .percentageOfGenesUsed(
+              "EMTSign", datasetm, Sign_E, "epithelial", author = author)
+            .percentageOfGenesUsed(
+              "EMTSign", datasetm, Sign_M, "mesenchymal", author = author)
+            
+            t_dataset <- t(datasetm)
+            epi <- scale(t_dataset[ ,intersect(Sign_E, colnames(t_dataset))])
+            mes <- scale(t_dataset[ ,intersect(Sign_M, colnames(t_dataset))])
+            epi <- rowSums(log2(epi-min(epi)+1))
+            mes <- rowSums(log2(mes-min(mes)+1))
+            score <- mes-epi
+            }
         return(.returnAsInput(
             userdata = dataset, result = score,
             SignName = paste0("EMT_", author), datasetm))
