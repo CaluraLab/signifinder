@@ -631,30 +631,38 @@ expandedImmuneSign <- function(
 #'
 #' @export
 TinflamSign <- function(
-        dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
-
-    .consistencyCheck(nametype, "TinflamSign")
-
+    dataset, nametype = "SYMBOL", author= "Ayers", whichAssay = "norm_expr") {
+  
+  .consistencyCheck(nametype, "TinflamSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  if (author == "Ayers"){
     sign_df <- Tinflam_Ayers
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-
-    datasetm <- .getMatrix(dataset, whichAssay)
+    
     datasetm_n <- log10(datasetm + 1)
-
+    
     housekeeping <- intersect(
-        row.names(datasetm_n), sign_df$SYMBOL[sign_df$class == "Housekeeping"])
+      row.names(datasetm_n), sign_df$SYMBOL[sign_df$class == "Housekeeping"])
     genes_pred <- intersect(
-        row.names(datasetm_n), sign_df$SYMBOL[sign_df$class == "TInflam"])
-
+      row.names(datasetm_n), sign_df$SYMBOL[sign_df$class == "TInflam"])
+    
     housekeeping_m <- apply(datasetm_n[housekeeping, ], 2, mean)
     datasetm_n <- sweep(datasetm_n[genes_pred, ], 2, housekeeping_m, FUN = "-")
     score <- .coeffScore(
-        sign_df[sign_df$SYMBOL %in% genes_pred, ], datasetm_n, "TinflamSign")
-
-    return(.returnAsInput(
-        userdata = dataset, result = score,
-        SignName = "Tinflam_Ayers", datasetm))
-}
+      sign_df[sign_df$SYMBOL %in% genes_pred, ], datasetm_n, "TinflamSign")}
+  
+  else if (author == "Thompson"){
+    sign_df <- Tinflam_Thompson
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    t_dataset <- t(datasetm)
+    sc_dataset <- scale(t_dataset[ , intersect(sign_df$SYMBOL, colnames(t_dataset))])
+    score <- rowSums(log2(sc_dataset-min(sc_dataset)+1))}
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = paste0("Tinflam_", author), datasetm))}
 
 
 #' Tertiary Lymphoid Structures (TLS) Signature
