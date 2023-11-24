@@ -4,7 +4,12 @@
 \alias{TinflamSign}
 \title{TinflamSign Signature}
 \usage{
-TinflamSign(dataset, nametype = "SYMBOL", whichAssay = "norm_expr")
+TinflamSign(
+  dataset,
+  nametype = "SYMBOL",
+  author = "Ayers",
+  whichAssay = "norm_expr"
+)
 }
 \arguments{
 \item{dataset}{Normalized expression values. A data frame or a matrix
@@ -16,6 +21,9 @@ expression values should be in an assay called 'norm_expr'.}
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
+
+\item{author}{character string saying the first author of the signature
+publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
