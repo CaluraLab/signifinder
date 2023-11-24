@@ -31,6 +31,7 @@ SignatureNames <- c(
     "IFN_Ayers",
     "ExpandedImmune_Ayers",
     "Tinflam_Ayers",
+    "Tinflam_Thompson",
     "TLS_Cabrita",
     "StemCellCD49f_Smith",
     "CIN_Carter_25",
@@ -128,7 +129,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
         "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
         "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
-        "TLS_Cabrita", "IPSOV_Shen"
+        "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
