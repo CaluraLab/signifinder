@@ -674,6 +674,9 @@ TinflamSign <- function(
     sign_df <- Tinflam_Thompson
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
     
+    .percentageOfGenesUsed(
+      "TinflamSign", datasetm, sign_df$SYMBOL, author = author)
+    
     t_dataset <- t(datasetm)
     sc_dataset <- scale(t_dataset[ , intersect(sign_df$SYMBOL, colnames(t_dataset))])
     score <- rowSums(log2(sc_dataset-min(sc_dataset)+1))}
