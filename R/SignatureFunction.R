@@ -1505,3 +1505,81 @@ glioCellStateSign <- function(
         userdata = dataset, result = t(scores), SignName = "", datasetm))
 }
 
+
+#' Metastatic melanoma Cellular States Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+melStateSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "melStateSign")
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  if(nrow(dataset)<2500){stop(
+    "dataset must have at least 2500 genes to compute the signature")}
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  dataset <- .dataTransformation(
+    dataset, datasetm, "TPM", hgReference, nametype)
+  datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
+  
+  sign_df <- MelState_Tirosh
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "melStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "MITF"], "MITF")
+  .percentageOfGenesUsed(
+    "melStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "AXL"], "AXL")
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0("MelState_Tirosh_", names(sign_list))
+  
+  datasetm_n <- datasetm_n[,isMalignant]
+  exp_lev <- log2(datasetm_n/10+1)
+  rel_exp <- exp_lev - rowMeans(exp_lev,  na.rm = TRUE)
+  
+  agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
+  ea_bin <- split(
+    sort(agg_exp, na.last = TRUE), factor(sort(rank(agg_exp) %% 25)))
+  ea_bin <- lapply(ea_bin, function(x){names(x)})
+  
+  scores <- as.data.frame(lapply(sign_list, function(x){
+    Gcont <- unlist(lapply(x, function(y){
+      u <- NULL
+      for (i in seq_along(ea_bin)) {
+        if (y %in% ea_bin[[i]]) {
+          u <- i
+          break}}
+      sample(ea_bin[[u]][!(ea_bin[[u]] %in% x)], 100)}))
+    score <- rep(NA, ncol(dataset))
+    SC <- colMeans(
+      rel_exp[x,], na.rm = TRUE)-colMeans(rel_exp[Gcont,], na.rm = TRUE)
+    score[isMalignant] <- SC
+    score
+  }))
+  
+  return(.returnAsInput(
+    userdata = dataset, result = t(scores), SignName = "", datasetm))
+}

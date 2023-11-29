@@ -66,7 +66,9 @@ SignatureNames <- c(
     "GlioCellState_Neftel_AC",
     "GlioCellState_Neftel_OPC",
     "GlioCellState_Neftel_NPC1",
-    "GlioCellState_Neftel_NPC2"
+    "GlioCellState_Neftel_NPC2",
+    "MelState_Tirosh_MITF",
+    "MelState_Tirosh_AXL"
 )
 
 #' @importFrom viridis magma viridis
@@ -98,6 +100,11 @@ my_colors <- colorRampPalette(my_colors)(100)
     )) {
         sname <- substring(name, 22)
         g <- GlioCellState_Neftel$SYMBOL[GlioCellState_Neftel$class == sname]
+    } else if (name %in% c(
+      "MelState_Tirosh_MITF", "MelState_Tirosh_AXL"
+    )) {
+      sname <- substring(name, 17)
+      g <- MelState_Tirosh$SYMBOL[MelState_Tirosh$class == sname]
     } else if (name %in% c(
         "IPS_Charoentong_MHC", "IPS_Charoentong_CP",
         "IPS_Charoentong_EC", "IPS_Charoentong_SC"
