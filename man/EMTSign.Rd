@@ -10,6 +10,7 @@ EMTSign(
   inputType = "microarray",
   author = "Miow",
   whichAssay = "norm_expr",
+  hgReference = "hg38",
   ...
 )
 }
