@@ -146,7 +146,7 @@ test_that("glioCellStateSign work", {
     expect_type(colData(myres)[,"GlioCellState_Neftel_MES1"], "double")
 })
 
-test_that("TinflamSign based on Thompson work", {
+test_that("TinflamSign based on Thompson's work", {
   rmatrix <- .fakeData("Tinflam_Thompson")
   myres <- TinflamSign(rmatrix, author = "Thompson")
   expect_true(is(myres, "SummarizedExperiment"))
