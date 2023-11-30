@@ -39,7 +39,7 @@
 #' @export
 EMTSign <- function(
         dataset, nametype = "SYMBOL", inputType = "microarray",
-        author = "Miow", whichAssay = "norm_expr", ...) {
+        author = "Miow", whichAssay = "norm_expr", hgReference = "hg38", ...) {
 
     .consistencyCheck(nametype, "EMTSign", author)
 
@@ -118,11 +118,16 @@ EMTSign <- function(
             .percentageOfGenesUsed(
               "EMTSign", datasetm, Sign_M, "mesenchymal", author = author)
             
-            t_dataset <- t(datasetm)
+            dataset <- .dataTransformation(dataset = dataset, data = datasetm, trans = "CPM", 
+                                           hgReference = hgReference, nametype = nametype)
+            datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
+            datasetm_n <- log2(datasetm_n + 1)
+            
+            t_dataset <- t(datasetm_n)
             epi <- scale(t_dataset[ ,intersect(Sign_E, colnames(t_dataset))])
             mes <- scale(t_dataset[ ,intersect(Sign_M, colnames(t_dataset))])
-            epi <- rowSums(log2(epi-min(epi)+1))
-            mes <- rowSums(log2(mes-min(mes)+1))
+            epi <- rowSums(log2(epi - min(epi) + 1))
+            mes <- rowSums(log2(mes - min(mes) + 1))
             score <- mes-epi
             }
         return(.returnAsInput(
