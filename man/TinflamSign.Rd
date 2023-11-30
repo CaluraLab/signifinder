@@ -8,7 +8,8 @@ TinflamSign(
   dataset,
   nametype = "SYMBOL",
   author = "Ayers",
-  whichAssay = "norm_expr"
+  whichAssay = "norm_expr",
+  hgReference = "hg38"
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
+
+\item{hgReference}{character string saying the human reference genome.
+Either one of "hg19" or "hg38".}
 }
 \value{
 If dataset is a \linkS4class{SummarizedExperiment} object, then
