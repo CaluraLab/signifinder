@@ -654,7 +654,7 @@ expandedImmuneSign <- function(
 #'
 #' @export
 TinflamSign <- function(
-    dataset, nametype = "SYMBOL", author= "Ayers", whichAssay = "norm_expr") {
+    dataset, nametype = "SYMBOL", author= "Ayers", whichAssay = "norm_expr", hgReference = "hg38") {
   
   .consistencyCheck(nametype, "TinflamSign")
   datasetm <- .getMatrix(dataset, whichAssay)
@@ -682,9 +682,14 @@ TinflamSign <- function(
     .percentageOfGenesUsed(
       "TinflamSign", datasetm, sign_df$SYMBOL, author = author)
     
-    t_dataset <- t(datasetm)
+    dataset <- .dataTransformation(dataset = dataset, data = datasetm, trans = "CPM", 
+                                   hgReference = hgReference, nametype = nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
+    datasetm_n <- log2(datasetm_n + 1)
+    
+    t_dataset <- t(datasetm_n)
     sc_dataset <- scale(t_dataset[ , intersect(sign_df$SYMBOL, colnames(t_dataset))])
-    score <- rowSums(log2(sc_dataset-min(sc_dataset)+1))}
+    score <- rowSums(log2(sc_dataset - min(sc_dataset) + 1))}
   
   return(.returnAsInput(
     userdata = dataset, result = score,
