@@ -65,7 +65,8 @@ SignatureNames <- c(
     "GlioCellState_Neftel_AC",
     "GlioCellState_Neftel_OPC",
     "GlioCellState_Neftel_NPC1",
-    "GlioCellState_Neftel_NPC2"
+    "GlioCellState_Neftel_NPC2",
+    "APM_Thompson"
 )
 
 #' @importFrom viridis magma viridis
@@ -129,7 +130,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
         "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
         "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
-        "TLS_Cabrita", "IPSOV_Shen"
+        "TLS_Cabrita", "IPSOV_Shen", "APM_Thompson"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
