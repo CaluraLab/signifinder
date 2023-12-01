@@ -34,6 +34,9 @@ publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
 
+\item{hgReference}{character string saying the human reference genome.
+Either one of "hg19" or "hg38".}
+
 \item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
 function.}
 }
