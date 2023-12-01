@@ -20,6 +20,8 @@
 #' publication. Check it in \code{\link[signifinder]{availableSignatures}}.
 #' @param whichAssay integer scalar or string indicating which assay of
 #' dataset to use.
+#' @param hgReference character string saying the human reference genome.
+#' Either one of "hg19" or "hg38".
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
 #' function.
 #'
