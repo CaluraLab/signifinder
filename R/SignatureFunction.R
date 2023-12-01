@@ -1513,11 +1513,6 @@ glioCellStateSign <- function(
 #' @param isMalignant logical vector of the same lenght of ncol(dataset), where
 #' TRUE states malignant cells and FALSE states non-malignant cells.
 #'
-#' @inherit EMTSign return
-#'
-#' @examples
-#' data(ovse)
-#'
 #' @export
 melStateSign <- function(
     dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
@@ -1596,6 +1591,7 @@ melStateSign <- function(
 #'
 #' @examples
 #' data(ovse)
+#' 
 #' CombinedSign(dataset = ovse)
 #' 
 #' @export
@@ -1621,4 +1617,33 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = "Combined_Thompson", datasetm))
+
 }
+  
+#' Antigen Processing Machinery Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#' APMSign(dataset = ovse)
+#'
+#' @export
+APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
+  
+  .consistencyCheck(nametype, "APMSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  dataset <- .dataTransformation(
+    dataset, datasetm, "CPM", hgReference, nametype)
+  datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
+  datasetm_n <- log2(datasetm_n+1)
+  
+  z_score <- t(scale(t(datasetm_n[intersect(lista, rownames(datasetm_n)), ]+1)))
+  score <- colSums(log2(z_score-min(z_score)+1))
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score, SignName = "APM_Thompson", datasetm))
+  }
