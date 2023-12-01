@@ -1505,6 +1505,7 @@ glioCellStateSign <- function(
         userdata = dataset, result = t(scores), SignName = "", datasetm))
 }
 
+<<<<<<< HEAD
 
 #' Metastatic melanoma Cellular States Signature
 #'
@@ -1619,7 +1620,7 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
     SignName = "Combined_Thompson", datasetm))
 
 }
-  
+
 #' Antigen Processing Machinery Signature
 #'
 #' @inherit EMTSign description
@@ -1636,13 +1637,13 @@ APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
                     hgReference = "hg38") {
   
   .consistencyCheck(nametype, "APMSign")
-  
+
   datasetm <- .getMatrix(dataset, whichAssay)
   dataset <- .dataTransformation(
     dataset, datasetm, "CPM", hgReference, nametype)
   datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
   datasetm_n <- log2(datasetm_n+1)
-  
+
   sign_df <- APM_Thompson
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
@@ -1650,8 +1651,10 @@ APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
   
   z_score <- t(scale(t(datasetm_n[intersect(sign_df$SYMBOL, 
                                           rownames(datasetm_n)), ]+1)))
+
   score <- colSums(log2(z_score-min(z_score)+1))
   
   return(.returnAsInput(
     userdata = dataset, result = score, SignName = "APM_Thompson", datasetm))
-  }
+
+}
