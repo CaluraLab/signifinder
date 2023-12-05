@@ -146,6 +146,7 @@ test_that("glioCellStateSign work", {
     expect_type(colData(myres)[,"GlioCellState_Neftel_MES1"], "double")
 })
 
+
 test_that("TinflamSign based on Thompson's work", {
   rmatrix <- .fakeData("Tinflam_Thompson")
   myres <- TinflamSign(rmatrix, author = "Thompson")
@@ -166,4 +167,15 @@ test_that("melStateSign work", {
   expect_true("MelState_Tirosh_MITF" %in% colnames(colData(myres)))
   expect_length(colData(myres)[,"MelState_Tirosh_AXL"],ncol(assay(myres)))
   expect_type(colData(myres)[,"MelState_Tirosh_AXL"], "double")
+})
+
+
+test_that("APMSign work", {
+  rmatrix <- .fakeData("APM_Thompson")
+  myres <- APMSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("APM_Thompson" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "APM_Thompson"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "APM_Thompson"], "double")
+  expect_message(APMSign(rmatrix), "100")
 })
