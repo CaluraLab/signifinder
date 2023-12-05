@@ -145,3 +145,13 @@ test_that("glioCellStateSign work", {
     expect_length(colData(myres)[,"GlioCellState_Neftel_AC"],ncol(assay(myres)))
     expect_type(colData(myres)[,"GlioCellState_Neftel_MES1"], "double")
 })
+
+test_that("APMSign work", {
+  rmatrix <- .fakeData("APM_Thompson")
+  myres <- APMSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("APM_Thompson" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "APM_Thompson"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "APM_Thompson"], "double")
+  expect_message(APMSign(rmatrix), "100")
+})
