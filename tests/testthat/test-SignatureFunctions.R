@@ -155,3 +155,15 @@ test_that("TinflamSign based on Thompson's work", {
   expect_type(colData(myres)[, "Tinflam_Thompson"], "double")
   expect_message(TinflamSign(rmatrix, author = "Thompson"), "100")
 })
+
+test_that("melStateSign work", {
+  rmatrix <- data.frame()
+  for(i in SignatureNames){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- melStateSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("MelState_Tirosh_MITF" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"MelState_Tirosh_AXL"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"MelState_Tirosh_AXL"], "double")
+})
