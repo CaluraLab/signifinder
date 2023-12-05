@@ -111,20 +111,21 @@ EMTSign <- function(
         } else if (author == "Thompson") {
             sign_df <- EMT_Thompson
             sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-            
+
             Sign_E <- sign_df$SYMBOL[sign_df$class == "epithelial"]
             Sign_M <- sign_df$SYMBOL[sign_df$class == "mesenchymal"]
-            
+
             .percentageOfGenesUsed(
               "EMTSign", datasetm, Sign_E, "epithelial", author = author)
             .percentageOfGenesUsed(
               "EMTSign", datasetm, Sign_M, "mesenchymal", author = author)
-            
-            dataset <- .dataTransformation(dataset = dataset, data = datasetm, trans = "CPM", 
-                                           hgReference = hgReference, nametype = nametype)
+
+            dataset <- .dataTransformation(
+              dataset = dataset, data = datasetm, trans = "CPM",
+              hgReference = hgReference, nametype = nametype)
             datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
             datasetm_n <- log2(datasetm_n + 1)
-            
+
             t_dataset <- t(datasetm_n)
             epi <- scale(t_dataset[ ,intersect(Sign_E, colnames(t_dataset))])
             mes <- scale(t_dataset[ ,intersect(Sign_M, colnames(t_dataset))])
@@ -656,43 +657,46 @@ expandedImmuneSign <- function(
 #'
 #' @export
 TinflamSign <- function(
-    dataset, nametype = "SYMBOL", author= "Ayers", whichAssay = "norm_expr", hgReference = "hg38") {
-  
+    dataset, nametype = "SYMBOL", author= "Ayers", whichAssay = "norm_expr",
+    hgReference = "hg38") {
+
   .consistencyCheck(nametype, "TinflamSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   if (author == "Ayers"){
     sign_df <- Tinflam_Ayers
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-    
+
     datasetm_n <- log10(datasetm + 1)
-    
+
     housekeeping <- intersect(
       row.names(datasetm_n), sign_df$SYMBOL[sign_df$class == "Housekeeping"])
     genes_pred <- intersect(
       row.names(datasetm_n), sign_df$SYMBOL[sign_df$class == "TInflam"])
-    
+
     housekeeping_m <- apply(datasetm_n[housekeeping, ], 2, mean)
     datasetm_n <- sweep(datasetm_n[genes_pred, ], 2, housekeeping_m, FUN = "-")
     score <- .coeffScore(
       sign_df[sign_df$SYMBOL %in% genes_pred, ], datasetm_n, "TinflamSign")}
-  
+
   else if (author == "Thompson"){
     sign_df <- Tinflam_Thompson
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-    
+
     .percentageOfGenesUsed(
       "TinflamSign", datasetm, sign_df$SYMBOL, author = author)
-    
-    dataset <- .dataTransformation(dataset = dataset, data = datasetm, trans = "CPM", 
-                                   hgReference = hgReference, nametype = nametype)
+
+    dataset <- .dataTransformation(
+      dataset = dataset, data = datasetm, trans = "CPM",
+      hgReference = hgReference, nametype = nametype)
     datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
     datasetm_n <- log2(datasetm_n + 1)
-    
+
     t_dataset <- t(datasetm_n)
-    sc_dataset <- scale(t_dataset[ , intersect(sign_df$SYMBOL, colnames(t_dataset))])
+    sc_dataset <- scale(
+      t_dataset[, intersect(sign_df$SYMBOL, colnames(t_dataset))])
     score <- rowSums(log2(sc_dataset - min(sc_dataset) + 1))}
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = paste0("Tinflam_", author), datasetm))}
