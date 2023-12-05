@@ -1637,7 +1637,7 @@ APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
                     hgReference = "hg38") {
   
   .consistencyCheck(nametype, "APMSign")
-
+  
   datasetm <- .getMatrix(dataset, whichAssay)
   dataset <- .dataTransformation(
     dataset, datasetm, "CPM", hgReference, nametype)
@@ -1647,6 +1647,7 @@ APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
   sign_df <- APM_Thompson
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
+
   .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
   
   z_score <- t(scale(t(datasetm_n[intersect(sign_df$SYMBOL, 
