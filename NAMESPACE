@@ -3,6 +3,7 @@
 export(ASCSign)
 export(CINSign)
 export(CISSign)
+export(CombinedSign)
 export(DNArepSign)
 export(ECMSign)
 export(EMTSign)
