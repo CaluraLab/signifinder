@@ -1525,6 +1525,8 @@ CombinedSign <- function(dataset, nametype = "SYMBOL",
   
   .consistencyCheck(nametype, "CombinedSign")
   
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
   res_emt <- EMTSign(dataset, nametype = nametype, 
                      author = "Thompson", whichAssay = whichAssay, hgReference = hgReference)[["EMT_Thompson"]]
   res_inf <- TinflamSign(dataset, nametype = nametype, 
@@ -1538,5 +1540,5 @@ CombinedSign <- function(dataset, nametype = "SYMBOL",
   
   return(.returnAsInput(
     userdata = dataset, result = score,
-    SignName = "CombinedSign", datasetm))
+    SignName = "Combined_Thompson", datasetm))
 }
