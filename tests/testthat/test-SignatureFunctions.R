@@ -155,3 +155,13 @@ test_that("TinflamSign based on Thompson's work", {
   expect_type(colData(myres)[, "Tinflam_Thompson"], "double")
   expect_message(TinflamSign(rmatrix, author = "Thompson"), "100")
 })
+
+test_that("CombinedSign work", {
+  rmatrix <- .fakeData("Combined_Thompson")
+  myres <- CombinedSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Combined_Thompson" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Combined_Thompson"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Combined_Thompson"], "double")
+  expect_message(CombinedSign(rmatrix), "100")
+})
