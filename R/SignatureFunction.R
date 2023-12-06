@@ -1505,3 +1505,38 @@ glioCellStateSign <- function(
         userdata = dataset, result = t(scores), SignName = "", datasetm))
 }
 
+
+#' EMT-Inflammation Combined Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param weighted logical value, saying whether the score should be calculated with or without weights
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+CombinedSign <- function(dataset, nametype = "SYMBOL", 
+                         whichAssay = "norm_expr", hgReference = "hg38", weighted = FALSE){
+  
+  # Combination of EMT_Thompson and Tinflam_Thompson signatures
+  
+  .consistencyCheck(nametype, "CombinedSign")
+  
+  res_emt <- EMTSign(dataset, nametype = nametype, 
+                     author = "Thompson", whichAssay = whichAssay, hgReference = hgReference)[["EMT_Thompson"]]
+  res_inf <- TinflamSign(dataset, nametype = nametype, 
+                         author = "Thompson", whichAssay = whichAssay, hgReference = hgReference)[["Tinflam_Thompson"]]
+  
+  if (weighted == FALSE){
+    score <- res_inf - res_emt
+  } else if (weighted == TRUE){
+    score <- -0.60 * res_emt + 0.19 * res_inf
+  }
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "CombinedSign", datasetm))
+}
