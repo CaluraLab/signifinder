@@ -66,7 +66,8 @@ SignatureNames <- c(
     "GlioCellState_Neftel_AC",
     "GlioCellState_Neftel_OPC",
     "GlioCellState_Neftel_NPC1",
-    "GlioCellState_Neftel_NPC2"
+    "GlioCellState_Neftel_NPC2",
+    "Combined_Thompson"
 )
 
 #' @importFrom viridis magma viridis
@@ -118,7 +119,12 @@ my_colors <- colorRampPalette(my_colors)(100)
     } else if (name %in% c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")) {
         sname <- substring(name, 17)
         g <- Autophagy_ChenM$SYMBOL[Autophagy_ChenM$class == sname]
-    } else if (name %in% c(
+    } else if (name == "Combined_Thompson"){
+        name_emt <- .GetGenes("EMT_Thompson")[ , "Gene"]
+        name_inf <- .GetGenes("Tinflam_Thompson")[ , "Gene"]
+        g <- union(name_emt, name_inf)
+    }
+      else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye", "Pyroptosis_Shao",
         "Pyroptosis_Lin", "Pyroptosis_Li", "Ferroptosis_Liang",
         "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
