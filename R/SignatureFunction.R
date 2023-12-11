@@ -1615,7 +1615,8 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
                          author = "Thompson", whichAssay = whichAssay, 
                          hgReference = hgReference)[["Tinflam_Thompson"]]
   
-  score <- if (weighted) { -0.60 * res_emt + 0.19 * res_inf} else {res_inf - res_emt}
+  score <- if (weighted) 
+    {-0.60 * res_emt + 0.19 * res_inf} else {res_inf - res_emt}
   
   return(.returnAsInput(
     userdata = dataset, result = score,
