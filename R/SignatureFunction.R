@@ -1595,8 +1595,8 @@ melStateSign <- function(
 #'
 #' @examples
 #' data(ovse)
-#'
-#' @export 
+#' 
+#' @export
 CombinedSign <- function(dataset, nametype = "SYMBOL", 
                          whichAssay = "norm_expr", hgReference = "hg38", weighted = FALSE){
   

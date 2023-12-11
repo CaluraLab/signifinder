@@ -165,6 +165,7 @@ test_that("CombinedSign work", {
   expect_type(colData(myres)[, "Combined_Thompson"], "double")
   expect_message(CombinedSign(rmatrix), "100")
 })
+
 test_that("melStateSign work", {
   rmatrix <- data.frame()
   for(i in SignatureNames){
@@ -176,3 +177,4 @@ test_that("melStateSign work", {
   expect_length(colData(myres)[,"MelState_Tirosh_AXL"],ncol(assay(myres)))
   expect_type(colData(myres)[,"MelState_Tirosh_AXL"], "double")
 })
+
