@@ -1589,16 +1589,18 @@ melStateSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param weighted logical value, saying whether the score should be calculated with or without weights
+#' @param weighted logical value, saying whether the score should be calculated 
+#' with or without weights.
 #'
 #' @inherit EMTSign return
 #'
 #' @examples
 #' data(ovse)
+#' CombinedSign(dataset = ovse)
 #' 
 #' @export
-CombinedSign <- function(dataset, nametype = "SYMBOL", 
-                         whichAssay = "norm_expr", hgReference = "hg38", weighted = FALSE){
+CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr", 
+                         hgReference = "hg38", weighted = FALSE){
   
   # Combination of EMT_Thompson and Tinflam_Thompson signatures
   
@@ -1607,15 +1609,13 @@ CombinedSign <- function(dataset, nametype = "SYMBOL",
   datasetm <- .getMatrix(dataset, whichAssay)
   
   res_emt <- EMTSign(dataset, nametype = nametype, 
-                     author = "Thompson", whichAssay = whichAssay, hgReference = hgReference)[["EMT_Thompson"]]
+                     author = "Thompson", whichAssay = whichAssay, 
+                     hgReference = hgReference)[["EMT_Thompson"]]
   res_inf <- TinflamSign(dataset, nametype = nametype, 
-                         author = "Thompson", whichAssay = whichAssay, hgReference = hgReference)[["Tinflam_Thompson"]]
+                         author = "Thompson", whichAssay = whichAssay, 
+                         hgReference = hgReference)[["Tinflam_Thompson"]]
   
-  if (weighted == FALSE){
-    score <- res_inf - res_emt
-  } else if (weighted == TRUE){
-    score <- -0.60 * res_emt + 0.19 * res_inf
-  }
+  score <- if (weighted) { -0.60 * res_emt + 0.19 * res_inf} else {res_inf - res_emt}
   
   return(.returnAsInput(
     userdata = dataset, result = score,
