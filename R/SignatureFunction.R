@@ -1643,16 +1643,14 @@ APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
     dataset, datasetm, "CPM", hgReference, nametype)
   datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
   datasetm_n <- log2(datasetm_n+1)
-
+  
   sign_df <- APM_Thompson
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
-
   .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
   
   z_score <- t(scale(t(datasetm_n[intersect(sign_df$SYMBOL, 
                                           rownames(datasetm_n)), ]+1)))
-
   score <- colSums(log2(z_score-min(z_score)+1))
   
   return(.returnAsInput(

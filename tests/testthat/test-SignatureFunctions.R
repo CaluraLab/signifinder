@@ -147,6 +147,9 @@ test_that("glioCellStateSign work", {
 })
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 33418fb20f4f477d1010ba258418cb8a32e83366
 
 test_that("TinflamSign based on Thompson's work", {
   rmatrix <- .fakeData("Tinflam_Thompson")
