@@ -187,3 +187,13 @@ test_that("APMSign work", {
   expect_type(colData(myres)[, "APM_Thompson"], "double")
   expect_message(APMSign(rmatrix), "100")
 })
+
+test_that("MPSSign work", {
+  rmatrix <- .fakeData("MPS_PerezGuijarro")
+  myres <- MPSSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("MPS_PerezGuijarro" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "MPS_PerezGuijarro"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "MPS_PerezGuijarro"], "double")
+  expect_message(MPSSign(rmatrix), "100")
+})
