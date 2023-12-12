@@ -32,19 +32,8 @@ TRUE states malignant cells and FALSE states non-malignant cells.}
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}
 }
-\value{
-If dataset is a \linkS4class{SummarizedExperiment} object, then
-scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
-If dataset is a data frame or a matrix, then a
-\linkS4class{SummarizedExperiment} object is created in which scores are
-added in the \code{\link[SummarizedExperiment]{colData}} section.
-}
 \description{
 This signature is computed accordingly to the reference paper,
 to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
-}
-\examples{
-data(ovse)
-
 }

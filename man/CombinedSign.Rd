@@ -29,7 +29,7 @@ dataset to use.}
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}
 
-\item{weighted}{logical value, saying whether the score should be calculated 
+\item{weighted}{logical value, saying whether the score should be calculated
 with or without weights.}
 }
 \value{
@@ -46,6 +46,7 @@ to have more details explore the function
 }
 \examples{
 data(ovse)
+
 CombinedSign(dataset = ovse)
 
 }

@@ -699,7 +699,8 @@ TinflamSign <- function(
 
   return(.returnAsInput(
     userdata = dataset, result = score,
-    SignName = paste0("Tinflam_", author), datasetm))}
+    SignName = paste0("Tinflam_", author), datasetm))
+}
 
 
 #' Tertiary Lymphoid Structures (TLS) Signature
@@ -1505,7 +1506,6 @@ glioCellStateSign <- function(
         userdata = dataset, result = t(scores), SignName = "", datasetm))
 }
 
-<<<<<<< HEAD
 
 #' Metastatic melanoma Cellular States Signature
 #'
@@ -1518,9 +1518,9 @@ glioCellStateSign <- function(
 melStateSign <- function(
     dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
     isMalignant = NULL, hgReference = "hg38") {
-  
+
   .consistencyCheck(nametype, "melStateSign")
-  
+
   if(is.null(isMalignant)){
     stop("isMalignant param is missing but it is required",
          "for the computation of the signature")
@@ -1529,38 +1529,38 @@ melStateSign <- function(
       stop("lenght of isMalignant must be equal to ncol(dataset)")}
     if(!is.logical(isMalignant)){
       stop("isMalignant must be a logical vector")}}
-  
+
   if(nrow(dataset)<2500){stop(
     "dataset must have at least 2500 genes to compute the signature")}
-  
+
   datasetm <- .getMatrix(dataset, whichAssay)
   dataset <- .dataTransformation(
     dataset, datasetm, "TPM", hgReference, nametype)
   datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
-  
+
   sign_df <- MelState_Tirosh
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   .percentageOfGenesUsed(
     "melStateSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "MITF"], "MITF")
   .percentageOfGenesUsed(
     "melStateSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "AXL"], "AXL")
-  
+
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
   sign_list <- split(sign_df$SYMBOL, sign_df$class)
   names(sign_list) <- paste0("MelState_Tirosh_", names(sign_list))
-  
+
   datasetm_n <- datasetm_n[,isMalignant]
   exp_lev <- log2(datasetm_n/10+1)
   rel_exp <- exp_lev - rowMeans(exp_lev,  na.rm = TRUE)
-  
+
   agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
   ea_bin <- split(
     sort(agg_exp, na.last = TRUE), factor(sort(rank(agg_exp) %% 25)))
   ea_bin <- lapply(ea_bin, function(x){names(x)})
-  
+
   scores <- as.data.frame(lapply(sign_list, function(x){
     Gcont <- unlist(lapply(x, function(y){
       u <- NULL
@@ -1575,7 +1575,7 @@ melStateSign <- function(
     score[isMalignant] <- SC
     score
   }))
-  
+
   return(.returnAsInput(
     userdata = dataset, result = t(scores), SignName = "", datasetm))
 }
@@ -1585,40 +1585,38 @@ melStateSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param weighted logical value, saying whether the score should be calculated 
+#' @param weighted logical value, saying whether the score should be calculated
 #' with or without weights.
 #'
 #' @inherit EMTSign return
 #'
 #' @examples
 #' data(ovse)
-#' 
+#'
 #' CombinedSign(dataset = ovse)
-#' 
+#'
 #' @export
-CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr", 
+CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
                          hgReference = "hg38", weighted = FALSE){
-  
+
   # Combination of EMT_Thompson and Tinflam_Thompson signatures
-  
+
   .consistencyCheck(nametype, "CombinedSign")
-  
+
   datasetm <- .getMatrix(dataset, whichAssay)
-  
-  res_emt <- EMTSign(dataset, nametype = nametype, 
-                     author = "Thompson", whichAssay = whichAssay, 
-                     hgReference = hgReference)[["EMT_Thompson"]]
-  res_inf <- TinflamSign(dataset, nametype = nametype, 
-                         author = "Thompson", whichAssay = whichAssay, 
-                         hgReference = hgReference)[["Tinflam_Thompson"]]
-  
-  score <- if (weighted) 
-    {-0.60 * res_emt + 0.19 * res_inf} else {res_inf - res_emt}
-  
+
+  res_emt <- EMTSign(
+    dataset, nametype = nametype, author = "Thompson", whichAssay = whichAssay,
+    hgReference = hgReference)[["EMT_Thompson"]]
+  res_inf <- TinflamSign(
+    dataset, nametype = nametype, author = "Thompson", whichAssay = whichAssay,
+    hgReference = hgReference)[["Tinflam_Thompson"]]
+
+  score <- if (weighted){-0.60*res_emt + 0.19*res_inf} else {res_inf-res_emt}
+
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = "Combined_Thompson", datasetm))
-
 }
 
 #' Antigen Processing Machinery Signature
@@ -1633,27 +1631,26 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
 #' APMSign(dataset = ovse)
 #'
 #' @export
-APMSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
-                    hgReference = "hg38") {
-  
+APMSign <- function(
+  dataset, nametype = "SYMBOL", whichAssay = "norm_expr",hgReference = "hg38") {
+
   .consistencyCheck(nametype, "APMSign")
-  
+
   datasetm <- .getMatrix(dataset, whichAssay)
   dataset <- .dataTransformation(
     dataset, datasetm, "CPM", hgReference, nametype)
   datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
   datasetm_n <- log2(datasetm_n+1)
-  
+
   sign_df <- APM_Thompson
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
-  
-  z_score <- t(scale(t(datasetm_n[intersect(sign_df$SYMBOL, 
-                                          rownames(datasetm_n)), ]+1)))
+
+  z_score <- t(
+    scale(t(datasetm_n[intersect(sign_df$SYMBOL, rownames(datasetm_n)), ]+1)))
   score <- colSums(log2(z_score-min(z_score)+1))
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score, SignName = "APM_Thompson", datasetm))
-
 }
