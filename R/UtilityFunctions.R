@@ -70,7 +70,8 @@ SignatureNames <- c(
     "MelState_Tirosh_MITF",
     "MelState_Tirosh_AXL",
     "Combined_Thompson",
-    "APM_Thompson"
+    "APM_Thompson",
+    "MPS_PerezGuijarro"
 )
 
 #' @importFrom viridis magma viridis
@@ -133,18 +134,19 @@ my_colors <- colorRampPalette(my_colors)(100)
         g <- union(name_emt, name_inf)
     }
       else if (name %in% c(
-        "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye", "Pyroptosis_Shao",
-        "Pyroptosis_Lin", "Pyroptosis_Li", "Ferroptosis_Liang",
-        "Ferroptosis_Li", "Ferroptosis_Liu", "Ferroptosis_Ye",
-        "LipidMetabolism_Zheng", "Hypoxia_Buffa", "Matrisome_Yuzhalin",
-        "Chemokines_Messina", "ImmunoScore_Hao", "ImmunoScore_Roh",
-        "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", "HRDS_Lu",
-        "ExpandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", "VEGF_Hu",
-        "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", "StemCellCD49f_Smith",
-        "Glycolysis_Zhang", "Glycolysis_Xu", "MitoticIndex_Yang",
-        "Autophagy_Xu", "Autophagy_Wang", "Autophagy_ChenH",
-        "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
-        "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson", "APM_Thompson"
+        "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye", 
+        "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li", 
+        "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu", 
+        "Ferroptosis_Ye", "LipidMetabolism_Zheng", "Hypoxia_Buffa", 
+        "Matrisome_Yuzhalin", "Chemokines_Messina", "ImmunoScore_Hao", 
+        "ImmunoScore_Roh", "ImmuneCyt_Rooney", "ImmuneCyt_Davoli", "IFN_Ayers", 
+        "HRDS_Lu", "ExpandedImmune_Ayers", "CellCycle_Davoli", "PassON_Du", 
+        "VEGF_Hu", "DNArep_Kang", "ASC_Smith", "IPS_Charoentong", 
+        "StemCellCD49f_Smith", "Glycolysis_Zhang", "Glycolysis_Xu", 
+        "MitoticIndex_Yang", "Autophagy_Xu", "Autophagy_Wang", 
+        "Autophagy_ChenH", "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
+        "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson", "APM_Thompson", 
+        "MPS_PerezGuijarro"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
