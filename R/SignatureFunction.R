@@ -1619,6 +1619,7 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
     SignName = "Combined_Thompson", datasetm))
 }
 
+
 #' Antigen Processing Machinery Signature
 #'
 #' @inherit EMTSign description
@@ -1653,4 +1654,39 @@ APMSign <- function(
 
   return(.returnAsInput(
     userdata = dataset, result = score, SignName = "APM_Thompson", datasetm))
+}
+
+
+#' Melanocytic Plasticity Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#' MPSSign(dataset = ovse)
+#'
+#' @export
+MPSSign <- function(dataset, nametype = "SYMBOL", 
+                    whichAssay = "norm_expr", hgReference = "hg38"){
+  
+  .consistencyCheck(nametype, "MPSSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- MPS_PerezGuijarro
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  dataset <- .dataTransformation(
+    dataset = dataset, data = datasetm, trans = "FPKM", 
+    hgReference = hgReference, nametype = nametype)
+  datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
+  
+  score <- .coeffScore(sdata = sign_df, 
+                       datasetm = datasetm_n, namesignature = "MPSSign")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "MPS_PerezGuijarro", datasetm))
 }
