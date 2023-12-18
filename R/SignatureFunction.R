@@ -1649,7 +1649,7 @@ APMSign <- function(
   .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
 
   z_score <- t(
-    scale(t(datasetm_n[intersect(sign_df$SYMBOL, rownames(datasetm_n)), ]+1)))
+    scale(t(datasetm_n[intersect(sign_df$SYMBOL, rownames(datasetm_n)), ])))
   score <- colSums(log2(z_score-min(z_score)+1))
 
   return(.returnAsInput(
