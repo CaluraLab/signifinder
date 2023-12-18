@@ -1690,3 +1690,32 @@ MPSSign <- function(dataset, nametype = "SYMBOL",
     userdata = dataset, result = score,
     SignName = "MPS_PerezGuijarro", datasetm))
 }
+
+
+#' Immune-Related Genes Signature
+#' 
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#' @examples
+#' data(ovse)
+#' IRGSign(dataset = ovse)
+#'
+#' @export
+IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "IRGSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- IRG_Yang
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  score <- .coeffScore(sdata = sign_df, 
+                       datasetm = datasetm, namesignature = "IRGSign")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "IRG_Yang", datasetm))
+}
+  
