@@ -197,3 +197,13 @@ test_that("MPSSign work", {
   expect_type(colData(myres)[, "MPS_PerezGuijarro"], "double")
   expect_message(MPSSign(rmatrix), "100")
 })
+
+test_that("IRGSign work", {
+  rmatrix <- .fakeData("IRG_Yang")
+  myres <- IRGSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("IRG_Yang" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "IRG_Yang"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "IRG_Yang"], "double")
+  expect_message(IRGSign(rmatrix), "100")
+})
