@@ -1629,7 +1629,7 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva gsvaParam
 #'
 #' @examples
 #' data(ovse)
@@ -1648,10 +1648,10 @@ APMSign <- function(
     sign_df <- APM_Wang
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
     
-    percentageOfGenesUsed("APMSign", datasetm, sign_df$SYMBOL)
+    .percentageOfGenesUsed("APMSign", datasetm, sign_df$SYMBOL)
     
     dots <- list(...)
-    args <- matchArguments(dots, list(
+    args <- .matchArguments(dots, list(
       exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Gaussian"))
     
     gsvaPar <- do.call(gsvaParam, args)
