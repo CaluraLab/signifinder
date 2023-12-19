@@ -1624,8 +1624,12 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' function.
 #'
 #' @inherit EMTSign return
+#'
+#' @importFrom GSVA gsva
 #'
 #' @examples
 #' data(ovse)
@@ -1633,27 +1637,46 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
 #'
 #' @export
 APMSign <- function(
-  dataset, nametype = "SYMBOL", whichAssay = "norm_expr",hgReference = "hg38") {
-
-  .consistencyCheck(nametype, "APMSign")
-
+    dataset, nametype = "SYMBOL", inputType = "microarray",
+    author = "Wang", whichAssay = "norm_expr", hgReference = "hg38", ...) {
+  
+  .consistencyCheck(nametype, "APMSign", author)
+  
   datasetm <- .getMatrix(dataset, whichAssay)
-  dataset <- .dataTransformation(
-    dataset, datasetm, "CPM", hgReference, nametype)
-  datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
-  datasetm_n <- log2(datasetm_n+1)
-
-  sign_df <- APM_Thompson
-  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-
-  .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
-
-  z_score <- t(
-    scale(t(datasetm_n[intersect(sign_df$SYMBOL, rownames(datasetm_n)), ])))
-  score <- colSums(log2(z_score-min(z_score)+1))
-
+  
+  if (author == "Wang") {
+    sign_df <- APM_Wang
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    percentageOfGenesUsed("APMSign", datasetm, sign_df$SYMBOL)
+    
+    dots <- list(...)
+    args <- matchArguments(dots, list(
+      exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Gaussian"))
+    
+    gsvaPar <- do.call(gsvaParam, args)
+    score <- gsva(gsvaPar, verbose=FALSE)
+    
+  } else if (author == "Thompson") {
+    
+    dataset <- .dataTransformation(
+      dataset, datasetm, "CPM", hgReference, nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
+    datasetm_n <- log2(datasetm_n+1)
+    
+    sign_df <- APM_Thompson
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
+    
+    z_score <- t(
+      scale(t(datasetm_n[intersect(sign_df$SYMBOL, rownames(datasetm_n)), ])))
+    score <- colSums(log2(z_score-min(z_score)+1))
+  }
+  
   return(.returnAsInput(
-    userdata = dataset, result = score, SignName = "APM_Thompson", datasetm))
+    userdata = dataset, result = score,
+    SignName = paste0("APM_", author), datasetm))
 }
 
 
