@@ -71,6 +71,7 @@ SignatureNames <- c(
     "MelState_Tirosh_AXL",
     "Combined_Thompson",
     "APM_Thompson",
+    "APM_Wang",
     "MPS_PerezGuijarro",
     "IRG_Yang"
 )
@@ -147,7 +148,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         "MitoticIndex_Yang", "Autophagy_Xu", "Autophagy_Wang",
         "Autophagy_ChenH", "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
         "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson", "APM_Thompson",
-        "MPS_PerezGuijarro", "IRG_Yang"
+        "APM_Wang", "MPS_PerezGuijarro", "IRG_Yang"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
