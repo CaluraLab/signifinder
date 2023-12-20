@@ -178,13 +178,23 @@ test_that("melStateSign work", {
   expect_type(colData(myres)[,"MelState_Tirosh_AXL"], "double")
 })
 
-test_that("APMSign work", {
+test_that("APMSign based on Thompson's work", {
   rmatrix <- .fakeData("APM_Thompson")
-  myres <- APMSign(rmatrix)
+  myres <- APMSign(rmatrix, author = "Thompson")
   expect_true(is(myres, "SummarizedExperiment"))
   expect_true("APM_Thompson" %in% colnames(colData(myres)))
   expect_length(colData(myres)[, "APM_Thompson"], ncol(assay(myres)))
   expect_type(colData(myres)[, "APM_Thompson"], "double")
+  expect_message(APMSign(rmatrix, author = "Thompson"), "100")
+})
+
+test_that("APMSign based on Wang's work", {
+  rmatrix <- .fakeData("APM_Wang")
+  myres <- APMSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("APM_Wang" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "APM_Wang"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "APM_Wang"], "double")
   expect_message(APMSign(rmatrix), "100")
 })
 

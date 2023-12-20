@@ -1656,6 +1656,7 @@ APMSign <- function(
     
     gsvaPar <- do.call(gsvaParam, args)
     score <- gsva(gsvaPar, verbose=FALSE)
+    score <- as.vector(score)
     
   } else if (author == "Thompson") {
     
