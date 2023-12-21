@@ -1763,6 +1763,8 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
   sign_df <- TGFB_Mariathasan
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
+  .percentageOfGenesUsed("TGFBSign", datasetm, sign_df$SYMBOL)
+  
   pca<-prcomp(t(datasetm[rownames(datasetm) %in% TGFB_Mariathasan$SYMBOL, ]), 
               scale = TRUE)$x
   score <- pca[, "PC1"]
