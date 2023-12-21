@@ -1744,7 +1744,7 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 }
 
 
-#' Pan-Fibroblasts TGFB Response Signature
+#' Pan-Fibroblast TGFB Response Signature
 #' 
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
