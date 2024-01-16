@@ -1751,6 +1751,7 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #' @inheritParams pyroptosisSign
 #'
 #' @inherit EMTSign return
+#' 
 #' @examples
 #' data(ovse)
 #' TGFBSign(dataset = ovse)
@@ -1884,7 +1885,6 @@ LRRC15CAFSign <- function(
 }
 
 
-
 #' Breast Cancer Cellular States Signature
 #'
 #' @inherit EMTSign description
@@ -1948,5 +1948,46 @@ breastStateSign <- function(
   return(.returnAsInput(
     userdata = dataset, result = t(scores),
     SignName = "BreastState_Wu", datasetm_n))
+}
+
+
+#' ICB Response Signature
+#' 
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#' 
+#' @examples
+#' data(ovse)
+#' ICBResponseSign(dataset = ovse)
+#'
+#' @export
+ICBResponseSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- ICBResponse_Chen
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  resp <- sign_df[grep("^response", sign_df$class),]
+  nresp <- sign_df[grep("non-response", sign_df$class),]
+  score <- data.frame(row.names = colnames(datasetm))
+  
+  datasetm_r <- datasetm[intersect(rownames(datasetm), resp$SYMBOL), ]
+  sup_resp <- colSums(datasetm_r)
+  corr_resp <- apply(datasetm_r, 1, function(x) cor(x, sup_resp, method = "pearson"))
+  score$response <- colSums(datasetm_r * corr_resp)
+  
+  datasetm_n <- datasetm[intersect(rownames(datasetm), nresp$SYMBOL), ]
+  sup_nresp <- colSums(datasetm_n)
+  corr_nresp <- apply(datasetm_n, 1, function(x) cor(x, sup_nresp, method = "pearson"))
+  score$nonresponse <- colSums(datasetm_n * corr_nresp)
+  
+  colnames(score) <- c("ICBResponse_Chen", "ICBNonresponse_Chen")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = t(score),
+    SignName = "", datasetm))
 }
 
