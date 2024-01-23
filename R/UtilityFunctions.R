@@ -74,7 +74,8 @@ SignatureNames <- c(
     "APM_Wang",
     "MPS_PerezGuijarro",
     "IRG_Yang",
-    "TGFB_Mariathasan"
+    "TGFB_Mariathasan",
+    "ADO_Sidders"
 )
 
 #' @importFrom viridis magma viridis
@@ -149,7 +150,8 @@ my_colors <- colorRampPalette(my_colors)(100)
         "MitoticIndex_Yang", "Autophagy_Xu", "Autophagy_Wang",
         "Autophagy_ChenH", "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
         "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson", "APM_Thompson",
-        "APM_Wang", "MPS_PerezGuijarro", "IRG_Yang", "TGFB_Mariathasan"
+        "APM_Wang", "MPS_PerezGuijarro", "IRG_Yang", "TGFB_Mariathasan", 
+        "ADO_Sidders"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
