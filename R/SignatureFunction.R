@@ -1742,4 +1742,34 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
     userdata = dataset, result = score,
     SignName = "IRG_Yang", datasetm))
 }
+
+
+#' Adenosine Signaling Signature
+#' 
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#' @examples
+#' data(ovse)
+#' ADOSign(dataset = ovse)
+#'
+#' @export
+ADOSign <- function(dataset, nametype = "SYMBOL", 
+                          whichAssay = "norm_expr"){
   
+  .consistencyCheck(nametype, "ADOSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- ADO_Sidders
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  gsvaPar <- gsvaParam(datasetm, list(sign_df$SYMBOL), kcdf = "Poisson")
+  score <- gsva(gsvaPar, verbose=FALSE)
+  score <- as.vector(score)
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "ADO_Sidders", datasetm))
+}
+
