@@ -1771,6 +1771,7 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
   return(.returnAsInput(userdata = dataset, result = score,
                         SignName = "TGFB_Mariathasan", datasetm))
 }
+<<<<<<< HEAD
 
 
 #' Adenosine Signaling Signature
@@ -1784,11 +1785,22 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #'
 #' @importFrom GSVA gsvaParam gsva
 #'
+=======
+  
+
+#' Adenosine Signaling Signature
+#' 
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+>>>>>>> 3d75806 (add code for ADOSign and ADO_Sidders in .GetGenes and SignatureNames)
 #' @examples
 #' data(ovse)
 #' ADOSign(dataset = ovse)
 #'
 #' @export
+<<<<<<< HEAD
 ADOSign <- function(dataset, nametype = "SYMBOL",
                     whichAssay = "norm_expr", ...){
 
@@ -1806,6 +1818,21 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
   gsvaPar <- do.call(gsvaParam, args)
   score <- as.vector(gsva(gsvaPar, verbose=FALSE))
 
+=======
+ADOSign <- function(dataset, nametype = "SYMBOL", 
+                          whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "ADOSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- ADO_Sidders
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  gsvaPar <- gsvaParam(datasetm, list(sign_df$SYMBOL), kcdf = "Poisson")
+  score <- gsva(gsvaPar, verbose=FALSE)
+  score <- as.vector(score)
+  
+>>>>>>> 3d75806 (add code for ADOSign and ADO_Sidders in .GetGenes and SignatureNames)
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = "ADO_Sidders", datasetm))
