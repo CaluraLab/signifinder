@@ -22,7 +22,7 @@
 #' dataset to use.
 #' @param hgReference character string saying the human reference genome.
 #' Either one of "hg19" or "hg38".
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
 #' @return If dataset is a \linkS4class{SummarizedExperiment} object, then
@@ -31,7 +31,7 @@
 #' \linkS4class{SummarizedExperiment} object is created in which scores are
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA ssgseaParam gsva
 #' @importFrom stats prcomp
 #'
 #' @examples
@@ -63,14 +63,13 @@ EMTSign <- function(
         names(gene_sets) <- paste0("EMT_Miow_", names(gene_sets))
 
         dots <- list(...)
-        kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
         args <- .matchArguments(dots, list(
-            expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-            kcdf = kcdftype, ssgsea.norm = FALSE, verbose = FALSE))
-        gsva_matrix <- do.call(gsva, args)
+          exprData = datasetm, geneSets = gene_sets, normalize = FALSE))
+        gsvaPar <- do.call(ssgseaParam, args)
+        score <- gsva(gsvaPar, verbose = FALSE)
 
         return(.returnAsInput(
-            userdata = dataset, result = gsva_matrix,
+            userdata = dataset, result = as.vector(score),
             SignName = "", datasetm))
     } else {
         if (author == "Mak") {
@@ -924,12 +923,12 @@ ASCSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA ssgseaParam gsva
 #' @importFrom SummarizedExperiment assays
 #' @importFrom stats weighted.mean
 #'
@@ -958,10 +957,10 @@ PassONSign <- function(
 
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
-        kcdf = "Poisson", ssgsea.norm = TRUE, verbose = FALSE))
-
-    gsva_matrix <- do.call(gsva, args)
+        exprData = datasetm_n, geneSets = sign_list))
+    
+    gsvaPar <- do.call(ssgseaParam, args)
+    gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
 
     gsva_mean <- vapply(seq_len(ncol(gsva_matrix)), function(x) {
         weighted.mean(gsva_matrix[, x], lengths(sign_list))},
@@ -977,12 +976,12 @@ PassONSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva ssgseaParam
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
@@ -1010,10 +1009,10 @@ IPRESSign <- function(
 
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
-        kcdf = "Gaussian", ssgsea.norm = TRUE, verbose = FALSE))
-
-    gsva_matrix <- do.call(gsva, args)
+        exprData = datasetm_n, geneSets = sign_list))
+    
+    gsvaPar <- do.call(ssgseaParam, args)
+    gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
     score <- rowMeans(vapply(
         as.data.frame(t(gsva_matrix)), scale, double(ncol(gsva_matrix))))
 
@@ -1157,12 +1156,12 @@ autophagySign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva ssgseaParam
 #'
 #' @examples
 #' data(ovse)
@@ -1191,10 +1190,9 @@ ECMSign <- function(
 
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-        kcdf = "Poisson", ssgsea.norm = FALSE, verbose = FALSE))
-
-    gsva_count <- do.call(gsva, args)
+        exprData = datasetm, geneSets = gene_sets, normalize = FALSE))
+    gsvaPar <- do.call(ssgseaParam, args)
+    gsva_count <- gsva(gsvaPar, verbose = FALSE)
 
     return(.returnAsInput(
         userdata = dataset, result = gsva_count, SignName = "", datasetm))
@@ -1367,10 +1365,12 @@ DNArepSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
 #' @inherit EMTSign return
+#' 
+#' @importFrom GSVA ssgseaParam gsva
 #'
 #' @examples
 #' data(ovse)
@@ -1397,10 +1397,9 @@ IPSOVSign <- function(
 
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list,
-        method = "ssgsea", kcdf = "Gaussian",
-        ssgsea.norm = FALSE, verbose = FALSE))
-    gsva_matrix <- do.call(gsva, args)
+        exprData = datasetm_n, geneSets = sign_list, normalize = FALSE))
+    gsvaPar <- do.call(ssgseaParam, args)
+    gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
 
     sign_class <- unique(sign_df[,2:3])
     sign_class <- sign_class[sign_class$class %in% row.names(gsva_matrix), ]
@@ -1624,7 +1623,7 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param ... other arguments passed on to the \code{\link[GSVA]{gsva}}
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsvaParam}}
 #' function.
 #'
 #' @inherit EMTSign return
@@ -1750,13 +1749,16 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #' @inheritParams pyroptosisSign
 #'
 #' @inherit EMTSign return
+#' 
+#' @importFrom GSVA gsvaParam gsva
+#' 
 #' @examples
 #' data(ovse)
 #' ADOSign(dataset = ovse)
 #'
 #' @export
 ADOSign <- function(dataset, nametype = "SYMBOL", 
-                          whichAssay = "norm_expr"){
+                    whichAssay = "norm_expr", ...){
   
   .consistencyCheck(nametype, "ADOSign")
   datasetm <- .getMatrix(dataset, whichAssay)
@@ -1764,9 +1766,11 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
   sign_df <- ADO_Sidders
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
-  gsvaPar <- gsvaParam(datasetm, list(sign_df$SYMBOL), kcdf = "Poisson")
-  score <- gsva(gsvaPar, verbose=FALSE)
-  score <- as.vector(score)
+  dots <- list(...)
+  args <- .matchArguments(dots, list(
+    exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Poisson"))
+  gsvaPar <- do.call(gsvaParam, args)
+  score <- as.vector(gsva(gsvaPar, verbose=FALSE))
   
   return(.returnAsInput(
     userdata = dataset, result = score,
