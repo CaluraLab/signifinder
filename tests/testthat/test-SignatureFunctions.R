@@ -227,3 +227,13 @@ test_that("TGFBSign work", {
   expect_type(colData(myres)[, "TGFB_Mariathasan"], "double")
   expect_message(TGFBSign(rmatrix), "100")
 })
+
+test_that("ADOSign work", {
+  rmatrix <- .fakeData("ADO_Sidders")
+  myres <- ADOSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("ADO_Sidders" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "ADO_Sidders"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "ADO_Sidders"], "double")
+  expect_message(ADOSign(rmatrix), "100")
+})
