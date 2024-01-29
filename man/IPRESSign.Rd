@@ -29,7 +29,7 @@ dataset to use.}
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}
 
-\item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
+\item{...}{other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 function.}
 }
 \value{

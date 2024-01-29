@@ -29,7 +29,7 @@ Either one of "microarray" or "rnaseq".}
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
 
-\item{...}{other arguments passed on to the \code{\link[GSVA]{gsva}}
+\item{...}{other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 function.}
 }
 \value{
