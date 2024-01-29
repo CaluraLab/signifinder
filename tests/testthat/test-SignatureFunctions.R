@@ -217,3 +217,13 @@ test_that("IRGSign work", {
   expect_type(colData(myres)[, "IRG_Yang"], "double")
   expect_message(IRGSign(rmatrix), "100")
 })
+
+test_that("ADOSign work", {
+  rmatrix <- .fakeData("ADO_Sidders")
+  myres <- ADOSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("ADO_Sidders" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "ADO_Sidders"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "ADO_Sidders"], "double")
+  expect_message(ADOSign(rmatrix), "100")
+})
