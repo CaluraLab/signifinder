@@ -1777,6 +1777,8 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #' 
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
+#' @param ... other arguments passed on to the \code{\link[GSVA]{gsvaParam}}
+#' function.
 #'
 #' @inherit EMTSign return
 #' 
@@ -1795,6 +1797,8 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
   
   sign_df <- ADO_Sidders
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed("ADOSign", datasetm, sign_df$SYMBOL)
   
   dots <- list(...)
   args <- .matchArguments(dots, list(
