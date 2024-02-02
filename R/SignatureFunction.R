@@ -1742,4 +1742,69 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
     userdata = dataset, result = score,
     SignName = "IRG_Yang", datasetm))
 }
+
+
+#' Breast Cancer Cellular States Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+breastStateSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
   
+  .consistencyCheck(nametype, "breastStateSign")
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  datasetm_n <- log2(datasetm + 1)
+  
+  sign_df <- BreastState_Wu
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "Basal"], "Basal")
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "Her2E"], "Her2E")
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "LumA"], "LumA")
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "LumB"], "LumB")
+
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0("BreastState_Wu_", names(sign_list))
+  
+  datasetm_n <- datasetm_n[,isMalignant]
+  
+  scores <- as.data.frame(lapply(sign_list, function(x) {
+    if (length(x)>1) {score <- colMeans(datasetm_n[x,], na.rm = TRUE)
+    } else {score <- datasetm_n[x,]}
+    score[isMalignant] <- score
+  }))
+  
+  return(.returnAsInput(
+    userdata = dataset, result = t(scores),
+    SignName = "BreastState_Wu", datasetm_n))
+}
