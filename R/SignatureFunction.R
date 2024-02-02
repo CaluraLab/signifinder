@@ -31,7 +31,7 @@
 #' \linkS4class{SummarizedExperiment} object is created in which scores are
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva gsvaParam
 #' @importFrom stats prcomp
 #'
 #' @examples
@@ -58,19 +58,21 @@ EMTSign <- function(
             "EMTSign", datasetm, EL$SYMBOL, "epithelial", author = author)
         .percentageOfGenesUsed(
             "EMTSign", datasetm, ML$SYMBOL, "mesenchymal", author = author)
-
+        
         gene_sets <- list( Epithelial = EL$SYMBOL, Mesenchymal = ML$SYMBOL)
         names(gene_sets) <- paste0("EMT_Miow_", names(gene_sets))
-
+        
         dots <- list(...)
         kcdftype <- ifelse(inputType == "microarray", "Gaussian", "Poisson")
         args <- .matchArguments(dots, list(
-            expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-            kcdf = kcdftype, ssgsea.norm = FALSE, verbose = FALSE))
-        gsva_matrix <- do.call(gsva, args)
+          exprData = datasetm, geneSets = gene_sets, kcdf = kcdftype))
+        
+        ssgseaPar <- do.call(ssgseaParam, args)
+        score <- gsva(gsvaPar, normalize = FALSE, verbose=FALSE)
+        score <- as.vector(score)
 
         return(.returnAsInput(
-            userdata = dataset, result = gsva_matrix,
+            userdata = dataset, result = score,
             SignName = "", datasetm))
     } else {
         if (author == "Mak") {
@@ -929,7 +931,7 @@ ASCSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva gsvaParam
 #' @importFrom SummarizedExperiment assays
 #' @importFrom stats weighted.mean
 #'
@@ -955,16 +957,16 @@ PassONSign <- function(
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     .percentageOfGenesUsed("PassONSign", datasetm_n, sign_df$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
-        kcdf = "Poisson", ssgsea.norm = TRUE, verbose = FALSE))
+      exprData = datasetm_n, geneSets = sign_list, kcdf = "Poisson"))
+    
+    ssgseaPar <- do.call(ssgseaParam, args)
+    score <- gsva(ssgseaPar, normalize = TRUE, verbose=FALSE)
 
-    gsva_matrix <- do.call(gsva, args)
-
-    gsva_mean <- vapply(seq_len(ncol(gsva_matrix)), function(x) {
-        weighted.mean(gsva_matrix[, x], lengths(sign_list))},
+    gsva_mean <- vapply(seq_len(ncol(score)), function(x) {
+        weighted.mean(score[, x], lengths(sign_list))},
         double(1))
 
     return(.returnAsInput(
@@ -982,7 +984,7 @@ PassONSign <- function(
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva gsvaParam
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
@@ -1007,15 +1009,16 @@ IPRESSign <- function(
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     .percentageOfGenesUsed("IPRESSign", datasetm_n, sign_df$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list, method = "ssgsea",
-        kcdf = "Gaussian", ssgsea.norm = TRUE, verbose = FALSE))
-
-    gsva_matrix <- do.call(gsva, args)
+      exprData = datasetm_n, geneSets = sign_list, kcdf = "Gaussian"))
+    
+    ssgseaPar <- do.call(ssgseaParam, args)
+    gsva_score <- gsva(ssgseaPar, normalize = TRUE, verbose=FALSE)
+    
     score <- rowMeans(vapply(
-        as.data.frame(t(gsva_matrix)), scale, double(ncol(gsva_matrix))))
+        as.data.frame(t(gsva_score)), scale, double(ncol(gsva_score))))
 
     return(.returnAsInput(
         userdata = dataset, result = score,
@@ -1162,7 +1165,7 @@ autophagySign <- function(
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom GSVA gsva
+#' @importFrom GSVA gsva gsvaParam
 #'
 #' @examples
 #' data(ovse)
@@ -1188,13 +1191,14 @@ ECMSign <- function(
     gene_sets <- list(
         ECM_Chakravarthy_up = sign_up$SYMBOL,
         ECM_Chakravarthy_down = sign_down$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm, gset.idx.list = gene_sets, method = "ssgsea",
-        kcdf = "Poisson", ssgsea.norm = FALSE, verbose = FALSE))
-
-    gsva_count <- do.call(gsva, args)
+      exprData = datasetm, geneSets = gene_sets, kcdf = "Poisson"))
+    
+    ssgseaPar <- do.call(ssgseaParam, args)
+    gsva_count <- gsva(ssgseaPar, normalize = FALSE, verbose=FALSE)
+    gsva_count <- as.vector(gsva_count)
 
     return(.returnAsInput(
         userdata = dataset, result = gsva_count, SignName = "", datasetm))
@@ -1371,7 +1375,9 @@ DNArepSign <- function(
 #' function.
 #'
 #' @inherit EMTSign return
-#'
+#' 
+#' @importFrom GSVA gsva gsvaParam
+#' 
 #' @examples
 #' data(ovse)
 #' IPSOVSign(dataset = ovse)
@@ -1394,13 +1400,13 @@ IPSOVSign <- function(
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     .percentageOfGenesUsed("IPSOVSign", datasetm, sign_df$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
-        expr = datasetm_n, gset.idx.list = sign_list,
-        method = "ssgsea", kcdf = "Gaussian",
-        ssgsea.norm = FALSE, verbose = FALSE))
-    gsva_matrix <- do.call(gsva, args)
+      exprData = datasetm_n, geneSets = sign_list, kcdf = "Gaussian"))
+    
+    ssgseaPar <- do.call(ssgseaParam, args)
+    gsva_matrix <- gsva(ssgseaPar, normalize = FALSE, verbose=FALSE)
 
     sign_class <- unique(sign_df[,2:3])
     sign_class <- sign_class[sign_class$class %in% row.names(gsva_matrix), ]
