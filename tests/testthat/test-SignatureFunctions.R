@@ -217,3 +217,16 @@ test_that("IRGSign work", {
   expect_type(colData(myres)[, "IRG_Yang"], "double")
   expect_message(IRGSign(rmatrix), "100")
 })
+
+test_that("breastStateSign work", {
+  rmatrix <- data.frame()
+  for(i in SignatureNames){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- breastStateSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("BreastState_Wu_LumA" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"BreastState_Wu_Her2E"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"BreastState_Wu_LumB"], "double")
+  expect_message(breastStateSign(rmatrix, isMalignant = malign), "100")
+})
