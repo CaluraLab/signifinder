@@ -69,7 +69,7 @@ EMTSign <- function(
         score <- gsva(gsvaPar, verbose = FALSE)
 
         return(.returnAsInput(
-            userdata = dataset, result = as.vector(score),
+            userdata = dataset, result = score,
             SignName = "", datasetm))
     } else {
         if (author == "Mak") {
@@ -958,7 +958,7 @@ PassONSign <- function(
     dots <- list(...)
     args <- .matchArguments(dots, list(
         exprData = datasetm_n, geneSets = sign_list))
-    
+
     gsvaPar <- do.call(ssgseaParam, args)
     gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
 
@@ -1010,7 +1010,7 @@ IPRESSign <- function(
     dots <- list(...)
     args <- .matchArguments(dots, list(
         exprData = datasetm_n, geneSets = sign_list))
-    
+
     gsvaPar <- do.call(ssgseaParam, args)
     gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
     score <- rowMeans(vapply(
@@ -1369,7 +1369,7 @@ DNArepSign <- function(
 #' function.
 #'
 #' @inherit EMTSign return
-#' 
+#'
 #' @importFrom GSVA ssgseaParam gsva
 #'
 #' @examples
@@ -1638,42 +1638,42 @@ CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
 APMSign <- function(
     dataset, nametype = "SYMBOL", inputType = "microarray",
     author = "Wang", whichAssay = "norm_expr", hgReference = "hg38", ...) {
-  
+
   .consistencyCheck(nametype, "APMSign", author)
-  
+
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   if (author == "Wang") {
     sign_df <- APM_Wang
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-    
+
     .percentageOfGenesUsed("APMSign", datasetm, sign_df$SYMBOL)
-    
+
     dots <- list(...)
     args <- .matchArguments(dots, list(
       exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Gaussian"))
-    
+
     gsvaPar <- do.call(gsvaParam, args)
     score <- gsva(gsvaPar, verbose=FALSE)
     score <- as.vector(score)
-    
+
   } else if (author == "Thompson") {
-    
+
     dataset <- .dataTransformation(
       dataset, datasetm, "CPM", hgReference, nametype)
     datasetm_n <- as.matrix(assays(dataset)[["CPM"]])
     datasetm_n <- log2(datasetm_n+1)
-    
+
     sign_df <- APM_Thompson
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-    
+
     .percentageOfGenesUsed("APMSign", datasetm_n, sign_df$SYMBOL)
-    
+
     z_score <- t(
       scale(t(datasetm_n[intersect(sign_df$SYMBOL, rownames(datasetm_n)), ])))
     score <- colSums(log2(z_score-min(z_score)+1))
   }
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = paste0("APM_", author), datasetm))
@@ -1692,23 +1692,23 @@ APMSign <- function(
 #' MPSSign(dataset = ovse)
 #'
 #' @export
-MPSSign <- function(dataset, nametype = "SYMBOL", 
+MPSSign <- function(dataset, nametype = "SYMBOL",
                     whichAssay = "norm_expr", hgReference = "hg38"){
-  
+
   .consistencyCheck(nametype, "MPSSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- MPS_PerezGuijarro
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   dataset <- .dataTransformation(
-    dataset = dataset, data = datasetm, trans = "FPKM", 
+    dataset = dataset, data = datasetm, trans = "FPKM",
     hgReference = hgReference, nametype = nametype)
   datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
-  
-  score <- .coeffScore(sdata = sign_df, 
+
+  score <- .coeffScore(sdata = sign_df,
                        datasetm = datasetm_n, namesignature = "MPSSign")
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = "MPS_PerezGuijarro", datasetm))
@@ -1716,7 +1716,7 @@ MPSSign <- function(dataset, nametype = "SYMBOL",
 
 
 #' Immune-Related Genes Signature
-#' 
+#'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
 #'
@@ -1727,16 +1727,16 @@ MPSSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @export
 IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
-  
+
   .consistencyCheck(nametype, "IRGSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- IRG_Yang
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
-  score <- .coeffScore(sdata = sign_df, 
+
+  score <- .coeffScore(sdata = sign_df,
                        datasetm = datasetm, namesignature = "IRGSign")
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = "IRG_Yang", datasetm))
@@ -1744,7 +1744,7 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 
 
 #' Pan-Fibroblast TGFB Response Signature
-#' 
+#'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
 #'
@@ -1755,57 +1755,57 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #'
 #' @export
 TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
-  
+
   .consistencyCheck(nametype, "TGFBSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- TGFB_Mariathasan
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   .percentageOfGenesUsed("TGFBSign", datasetm, sign_df$SYMBOL)
-  
-  pca<-prcomp(t(datasetm[rownames(datasetm) %in% TGFB_Mariathasan$SYMBOL, ]), 
+
+  pca<-prcomp(t(datasetm[rownames(datasetm) %in% TGFB_Mariathasan$SYMBOL, ]),
               scale = TRUE)$x
   score <- pca[, "PC1"]
-  
-  return(.returnAsInput(userdata = dataset, result = score, 
+
+  return(.returnAsInput(userdata = dataset, result = score,
                         SignName = "TGFB_Mariathasan", datasetm))
 }
-  
+
 
 #' Adenosine Signaling Signature
-#' 
+#'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsvaParam}}
 #' function.
 #'
 #' @inherit EMTSign return
-#' 
+#'
 #' @importFrom GSVA gsvaParam gsva
-#' 
+#'
 #' @examples
 #' data(ovse)
 #' ADOSign(dataset = ovse)
 #'
 #' @export
-ADOSign <- function(dataset, nametype = "SYMBOL", 
+ADOSign <- function(dataset, nametype = "SYMBOL",
                     whichAssay = "norm_expr", ...){
-  
+
   .consistencyCheck(nametype, "ADOSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- ADO_Sidders
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   .percentageOfGenesUsed("ADOSign", datasetm, sign_df$SYMBOL)
-  
+
   dots <- list(...)
   args <- .matchArguments(dots, list(
     exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Poisson"))
   gsvaPar <- do.call(gsvaParam, args)
   score <- as.vector(gsva(gsvaPar, verbose=FALSE))
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score,
     SignName = "ADO_Sidders", datasetm))
