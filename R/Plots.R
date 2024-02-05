@@ -122,8 +122,8 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 #'
 #' @return A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 #'
-#' @importFrom ComplexHeatmap Heatmap rowAnnotation '%v%' HeatmapAnnotation
-#' @importFrom magrittr '%>%'
+#' @importFrom ComplexHeatmap Heatmap rowAnnotation %v% HeatmapAnnotation
+#' @importFrom magrittr %>%
 #' @importFrom dplyr group_by summarise_all
 #' @importFrom SummarizedExperiment colData
 #' @importFrom grid gpar
@@ -233,7 +233,7 @@ geneHeatmapSignPlot <- function(
 #'
 #' @return A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 #'
-#' @importFrom ComplexHeatmap Heatmap '%v%'
+#' @importFrom ComplexHeatmap Heatmap %v%
 #' @importFrom SummarizedExperiment colData
 #'
 #' @examples
