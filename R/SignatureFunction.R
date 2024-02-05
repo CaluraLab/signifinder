@@ -1742,4 +1742,34 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
     userdata = dataset, result = score,
     SignName = "IRG_Yang", datasetm))
 }
+
+
+#' Pan-Fibroblast TGFB Response Signature
+#' 
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#' @examples
+#' data(ovse)
+#' TGFBSign(dataset = ovse)
+#'
+#' @export
+TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "TGFBSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- TGFB_Mariathasan
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed("TGFBSign", datasetm, sign_df$SYMBOL)
+  
+  pca<-prcomp(t(datasetm[rownames(datasetm) %in% TGFB_Mariathasan$SYMBOL, ]), 
+              scale = TRUE)$x
+  score <- pca[, "PC1"]
+  
+  return(.returnAsInput(userdata = dataset, result = score, 
+                        SignName = "TGFB_Mariathasan", datasetm))
+}
   

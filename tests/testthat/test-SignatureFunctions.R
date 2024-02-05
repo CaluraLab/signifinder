@@ -217,3 +217,13 @@ test_that("IRGSign work", {
   expect_type(colData(myres)[, "IRG_Yang"], "double")
   expect_message(IRGSign(rmatrix), "100")
 })
+
+test_that("TGFBSign work", {
+  rmatrix <- .fakeData("TGFB_Mariathasan")
+  myres <- TGFBSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("TGFB_Mariathasan" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "TGFB_Mariathasan"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "TGFB_Mariathasan"], "double")
+  expect_message(TGFBSign(rmatrix), "100")
+})
