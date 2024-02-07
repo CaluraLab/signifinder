@@ -150,7 +150,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         "MitoticIndex_Yang", "Autophagy_Xu", "Autophagy_Wang",
         "Autophagy_ChenH", "CellCycle_Lundberg", "IPRES_Hugo", "CIS_Robertson",
         "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson", "APM_Thompson",
-        "APM_Wang", "MPS_PerezGuijarro", "IRG_Yang", "TGFB_Mariathasan", 
+        "APM_Wang", "MPS_PerezGuijarro", "IRG_Yang", "TGFB_Mariathasan",
         "ADO_Sidders"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
@@ -285,7 +285,7 @@ setMethod(".returnAsInput",
         namesignature, datasetm, sdata$SYMBOL, detail, author)
     sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
     columnNA <- .managena(datasetm = datasetm, genes = sdata$SYMBOL)
-    score <- colSums(datasetm[sdata$SYMBOL, ] * sdata$coeff, na.rm = TRUE)
+    score <- colSums(datasetm[sdata$SYMBOL, ,drop=FALSE] * sdata$coeff, na.rm = TRUE)
     score[columnNA > 0.9] <- NA
     return(score)
 }
