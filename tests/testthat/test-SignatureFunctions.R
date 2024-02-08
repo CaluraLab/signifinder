@@ -237,3 +237,13 @@ test_that("ADOSign work", {
   expect_type(colData(myres)[, "ADO_Sidders"], "double")
   expect_message(ADOSign(rmatrix), "100")
 })
+
+test_that("MITFlowPTENnegSign work", {
+  rmatrix <- .fakeData("MITFlowPTENneg_Cabrita")
+  myres <- MITFlowPTENnegSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("MITFlowPTENneg_Cabrita" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "MITFlowPTENneg_Cabrita"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "MITFlowPTENneg_Cabrita"], "double")
+  expect_message(MITFlowPTENnegSign(rmatrix), "100")
+})
