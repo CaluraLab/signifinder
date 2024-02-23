@@ -1813,3 +1813,37 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
     SignName = "ADO_Sidders", datasetm))
 }
 
+
+#' MITFlow/PTENneg Signature
+#' 
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' 
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#' MITFlowPTENnegSign(dataset = ovse)
+#'
+#' @export
+MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL", 
+                               whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "MITFlowPTENnegSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- MITFlowPTENneg_Cabrita
+  
+  .percentageOfGenesUsed("MITFlowPTENnegSign", datasetm, sign_df$SYMBOL)
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
+  datasetm <- log2(datasetm+1)
+  score <- cor(datasetm[sign_df$SYMBOL,], sign_df$Coefficient, 
+               method = "pearson")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = as.vector(score),
+    SignName = "MITFlowPTENneg_Cabrita", datasetm))
+  }
+
+
