@@ -42,6 +42,9 @@ A \code{\link[ComplexHeatmap]{Heatmap-class}} object.
 }
 \description{
 Given one or multiple signatures, the function returns a heatmap of scores.
+Since each signature has its own method to compute the score then to plot
+several signatures together the scores are transformed into z-score,
+individually for each signature.
 }
 \examples{
 data(ovse)

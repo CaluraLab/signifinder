@@ -36,12 +36,13 @@ used to compute the evaluation plot.}
 A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Given multiple signatures, it returns a multipanel plot that shows: (i)
-the percentage of genes from the signature gene list that are actually
-available in the dataset; (ii) the log2 average expressions of these genes;
-(iii) the percentage of zero values in them; (iv) the correlation between
-scores and total read counts; (v) the correlation between scores and the
-percentage of total zero values.
+A multipanel plot that shows: (i) a value of the goodness of a signature for
+the user's dataset. This is a combination of the parameters shown in the
+other pannels; (ii) the percentage of genes from the signature gene list that
+are actually available in the dataset; (iii) the percentage of zero values in
+the signature genes, for each sample; (iv) the correlation between signature
+scores and the sample total read counts; (v) the correlation between
+signature scores and the percentage of the sample total zero values.
 }
 \examples{
 data(ovse)

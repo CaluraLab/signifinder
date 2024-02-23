@@ -3,7 +3,7 @@
 #' Scatterplot for a single signature
 #'
 #' Given signatures' scores, it returns a scatterplot of samples' scores and a
-#' barplot of the density distributions of samples' scores.
+#' barplot of the density distribution of samples' scores.
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
@@ -214,6 +214,9 @@ geneHeatmapSignPlot <- function(
 #' Global Heatmap of Signatures' scores.
 #'
 #' Given one or multiple signatures, the function returns a heatmap of scores.
+#' Since each signature has its own method to compute the score then to plot
+#' several signatures together the scores are transformed into z-score,
+#' individually for each signature.
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
@@ -270,14 +273,19 @@ heatmapSignPlot <- function(
         data <- data[, intersect(c(whichSign, clusterBySign), colnames(data))]}
     keepnames <- rownames(data)
 
-    data <- vapply(data, .range01, double(nrow(data)))
-    row.names(data) <- keepnames
+    if(length(unique(unlist(lapply(strsplit(
+        x = colnames(data), split = "_"),
+        function(i) paste(i[1:2], collapse = "_"))))) > 1){
+        data <- apply(data, 2, scale)
+        row.names(data) <- keepnames
+        legendName = "z score"
+    } else {legendName = "score"}
     data <- as.matrix(t(data))
 
     dots <- list(...)
     htargs <- .matchArguments(
         dots, list(
-            name = "scaled\nscore", show_column_names = FALSE, col = mycol))
+            name = legendName, show_column_names = FALSE, col = mycol))
 
     if (!is.null(sampleAnnot)) {
         if (splitBySampleAnnot) {
@@ -514,7 +522,7 @@ survivalSignPlot <- function(
 
 #' Ridgeline Plot
 #'
-#' Given multiple signatures, the function plots densities scores.
+#' Given multiple signatures, the function plots scores density distribution.
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
@@ -603,12 +611,13 @@ ridgelineSignPlot <- function(
 
 #' Evaluation Plot
 #'
-#' Given multiple signatures, it returns a multipanel plot that shows: (i)
-#' the percentage of genes from the signature gene list that are actually
-#' available in the dataset; (ii) the log2 average expressions of these genes;
-#' (iii) the percentage of zero values in them; (iv) the correlation between
-#' scores and total read counts; (v) the correlation between scores and the
-#' percentage of total zero values.
+#' A multipanel plot that shows: (i) a value of the goodness of a signature for
+#' the user's dataset. This is a combination of the parameters shown in the
+#' other pannels; (ii) the percentage of genes from the signature gene list that
+#' are actually available in the dataset; (iii) the percentage of zero values in
+#' the signature genes, for each sample; (iv) the correlation between signature
+#' scores and the sample total read counts; (v) the correlation between
+#' signature scores and the percentage of the sample total zero values.
 #'
 #' @param data an object of type \linkS4class{SummarizedExperiment}. Output of
 #' the signatures functions.
@@ -703,12 +712,13 @@ evaluationSignPlot <- function(
         coverage_cor <- cor(x = c_conte, i)
         zeros_cor <- cor(x = z_conte, i)
 
-        if (n_shared==1){
-            coverage_sign <- log2(dataset[shared,] + 1)
-        } else {
-            coverage_sign <- log2(colMeans(dataset[shared,]) + 1)}
+        goodness <- (2*perc_genes + 2*(100-median(perc_zero)) +
+                         (1-abs(coverage_cor))*100 + (1-abs(zeros_cor))*100)/6
+        goodTab <- c(perc_genes, 100-median(perc_zero), (
+            1-abs(coverage_cor))*50, (1-abs(zeros_cor))*50)
 
-        list(perc_genes, perc_zero, coverage_cor, zeros_cor, coverage_sign)
+        list(perc_genes, perc_zero, coverage_cor,
+             zeros_cor, goodness, goodTab)
     })
     names(res) <- signs
 
@@ -718,55 +728,72 @@ evaluationSignPlot <- function(
             data.frame(p_zeros = res[[x]][[2]], signature = signs[x]) ))
     coverage_cor <- unlist(lapply(res, function(x) round(x[[3]], 2) ))
     zeros_cor <- unlist(lapply(res, function(x) round(x[[4]], 2) ))
-    matrix_coverage_sign <- do.call(rbind, lapply(
-        seq_along(signs), function(x)
-            data.frame(coverage = res[[x]][[5]], signature = signs[x]) ))
+    goodness <- unlist(lapply(res, function(x) round(x[[5]], 1) ))
+    order_sign <- factor(signs, levels = names(sort(goodness)))
+    matrix_percent_zeros$signature <- factor(
+        matrix_percent_zeros$signature, levels = names(sort(goodness)))
+    goodTab <- do.call(rbind, lapply(seq_along(res), function(x){
+        data.frame(
+            "class" = c("perc_genes", "perc_zero", "cov_cor", "zero_cor"),
+            "signature" = rep(signs[x], 4), "len" = res[[x]][[6]]/3 )
+    }))
+    goodTab$signature <- factor(
+        goodTab$signature, levels = names(sort(goodness)))
+    goodTab$class <- factor(
+        goodTab$class, levels = c(
+            "zero_cor", "cov_cor", "perc_zero", "perc_genes"))
 
-    g1 <- ggplot(mapping = aes(x = perc_genes, y = names(perc_genes))) +
-        geom_bar(stat = "identity", fill = "#a0d83c") +
+    g0 <- ggplot(mapping = aes(x = goodTab$len, y = goodTab$signature)) +
+        geom_bar(aes(
+            fill = goodTab$class), stat = "identity", show.legend = FALSE) +
         geom_text(aes(
-            x = 8, y = names(perc_genes), label = paste0(
+            x = goodness+.1, y = order_sign,
+            label = as.character(goodness), hjust = 0)) +
+        xlim(0, 102) +
+        scale_fill_manual(values = c(
+            "perc_genes" = "#eec55a", "perc_zero" = "#7474cc",
+            "cov_cor" = "#C08497", "zero_cor" = "#76bce4")) +
+        labs(x = "goodness of signature \nfor the dataset") +
+        theme_minimal() +
+        theme(axis.title.y = element_blank(), axis.ticks.y = element_blank())
+
+    g1 <- ggplot(mapping = aes(x = perc_genes, y = order_sign)) +
+        geom_bar(stat = "identity", color = "#eec55a", fill = "#eec55a") +
+        geom_text(aes(
+            x = 8, y = order_sign, label = paste0(
                 as.character(round(perc_genes)), "%"), hjust = 0)) +
         xlim(0, 100) +
         labs(x = "% of signature genes\nin the dataset") +
         theme_light() +
-        theme(axis.title.y = element_blank(), axis.ticks.y = element_blank())
-
-    g2 <- ggplot(matrix_coverage_sign, aes(
-        x = matrix_coverage_sign$coverage,
-        y = matrix_coverage_sign$signature)) +
-        geom_boxplot(outlier.size = 1, fill = "grey90") +
-        labs(x = "log average expression\nof signature genes") +
-        theme_light() +
         theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
-                axis.ticks.y=element_blank())
+              axis.ticks.y = element_blank())
 
-    g3 <- ggplot(matrix_percent_zeros, aes(
+    g2 <- ggplot(matrix_percent_zeros, aes(
         x = matrix_percent_zeros$p_zeros, y = matrix_percent_zeros$signature)) +
-        geom_boxplot(outlier.size = 1, fill = "grey90") +
+        geom_boxplot(outlier.size = 1, fill = "#ababe0", color = "#7474cc") +
         labs(x = "% of zero values\nof signature genes") + xlim(0, 100) +
         theme_light() +
         theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
-                axis.ticks.y=element_blank())
+              axis.ticks.y=element_blank())
 
-    color_point <- c("coverage" = "#D83CA0", "zeros" = "#3CA0D8")
-    g4 <- ggplot() +
+    color_point <- c("coverage" = "#C08497", "zeros" = "#76bce4")
+    g3 <- ggplot() +
         geom_vline(xintercept = 0, linetype = "dashed") +
-        geom_point(aes(x = coverage_cor, y = names(coverage_cor),
-                        color = "coverage"), size = 2) +
-        geom_point(aes(x = zeros_cor, y = names(zeros_cor),
-                        color = "zeros"), size = 2) +
+        geom_point(aes(x = coverage_cor, y = order_sign,
+                       color = "coverage"), size = 2) +
+        geom_point(aes(x = zeros_cor, y = order_sign,
+                       color = "zeros"), size = 2) +
         xlim(-1, 1) +
         labs(x = "correlation") +
         scale_color_manual(
             values = color_point,
             labels = c("total expression", "total percentage\nof zeros"),
-            name = "correlation between\nsignature score and") +
+            name = "correlation between\nsignature score and:") +
         theme_light() +
         theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
-                axis.ticks.y=element_blank())
+              axis.ticks.y=element_blank())
 
-    g <- plot_grid(g1, g2, g3, g4, rel_widths = c(1.3, 1, 1, 1),
-                    nrow = 1, align = "h", axis = "b")
+    g <- plot_grid(g0, g1, g2, g3, rel_widths = c(1, .7, .7, 1.1),
+              nrow = 1, align = "h", axis = "b")
     return(g)
 }

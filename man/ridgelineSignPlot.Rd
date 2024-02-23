@@ -34,7 +34,7 @@ used to compute the ridgeline plot.}
 A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Given multiple signatures, the function plots densities scores.
+Given multiple signatures, the function plots scores density distribution.
 }
 \examples{
 data(ovse)

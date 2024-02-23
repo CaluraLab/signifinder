@@ -21,7 +21,7 @@ A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
 Given signatures' scores, it returns a scatterplot of samples' scores and a
-barplot of the density distributions of samples' scores.
+barplot of the density distribution of samples' scores.
 }
 \examples{
 data(ovse)
