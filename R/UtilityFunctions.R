@@ -419,8 +419,8 @@ setMethod(".returnAsInput",
 
 #' Show Available Signatures
 #'
-#' It shows a table containing all the information of the signatures collected
-#' in the package.
+#' It returns a table with all the information of the signatures collected
+#' in signifinder.
 #'
 #' @param tumor character vector saying the type of tumors for which signatures
 #' are developed. Used to filter the signatures in the table.
@@ -429,7 +429,7 @@ setMethod(".returnAsInput",
 #' @param topic character vector saying the signature topics. Used to filter
 #' the signatures in the table.
 #' @param requiredInput character string saying the type of data required in
-#' input by the signature. Either one of "microarray" or "rnaseq". Used to
+#' input by the signature. Either one of "microarray", "rnaseq" or "sc". Used to
 #' filter the signatures in the table.
 #' @param description logical. If TRUE it shows the signature's description.
 #'
@@ -492,8 +492,11 @@ availableSignatures <- function(
 #' \code{\link[SpatialExperiment]{SpatialExperiment}}.
 #' @param nametype character string saying the type of gene name ID (row names
 #' in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".
-#' @param inputType character string saying the type of data you are using.
-#' Either one of "microarray" or "rnaseq".
+#' @param inputType character vector saying the type of data you are using.
+#' When working with bulk data this should be either one of "microarray" or
+#' "rnaseq". When working with single-cell data and spatial transcriptomics data
+#' this could be "sc" to compute only signatures developed by single-cell data
+#' or c("rnaseq", "sc") to compute all the signatures.
 #' @param whichAssay integer scalar or string indicating which assay of
 #' dataset to use.
 #' @param whichSign character vector saying the signatures to compute.
@@ -518,13 +521,15 @@ multipleSign <- function(
         dataset, nametype = "SYMBOL", inputType = "rnaseq",
         whichAssay = "norm_expr", whichSign = NULL, tumor = NULL,
         tissue = NULL, topic = NULL, ...) {
-    argg <- c(as.list(environment()), list(...))
     st <- availableSignatures(
         tumor = tumor,
         tissue = tissue,
         topic = topic,
-        requiredInput = inputType
-    )
+        requiredInput = inputType)
+
+    inputType <- inputType[!inputType=="sc"]
+    argg <- c(as.list(environment()), list(...))
+    argg <- argg[!names(argg)=="st"]
 
     if (!is.null(whichSign)) {
         st <- st[grepl(paste(whichSign, collapse = "|"), st$signature), ]
@@ -555,3 +560,37 @@ multipleSign <- function(
     }
     return(dataset)
 }
+
+
+#' Get Signature Gene List
+#'
+#' @description This function returns the list of genes of a signature.
+#'
+#' @param whichSign name of the signature. The names are those in column
+#' 'signature' from the table which is obtained by
+#' \code{\link[signifinder]{availableSignatures}}.
+#'
+#' @return A dataframe object with "SYMBOL" in the first column. Some signatures
+#' have also additional colums: "coeff" for coefficients that weigh the gene
+#' contributions; "class" for a classification that divides the signature in
+#' two or more groups. Few signatures have other specific columns.
+#'
+#' @examples
+#' getSignGenes("EMT_Miow")
+#'
+#' @export
+getSignGenes <- function(whichSign) {
+    if (!(whichSign %in% signatureTable$signature)) {
+        stop("This signature is not present in signifinder")}
+
+    if(whichSign=="Combined_Thompson"){
+        message(
+        "Combined_Thompson is a combination of EMT_Thompson and
+        Tinflam_Thompson signatures.")
+    } else {
+        signGene <- eval(parse(text = whichSign))
+        rownames(signGene) <- seq_len(nrow(signGene))
+        return(signGene)
+    }
+}
+

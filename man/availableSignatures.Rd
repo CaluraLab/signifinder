@@ -23,7 +23,7 @@ signatures are developed. Used to filter the signatures in the table.}
 the signatures in the table.}
 
 \item{requiredInput}{character string saying the type of data required in
-input by the signature. Either one of "microarray" or "rnaseq". Used to
+input by the signature. Either one of "microarray", "rnaseq" or "sc". Used to
 filter the signatures in the table.}
 
 \item{description}{logical. If TRUE it shows the signature's description.}
@@ -48,8 +48,8 @@ A data frame with 53 rows and 12 variables:
 }
 }
 \description{
-It shows a table containing all the information of the signatures collected
-in the package.
+It returns a table with all the information of the signatures collected
+in signifinder.
 }
 \examples{
 availableSignatures()

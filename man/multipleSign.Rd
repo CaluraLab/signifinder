@@ -26,8 +26,11 @@ Alternatively, an object of type \linkS4class{SummarizedExperiment},
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 
-\item{inputType}{character string saying the type of data you are using.
-Either one of "microarray" or "rnaseq".}
+\item{inputType}{character vector saying the type of data you are using.
+When working with bulk data this should be either one of "microarray" or
+"rnaseq". When working with single-cell data and spatial transcriptomics data
+this could be "sc" to compute only signatures developed by single-cell data
+or c("rnaseq", "sc") to compute all the signatures.}
 
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
