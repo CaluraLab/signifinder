@@ -17,17 +17,17 @@ Description: signifinder is an R package for computing and exploring a
 License: AGPL-3
 biocViews: GeneExpression, GeneTarget, ImmunoOncology, BiomedicalInformatics, 
     RNASeq, Microarray, ReportWriting, Visualization, SingleCell, Spatial
-Imports: ggplot2, org.Hs.eg.db, patchwork, AnnotationDbi, BiocGenerics, 
-    ComplexHeatmap, cowplot, DGEobj.utils, GSVA, IRanges, SummarizedExperiment, 
-    consensusOV, dplyr, ensembldb, ggridges, grid, magrittr, matrixStats, 
-    maxstat, methods, openair, RColorBrewer, TxDb.Hsapiens.UCSC.hg19.knownGene, 
-    TxDb.Hsapiens.UCSC.hg38.knownGene, stats, survival, survminer, viridis, 
-    SpatialExperiment
+Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, cowplot, 
+    DGEobj.utils, dplyr, ensembldb, ggplot2, ggridges, GSVA, IRanges, magrittr, 
+    matrixStats, maxstat, methods, openair, org.Hs.eg.db, patchwork, 
+    RColorBrewer, TxDb.Hsapiens.UCSC.hg19.knownGene, 
+    TxDb.Hsapiens.UCSC.hg38.knownGene, SpatialExperiment, stats, 
+    SummarizedExperiment, survival, survminer, viridis
 Encoding: UTF-8
 RoxygenNote: 7.3.1
 Depends: R (>= 4.3.0)
 LazyData: false
-Suggests: BiocStyle, knitr, kableExtra, testthat (>= 3.0.0), edgeR, limma
+Suggests: BiocStyle, edgeR, grid, kableExtra, knitr, limma, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 BugReports: https://github.com/CaluraLab/signifinder/issues

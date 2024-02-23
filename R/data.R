@@ -18,8 +18,6 @@
 #'
 #' @docType data
 #'
-#' @return An object of class \linkS4class{SummarizedExperiment}.
-#'
 #' @usage data(ovse)
 #'
 "ovse"

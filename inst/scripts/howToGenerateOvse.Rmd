@@ -36,7 +36,7 @@ assay(OVse) <- EDASeq::betweenLaneNormalization(as.matrix(assay(OVse)),
 Then, we compute the scores for the ovarian subgroups using the `consensusOVSign` function from `signifinder`, and we assign to each sample the subgroup with the highest score, following the procedure suggested by Chen et al, 2018, Clinical Cancer Research.
 ```{r}
 ## Compute consensusOV
-OVse <- consensusOVSign(OVse)
+OVse <- consensusOVSign(OVse, whichAssay = 1)
 
 cons_names <- c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", 
                 "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES")
@@ -95,7 +95,7 @@ colData(ovse) <- cbind(colData(ovse), os, status)
 To compute the signatures, we firstly transform normalized counts into TPM, CPM and FPKM and add these data inside the `ovse` object.
 ```{r}
 ## Compute TPM, CPM and FPKM
-data <- signifinder:::.getMatrix(ovse)
+data <- signifinder:::.getMatrix(ovse, whichAssay = 1)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene::TxDb.Hsapiens.UCSC.hg19.knownGene
 exons.db <- ensembldb::exonsBy(txdb, by = "gene")
 g <- rownames(ovse)

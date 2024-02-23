@@ -1483,7 +1483,8 @@ glioCellStateSign <- function(
 
     agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
     ea_bin <- split(
-        sort(agg_exp, na.last = TRUE), factor(sort(rank(agg_exp) %% 30)))
+        sort(agg_exp, na.last = TRUE), factor(
+            sort(round(x = rank(agg_exp) %% 30, digits = 0))))
     ea_bin <- lapply(ea_bin, function(x){names(x)})
 
     scores <- as.data.frame(lapply(sign_list, function(x){
@@ -1557,7 +1558,8 @@ melStateSign <- function(
 
   agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
   ea_bin <- split(
-    sort(agg_exp, na.last = TRUE), factor(sort(rank(agg_exp) %% 25)))
+    sort(agg_exp, na.last = TRUE), factor(
+        sort(round(x = rank(agg_exp) %% 25, digits = 0))))
   ea_bin <- lapply(ea_bin, function(x){names(x)})
 
   scores <- as.data.frame(lapply(sign_list, function(x){
