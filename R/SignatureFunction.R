@@ -1847,3 +1847,39 @@ MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
   }
 
 
+#' LRRC15 CAF Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#'
+#' @importFrom sparrow GeneSetDb scoreSingleSamples
+#'
+#' @examples
+#' data(ovse)
+#' LRRC15CAFSign(dataset = ovse)
+#'
+#' @export
+LRRC15CAFSign <- function(dataset, nametype = "SYMBOL",
+                          whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "LRRC15CAFSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- LRRC15CAF_Dominguez
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed("LRRC15CAFSign", datasetm, sign_df$SYMBOL)
+  
+  gdb <- list(LRRC15_CAF = sign_df$SYMBOL)
+  gdb <- GeneSetDb(gdb)
+  
+  datasetm <- log2(datasetm + 1)
+  score <- scoreSingleSamples(gdb, datasetm, methods = 'ewm')
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score$score,
+    SignName = "LRRC15CAF_Dominguez", datasetm))
+}
+

@@ -247,3 +247,13 @@ test_that("MITFlowPTENnegSign work", {
   expect_type(colData(myres)[, "MITFlowPTENneg_Cabrita"], "double")
   expect_message(MITFlowPTENnegSign(rmatrix), "100")
 })
+
+test_that("LRRC15CAFSign work", {
+  rmatrix <- .fakeData("LRRC15CAF_Dominguez")
+  myres <- LRRC15CAFSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("LRRC15CAF_Dominguez" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "LRRC15CAF_Dominguez"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "LRRC15CAF_Dominguez"], "double")
+  expect_message(LRRC15CAFSign(rmatrix), "100")
+})
