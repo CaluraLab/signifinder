@@ -1815,10 +1815,10 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
 
 
 #' MITFlow/PTENneg Signature
-#' 
+#'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' 
+#'
 #' @inherit EMTSign return
 #'
 #' @examples
@@ -1826,21 +1826,21 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
 #' MITFlowPTENnegSign(dataset = ovse)
 #'
 #' @export
-MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL", 
+MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
                                whichAssay = "norm_expr"){
-  
+
   .consistencyCheck(nametype, "MITFlowPTENnegSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- MITFlowPTENneg_Cabrita
-  
+
   .percentageOfGenesUsed("MITFlowPTENnegSign", datasetm, sign_df$SYMBOL)
-  
+
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
   datasetm <- log2(datasetm+1)
-  score <- cor(datasetm[sign_df$SYMBOL,], sign_df$Coefficient, 
+  score <- cor(datasetm[sign_df$SYMBOL,], sign_df$Coefficient,
                method = "pearson")
-  
+
   return(.returnAsInput(
     userdata = dataset, result = as.vector(score),
     SignName = "MITFlowPTENneg_Cabrita", datasetm))
@@ -1861,23 +1861,23 @@ MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
 #' LRRC15CAFSign(dataset = ovse)
 #'
 #' @export
-LRRC15CAFSign <- function(dataset, nametype = "SYMBOL",
-                          whichAssay = "norm_expr"){
-  
+LRRC15CAFSign <- function(
+        dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+
   .consistencyCheck(nametype, "LRRC15CAFSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- LRRC15CAF_Dominguez
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   .percentageOfGenesUsed("LRRC15CAFSign", datasetm, sign_df$SYMBOL)
-  
+
   gdb <- list(LRRC15_CAF = sign_df$SYMBOL)
   gdb <- GeneSetDb(gdb)
-  
+
   datasetm <- log2(datasetm + 1)
   score <- scoreSingleSamples(gdb, datasetm, methods = 'ewm')
-  
+
   return(.returnAsInput(
     userdata = dataset, result = score$score,
     SignName = "LRRC15CAF_Dominguez", datasetm))
