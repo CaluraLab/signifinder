@@ -162,9 +162,12 @@ geneHeatmapSignPlot <- function(
         signval <- matrix(
             signval, nrow = 1,
             dimnames = list(whichSign, colnames(dataset)))
+        legendName = "score"
     } else {
-        signval <- vapply(signval, .range01, double(nrow(signval)))
-        signval <- as.matrix(t(signval))}
+        signval <- as.matrix(signval)
+        signval <- apply(signval, 2, scale)
+        signval <- t(signval)
+        legendName = "z score"}
 
     Gene <- NULL
     geneTable <- as.data.frame(do.call(rbind, lapply(whichSign, .GetGenes))) %>%
@@ -185,7 +188,7 @@ geneHeatmapSignPlot <- function(
     } else {htargs$matrix <- filtdataset}
 
     htargs_top <- c(
-        list(matrix = signval, name = "score", col = mycol1),
+        list(matrix = signval, name = legendName, col = mycol1),
         htargs[ !(names(htargs) %in% c("matrix", "name", "col")) ])
 
     if (length(whichSign) != 1) {
@@ -563,9 +566,9 @@ ridgelineSignPlot <- function(
             signs <- intersect(whichSign, colnames(tmp))}
     } else {stop("There are no signatures computed with signifinder in data")}
 
-    tmp <- as.data.frame(tmp[, signs])
+    tmp <- tmp[, signs]
+    tmp <- as.data.frame(apply(tmp, 2, scale))
     colnames(tmp) <- signs
-    tmp <- data.frame(vapply(tmp, .range01, double(nrow(tmp))))
 
     if (!is.null(groupByAnnot)) {
         if (length(groupByAnnot) != nrow(tmp)) {
@@ -592,19 +595,20 @@ ridgelineSignPlot <- function(
     }))
 
     dots <- list(...)
-    ridgeargs <- .matchArguments(dots, list(
-        alpha = 0.5, bandwidth = 0.05, scale = 1))
+    ridgeargs <- .matchArguments(dots, list(alpha = 0.5, scale = 1))
 
     if (is.null(groupByAnnot)) {
         x <- NULL
         g <- ggplot(tmp1, aes(x = score, y = signature, fill = after_stat(x))) +
             do.call(geom_density_ridges_gradient, ridgeargs) +
-            scale_fill_viridis_c(name = "score", option = "A")
+            scale_fill_viridis_c(name = "z score", option = "A") +
+            labs(x = "z score")
     } else {
         ridgeargs$mapping <- aes(fill = rep(groupByAnnot, n))
         g <- ggplot(tmp1, aes(x = score, y = signature)) +
             do.call(geom_density_ridges, ridgeargs) +
-            scale_fill_discrete(name = "Group")}
+            scale_fill_discrete(name = "Group") +
+            labs(x = "z score")}
         return(g)
 }
 
@@ -768,7 +772,7 @@ evaluationSignPlot <- function(
         theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
               axis.ticks.y = element_blank())
 
-    g2 <- ggplot(matrix_percent_zeros, aes(
+    g2 <- ggplot(mapping = aes(
         x = matrix_percent_zeros$p_zeros, y = matrix_percent_zeros$signature)) +
         geom_boxplot(outlier.size = 1, fill = "#ababe0", color = "#7474cc") +
         labs(x = "% of zero values\nof signature genes") + xlim(0, 100) +
@@ -787,13 +791,13 @@ evaluationSignPlot <- function(
         labs(x = "correlation") +
         scale_color_manual(
             values = color_point,
-            labels = c("total expression", "total percentage\nof zeros"),
-            name = "correlation between\nsignature score and:") +
+            labels = c("total expr", "total %\nof zeros"),
+            name = "correlation of\nscores with:") +
         theme_light() +
         theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
               axis.ticks.y=element_blank())
 
-    g <- plot_grid(g0, g1, g2, g3, rel_widths = c(1, .7, .7, 1.1),
+    g <- plot_grid(g0, g1, g2, g3, rel_widths = c(1, .7, .7, 1),
               nrow = 1, align = "h", axis = "b")
     return(g)
 }
