@@ -31,7 +31,6 @@
 #' \linkS4class{SummarizedExperiment} object is created in which scores are
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
-
 #' @importFrom GSVA ssgseaParam gsva
 #' @importFrom stats prcomp
 #'
