@@ -77,7 +77,11 @@ SignatureNames <- c(
     "TGFB_Mariathasan",
     "ADO_Sidders",
     "MITFlowPTENneg_Cabrita",
-    "LRRC15CAF_Dominguez"
+    "LRRC15CAF_Dominguez",
+    "BreastState_Wu_Basal",
+    "BreastState_Wu_Her2E",
+    "BreastState_Wu_LumA",
+    "BreastState_Wu_LumB"
 )
 
 #' @importFrom viridis magma viridis
@@ -138,6 +142,12 @@ my_colors <- colorRampPalette(my_colors)(100)
         name_emt <- .GetGenes("EMT_Thompson")[ , "Gene"]
         name_inf <- .GetGenes("Tinflam_Thompson")[ , "Gene"]
         g <- union(name_emt, name_inf)
+    } else if (name %in% c(
+      "BreastState_Wu_Basal", "BreastState_Wu_Her2E",
+      "BreastState_Wu_LumA", "BreastState_Wu_LumB"
+    )) {
+      sname <- substring(name, 16)
+      g <- BreastState_Wu$SYMBOL[BreastState_Wu$class == sname]
     }
       else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye",

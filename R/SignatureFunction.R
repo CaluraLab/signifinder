@@ -31,6 +31,7 @@
 #' \linkS4class{SummarizedExperiment} object is created in which scores are
 #' added in the \code{\link[SummarizedExperiment]{colData}} section.
 #'
+
 #' @importFrom GSVA ssgseaParam gsva
 #' @importFrom stats prcomp
 #'
@@ -58,10 +59,10 @@ EMTSign <- function(
             "EMTSign", datasetm, EL$SYMBOL, "epithelial", author = author)
         .percentageOfGenesUsed(
             "EMTSign", datasetm, ML$SYMBOL, "mesenchymal", author = author)
-
+        
         gene_sets <- list( Epithelial = EL$SYMBOL, Mesenchymal = ML$SYMBOL)
         names(gene_sets) <- paste0("EMT_Miow_", names(gene_sets))
-
+        
         dots <- list(...)
         args <- .matchArguments(dots, list(
           exprData = datasetm, geneSets = gene_sets, normalize = FALSE))
@@ -954,7 +955,7 @@ PassONSign <- function(
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     .percentageOfGenesUsed("PassONSign", datasetm_n, sign_df$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
         exprData = datasetm_n, geneSets = sign_list))
@@ -1006,7 +1007,7 @@ IPRESSign <- function(
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     .percentageOfGenesUsed("IPRESSign", datasetm_n, sign_df$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
         exprData = datasetm_n, geneSets = sign_list))
@@ -1014,7 +1015,7 @@ IPRESSign <- function(
     gsvaPar <- do.call(ssgseaParam, args)
     gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
     score <- rowMeans(vapply(
-        as.data.frame(t(gsva_matrix)), scale, double(ncol(gsva_matrix))))
+        as.data.frame(t(gsva_score)), scale, double(ncol(gsva_score))))
 
     return(.returnAsInput(
         userdata = dataset, result = score,
@@ -1187,7 +1188,7 @@ ECMSign <- function(
     gene_sets <- list(
         ECM_Chakravarthy_up = sign_up$SYMBOL,
         ECM_Chakravarthy_down = sign_down$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
         exprData = datasetm, geneSets = gene_sets, normalize = FALSE))
@@ -1394,7 +1395,7 @@ IPSOVSign <- function(
     sign_list <- split(sign_df$SYMBOL, sign_df$class)
 
     .percentageOfGenesUsed("IPSOVSign", datasetm, sign_df$SYMBOL)
-
+    
     dots <- list(...)
     args <- .matchArguments(dots, list(
         exprData = datasetm_n, geneSets = sign_list, normalize = FALSE))
@@ -1881,5 +1882,71 @@ LRRC15CAFSign <- function(
   return(.returnAsInput(
     userdata = dataset, result = score$score,
     SignName = "LRRC15CAF_Dominguez", datasetm))
+}
+
+
+#' Breast Cancer Cellular States Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+breastStateSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "breastStateSign")
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  datasetm_n <- log2(datasetm + 1)
+  
+  sign_df <- BreastState_Wu
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "Basal"], "Basal")
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "Her2E"], "Her2E")
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "LumA"], "LumA")
+  .percentageOfGenesUsed(
+    "breastStateSign", datasetm_n,
+    sign_df$SYMBOL[sign_df$class == "LumB"], "LumB")
+
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0("BreastState_Wu_", names(sign_list))
+  
+  datasetm_n <- datasetm_n[,isMalignant]
+  
+  scores <- as.data.frame(lapply(sign_list, function(x) {
+    if (length(x)>1) {score <- colMeans(datasetm_n[x,], na.rm = TRUE)
+    } else {score <- datasetm_n[x,]}
+    score[isMalignant] <- score
+  }))
+  
+  return(.returnAsInput(
+    userdata = dataset, result = t(scores),
+    SignName = "BreastState_Wu", datasetm_n))
 }
 
