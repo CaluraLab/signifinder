@@ -270,3 +270,15 @@ test_that("breastStateSign work", {
   expect_type(colData(myres)[,"BreastState_Wu_LumB"], "double")
   expect_message(breastStateSign(rmatrix, isMalignant = malign), "100")
 })
+
+test_that("ICBResponseSign work", {
+  pyrnames <- c("ICBResponse_Chen_responder", "ICBResponse_Chen_nonresponder")
+  pname <- sample(pyrnames, 1)
+  rmatrix <- .fakeData(pname)
+  myres <- ICBResponseSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true(pname %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, pname], ncol(assay(myres)))
+  expect_type(colData(myres)[, pname], "double")
+  expect_message(ICBResponseSign(rmatrix), "100")
+})
