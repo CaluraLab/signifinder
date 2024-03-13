@@ -1963,31 +1963,40 @@ breastStateSign <- function(
 #' ICBResponseSign(dataset = ovse)
 #'
 #' @export
-ICBResponseSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+ICBResponseSign <- function(dataset, nametype = "SYMBOL", 
+                            whichAssay = "norm_expr"){
   
+  .consistencyCheck(nametype, "ICBResponseSign")
   datasetm <- .getMatrix(dataset, whichAssay)
   
   sign_df <- ICBResponse_Chen
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
-  resp <- sign_df[grep("^response", sign_df$class),]
-  nresp <- sign_df[grep("non-response", sign_df$class),]
-  score <- data.frame(row.names = colnames(datasetm))
+  .percentageOfGenesUsed(
+    "ICBResponseSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "responder"], "responder")
+  .percentageOfGenesUsed(
+    "ICBResponseSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "nonresponder"], "nonresponder")
+  
+  resp <- sign_df[grep("^responder", sign_df$class),]
+  nresp <- sign_df[grep("nonresponder", sign_df$class),]
+  score <- list()
   
   datasetm_r <- datasetm[intersect(rownames(datasetm), resp$SYMBOL), ]
   sup_resp <- colSums(datasetm_r)
-  corr_resp <- apply(datasetm_r, 1, function(x) cor(x, sup_resp, method = "pearson"))
-  score$response <- colSums(datasetm_r * corr_resp)
+  corr_resp <- apply(datasetm_r, 1, 
+                     function(x) cor(x, sup_resp, method = "pearson"))
+  score[["ICBResponse_Chen_responder"]] <- colSums(datasetm_r * corr_resp)
   
   datasetm_n <- datasetm[intersect(rownames(datasetm), nresp$SYMBOL), ]
   sup_nresp <- colSums(datasetm_n)
-  corr_nresp <- apply(datasetm_n, 1, function(x) cor(x, sup_nresp, method = "pearson"))
-  score$nonresponse <- colSums(datasetm_n * corr_nresp)
-  
-  colnames(score) <- c("ICBResponse_Chen", "ICBNonresponse_Chen")
+  corr_nresp <- apply(datasetm_n, 1, 
+                      function(x) cor(x, sup_nresp, method = "pearson"))
+  score[["ICBResponse_Chen_nonresponder"]] <- colSums(datasetm_n * corr_nresp)
   
   return(.returnAsInput(
-    userdata = dataset, result = t(score),
+    userdata = dataset, result = t(as.data.frame(score)),
     SignName = "", datasetm))
 }
 
