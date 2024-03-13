@@ -81,7 +81,9 @@ SignatureNames <- c(
     "BreastState_Wu_Basal",
     "BreastState_Wu_Her2E",
     "BreastState_Wu_LumA",
-    "BreastState_Wu_LumB"
+    "BreastState_Wu_LumB",
+    "ICBResponse_Chen_responder",
+    "ICBResponse_Chen_nonresponder"
 )
 
 #' @importFrom viridis magma viridis
@@ -148,6 +150,11 @@ my_colors <- colorRampPalette(my_colors)(100)
     )) {
       sname <- substring(name, 16)
       g <- BreastState_Wu$SYMBOL[BreastState_Wu$class == sname]
+    } else if (name %in% c("ICBResponse_Chen_responder", 
+                           "ICBResponse_Chen_nonresponder"
+    )) {
+      sname <- substring(name, 18)
+      g <- ICBResponse_Chen$SYMBOL[ICBResponse_Chen$class == sname]
     }
       else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye",
