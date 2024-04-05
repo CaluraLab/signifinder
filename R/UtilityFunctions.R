@@ -84,7 +84,23 @@ SignatureNames <- c(
     "BreastState_Wu_LumB",
     "ICBResponse_Chen_responder",
     "ICBResponse_Chen_nonresponder",
-    "COXIS_Bonavita"
+    "COXIS_Bonavita",
+    "PanState_Barkley_Cycle",
+    "PanState_Barkley_Stress",
+    "PanState_Barkley_Interferon",
+    "PanState_Barkley_Hypoxia",
+    "PanState_Barkley_Oxphos",
+    "PanState_Barkley_Metal",
+    "PanState_Barkley_cEMT",
+    "PanState_Barkley_pEMT",
+    "PanState_Barkley_Alveolar",
+    "PanState_Barkley_Basal",
+    "PanState_Barkley_Squamous",
+    "PanState_Barkley_Glandular",
+    "PanState_Barkley_Ciliated",
+    "PanState_Barkley_AC",
+    "PanState_Barkley_OPC",
+    "PanState_Barkley_NPC"
 )
 
 #' @importFrom viridis magma viridis
@@ -156,7 +172,19 @@ my_colors <- colorRampPalette(my_colors)(100)
     )) {
       sname <- substring(name, 18)
       g <- ICBResponse_Chen$SYMBOL[ICBResponse_Chen$class == sname]
-    }
+    }  else if (name %in% c(
+      "PanState_Barkley_Cycle", "PanState_Barkley_Stress",
+      "PanState_Barkley_Interferon", "PanState_Barkley_Hypoxia",
+      "PanState_Barkley_Oxphos", "PanState_Barkley_Metal",
+      "PanState_Barkley_cEMT", "PanState_Barkley_pEMT",
+      "PanState_Barkley_Alveolar", "PanState_Barkley_Basal",
+      "PanState_Barkley_Squamous", "PanState_Barkley_Glandular",
+      "PanState_Barkley_Ciliated", "PanState_Barkley_AC",
+      "PanState_Barkley_OPC", "PanState_Barkley_NPC"
+    )) {
+      sname <- substring(name, 18)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
+    } 
       else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye",
         "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",

@@ -2018,3 +2018,132 @@ COXISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
     userdata = dataset, result = score, SignName = "COXIS_Bonavita", datasetm))
 }
 
+#' Pancancer Cellular States Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#' 
+#' @importFrom ggplot2 cut_number
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+panStateSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "panStateSign")
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- PanState_Barkley
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Cycle"], "Cycle")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Stress"], "Stress")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Interferon"], "Interferon")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Hypoxia"], "Hypoxia")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Oxphos"], "Oxphos")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Metal"], "Metal")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "cEMT"], "cEMT")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "pEMT"], "pEMT")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Alveolar"], "Alveolar")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Basal"], "Basal")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Squamous"], "Squamous")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Glandular"], "Glandular")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Ciliated"], "Ciliated")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "AC"], "AC")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
+  .percentageOfGenesUsed(
+    "panStateSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "NPC"], "NPC")
+  
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0("PanState_Barkley_", names(sign_list))
+  
+  datasetm <- datasetm[,isMalignant]
+  
+  data.avg <- sort(rowMeans(x = datasetm, na.rm = TRUE))
+  data.cut = cut_number(x = data.avg + rnorm(n = length(data.avg))/1e+30, 
+                        n = 25, labels = FALSE, right = FALSE)
+  names(x = data.cut) = names(x = data.avg)
+  binned = split(names(data.cut), data.cut)
+  
+  rand = lapply(names(sign_list), function(m){
+    lapply(1:1000, function(i){
+      used = vector()
+      unused = binned
+      for (g in sign_list[[m]]){
+        pool = data.cut[g]
+        if (!(is.na(pool))) {
+          new = sample(unused[[pool]], 1)
+          used = c(used, new)
+          unused[[pool]] = setdiff(unused[[pool]], new)
+        }
+      }
+      return(used)})
+  })
+  names(rand) = names(sign_list)
+  
+  scores = t(sapply(names(sign_list), function(m){
+    ra = sapply(rand[[m]], function(i){
+      colMeans(df[i, ], na.rm = TRUE)
+    })
+    re = colMeans(df[rownames(df) %in% sign_list[[m]], ], na.rm = TRUE)
+    p = rowMeans(ra >= re)
+    p = -log10(p)
+    return(p)
+  }))
+  scores[is.infinite(scores)] = 4
+  scores = scores/4
+  
+  return(.returnAsInput(
+    userdata = dataset, result = t(scores),
+    SignName = "PanState_Barkley", datasetm))
+}
