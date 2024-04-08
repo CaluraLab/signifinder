@@ -282,3 +282,13 @@ test_that("ICBResponseSign work", {
   expect_type(colData(myres)[, pname], "double")
   expect_message(ICBResponseSign(rmatrix), "100")
 })
+
+test_that("COXISSign work", {
+  rmatrix <- .fakeData("COXIS_Bonavita")
+  myres <- COXISSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("COXIS_Bonavita" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "COXIS_Bonavita"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "COXIS_Bonavita"], "double")
+  expect_message(COXISSign(rmatrix), "100")
+})
