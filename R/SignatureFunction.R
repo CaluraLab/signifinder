@@ -1950,3 +1950,41 @@ breastStateSign <- function(
     SignName = "BreastState_Wu", datasetm_n))
 }
 
+
+#' COX-2-associated Inflammatory Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#' COXISSign(dataset = ovse)
+#'
+#' @export
+COXISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "COXISSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  datasetm <- log2(datasetm + 1)
+  
+  sign_df <- COXIS_Bonavita
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed("COXISSign", datasetm, sign_df$SYMBOL)
+  
+  pos <- intersect(rownames(datasetm), sign_df[sign_df$class == "CP", "SYMBOL"])
+  datasetm_pos <- datasetm[pos,]
+  score_pos <- colMeans(datasetm_pos)
+  
+  neg <- intersect(rownames(datasetm), sign_df[sign_df$class == "CI", "SYMBOL"])
+  datasetm_neg <- datasetm[neg,]
+  score_neg <- colMeans(datasetm_neg)
+  
+  score <- score_pos / score_neg
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "COXIS_Bonavita", datasetm))
+}
