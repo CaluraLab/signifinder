@@ -2133,9 +2133,9 @@ panStateSign <- function(
   
   scores = t(sapply(names(sign_list), function(m){
     ra = sapply(rand[[m]], function(i){
-      colMeans(df[i, ], na.rm = TRUE)
+      colMeans(datasetm[i, ], na.rm = TRUE)
     })
-    re = colMeans(df[rownames(df) %in% sign_list[[m]], ], na.rm = TRUE)
+    re = colMeans(datasetm[rownames(datasetm) %in% sign_list[[m]], ], na.rm = TRUE)
     p = rowMeans(ra >= re)
     p = -log10(p)
     return(p)
