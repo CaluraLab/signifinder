@@ -2005,7 +2005,7 @@ panStateSign <- function(
     sign_df$SYMBOL[sign_df$class == "Metal"], "Metal")
   .percentageOfGenesUsed(
     "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "cEMT"], "cEMT")
+    sign_df$SYMBOL[sign_df$class == "Mesenchymal"], "Mesenchymal")
   .percentageOfGenesUsed(
     "panStateSign", datasetm,
     sign_df$SYMBOL[sign_df$class == "pEMT"], "pEMT")
