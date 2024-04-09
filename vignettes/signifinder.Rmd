@@ -10,7 +10,7 @@ author:
   email: enrica.calura@unipd.it
 package: signifinder
 abstract: >
-  signifinder offers a rapid way to apply and explore gene expression tumor signatures from literature. It allows to compute the signature scores on the user dataset. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains 59 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
+  signifinder offers a rapid way to apply and explore gene expression tumor signatures from literature. It allows to compute the signature scores on the user dataset. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains 60 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
 output: 
   BiocStyle::html_document:
       toc: true
