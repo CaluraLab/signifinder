@@ -2059,7 +2059,7 @@ panStateSign <- function(
           unused[[pool]] = setdiff(unused[[pool]], new)
         }
       }
-      return(used)})
+      used})
   })
   names(rand) = names(sign_list)
   
@@ -2070,12 +2070,11 @@ panStateSign <- function(
     re = colMeans(datasetm[rownames(datasetm) %in% sign_list[[m]], ], na.rm = TRUE)
     p = rowMeans(ra >= re)
     p = -log10(p)
-    return(p)
   }))
   scores[is.infinite(scores)] = 4
   scores = scores/4
   
   return(.returnAsInput(
-    userdata = dataset, result = t(scores),
-    SignName = "PanState_Barkley", datasetm))
+    userdata = dataset, result = scores,
+    SignName = "", datasetm))
 }
