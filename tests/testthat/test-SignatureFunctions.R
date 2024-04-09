@@ -305,4 +305,7 @@ test_that("panStateSign work", {
   expect_type(colData(myres)[,"PanState_Barkley_pEMT"], "double")
   expect_message(panStateSign(rmatrix, isMalignant = malign), "100")
 })
+<<<<<<< HEAD
 
+=======
+>>>>>>> 17f5ec9 (Update PanState_Barkley function, add its test and update of manual)
