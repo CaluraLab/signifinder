@@ -292,3 +292,17 @@ test_that("COXISSign work", {
   expect_type(colData(myres)[, "COXIS_Bonavita"], "double")
   expect_message(COXISSign(rmatrix), "100")
 })
+
+test_that("panStateSign work", {
+  rmatrix <- data.frame()
+  for(i in SignatureNames){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- panStateSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("PanState_Barkley_Mesenchymal" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"PanState_Barkley_AC"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"PanState_Barkley_pEMT"], "double")
+  expect_message(panStateSign(rmatrix, isMalignant = malign), "100")
+})
+
