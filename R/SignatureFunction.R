@@ -33,6 +33,7 @@
 #'
 #' @importFrom GSVA ssgseaParam gsva
 #' @importFrom stats prcomp
+#' @importFrom ggplot2 cut_number
 #'
 #' @examples
 #' data(ovse)
@@ -41,7 +42,8 @@
 #' @export
 EMTSign <- function(
     dataset, nametype = "SYMBOL", inputType = "microarray",
-    author = "Miow", whichAssay = "norm_expr", hgReference = "hg38", ...) {
+    author = "Miow", whichAssay = "norm_expr", hgReference = "hg38",
+    isMalignant = NULL, ...) {
 
   .consistencyCheck(nametype, "EMTSign", author)
 
@@ -131,7 +133,46 @@ EMTSign <- function(
       epi <- rowSums(log2(epi - min(epi) + 1))
       mes <- rowSums(log2(mes - min(mes) + 1))
       score <- mes-epi
-    }
+    } else if (author == "Barkley") {
+        
+        .consistencyCheck(nametype, "panStateSign")
+        
+        if(is.null(isMalignant)){
+          stop("isMalignant param is missing but it is required",
+               "for the computation of the signature")
+        } else {
+          if(length(isMalignant)!=ncol(dataset)){
+            stop("lenght of isMalignant must be equal to ncol(dataset)")}
+          if(!is.logical(isMalignant)){
+            stop("isMalignant must be a logical vector")}}
+        
+        datasetm <- .getMatrix(dataset, whichAssay)
+        
+        sign_df <- PanState_Barkley
+        sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+        
+        .percentageOfGenesUsed(
+          "panStateSign", datasetm,
+          sign_df$SYMBOL[sign_df$class == "cEMT"], "cEMT")
+        .percentageOfGenesUsed(
+          "panStateSign", datasetm,
+          sign_df$SYMBOL[sign_df$class == "pEMT"], "pEMT")
+        
+        
+        sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+        sign_list <- split(sign_df$SYMBOL, sign_df$class)
+        names(sign_list) <- paste0("EMT_Barkley_", names(sign_list))
+        
+        datasetm <- datasetm[,isMalignant]
+        score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                             modules = c("cEMT", "pEMT"))
+        
+        return(.returnAsInput(
+          userdata = dataset, result = score,
+          SignName = "", datasetm))
+        }
+        
+        
     return(.returnAsInput(
       userdata = dataset, result = score,
       SignName = paste0("EMT_", author), datasetm))
