@@ -4,6 +4,8 @@ SignatureNames <- c(
     "EMT_Mak",
     "EMT_Cheng",
     "EMT_Thompson",
+    "EMT_Barkley_cEMT",
+    "EMT_Barkley_pEMT",
     "Pyroptosis_Ye",
     "Pyroptosis_Shao",
     "Pyroptosis_Lin",
@@ -88,8 +90,6 @@ SignatureNames <- c(
     "PanState_Barkley_Hypoxia",
     "PanState_Barkley_Oxphos",
     "PanState_Barkley_Metal",
-    "PanState_Barkley_Mesenchymal",
-    "PanState_Barkley_pEMT",
     "PanState_Barkley_Alveolar",
     "PanState_Barkley_Basal",
     "PanState_Barkley_Squamous",
@@ -168,7 +168,7 @@ my_colors <- colorRampPalette(my_colors)(100)
       "PanState_Barkley_Cycle", "PanState_Barkley_Stress",
       "PanState_Barkley_Interferon", "PanState_Barkley_Hypoxia",
       "PanState_Barkley_Oxphos", "PanState_Barkley_Metal",
-      "PanState_Barkley_Mesenchymal", "PanState_Barkley_pEMT",
+      "PanState_Barkley_cEMT", "PanState_Barkley_pEMT",
       "PanState_Barkley_Alveolar", "PanState_Barkley_Basal",
       "PanState_Barkley_Squamous", "PanState_Barkley_Glandular",
       "PanState_Barkley_Ciliated", "PanState_Barkley_AC",
@@ -634,3 +634,45 @@ getSignGenes <- function(whichSign) {
     }
 }
 
+#' Pancancer Cellular States Barkley Scoring Function
+#'
+#' @importFrom ggplot2 cut_number
+#' @export
+.barkleyFun <- function(dataset, signList, modules) {
+  
+  data.avg <- sort(rowMeans(x = dataset, na.rm = TRUE))
+  data.cut = cut_number(x = data.avg + rnorm(n = length(data.avg))/1e+30, 
+                        n = 25, labels = FALSE, right = FALSE)
+  names(x = data.cut) = names(x = data.avg)
+  binned = split(names(data.cut), data.cut)
+  mod <- signList[modules]
+  
+  rand = lapply(names(mod), function(m){
+    lapply(1:1000, function(i){
+      used = vector()
+      unused = binned
+      for (g in mod[[m]]){
+        pool = data.cut[g]
+        if (!(is.na(pool))) {
+          new = sample(unused[[pool]], 1)
+          used = c(used, new)
+          unused[[pool]] = setdiff(unused[[pool]], new)
+        }
+      }
+      used})
+  })
+  names(rand) = names(mod)
+  
+  scores = t(sapply(names(mod), function(m){
+    ra = sapply(rand[[m]], function(i){
+      colMeans(dataset[i, ], na.rm = TRUE)
+    })
+    re = colMeans(dataset[rownames(dataset) %in% mod[[m]], ], na.rm = TRUE)
+    p = rowMeans(ra >= re)
+    p = -log10(p)
+  }))
+  scores[is.infinite(scores)] = 4
+  scores = scores/4
+  
+  return(scores)
+}
