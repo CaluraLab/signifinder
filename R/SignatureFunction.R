@@ -1834,6 +1834,7 @@ MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
   datasetm <- .getMatrix(dataset, whichAssay)
 
   sign_df <- MITFlowPTENneg_Cabrita
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
 
   .percentageOfGenesUsed("MITFlowPTENnegSign", datasetm, sign_df$SYMBOL)
 
