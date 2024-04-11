@@ -116,9 +116,12 @@ my_colors <- colorRampPalette(my_colors)(100)
     if (name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")) {
         sname <- paste0(substring(name, 10), "-like")
         g <- EMT_Miow$SYMBOL[EMT_Miow$class == sname]
+    } else if (name %in% c("EMT_Barkley_cEMT", "EMT_Barkley_pEMT")) {
+        sname <- substring(name, 13)
+        g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     } else if (name %in% c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")) {
-        sname <- substring(name, 18)
-        g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
+      sname <- substring(name, 18)
+      g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
     } else if (name %in% c(
         "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
         "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"
@@ -176,7 +179,6 @@ my_colors <- colorRampPalette(my_colors)(100)
       "PanState_Barkley_Cycle", "PanState_Barkley_Stress",
       "PanState_Barkley_Interferon", "PanState_Barkley_Hypoxia",
       "PanState_Barkley_Oxphos", "PanState_Barkley_Metal",
-      "PanState_Barkley_cEMT", "PanState_Barkley_pEMT",
       "PanState_Barkley_Alveolar", "PanState_Barkley_Basal",
       "PanState_Barkley_Squamous", "PanState_Barkley_Glandular",
       "PanState_Barkley_Ciliated", "PanState_Barkley_AC",
