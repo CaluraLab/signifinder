@@ -16,6 +16,7 @@ SignatureNames <- c(
     "Ferroptosis_Ye",
     "LipidMetabolism_Zheng",
     "Hypoxia_Buffa",
+    "Hypoxia_Barkley",
     "ImmunoScore_Hao",
     "ImmunoScore_Roh",
     "ConsensusOV_Chen_IMR",
@@ -87,7 +88,6 @@ SignatureNames <- c(
     "PanState_Barkley_Cycle",
     "PanState_Barkley_Stress",
     "PanState_Barkley_Interferon",
-    "PanState_Barkley_Hypoxia",
     "PanState_Barkley_Oxphos",
     "PanState_Barkley_Metal",
     "PanState_Barkley_Alveolar",
@@ -169,16 +169,19 @@ my_colors <- colorRampPalette(my_colors)(100)
       g <- BreastState_Wu$SYMBOL[BreastState_Wu$class == sname]
     }  else if (name %in% c(
       "PanState_Barkley_Cycle", "PanState_Barkley_Stress",
-      "PanState_Barkley_Interferon", "PanState_Barkley_Hypoxia",
-      "PanState_Barkley_Oxphos", "PanState_Barkley_Metal",
-      "PanState_Barkley_Alveolar", "PanState_Barkley_Basal",
-      "PanState_Barkley_Squamous", "PanState_Barkley_Glandular",
-      "PanState_Barkley_Ciliated", "PanState_Barkley_AC",
-      "PanState_Barkley_OPC", "PanState_Barkley_NPC"
+      "PanState_Barkley_Interferon", "PanState_Barkley_Oxphos",
+      "PanState_Barkley_Metal", "PanState_Barkley_Alveolar",
+      "PanState_Barkley_Basal", "PanState_Barkley_Squamous",
+      "PanState_Barkley_Glandular", "PanState_Barkley_Ciliated",
+      "PanState_Barkley_AC", "PanState_Barkley_OPC",
+      "PanState_Barkley_NPC"
     )) {
       sname <- substring(name, 18)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
-    } 
+    } else if (name == "Hypoxia_Barkley") {
+      sname <- substring(name, 1, 7)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
+    }
       else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye",
         "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
