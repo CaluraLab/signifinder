@@ -42,6 +42,7 @@ SignatureNames <- c(
     "CIN_Carter_70",
     "CellCycle_Lundberg",
     "CellCycle_Davoli",
+    "CellCycle_Barkley",
     "Chemokines_Messina",
     "ASC_Smith",
     "PassON_Du",
@@ -88,7 +89,6 @@ SignatureNames <- c(
     "ICBResponse_Chen_responder",
     "ICBResponse_Chen_nonresponder",
     "COXIS_Bonavita",
-    "PanState_Barkley_Cycle",
     "PanState_Barkley_Stress",
     "PanState_Barkley_Interferon",
     "PanState_Barkley_Oxphos",
@@ -188,6 +188,9 @@ my_colors <- colorRampPalette(my_colors)(100)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     } else if (name == "Hypoxia_Barkley") {
       sname <- substring(name, 1, 7)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
+    } else if (name == "CellCycle_Barkley") {
+      sname <- substring(name, 5, grep("_", name) - 1)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     }
       else if (name %in% c(

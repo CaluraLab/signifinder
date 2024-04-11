@@ -887,8 +887,8 @@ CINSign <- function(
 #' @export
 cellCycleSign <- function(
     dataset, nametype = "SYMBOL", author = "Lundberg",
-    inputType = "microarray", whichAssay = "norm_expr") {
-
+    inputType = "microarray", whichAssay = "norm_expr", isMalignant = NULL) {
+  
   .consistencyCheck(nametype, "cellCycleSign", author)
   datasetm <- .getMatrix(dataset, whichAssay)
 
@@ -907,6 +907,32 @@ cellCycleSign <- function(
     score <- .statScore(
       CellCycle_Davoli$SYMBOL, t(datasetm_r), nametype,
       ".meang", "cellCycleSign", author = author)
+  } else if (author == "Barkley") {
+    
+    if(is.null(isMalignant)){
+      stop("isMalignant param is missing but it is required",
+           "for the computation of the signature")
+    } else {
+      if(length(isMalignant)!=ncol(dataset)){
+        stop("lenght of isMalignant must be equal to ncol(dataset)")}
+      if(!is.logical(isMalignant)){
+        stop("isMalignant must be a logical vector")}}
+    
+    sign_df <- PanState_Barkley
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed(
+      "panStateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "Cycle"], "Cycle")
+    
+    
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    names(sign_list) <- paste0("Cell", names(sign_list), "_Barkley")
+    
+    datasetm <- datasetm[,isMalignant]
+    score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                         modules = "CellCycle_Barkley")
   }
 
   return(.returnAsInput(
@@ -2125,18 +2151,13 @@ panStateSign <- function(
   sign_df <- PanState_Barkley
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Cycle"], "Cycle")
+  
   .percentageOfGenesUsed(
     "panStateSign", datasetm,
     sign_df$SYMBOL[sign_df$class == "Stress"], "Stress")
   .percentageOfGenesUsed(
     "panStateSign", datasetm,
     sign_df$SYMBOL[sign_df$class == "Interferon"], "Interferon")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Hypoxia"], "Hypoxia")
   .percentageOfGenesUsed(
     "panStateSign", datasetm,
     sign_df$SYMBOL[sign_df$class == "Oxphos"], "Oxphos")

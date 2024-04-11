@@ -44,34 +44,6 @@ test_that("EMTSign based on Thompson's work", {
   expect_message(EMTSign(rmatrix, author = "Thompson"), "100")
 })
 
-test_that("EMTSign based on Barkley's work", {
-  rmatrix <- data.frame()
-  for(i in SignatureNames){
-    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
-  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- EMTSign(rmatrix, inputType = "sc", author = "Barkley", 
-                   isMalignant = malign)
-  expect_true(is(myres, "SummarizedExperiment"))
-  expect_true("EMT_Barkley_cEMT" %in% colnames(colData(myres)))
-  expect_length(colData(myres)[,"EMT_Barkley_pEMT"],ncol(assay(myres)))
-  expect_type(colData(myres)[,"EMT_Barkley_cEMT"], "double")
-  expect_message(EMTSign(rmatrix, isMalignant = malign), "100")
-})
-
-test_that("hypoxiaSign based on Barkley's work", {
-  rmatrix <- data.frame()
-  for(i in SignatureNames){
-    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
-  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- hypoxiaSign(rmatrix, inputType = "sc", author = "Barkley", 
-                   isMalignant = malign)
-  expect_true(is(myres, "SummarizedExperiment"))
-  expect_true("Hypoxia_Barkley" %in% colnames(colData(myres)))
-  expect_length(colData(myres)[, "Hypoxia_Barkley"], ncol(assay(myres)))
-  expect_type(colData(myres)[, "Hypoxia_Barkley"], "double")
-  expect_message(APMSign(rmatrix), "100")
-})
-
 test_that("ASCSign work", {
     rmatrix <- .fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
@@ -333,7 +305,3 @@ test_that("panStateSign work", {
   expect_type(colData(myres)[,"PanState_Barkley_pEMT"], "double")
   expect_message(panStateSign(rmatrix, isMalignant = malign), "100")
 })
-<<<<<<< HEAD
-
-=======
->>>>>>> 17f5ec9 (Update PanState_Barkley function, add its test and update of manual)

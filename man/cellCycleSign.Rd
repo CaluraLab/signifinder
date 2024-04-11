@@ -9,7 +9,8 @@ cellCycleSign(
   nametype = "SYMBOL",
   author = "Lundberg",
   inputType = "microarray",
-  whichAssay = "norm_expr"
+  whichAssay = "norm_expr",
+  isMalignant = NULL
 )
 }
 \arguments{
