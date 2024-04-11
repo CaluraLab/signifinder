@@ -58,6 +58,20 @@ test_that("EMTSign based on Barkley's work", {
   expect_message(EMTSign(rmatrix, isMalignant = malign), "100")
 })
 
+test_that("hypoxiaSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  for(i in SignatureNames){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- hypoxiaSign(rmatrix, inputType = "sc", author = "Barkley", 
+                   isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Hypoxia_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Hypoxia_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Hypoxia_Barkley"], "double")
+  expect_message(APMSign(rmatrix), "100")
+})
+
 test_that("ASCSign work", {
     rmatrix <- .fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
