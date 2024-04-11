@@ -135,7 +135,7 @@ EMTSign <- function(
       score <- mes-epi
     } else if (author == "Barkley") {
         
-        .consistencyCheck(nametype, "panStateSign")
+        .consistencyCheck(nametype, "EMTSign")
         
         if(is.null(isMalignant)){
           stop("isMalignant param is missing but it is required",
@@ -165,7 +165,7 @@ EMTSign <- function(
         
         datasetm <- datasetm[,isMalignant]
         score <- .barkleyFun(dataset = datasetm, signList = sign_list,
-                             modules = c("cEMT", "pEMT"))
+                             modules = c("EMT_Barkley_cEMT", "EMT_Barkley_pEMT"))
         
         return(.returnAsInput(
           userdata = dataset, result = score,
