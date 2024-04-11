@@ -7,8 +7,10 @@
 hypoxiaSign(
   dataset,
   nametype = "SYMBOL",
+  author = "Buffa",
   inputType = "microarray",
-  whichAssay = "norm_expr"
+  whichAssay = "norm_expr",
+  isMalignant = NULL
 )
 }
 \arguments{
@@ -21,6 +23,9 @@ expression values should be in an assay called 'norm_expr'.}
 
 \item{nametype}{character string saying the type of gene name ID (row names
 in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
+
+\item{author}{character string saying the first author of the signature
+publication. Check it in \code{\link[signifinder]{availableSignatures}}.}
 
 \item{inputType}{character string saying the type of data you are using.
 Either one of "microarray" or "rnaseq".}
