@@ -33,7 +33,7 @@
 #'
 #' @importFrom GSVA ssgseaParam gsva
 #' @importFrom stats prcomp
-#' @importFrom ggplot2 cut_number
+#' 
 #'
 #' @examples
 #' data(ovse)
@@ -135,8 +135,6 @@ EMTSign <- function(
       score <- mes-epi
     } else if (author == "Barkley") {
         
-        .consistencyCheck(nametype, "EMTSign")
-        
         if(is.null(isMalignant)){
           stop("isMalignant param is missing but it is required",
                "for the computation of the signature")
@@ -145,8 +143,6 @@ EMTSign <- function(
             stop("lenght of isMalignant must be equal to ncol(dataset)")}
           if(!is.logical(isMalignant)){
             stop("isMalignant must be a logical vector")}}
-        
-        datasetm <- .getMatrix(dataset, whichAssay)
         
         sign_df <- PanState_Barkley
         sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
@@ -319,22 +315,57 @@ lipidMetabolismSign <- function(
 #'
 #' @export
 hypoxiaSign <- function(
-    dataset, nametype = "SYMBOL", inputType = "microarray",
-    whichAssay = "norm_expr") {
-
+    dataset, nametype = "SYMBOL", author =  "Buffa", inputType = "microarray",
+    whichAssay = "norm_expr", isMalignant = NULL) {
+  
   .consistencyCheck(nametype, "hypoxiaSign")
 
   datasetm <- .getMatrix(dataset, whichAssay)
-  datasetm_n <- if (inputType == "rnaseq") {
-    log2(datasetm + 1)
-  } else { datasetm }
-  score <- .statScore(
-    Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n), nametype = nametype,
-    typeofstat = "median", namesignature = "hypoxiaSign")
-
-  return(.returnAsInput(
-    userdata = dataset, result = as.vector(scale(score)),
-    SignName = "Hypoxia_Buffa", datasetm))
+  
+  if (author == "Buffa") {
+    
+    datasetm_n <- if (inputType == "rnaseq") {
+      log2(datasetm + 1)
+    } else { datasetm }
+    score <- .statScore(
+      Hypoxia_Buffa$SYMBOL, datasetm = abs(datasetm_n), nametype = nametype,
+      typeofstat = "median", namesignature = "hypoxiaSign")
+    
+    return(.returnAsInput(
+      userdata = dataset, result = as.vector(scale(score)),
+      SignName = "Hypoxia_Buffa", datasetm))
+  } else {
+    if (author == "Barkley") {
+      
+      if(is.null(isMalignant)){
+        stop("isMalignant param is missing but it is required",
+             "for the computation of the signature")
+      } else {
+        if(length(isMalignant)!=ncol(dataset)){
+          stop("lenght of isMalignant must be equal to ncol(dataset)")}
+        if(!is.logical(isMalignant)){
+          stop("isMalignant must be a logical vector")}}
+      
+      sign_df <- PanState_Barkley
+      sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+      
+      .percentageOfGenesUsed(
+        "panStateSign", datasetm,
+        sign_df$SYMBOL[sign_df$class == "Hypoxia"], "Hypoxia")
+      
+      
+      sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+      sign_list <- split(sign_df$SYMBOL, sign_df$class)
+      names(sign_list) <- paste0(names(sign_list), "_Barkley")
+      
+      datasetm <- datasetm[,isMalignant]
+      score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                           modules = "Hypoxia_Barkley")
+      
+      return(.returnAsInput(
+        userdata = dataset, result = score,
+        SignName = "Hypoxia_Barkley", datasetm))}
+  }
 }
 
 
