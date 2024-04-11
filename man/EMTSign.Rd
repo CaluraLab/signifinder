@@ -11,6 +11,7 @@ EMTSign(
   author = "Miow",
   whichAssay = "norm_expr",
   hgReference = "hg38",
+  isMalignant = NULL,
   ...
 )
 }
