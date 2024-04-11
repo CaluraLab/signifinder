@@ -69,7 +69,7 @@ test_that("hypoxiaSign based on Barkley's work", {
   expect_true("Hypoxia_Barkley" %in% colnames(colData(myres)))
   expect_length(colData(myres)[, "Hypoxia_Barkley"], ncol(assay(myres)))
   expect_type(colData(myres)[, "Hypoxia_Barkley"], "double")
-  expect_message(APMSign(rmatrix), "100")
+  expect_message(hypoxiaSign(rmatrix), "100")
 })
 
 test_that("ASCSign work", {
@@ -182,6 +182,19 @@ test_that("TinflamSign based on Thompson's work", {
   expect_length(colData(myres)[, "Tinflam_Thompson"], ncol(assay(myres)))
   expect_type(colData(myres)[, "Tinflam_Thompson"], "double")
   expect_message(TinflamSign(rmatrix, author = "Thompson"), "100")
+})
+
+test_that("cellCycleSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  for(i in SignatureNames){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- cellCycleSign(rmatrix, inputType = "sc", author = "Barkley", 
+                       isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("CellCycle_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "CellCycle_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "CellCycle_Barkley"], "double")
 })
 
 test_that("CombinedSign work", {
