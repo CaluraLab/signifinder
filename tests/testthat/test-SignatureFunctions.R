@@ -162,7 +162,7 @@ test_that("IPSOVSign work", {
     expect_message(IPSOVSign(rmatrix), "100")
 })
 
-test_that("glioCellStateSign work", {
+test_that("glioCellStateSign based on Neftel's work", {
     rmatrix <- data.frame()
     for(i in SignatureNames){
         rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
@@ -172,6 +172,19 @@ test_that("glioCellStateSign work", {
     expect_true("GlioCellState_Neftel_OPC" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"GlioCellState_Neftel_AC"],ncol(assay(myres)))
     expect_type(colData(myres)[,"GlioCellState_Neftel_MES1"], "double")
+})
+
+test_that("glioCellStateSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  for(i in SignatureNames){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- glioCellStateSign(rmatrix, inputType = "sc", author = "Barkley", 
+                   isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("GlioCellState_Barkley_AC" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"GlioCellState_Barkley_OPC"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"GlioCellState_Barkley_NPC"], "double")
 })
 
 test_that("TinflamSign based on Thompson's work", {

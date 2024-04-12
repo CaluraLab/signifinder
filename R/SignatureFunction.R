@@ -1527,8 +1527,8 @@ IPSOVSign <- function(
 #'
 #' @export
 glioCellStateSign <- function(
-    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
-    isMalignant = NULL, hgReference = "hg38") {
+    dataset, nametype = "SYMBOL", inputType = "sc", author = "Neftel", 
+    whichAssay = "norm_expr", isMalignant = NULL, hgReference = "hg38") {
   
   .consistencyCheck(nametype, "glioCellStateSign")
   
@@ -1540,68 +1540,101 @@ glioCellStateSign <- function(
       stop("lenght of isMalignant must be equal to ncol(dataset)")}
     if(!is.logical(isMalignant)){
       stop("isMalignant must be a logical vector")}}
-  
-  if(nrow(dataset)<3000){stop(
-    "dataset must have at least 3000 genes to compute the signature")}
-  
-  datasetm <- .getMatrix(dataset, whichAssay)
-  dataset <- .dataTransformation(
-    dataset, datasetm, "TPM", hgReference, nametype)
-  datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
-  
-  sign_df <- GlioCellState_Neftel
-  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
-  .percentageOfGenesUsed(
-    "glioCellStateSign", datasetm_n,
-    sign_df$SYMBOL[sign_df$class == "MES2"], "MES2")
-  .percentageOfGenesUsed(
-    "glioCellStateSign", datasetm_n,
-    sign_df$SYMBOL[sign_df$class == "MES1"], "MES1")
-  .percentageOfGenesUsed(
-    "glioCellStateSign", datasetm_n,
-    sign_df$SYMBOL[sign_df$class == "AC"], "AC")
-  .percentageOfGenesUsed(
-    "glioCellStateSign", datasetm_n,
-    sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
-  .percentageOfGenesUsed(
-    "glioCellStateSign", datasetm_n,
-    sign_df$SYMBOL[sign_df$class == "NPC1"], "NPC1")
-  .percentageOfGenesUsed(
-    "glioCellStateSign", datasetm_n,
-    sign_df$SYMBOL[sign_df$class == "NPC2"], "NPC2")
-  
-  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
-  sign_list <- split(sign_df$SYMBOL, sign_df$class)
-  names(sign_list) <- paste0("GlioCellState_Neftel_", names(sign_list))
-  
-  datasetm_n <- datasetm_n[,isMalignant]
-  exp_lev <- log2(datasetm_n/10+1)
-  rel_exp <- exp_lev - rowMeans(exp_lev,  na.rm = TRUE)
-  
-  agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
-  ea_bin <- split(
-    sort(agg_exp, na.last = TRUE), factor(
-      sort(round(x = rank(agg_exp) %% 30, digits = 0))))
-  ea_bin <- lapply(ea_bin, function(x){names(x)})
-  
-  scores <- as.data.frame(lapply(sign_list, function(x){
-    Gcont <- unlist(lapply(x, function(y){
-      u <- NULL
-      for (i in seq_along(ea_bin)) {
-        if (y %in% ea_bin[[i]]) {
-          u <- i
-          break}}
-      sample(ea_bin[[u]][!(ea_bin[[u]] %in% x)], 100)}))
-    score <- rep(NA, ncol(dataset))
-    SC <- colMeans(
-      rel_exp[x,], na.rm = TRUE)-colMeans(rel_exp[Gcont,], na.rm = TRUE)
-    score[isMalignant] <- SC
-    score
-  }))
-  
-  return(.returnAsInput(
-    userdata = dataset, result = t(scores), SignName = "", datasetm))
+  if (author == "Neftel") {
+    if(nrow(dataset)<3000){stop(
+      "dataset must have at least 3000 genes to compute the signature")}
+    
+    datasetm <- .getMatrix(dataset, whichAssay)
+    dataset <- .dataTransformation(
+      dataset, datasetm, "TPM", hgReference, nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
+    
+    sign_df <- GlioCellState_Neftel
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed(
+      "glioCellStateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "MES2"], "MES2")
+    .percentageOfGenesUsed(
+      "glioCellStateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "MES1"], "MES1")
+    .percentageOfGenesUsed(
+      "glioCellStateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "AC"], "AC")
+    .percentageOfGenesUsed(
+      "glioCellStateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
+    .percentageOfGenesUsed(
+      "glioCellStateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "NPC1"], "NPC1")
+    .percentageOfGenesUsed(
+      "glioCellStateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "NPC2"], "NPC2")
+    
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    names(sign_list) <- paste0("GlioCellState_Neftel_", names(sign_list))
+    
+    datasetm_n <- datasetm_n[,isMalignant]
+    exp_lev <- log2(datasetm_n/10+1)
+    rel_exp <- exp_lev - rowMeans(exp_lev,  na.rm = TRUE)
+    
+    agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
+    ea_bin <- split(
+      sort(agg_exp, na.last = TRUE), factor(
+        sort(round(x = rank(agg_exp) %% 30, digits = 0))))
+    ea_bin <- lapply(ea_bin, function(x){names(x)})
+    
+    scores <- as.data.frame(lapply(sign_list, function(x){
+      Gcont <- unlist(lapply(x, function(y){
+        u <- NULL
+        for (i in seq_along(ea_bin)) {
+          if (y %in% ea_bin[[i]]) {
+            u <- i
+            break}}
+        sample(ea_bin[[u]][!(ea_bin[[u]] %in% x)], 100)}))
+      score <- rep(NA, ncol(dataset))
+      SC <- colMeans(
+        rel_exp[x,], na.rm = TRUE)-colMeans(rel_exp[Gcont,], na.rm = TRUE)
+      score[isMalignant] <- SC
+      score
+    }))
+    
+    return(.returnAsInput(
+      userdata = dataset, result = t(scores), SignName = "", datasetm))
+    
+  } else if (author == "Barkley") {
+    
+    datasetm <- .getMatrix(dataset, whichAssay)
+    sign_df <- PanState_Barkley
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed(
+      "panStateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "AC"], "AC")
+    .percentageOfGenesUsed(
+      "panStateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
+    .percentageOfGenesUsed(
+      "panStateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "NPC"], "NPC")
+    
+    
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    names(sign_list) <- paste0("GlioCellState_Barkley_", names(sign_list))
+    
+    datasetm <- datasetm[,isMalignant]
+    score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                         modules = c("GlioCellState_Barkley_AC", 
+                                     "GlioCellState_Barkley_OPC", 
+                                     "GlioCellState_Barkley_NPC"))
+    
+    return(.returnAsInput(
+      userdata = dataset, result = score,
+      SignName = "", datasetm))
+  }
+
 }
 
 
@@ -2117,15 +2150,6 @@ panStateSign <- function(
   .percentageOfGenesUsed(
     "panStateSign", datasetm,
     sign_df$SYMBOL[sign_df$class == "Ciliated"], "Ciliated")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "AC"], "AC")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "NPC"], "NPC")
   
   
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
