@@ -71,6 +71,9 @@ SignatureNames <- c(
     "GlioCellState_Neftel_OPC",
     "GlioCellState_Neftel_NPC1",
     "GlioCellState_Neftel_NPC2",
+    "GlioCellState_Barkley_AC", 
+    "GlioCellState_Barkley_OPC", 
+    "GlioCellState_Barkley_NPC",
     "MelState_Tirosh_MITF",
     "MelState_Tirosh_AXL",
     "Combined_Thompson",
@@ -97,10 +100,7 @@ SignatureNames <- c(
     "PanState_Barkley_Basal",
     "PanState_Barkley_Squamous",
     "PanState_Barkley_Glandular",
-    "PanState_Barkley_Ciliated",
-    "PanState_Barkley_AC",
-    "PanState_Barkley_OPC",
-    "PanState_Barkley_NPC"
+    "PanState_Barkley_Ciliated"
 )
 
 #' @importFrom viridis magma viridis
@@ -135,6 +135,12 @@ my_colors <- colorRampPalette(my_colors)(100)
     )) {
         sname <- substring(name, 22)
         g <- GlioCellState_Neftel$SYMBOL[GlioCellState_Neftel$class == sname]
+    } else if (name %in% c(
+      "GlioCellState_Barkley_AC", "GlioCellState_Barkley_OPC",
+      "GlioCellState_Barkley_NPC"
+    )) {
+      sname <- substring(name, 23)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     } else if (name %in% c(
       "MelState_Tirosh_MITF", "MelState_Tirosh_AXL"
     )) {
@@ -180,9 +186,7 @@ my_colors <- colorRampPalette(my_colors)(100)
       "PanState_Barkley_Interferon", "PanState_Barkley_Oxphos",
       "PanState_Barkley_Metal", "PanState_Barkley_Alveolar",
       "PanState_Barkley_Basal", "PanState_Barkley_Squamous",
-      "PanState_Barkley_Glandular", "PanState_Barkley_Ciliated",
-      "PanState_Barkley_AC", "PanState_Barkley_OPC",
-      "PanState_Barkley_NPC"
+      "PanState_Barkley_Glandular", "PanState_Barkley_Ciliated"
     )) {
       sname <- substring(name, 18)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
