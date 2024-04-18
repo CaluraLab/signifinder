@@ -148,10 +148,10 @@ EMTSign <- function(
         sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
         
         .percentageOfGenesUsed(
-          "panStateSign", datasetm,
+          "EMTSign", datasetm,
           sign_df$SYMBOL[sign_df$class == "cEMT"], "cEMT")
         .percentageOfGenesUsed(
-          "panStateSign", datasetm,
+          "EMTSign", datasetm,
           sign_df$SYMBOL[sign_df$class == "pEMT"], "pEMT")
         
         
@@ -350,7 +350,7 @@ hypoxiaSign <- function(
       sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
       
       .percentageOfGenesUsed(
-        "panStateSign", datasetm,
+        "hipoxiaSign", datasetm,
         sign_df$SYMBOL[sign_df$class == "Hypoxia"], "Hypoxia")
       
       
@@ -922,7 +922,7 @@ cellCycleSign <- function(
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
     
     .percentageOfGenesUsed(
-      "panStateSign", datasetm,
+      "cellCycleSign", datasetm,
       sign_df$SYMBOL[sign_df$class == "Cycle"], "Cycle")
     
     
@@ -2014,7 +2014,8 @@ LRRC15CAFSign <- function(
 }
 
 
-#' Breast Cancer Cellular States Signature
+
+#' Breast Cancer Subtypes Signature
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
@@ -2027,36 +2028,45 @@ LRRC15CAFSign <- function(
 #' data(ovse)
 #'
 #' @export
-breastStateSign <- function(
+SCSubtypeSign <- function(
     dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
     isMalignant = NULL, hgReference = "hg38") {
-
-  .consistencyCheck(nametype, "breastStateSign")
-  .isMalignantCheck(isMalignant, dataset)
-
+  
+  .consistencyCheck(nametype, "SCSubtypeSign")
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
   datasetm <- .getMatrix(dataset, whichAssay)
   datasetm_n <- log2(datasetm + 1)
-
-  sign_df <- BreastState_Wu
+  
+  sign_df <- SCSubtype_Wu
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
 
   .percentageOfGenesUsed(
-    "breastStateSign", datasetm_n,
+    "SCSubtypeSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "Basal"], "Basal")
   .percentageOfGenesUsed(
-    "breastStateSign", datasetm_n,
+    "SCSubtypeSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "Her2E"], "Her2E")
   .percentageOfGenesUsed(
-    "breastStateSign", datasetm_n,
+    "SCSubtypeSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "LumA"], "LumA")
   .percentageOfGenesUsed(
-    "breastStateSign", datasetm_n,
+    "SCSubtypeSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "LumB"], "LumB")
 
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
   sign_list <- split(sign_df$SYMBOL, sign_df$class)
-  names(sign_list) <- paste0("BreastState_Wu_", names(sign_list))
-
+  
+  names(sign_list) <- paste0("SCSubtype_Wu_", names(sign_list))
+  
   datasetm_n <- datasetm_n[,isMalignant]
 
   scores <- as.data.frame(lapply(sign_list, function(x) {
@@ -2066,7 +2076,7 @@ breastStateSign <- function(
 
   return(.returnAsInput(
     userdata = dataset, result = t(scores),
-    SignName = "BreastState_Wu", datasetm_n))
+    SignName = "SCSubtype_Wu", datasetm_n))
 }
 
 
@@ -2157,7 +2167,8 @@ COXISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
     userdata = dataset, result = score, SignName = "COXIS_Bonavita", datasetm))
 }
 
-#' Pancancer Cellular States Signature
+
+#'Stress Response Signature
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
@@ -2166,17 +2177,18 @@ COXISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #'
 #' @inherit EMTSign return
 #' 
-#' @importFrom ggplot2 cut_number
 #'
 #' @examples
 #' data(ovse)
 #'
 #' @export
-panStateSign <- function(
+stressSign <- function(
     dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
     isMalignant = NULL, hgReference = "hg38") {
   
-  .consistencyCheck(nametype, "panStateSign")
+  .consistencyCheck(nametype, "stressSign")
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
   
   if(is.null(isMalignant)){
     stop("isMalignant param is missing but it is required",
@@ -2187,87 +2199,376 @@ panStateSign <- function(
     if(!is.logical(isMalignant)){
       stop("isMalignant must be a logical vector")}}
   
-  datasetm <- .getMatrix(dataset, whichAssay)
-  
   sign_df <- PanState_Barkley
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
   
-  
   .percentageOfGenesUsed(
-    "panStateSign", datasetm,
+    "stressSign", datasetm,
     sign_df$SYMBOL[sign_df$class == "Stress"], "Stress")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Interferon"], "Interferon")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Oxphos"], "Oxphos")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Metal"], "Metal")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Mesenchymal"], "Mesenchymal")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "pEMT"], "pEMT")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Alveolar"], "Alveolar")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Basal"], "Basal")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Squamous"], "Squamous")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Glandular"], "Glandular")
-  .percentageOfGenesUsed(
-    "panStateSign", datasetm,
-    sign_df$SYMBOL[sign_df$class == "Ciliated"], "Ciliated")
   
   
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
   sign_list <- split(sign_df$SYMBOL, sign_df$class)
-  names(sign_list) <- paste0("PanState_Barkley_", names(sign_list))
+  names(sign_list) <- paste0(names(sign_list), "_Barkley")
   
   datasetm <- datasetm[,isMalignant]
-  
-  data.avg <- sort(rowMeans(x = datasetm, na.rm = TRUE))
-  data.cut = cut_number(x = data.avg + rnorm(n = length(data.avg))/1e+30, 
-                        n = 25, labels = FALSE, right = FALSE)
-  names(x = data.cut) = names(x = data.avg)
-  binned = split(names(data.cut), data.cut)
-  
-  rand = lapply(names(sign_list), function(m){
-    lapply(1:1000, function(i){
-      used = vector()
-      unused = binned
-      for (g in sign_list[[m]]){
-        pool = data.cut[g]
-        if (!(is.na(pool))) {
-          new = sample(unused[[pool]], 1)
-          used = c(used, new)
-          unused[[pool]] = setdiff(unused[[pool]], new)
-        }
-      }
-      used})
-  })
-  names(rand) = names(sign_list)
-  
-  scores = t(sapply(names(sign_list), function(m){
-    ra = sapply(rand[[m]], function(i){
-      colMeans(datasetm[i, ], na.rm = TRUE)
-    })
-    re = colMeans(datasetm[rownames(datasetm) %in% sign_list[[m]], ], na.rm = TRUE)
-    p = rowMeans(ra >= re)
-    p = -log10(p)
-  }))
-  scores[is.infinite(scores)] = 4
-  scores = scores/4
+  score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                       modules = "Stress_Barkley")
   
   return(.returnAsInput(
-    userdata = dataset, result = scores,
-    SignName = "", datasetm))
+    userdata = dataset, result = score,
+    SignName = "Stress_Barkley", datasetm))
+}
+
+#'Interferon Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#' 
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+interferonSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "interferonSign")
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  sign_df <- PanState_Barkley
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "interferonSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Interferon"], "Interferon")
+  
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0(names(sign_list), "_Barkley")
+  
+  datasetm <- datasetm[,isMalignant]
+  score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                       modules = "Interferon_Barkley")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "Interferon_Barkley", datasetm))
+}
+
+#'Oxidative Phosphorylation Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#' 
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+oxphosSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "oxphosSign")
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  sign_df <- PanState_Barkley
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "oxphosSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Oxphos"], "Oxphos")
+  
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0(names(sign_list), "_Barkley")
+  
+  datasetm <- datasetm[,isMalignant]
+  score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                       modules = "Oxphos_Barkley")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "Oxphos_Barkley", datasetm))
+}
+
+#'Metal Response Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#' 
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+metalSign <- function(
+    dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "metalSign")
+  
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  sign_df <- PanState_Barkley
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  .percentageOfGenesUsed(
+    "metalSign", datasetm,
+    sign_df$SYMBOL[sign_df$class == "Metal"], "Metal")
+  
+  
+  sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+  sign_list <- split(sign_df$SYMBOL, sign_df$class)
+  names(sign_list) <- paste0(names(sign_list), "_Barkley")
+  
+  datasetm <- datasetm[,isMalignant]
+  score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                       modules = "Metal_Barkley")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score,
+    SignName = "Metal_Barkley", datasetm))
+}
+
+#' Cellular States Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams pyroptosisSign
+#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#'
+#' @export
+stateSign <- function(
+    dataset, nametype = "SYMBOL", inputType = "sc", author = "Barkley", 
+    whichAssay = "norm_expr", isMalignant = NULL, hgReference = "hg38") {
+  
+  .consistencyCheck(nametype, "stateSign")
+  
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing but it is required",
+         "for the computation of the signature")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("lenght of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+  
+  if (author == "Neftel") {
+    
+    if(nrow(dataset)<3000){stop(
+      "dataset must have at least 3000 genes to compute the signature")}
+    
+    datasetm <- .getMatrix(dataset, whichAssay)
+    dataset <- .dataTransformation(
+      dataset, datasetm, "TPM", hgReference, nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
+    
+    sign_df <- State_Neftel
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "MES2"], "MES2")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "MES1"], "MES1")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "AC"], "AC")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "NPC1"], "NPC1")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "NPC2"], "NPC2")
+    
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    names(sign_list) <- paste0("State_Neftel_", names(sign_list))
+    
+    datasetm_n <- datasetm_n[,isMalignant]
+    exp_lev <- log2(datasetm_n/10+1)
+    rel_exp <- exp_lev - rowMeans(exp_lev,  na.rm = TRUE)
+    
+    agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
+    ea_bin <- split(
+      sort(agg_exp, na.last = TRUE), factor(
+        sort(round(x = rank(agg_exp) %% 30, digits = 0))))
+    ea_bin <- lapply(ea_bin, function(x){names(x)})
+    
+    scores <- as.data.frame(lapply(sign_list, function(x){
+      Gcont <- unlist(lapply(x, function(y){
+        u <- NULL
+        for (i in seq_along(ea_bin)) {
+          if (y %in% ea_bin[[i]]) {
+            u <- i
+            break}}
+        sample(ea_bin[[u]][!(ea_bin[[u]] %in% x)], 100)}))
+      score <- rep(NA, ncol(dataset))
+      SC <- colMeans(
+        rel_exp[x,], na.rm = TRUE)-colMeans(rel_exp[Gcont,], na.rm = TRUE)
+      score[isMalignant] <- SC
+      score
+    }))
+    
+    return(.returnAsInput(
+      userdata = dataset, result = t(scores), SignName = "", datasetm))
+    
+  } else if (author == "Barkley") {
+    
+    datasetm <- .getMatrix(dataset, whichAssay)
+    sign_df <- PanState_Barkley
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "Alveolar"], "Alveolar")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "Basal"], "Basal")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "Squamous"], "Squamous")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "Glandular"], "Glandular")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "Ciliated"], "Ciliated")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "AC"], "AC")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "OPC"], "OPC")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm,
+      sign_df$SYMBOL[sign_df$class == "NPC"], "NPC")
+    
+    
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    names(sign_list) <- paste0("State_Barkley_", names(sign_list))
+    
+    datasetm <- datasetm[,isMalignant]
+    score <- .barkleyFun(dataset = datasetm, signList = sign_list,
+                         modules = c("State_Barkley_Alveolar",
+                                     "State_Barkley_Basal",
+                                     "State_Barkley_Squamous",
+                                     "State_Barkley_Glandular",
+                                     "State_Barkley_Ciliated",
+                                     "State_Barkley_AC",
+                                     "State_Barkley_OPC", 
+                                     "State_Barkley_NPC"))
+    
+    return(.returnAsInput(
+      userdata = dataset, result = score,
+      SignName = "", datasetm))
+  } else if (author == "Tirosh") {
+    
+    if(nrow(dataset)<2500){stop(
+      "dataset must have at least 2500 genes to compute the signature")}
+    
+    datasetm <- .getMatrix(dataset, whichAssay)
+    dataset <- .dataTransformation(
+      dataset, datasetm, "TPM", hgReference, nametype)
+    datasetm_n <- as.matrix(assays(dataset)[["TPM"]])
+    
+    sign_df <- State_Tirosh
+    sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "MITF"], "MITF")
+    .percentageOfGenesUsed(
+      "stateSign", datasetm_n,
+      sign_df$SYMBOL[sign_df$class == "AXL"], "AXL")
+    
+    sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
+    sign_list <- split(sign_df$SYMBOL, sign_df$class)
+    names(sign_list) <- paste0("State_Tirosh_", names(sign_list))
+    
+    datasetm_n <- datasetm_n[,isMalignant]
+    exp_lev <- log2(datasetm_n/10+1)
+    rel_exp <- exp_lev - rowMeans(exp_lev,  na.rm = TRUE)
+    
+    agg_exp <- log2(rowMeans(datasetm_n, na.rm = TRUE)+1)
+    ea_bin <- split(
+      sort(agg_exp, na.last = TRUE), factor(
+        sort(round(x = rank(agg_exp) %% 25, digits = 0))))
+    ea_bin <- lapply(ea_bin, function(x){names(x)})
+    
+    scores <- as.data.frame(lapply(sign_list, function(x){
+      Gcont <- unlist(lapply(x, function(y){
+        u <- NULL
+        for (i in seq_along(ea_bin)) {
+          if (y %in% ea_bin[[i]]) {
+            u <- i
+            break}}
+        sample(ea_bin[[u]][!(ea_bin[[u]] %in% x)], 100)}))
+      score <- rep(NA, ncol(dataset))
+      SC <- colMeans(
+        rel_exp[x,], na.rm = TRUE)-colMeans(rel_exp[Gcont,], na.rm = TRUE)
+      score[isMalignant] <- SC
+      score
+    }))
+    
+    return(.returnAsInput(
+      userdata = dataset, result = t(scores), SignName = "", datasetm))
+  }
+  
 }
