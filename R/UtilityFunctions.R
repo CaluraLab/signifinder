@@ -65,17 +65,22 @@ SignatureNames <- c(
     "VEGF_Hu",
     "DNArep_Kang",
     "IPSOV_Shen",
-    "GlioCellState_Neftel_MES2",
-    "GlioCellState_Neftel_MES1",
-    "GlioCellState_Neftel_AC",
-    "GlioCellState_Neftel_OPC",
-    "GlioCellState_Neftel_NPC1",
-    "GlioCellState_Neftel_NPC2",
-    "GlioCellState_Barkley_AC", 
-    "GlioCellState_Barkley_OPC", 
-    "GlioCellState_Barkley_NPC",
-    "MelState_Tirosh_MITF",
-    "MelState_Tirosh_AXL",
+    "State_Neftel_MES2",
+    "State_Neftel_MES1",
+    "State_Neftel_AC",
+    "State_Neftel_OPC",
+    "State_Neftel_NPC1",
+    "State_Neftel_NPC2",
+    "State_Barkley_Alveolar",
+    "State_Barkley_Basal",
+    "State_Barkley_Squamous",
+    "State_Barkley_Glandular",
+    "State_Barkley_Ciliated",
+    "State_Barkley_AC", 
+    "State_Barkley_OPC", 
+    "State_Barkley_NPC",
+    "State_Tirosh_MITF",
+    "State_Tirosh_AXL",
     "Combined_Thompson",
     "APM_Thompson",
     "APM_Wang",
@@ -85,19 +90,14 @@ SignatureNames <- c(
     "ADO_Sidders",
     "MITFlowPTENneg_Cabrita",
     "LRRC15CAF_Dominguez",
-    "BreastState_Wu_Basal",
-    "BreastState_Wu_Her2E",
-    "BreastState_Wu_LumA",
-    "BreastState_Wu_LumB",
-    "PanState_Barkley_Stress",
-    "PanState_Barkley_Interferon",
-    "PanState_Barkley_Oxphos",
-    "PanState_Barkley_Metal",
-    "PanState_Barkley_Alveolar",
-    "PanState_Barkley_Basal",
-    "PanState_Barkley_Squamous",
-    "PanState_Barkley_Glandular",
-    "PanState_Barkley_Ciliated"
+    "SCSubtype_Wu_Basal",
+    "SCSubtype_Wu_Her2E",
+    "SCSubtype_Wu_LumA",
+    "SCSubtype_Wu_LumB",
+    "Stress_Barkley",
+    "Interferon_Barkley",
+    "Oxphos_Barkley",
+    "Metal_Barkley"
 )
 
 #' @importFrom viridis magma viridis
@@ -126,23 +126,24 @@ my_colors <- colorRampPalette(my_colors)(100)
         sname <- substring(name, 18)
         g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class == sname]
     } else if (name %in% c(
-        "GlioCellState_Neftel_MES2", "GlioCellState_Neftel_MES1",
-        "GlioCellState_Neftel_AC", "GlioCellState_Neftel_OPC",
-        "GlioCellState_Neftel_NPC1", "GlioCellState_Neftel_NPC2"
+        "State_Neftel_MES2", "State_Neftel_MES1",
+        "State_Neftel_AC", "State_Neftel_OPC",
+        "State_Neftel_NPC1", "State_Neftel_NPC2"
     )) {
-        sname <- substring(name, 22)
-        g <- GlioCellState_Neftel$SYMBOL[GlioCellState_Neftel$class == sname]
+        sname <- substring(name, 14)
+        g <- State_Neftel$SYMBOL[State_Neftel$class == sname]
     } else if (name %in% c(
-      "GlioCellState_Barkley_AC", "GlioCellState_Barkley_OPC",
-      "GlioCellState_Barkley_NPC"
+      "State_Barkley_Alveolar", "State_Barkley_Basal", "State_Barkley_Squamous",
+      "State_Barkley_Glandular", "State_Barkley_Ciliated", "State_Barkley_AC",
+      "State_Barkley_OPC", "State_Barkley_NPC"
     )) {
-      sname <- substring(name, 23)
+      sname <- substring(name, 15)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     } else if (name %in% c(
-      "MelState_Tirosh_MITF", "MelState_Tirosh_AXL"
+      "State_Tirosh_MITF", "State_Tirosh_AXL"
     )) {
-      sname <- substring(name, 17)
-      g <- MelState_Tirosh$SYMBOL[MelState_Tirosh$class == sname]
+      sname <- substring(name, 14)
+      g <- State_Tirosh$SYMBOL[State_Tirosh$class == sname]
     } else if (name %in% c(
         "IPS_Charoentong_MHC", "IPS_Charoentong_CP",
         "IPS_Charoentong_EC", "IPS_Charoentong_SC"
@@ -168,28 +169,20 @@ my_colors <- colorRampPalette(my_colors)(100)
         name_inf <- .GetGenes("Tinflam_Thompson")[ , "Gene"]
         g <- union(name_emt, name_inf)
     } else if (name %in% c(
-      "BreastState_Wu_Basal", "BreastState_Wu_Her2E",
-      "BreastState_Wu_LumA", "BreastState_Wu_LumB"
+      "SCSubtype_Wu_Basal", "SCSubtype_Wu_Her2E",
+      "SCSubtype_Wu_LumA", "SCSubtype_Wu_LumB"
     )) {
       sname <- substring(name, 16)
-      g <- BreastState_Wu$SYMBOL[BreastState_Wu$class == sname]
-    }  else if (name %in% c(
-      "PanState_Barkley_Cycle", "PanState_Barkley_Stress",
-      "PanState_Barkley_Interferon", "PanState_Barkley_Oxphos",
-      "PanState_Barkley_Metal", "PanState_Barkley_Alveolar",
-      "PanState_Barkley_Basal", "PanState_Barkley_Squamous",
-      "PanState_Barkley_Glandular", "PanState_Barkley_Ciliated"
-    )) {
-      sname <- substring(name, 18)
-      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
-    } else if (name == "Hypoxia_Barkley") {
-      sname <- substring(name, 1, 7)
+      g <- SCSubtype_Wu$SYMBOL[SCSubtype_Wu$class == sname]
+    } else if (name %in% c(
+      "Hypoxia_Barkley", "Stress_Barkley", "Interferon_Barkley", 
+      "Oxphos_Barkley", "Metal_Barkley")) {
+      sname <- substring(name, 1, regexpr("_", name) - 1)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     } else if (name == "CellCycle_Barkley") {
-      sname <- substring(name, 5, grep("_", name) - 1)
+      sname <- substring(name, 5, regexpr("_", name) - 1)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
-    }
-      else if (name %in% c(
+    } else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye",
         "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
         "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu",
