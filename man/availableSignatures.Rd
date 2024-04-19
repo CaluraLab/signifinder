@@ -29,7 +29,7 @@ filter the signatures in the table.}
 \item{description}{logical. If TRUE it shows the signature's description.}
 }
 \value{
-A data frame with 53 rows and 12 variables:
+A data frame with 12 variables:
 \describe{
   \item{signature}{name of the signature}
   \item{scoreLabel}{label of the signature when added inside colData section}

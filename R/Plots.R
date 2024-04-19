@@ -162,12 +162,12 @@ geneHeatmapSignPlot <- function(
         signval <- matrix(
             signval, nrow = 1,
             dimnames = list(whichSign, colnames(dataset)))
-        legendName = "score"
+        legendName <- "score"
     } else {
         signval <- as.matrix(signval)
         signval <- apply(signval, 2, scale)
         signval <- t(signval)
-        legendName = "z score"}
+        legendName <- "z score"}
 
     Gene <- NULL
     geneTable <- as.data.frame(do.call(rbind, lapply(whichSign, .GetGenes))) %>%
@@ -278,11 +278,11 @@ heatmapSignPlot <- function(
 
     if(length(unique(unlist(lapply(strsplit(
         x = colnames(data), split = "_"),
-        function(i) paste(i[1:2], collapse = "_"))))) > 1){
+        function(i) paste(i[c(1,2)], collapse = "_"))))) > 1){
         data <- apply(data, 2, scale)
         row.names(data) <- keepnames
-        legendName = "z score"
-    } else {legendName = "score"}
+        legendName <- "z score"
+    } else {legendName <- "score"}
     data <- as.matrix(t(data))
 
     dots <- list(...)
@@ -717,12 +717,11 @@ evaluationSignPlot <- function(
         zeros_cor <- cor(x = z_conte, i)
 
         goodness <- (2*perc_genes + 2*(100-median(perc_zero)) +
-                         (1-abs(coverage_cor))*100 + (1-abs(zeros_cor))*100)/6
+            (1-abs(coverage_cor))*100 + (1-abs(zeros_cor))*100)/6
         goodTab <- c(perc_genes, 100-median(perc_zero), (
             1-abs(coverage_cor))*50, (1-abs(zeros_cor))*50)
 
-        list(perc_genes, perc_zero, coverage_cor,
-             zeros_cor, goodness, goodTab)
+        list(perc_genes, perc_zero, coverage_cor, zeros_cor, goodness, goodTab)
     })
     names(res) <- signs
 

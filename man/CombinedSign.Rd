@@ -46,7 +46,6 @@ to have more details explore the function
 }
 \examples{
 data(ovse)
-
 CombinedSign(dataset = ovse)
 
 }

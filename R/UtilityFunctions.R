@@ -151,7 +151,7 @@ my_colors <- colorRampPalette(my_colors)(100)
     )) {
       sname <- substring(name, 16)
       g <- BreastState_Wu$SYMBOL[BreastState_Wu$class == sname]
-    } else if (name %in% c("ICBResponse_Chen_responder", 
+    } else if (name %in% c("ICBResponse_Chen_responder",
                            "ICBResponse_Chen_nonresponder"
     )) {
       sname <- substring(name, 18)
@@ -300,13 +300,24 @@ setMethod(".returnAsInput",
             stop("This author is not present for this signature")}}
 }
 
+.isMalignantCheck <- function(isMalignant, dataset) {
+  if(is.null(isMalignant)){
+    stop("isMalignant param is missing")
+  } else {
+    if(length(isMalignant)!=ncol(dataset)){
+      stop("length of isMalignant must be equal to ncol(dataset)")}
+    if(!is.logical(isMalignant)){
+      stop("isMalignant must be a logical vector")}}
+}
+
 .coeffScore <- function(
         sdata, datasetm, namesignature, detail = NULL, author = "") {
     .percentageOfGenesUsed(
         namesignature, datasetm, sdata$SYMBOL, detail, author)
     sdata <- sdata[sdata$SYMBOL %in% row.names(datasetm), ]
     columnNA <- .managena(datasetm = datasetm, genes = sdata$SYMBOL)
-    score <- colSums(datasetm[sdata$SYMBOL, ,drop=FALSE] * sdata$coeff, na.rm = TRUE)
+    score <- colSums(
+      datasetm[sdata$SYMBOL, ,drop = FALSE] * sdata$coeff, na.rm = TRUE)
     score[columnNA > 0.9] <- NA
     return(score)
 }
@@ -454,7 +465,7 @@ setMethod(".returnAsInput",
 #' filter the signatures in the table.
 #' @param description logical. If TRUE it shows the signature's description.
 #'
-#' @return A data frame with 53 rows and 12 variables:
+#' @return A data frame with 12 variables:
 #' \describe{
 #'   \item{signature}{name of the signature}
 #'   \item{scoreLabel}{label of the signature when added inside colData section}
@@ -604,7 +615,7 @@ getSignGenes <- function(whichSign) {
     if (!(whichSign %in% signatureTable$signature)) {
         stop("This signature is not present in signifinder")}
 
-    if(whichSign=="Combined_Thompson"){
+    if(whichSign == "Combined_Thompson"){
         message(
         "Combined_Thompson is a combination of EMT_Thompson and
         Tinflam_Thompson signatures.")

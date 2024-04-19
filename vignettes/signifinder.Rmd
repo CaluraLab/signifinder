@@ -10,7 +10,7 @@ author:
   email: enrica.calura@unipd.it
 package: signifinder
 abstract: >
-  signifinder offers a rapid way to apply and explore gene expression tumor signatures from literature. It allows to compute the signature scores on the user dataset. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains 60 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
+  signifinder offers a rapid way to apply and explore gene expression tumor signatures from literature. It allows to compute the signature scores on the user dataset. Further, it supports the exploration of the scores proving functions to visualize single or multiple signatures. Currently, signifinder contains more than 60 distinct signatures collected from the literature relating to multiple tumors and multiple cancer processes.
 output: 
   BiocStyle::html_document:
       toc: true
@@ -148,7 +148,7 @@ ovse <- multipleSign(dataset = ovse, inputType = "rnaseq",
 
 ## Signature goodness
 
-When computing a signature on a dataset we always have to keep in mind that not all the signature genes may be present in the dataset. Also, these may have many zero values or other issues affecting the goodness of a specific signature for the dataset. We can inspect some signature's technical parameters to evaluate their reliability for the analysed dataset. First, users can access the complete gene list of a signature with the function `getSignGenes`, that returns a dataframe object with "SYMBOL" in the first column. Some signatures have also additional colums: "coeff" for coefficients that weigh the gene contributions; "class" for a classification that divides the signature in two or more groups. Few signatures have other specific columns.
+When computing a signature on a dataset we always have to keep in mind that not all the signature genes may be present in the dataset. Also, these may have many zero values or other issues affecting the goodness of a specific signature for the dataset. We can inspect some signature's technical parameters to evaluate their reliability for the analysed dataset. First, users can access the complete gene list of a signature with the function `getSignGenes`, that returns a dataframe object with "SYMBOL" in the first column. Some signatures have also additional columns: "coeff" for coefficients that weigh the gene contributions; "class" for a classification that divides the signature in two or more groups. Few signatures have other specific columns.
 
 ```{r}
 getSignGenes("VEGF_Hu")

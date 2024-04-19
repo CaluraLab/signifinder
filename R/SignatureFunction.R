@@ -1401,7 +1401,7 @@ IPSOVSign <- function(
   gsvaPar <- do.call(ssgseaParam, args)
   gsva_matrix <- gsva(gsvaPar, verbose = FALSE)
 
-  sign_class <- unique(sign_df[,2:3])
+  sign_class <- unique(sign_df[,c(2,3)])
   sign_class <- sign_class[sign_class$class %in% row.names(gsva_matrix), ]
   columnNA <- .managena(datasetm = gsva_matrix, genes = sign_class$class)
   score <- colSums(
@@ -1419,7 +1419,7 @@ IPSOVSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' @param isMalignant logical vector of the same length of ncol(dataset), where
 #' TRUE states malignant cells and FALSE states non-malignant cells.
 #'
 #' @inherit EMTSign return
@@ -1433,15 +1433,7 @@ glioCellStateSign <- function(
     isMalignant = NULL, hgReference = "hg38") {
 
   .consistencyCheck(nametype, "glioCellStateSign")
-
-  if(is.null(isMalignant)){
-    stop("isMalignant param is missing but it is required",
-         "for the computation of the signature")
-  } else {
-    if(length(isMalignant)!=ncol(dataset)){
-      stop("lenght of isMalignant must be equal to ncol(dataset)")}
-    if(!is.logical(isMalignant)){
-      stop("isMalignant must be a logical vector")}}
+  .isMalignantCheck(isMalignant, dataset)
 
   if(nrow(dataset)<3000){stop(
     "dataset must have at least 3000 genes to compute the signature")}
@@ -1507,12 +1499,17 @@ glioCellStateSign <- function(
 }
 
 
-#' Metastatic melanoma Cellular States Signature
+#' Metastatic Melanoma Cellular States Signature
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' @param isMalignant logical vector of the same length of ncol(dataset), where
 #' TRUE states malignant cells and FALSE states non-malignant cells.
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
 #'
 #' @export
 melStateSign <- function(
@@ -1520,15 +1517,7 @@ melStateSign <- function(
     isMalignant = NULL, hgReference = "hg38") {
 
   .consistencyCheck(nametype, "melStateSign")
-
-  if(is.null(isMalignant)){
-    stop("isMalignant param is missing but it is required",
-         "for the computation of the signature")
-  } else {
-    if(length(isMalignant)!=ncol(dataset)){
-      stop("lenght of isMalignant must be equal to ncol(dataset)")}
-    if(!is.logical(isMalignant)){
-      stop("isMalignant must be a logical vector")}}
+  .isMalignantCheck(isMalignant, dataset)
 
   if(nrow(dataset)<2500){stop(
     "dataset must have at least 2500 genes to compute the signature")}
@@ -1593,12 +1582,12 @@ melStateSign <- function(
 #'
 #' @examples
 #' data(ovse)
-#'
 #' CombinedSign(dataset = ovse)
 #'
 #' @export
-CombinedSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
-                         hgReference = "hg38", weighted = FALSE){
+CombinedSign <- function(
+        dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+        hgReference = "hg38", weighted = FALSE){
 
   # Combination of EMT_Thompson and Tinflam_Thompson signatures
 
@@ -1656,7 +1645,7 @@ APMSign <- function(
       exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Gaussian"))
 
     gsvaPar <- do.call(gsvaParam, args)
-    score <- gsva(gsvaPar, verbose=FALSE)
+    score <- gsva(gsvaPar, verbose = FALSE)
     score <- as.vector(score)
 
   } else if (author == "Thompson") {
@@ -1694,8 +1683,9 @@ APMSign <- function(
 #' MPSSign(dataset = ovse)
 #'
 #' @export
-MPSSign <- function(dataset, nametype = "SYMBOL",
-                    whichAssay = "norm_expr", hgReference = "hg38"){
+MPSSign <- function(
+        dataset, nametype = "SYMBOL", whichAssay = "norm_expr",
+        hgReference = "hg38"){
 
   .consistencyCheck(nametype, "MPSSign")
   datasetm <- .getMatrix(dataset, whichAssay)
@@ -1708,8 +1698,8 @@ MPSSign <- function(dataset, nametype = "SYMBOL",
     hgReference = hgReference, nametype = nametype)
   datasetm_n <- as.matrix(assays(dataset)[["FPKM"]])
 
-  score <- .coeffScore(sdata = sign_df,
-                       datasetm = datasetm_n, namesignature = "MPSSign")
+  score <- .coeffScore(
+      sdata = sign_df, datasetm = datasetm_n, namesignature = "MPSSign")
 
   return(.returnAsInput(
     userdata = dataset, result = score,
@@ -1723,6 +1713,7 @@ MPSSign <- function(dataset, nametype = "SYMBOL",
 #' @inheritParams pyroptosisSign
 #'
 #' @inherit EMTSign return
+#'
 #' @examples
 #' data(ovse)
 #' IRGSign(dataset = ovse)
@@ -1736,12 +1727,11 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
   sign_df <- IRG_Yang
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
 
-  score <- .coeffScore(sdata = sign_df,
-                       datasetm = datasetm, namesignature = "IRGSign")
+  score <- .coeffScore(
+    sdata = sign_df, datasetm = datasetm, namesignature = "IRGSign")
 
   return(.returnAsInput(
-    userdata = dataset, result = score,
-    SignName = "IRG_Yang", datasetm))
+    userdata = dataset, result = score, SignName = "IRG_Yang", datasetm))
 }
 
 
@@ -1767,12 +1757,12 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 
   .percentageOfGenesUsed("TGFBSign", datasetm, sign_df$SYMBOL)
 
-  pca<-prcomp(t(datasetm[rownames(datasetm) %in% TGFB_Mariathasan$SYMBOL, ]),
-              scale = TRUE)$x
+  pca<-prcomp(t(datasetm[
+    rownames(datasetm) %in% TGFB_Mariathasan$SYMBOL, ]), scale = TRUE)$x
   score <- pca[, "PC1"]
 
-  return(.returnAsInput(userdata = dataset, result = score,
-                        SignName = "TGFB_Mariathasan", datasetm))
+  return(.returnAsInput(
+    userdata = dataset, result = score, SignName="TGFB_Mariathasan", datasetm))
 }
 
 
@@ -1792,8 +1782,8 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #' ADOSign(dataset = ovse)
 #'
 #' @export
-ADOSign <- function(dataset, nametype = "SYMBOL",
-                    whichAssay = "norm_expr", ...){
+ADOSign <- function(
+  dataset, nametype = "SYMBOL", whichAssay = "norm_expr", ...){
 
   .consistencyCheck(nametype, "ADOSign")
   datasetm <- .getMatrix(dataset, whichAssay)
@@ -1807,11 +1797,10 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
   args <- .matchArguments(dots, list(
     exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Poisson"))
   gsvaPar <- do.call(gsvaParam, args)
-  score <- as.vector(gsva(gsvaPar, verbose=FALSE))
+  score <- as.vector(gsva(gsvaPar, verbose = FALSE))
 
   return(.returnAsInput(
-    userdata = dataset, result = score,
-    SignName = "ADO_Sidders", datasetm))
+    userdata = dataset, result = score, SignName = "ADO_Sidders", datasetm))
 }
 
 
@@ -1827,8 +1816,8 @@ ADOSign <- function(dataset, nametype = "SYMBOL",
 #' MITFlowPTENnegSign(dataset = ovse)
 #'
 #' @export
-MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
-                               whichAssay = "norm_expr"){
+MITFlowPTENnegSign <- function(
+  dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 
   .consistencyCheck(nametype, "MITFlowPTENnegSign")
   datasetm <- .getMatrix(dataset, whichAssay)
@@ -1840,8 +1829,8 @@ MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
 
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
   datasetm <- log2(datasetm+1)
-  score <- cor(datasetm[sign_df$SYMBOL,], sign_df$Coefficient,
-               method = "pearson")
+  score <- cor(
+    datasetm[sign_df$SYMBOL,], sign_df$Coefficient, method = "pearson")
 
   return(.returnAsInput(
     userdata = dataset, result = as.vector(score),
@@ -1864,7 +1853,7 @@ MITFlowPTENnegSign <- function(dataset, nametype = "SYMBOL",
 #'
 #' @export
 LRRC15CAFSign <- function(
-    dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
+  dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 
   .consistencyCheck(nametype, "LRRC15CAFSign")
   datasetm <- .getMatrix(dataset, whichAssay)
@@ -1890,7 +1879,7 @@ LRRC15CAFSign <- function(
 #'
 #' @inherit EMTSign description
 #' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
+#' @param isMalignant logical vector of the same length of ncol(dataset), where
 #' TRUE states malignant cells and FALSE states non-malignant cells.
 #'
 #' @inherit EMTSign return
@@ -1904,15 +1893,7 @@ breastStateSign <- function(
     isMalignant = NULL, hgReference = "hg38") {
 
   .consistencyCheck(nametype, "breastStateSign")
-
-  if(is.null(isMalignant)){
-    stop("isMalignant param is missing but it is required",
-         "for the computation of the signature")
-  } else {
-    if(length(isMalignant)!=ncol(dataset)){
-      stop("lenght of isMalignant must be equal to ncol(dataset)")}
-    if(!is.logical(isMalignant)){
-      stop("isMalignant must be a logical vector")}}
+  .isMalignantCheck(isMalignant, dataset)
 
   datasetm <- .getMatrix(dataset, whichAssay)
   datasetm_n <- log2(datasetm + 1)
@@ -1933,7 +1914,6 @@ breastStateSign <- function(
     "breastStateSign", datasetm_n,
     sign_df$SYMBOL[sign_df$class == "LumB"], "LumB")
 
-
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm_n), ]
   sign_list <- split(sign_df$SYMBOL, sign_df$class)
   names(sign_list) <- paste0("BreastState_Wu_", names(sign_list))
@@ -1943,8 +1923,7 @@ breastStateSign <- function(
   scores <- as.data.frame(lapply(sign_list, function(x) {
     if (length(x)>1) {score <- colMeans(datasetm_n[x,], na.rm = TRUE)
     } else {score <- datasetm_n[x,]}
-    score[isMalignant] <- score
-  }))
+    score[isMalignant] <- score }))
 
   return(.returnAsInput(
     userdata = dataset, result = t(scores),
@@ -2015,28 +1994,27 @@ ICBResponseSign <- function(
 #'
 #' @export
 COXISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
-  
+
   .consistencyCheck(nametype, "COXISSign")
   datasetm <- .getMatrix(dataset, whichAssay)
   datasetm <- log2(datasetm + 1)
-  
+
   sign_df <- COXIS_Bonavita
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   .percentageOfGenesUsed("COXISSign", datasetm, sign_df$SYMBOL)
-  
+
   pos <- intersect(rownames(datasetm), sign_df[sign_df$class == "CP", "SYMBOL"])
   datasetm_pos <- datasetm[pos,]
   score_pos <- colMeans(datasetm_pos)
-  
+
   neg <- intersect(rownames(datasetm), sign_df[sign_df$class == "CI", "SYMBOL"])
   datasetm_neg <- datasetm[neg,]
   score_neg <- colMeans(datasetm_neg)
-  
+
   score <- score_pos / score_neg
-  
+
   return(.returnAsInput(
-    userdata = dataset, result = score,
-    SignName = "COXIS_Bonavita", datasetm))
+    userdata = dataset, result = score, SignName = "COXIS_Bonavita", datasetm))
 }
 

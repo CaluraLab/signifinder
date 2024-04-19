@@ -2,7 +2,7 @@
 % Please edit documentation in R/SignatureFunction.R
 \name{melStateSign}
 \alias{melStateSign}
-\title{Metastatic melanoma Cellular States Signature}
+\title{Metastatic Melanoma Cellular States Signature}
 \usage{
 melStateSign(
   dataset,
@@ -26,14 +26,25 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
 
-\item{isMalignant}{logical vector of the same lenght of ncol(dataset), where
+\item{isMalignant}{logical vector of the same length of ncol(dataset), where
 TRUE states malignant cells and FALSE states non-malignant cells.}
 
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}
 }
+\value{
+If dataset is a \linkS4class{SummarizedExperiment} object, then
+scores are added in the \code{\link[SummarizedExperiment]{colData}} section.
+If dataset is a data frame or a matrix, then a
+\linkS4class{SummarizedExperiment} object is created in which scores are
+added in the \code{\link[SummarizedExperiment]{colData}} section.
+}
 \description{
 This signature is computed accordingly to the reference paper,
 to have more details explore the function
  \code{\link[signifinder]{availableSignatures}}.
+}
+\examples{
+data(ovse)
+
 }
