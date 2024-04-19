@@ -1,6 +1,17 @@
 \name{NEWS}
 \title{ for package \pkg{signifinder} }
 
+\section{Version 1.6.0, Bioconductor 3.19 Release}{
+ \itemize{
+  \item Add 15 new signatures.
+  \item Update the \code{evaluationSignPlot} function to return an overall
+  goodness score.
+  \item Add \code{getSignGenes} function to access the signatures gene list.
+  \item When multiple signatures are plotted, values are reported in z-scores
+  and not rescaled between 0 and 1 as before.
+ }
+}
+
 \section{Version 1.4.0, Bioconductor 3.18 Release}{
  \itemize{
   \item Add \code{glioCellStateSign} function to compute the glioblastoma
