@@ -326,16 +326,18 @@ test_that("LRRC15CAFSign work", {
 })
 
 test_that("SCSubtypeSign work", {
-  pyrnames <- c("SCSubtype_Wu_Basal", "SCSubtype_Wu_Her2E",
-                "SCSubtype_Wu_LumA", "SCSubtype_Wu_LumB")
+  pyrnames <- c("SCSubtype_Wu_Basal",
+                "SCSubtype_Wu_Her2E",
+                "SCSubtype_Wu_LumA",
+                "SCSubtype_Wu_LumB")
   pname <- sample(pyrnames, 1)
   rmatrix <- .fakeData(pname)
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- SCSubtypeSign(rmatrix, isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
-  expect_true("SCSubtype_Wu_LumA" %in% colnames(colData(myres)))
-  expect_length(colData(myres)[,"SCSubtype_Wu_Her2E"],ncol(assay(myres)))
-  expect_type(colData(myres)[,"SCSubtype_Wu_LumB"], "double")
+  expect_true(pname %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,pname],ncol(assay(myres)))
+  expect_type(colData(myres)[,pname], "double")
   expect_message(SCSubtypeSign(rmatrix, isMalignant = malign), "100")
 })
 
