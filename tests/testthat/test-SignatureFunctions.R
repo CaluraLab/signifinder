@@ -45,9 +45,10 @@ test_that("EMTSign based on Thompson's work", {
 })
 
 test_that("EMTSign based on Barkley's work", {
-  pyrnames <- c("EMT_Barkley_cEMT", "EMT_Barkley_pEMT")
-  pname <- sample(pyrnames, 1)
-  rmatrix <- .fakeData(pname)
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- EMTSign(rmatrix, inputType = "sc", author = "Barkley", 
                    isMalignant = malign)
@@ -60,7 +61,10 @@ test_that("EMTSign based on Barkley's work", {
 })
 
 test_that("hypoxiaSign based on Barkley's work", {
-  rmatrix <- .fakeData("Hypoxia_Barkley")
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- hypoxiaSign(rmatrix, inputType = "sc", author = "Barkley", 
                    isMalignant = malign)
@@ -179,7 +183,8 @@ test_that("stateSign based on Neftel's work", {
 
 test_that("stateSign based on Barkley's work", {
   rmatrix <- data.frame()
-  for(i in SignatureNames){
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
     rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- stateSign(rmatrix, inputType = "sc", author = "Barkley", 
@@ -321,9 +326,10 @@ test_that("LRRC15CAFSign work", {
 })
 
 test_that("SCSubtypeSign work", {
-  rmatrix <- data.frame()
-  for(i in SignatureNames){
-    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  pyrnames <- c("SCSubtype_Wu_Basal", "SCSubtype_Wu_Her2E",
+                "SCSubtype_Wu_LumA", "SCSubtype_Wu_LumB")
+  pname <- sample(pyrnames, 1)
+  rmatrix <- .fakeData(pname)
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- SCSubtypeSign(rmatrix, isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
@@ -378,7 +384,10 @@ test_that("interferonSign based on Barkley's work", {
 })
 
 test_that("oxphosSign based on Barkley's work", {
-  rmatrix <- .fakeData("Oxphos_Barkley")
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- oxphosSign(rmatrix, isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
@@ -389,7 +398,10 @@ test_that("oxphosSign based on Barkley's work", {
 })
 
 test_that("metalSign based on Barkley's work", {
-  rmatrix <- .fakeData("Metal_Barkley")
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
   myres <- metalSign(rmatrix, isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))

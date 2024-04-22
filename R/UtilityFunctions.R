@@ -175,7 +175,7 @@ my_colors <- colorRampPalette(my_colors)(100)
       "SCSubtype_Wu_Basal", "SCSubtype_Wu_Her2E",
       "SCSubtype_Wu_LumA", "SCSubtype_Wu_LumB"
     )) {
-      sname <- substring(name, 16)
+      sname <- substring(name, 14)
       g <- SCSubtype_Wu$SYMBOL[SCSubtype_Wu$class == sname]
     } else if (name %in% c("ICBResponse_Chen_responder",
                            "ICBResponse_Chen_nonresponder"
