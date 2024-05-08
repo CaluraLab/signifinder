@@ -662,6 +662,7 @@ getSignGenes <- function(whichSign) {
 #' Pancancer Cellular States Barkley Scoring Function
 #'
 #' @importFrom ggplot2 cut_number
+#' @importFrom scales rescale
 #' @export
 .barkleyFun <- function(dataset, signList, modules) {
   
@@ -693,11 +694,11 @@ getSignGenes <- function(whichSign) {
       colMeans(dataset[i, ], na.rm = TRUE)
     })
     re = colMeans(dataset[rownames(dataset) %in% mod[[m]], ], na.rm = TRUE)
-    p = rowMeans(ra >= re)
-    p = -log10(p)
+    p = -log10(rowMeans(ra >= re))
   }))
   scores[is.infinite(scores)] = 4
   scores = scores/4
+  scores = rescale(scores)
   
   return(scores)
 }
