@@ -1845,8 +1845,6 @@ MITFlowPTENnegSign <- function(
 #'
 #' @inherit EMTSign return
 #'
-#' @importFrom sparrow GeneSetDb scoreSingleSamples
-#'
 #' @examples
 #' data(ovse)
 #' LRRC15CAFSign(dataset = ovse)
@@ -1862,15 +1860,16 @@ LRRC15CAFSign <- function(
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
 
   .percentageOfGenesUsed("LRRC15CAFSign", datasetm, sign_df$SYMBOL)
-
-  gdb <- list(LRRC15_CAF = sign_df$SYMBOL)
-  gdb <- GeneSetDb(gdb)
-
-  datasetm <- log2(datasetm + 1)
-  score <- scoreSingleSamples(gdb, datasetm, methods = 'ewm')
+  
+  datasetm_n <- datasetm[rownames(datasetm) %in% sign_df$SYMBOL,]
+  datasetm_n <- log2(datasetm_n + 1)
+  pca <- prcomp(t(datasetm_n), center=TRUE, scale=TRUE)
+  weights <- pca$rotation[,1]
+  contribution <- abs(weights) / sum(abs(weights))
+  score <- apply(datasetm_n, 2, function(x) weighted.mean(x, contribution))
 
   return(.returnAsInput(
-    userdata = dataset, result = score$score,
+    userdata = dataset, result = score,
     SignName = "LRRC15CAF_Dominguez", datasetm))
 }
 
