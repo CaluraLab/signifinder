@@ -44,6 +44,38 @@ test_that("EMTSign based on Thompson's work", {
   expect_message(EMTSign(rmatrix, author = "Thompson"), "100")
 })
 
+test_that("EMTSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- EMTSign(rmatrix, inputType = "sc", author = "Barkley", 
+                   isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("EMT_Barkley_cEMT" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"EMT_Barkley_pEMT"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"EMT_Barkley_cEMT"], "double")
+  expect_message(EMTSign(rmatrix, inputType = "sc", author = "Barkley", 
+                         isMalignant = malign), "100")
+})
+
+test_that("hypoxiaSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- hypoxiaSign(rmatrix, inputType = "sc", author = "Barkley", 
+                   isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Hypoxia_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Hypoxia_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Hypoxia_Barkley"], "double")
+  expect_message(hypoxiaSign(rmatrix, inputType = "sc", author = "Barkley", 
+                             isMalignant = malign), "100")
+})
+
 test_that("ASCSign work", {
     rmatrix <- .fakeData("ASC_Smith")
     myres <- ASCSign(rmatrix)
@@ -134,16 +166,35 @@ test_that("IPSOVSign work", {
     expect_message(IPSOVSign(rmatrix), "100")
 })
 
-test_that("glioCellStateSign work", {
+test_that("stateSign based on Neftel's work", {
     rmatrix <- data.frame()
     for(i in SignatureNames){
         rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
     malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-    myres <- glioCellStateSign(rmatrix, isMalignant = malign)
+    myres <- stateSign(rmatrix, inputType = "sc", author = "Neftel", 
+                       isMalignant = malign)
     expect_true(is(myres, "SummarizedExperiment"))
-    expect_true("GlioCellState_Neftel_OPC" %in% colnames(colData(myres)))
-    expect_length(colData(myres)[,"GlioCellState_Neftel_AC"],ncol(assay(myres)))
-    expect_type(colData(myres)[,"GlioCellState_Neftel_MES1"], "double")
+    expect_true("State_Neftel_OPC" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[,"State_Neftel_AC"],ncol(assay(myres)))
+    expect_type(colData(myres)[,"State_Neftel_MES1"], "double")
+    expect_message(stateSign(rmatrix, inputType = "sc", author = "Neftel", 
+                             isMalignant = malign), "100")
+})
+
+test_that("stateSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- stateSign(rmatrix, inputType = "sc", author = "Barkley", 
+                   isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("State_Barkley_AC" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"State_Barkley_OPC"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"State_Barkley_NPC"], "double")
+  expect_message(stateSign(rmatrix, inputType = "sc", author = "Barkley", 
+                           isMalignant = malign), "100")
 })
 
 test_that("TinflamSign based on Thompson's work", {
@@ -156,6 +207,19 @@ test_that("TinflamSign based on Thompson's work", {
   expect_message(TinflamSign(rmatrix, author = "Thompson"), "100")
 })
 
+test_that("cellCycleSign based on Barkley's work", {
+  rmatrix <- .fakeData("CellCycle_Barkley")
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- cellCycleSign(rmatrix, inputType = "sc", author = "Barkley", 
+                       isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("CellCycle_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "CellCycle_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "CellCycle_Barkley"], "double")
+  expect_message(cellCycleSign(rmatrix, inputType = "sc", author = "Barkley", 
+                             isMalignant = malign), "100")
+})
+
 test_that("CombinedSign work", {
   rmatrix <- .fakeData("Combined_Thompson")
   myres <- CombinedSign(rmatrix)
@@ -166,16 +230,19 @@ test_that("CombinedSign work", {
   expect_message(CombinedSign(rmatrix), "100")
 })
 
-test_that("melStateSign work", {
+test_that("stateSign based on Tirosh's work", {
   rmatrix <- data.frame()
   for(i in SignatureNames){
     rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- melStateSign(rmatrix, isMalignant = malign)
+  myres <- stateSign(rmatrix, inputType = "sc", author = "Tirosh", 
+                     isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
-  expect_true("MelState_Tirosh_MITF" %in% colnames(colData(myres)))
-  expect_length(colData(myres)[,"MelState_Tirosh_AXL"],ncol(assay(myres)))
-  expect_type(colData(myres)[,"MelState_Tirosh_AXL"], "double")
+  expect_true("State_Tirosh_MITF" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,"State_Tirosh_AXL"],ncol(assay(myres)))
+  expect_type(colData(myres)[,"State_Tirosh_AXL"], "double")
+  expect_message(stateSign(rmatrix, inputType = "sc", author = "Tirosh", 
+                           isMalignant = malign), "100")
 })
 
 test_that("APMSign based on Thompson's work", {
@@ -258,17 +325,20 @@ test_that("LRRC15CAFSign work", {
   expect_message(LRRC15CAFSign(rmatrix), "100")
 })
 
-test_that("breastStateSign work", {
-  rmatrix <- data.frame()
-  for(i in SignatureNames){
-    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+test_that("SCSubtypeSign work", {
+  pyrnames <- c("SCSubtype_Wu_Basal",
+                "SCSubtype_Wu_Her2E",
+                "SCSubtype_Wu_LumA",
+                "SCSubtype_Wu_LumB")
+  pname <- sample(pyrnames, 1)
+  rmatrix <- .fakeData(pname)
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- breastStateSign(rmatrix, isMalignant = malign)
+  myres <- SCSubtypeSign(rmatrix, isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
-  expect_true("BreastState_Wu_LumA" %in% colnames(colData(myres)))
-  expect_length(colData(myres)[,"BreastState_Wu_Her2E"],ncol(assay(myres)))
-  expect_type(colData(myres)[,"BreastState_Wu_LumB"], "double")
-  expect_message(breastStateSign(rmatrix, isMalignant = malign), "100")
+  expect_true(pname %in% colnames(colData(myres)))
+  expect_length(colData(myres)[,pname],ncol(assay(myres)))
+  expect_type(colData(myres)[,pname], "double")
+  expect_message(SCSubtypeSign(rmatrix, isMalignant = malign), "100")
 })
 
 test_that("ICBResponseSign work", {
@@ -291,4 +361,54 @@ test_that("COXISSign work", {
   expect_length(colData(myres)[, "COXIS_Bonavita"], ncol(assay(myres)))
   expect_type(colData(myres)[, "COXIS_Bonavita"], "double")
   expect_message(COXISSign(rmatrix), "100")
+})
+
+test_that("stressSign based on Barkley's work", {
+  rmatrix <- .fakeData("Stress_Barkley")
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- stressSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Stress_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Stress_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Stress_Barkley"], "double")
+  expect_message(stressSign(rmatrix, isMalignant = malign), "100")
+})
+
+test_that("interferonSign based on Barkley's work", {
+  rmatrix <- .fakeData("Interferon_Barkley")
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- interferonSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Interferon_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Interferon_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Interferon_Barkley"], "double")
+  expect_message(interferonSign(rmatrix, isMalignant = malign), "100")
+})
+
+test_that("oxphosSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- oxphosSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Oxphos_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Oxphos_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Oxphos_Barkley"], "double")
+  expect_message(oxphosSign(rmatrix, isMalignant = malign), "100")
+})
+
+test_that("metalSign based on Barkley's work", {
+  rmatrix <- data.frame()
+  PanBarkley <- SignatureNames[grep("Barkley", SignatureNames)]
+  for(i in PanBarkley){
+    rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
+  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+  myres <- metalSign(rmatrix, isMalignant = malign)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("Metal_Barkley" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "Metal_Barkley"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "Metal_Barkley"], "double")
+  expect_message(metalSign(rmatrix, isMalignant = malign), "100")
 })

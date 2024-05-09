@@ -4,6 +4,8 @@ SignatureNames <- c(
     "EMT_Mak",
     "EMT_Cheng",
     "EMT_Thompson",
+    "EMT_Barkley_cEMT",
+    "EMT_Barkley_pEMT",
     "Pyroptosis_Ye",
     "Pyroptosis_Shao",
     "Pyroptosis_Lin",
@@ -14,6 +16,7 @@ SignatureNames <- c(
     "Ferroptosis_Ye",
     "LipidMetabolism_Zheng",
     "Hypoxia_Buffa",
+    "Hypoxia_Barkley",
     "ImmunoScore_Hao",
     "ImmunoScore_Roh",
     "ConsensusOV_Chen_IMR",
@@ -39,6 +42,7 @@ SignatureNames <- c(
     "CIN_Carter_70",
     "CellCycle_Lundberg",
     "CellCycle_Davoli",
+    "CellCycle_Barkley",
     "Chemokines_Messina",
     "ASC_Smith",
     "PassON_Du",
@@ -61,14 +65,22 @@ SignatureNames <- c(
     "VEGF_Hu",
     "DNArep_Kang",
     "IPSOV_Shen",
-    "GlioCellState_Neftel_MES2",
-    "GlioCellState_Neftel_MES1",
-    "GlioCellState_Neftel_AC",
-    "GlioCellState_Neftel_OPC",
-    "GlioCellState_Neftel_NPC1",
-    "GlioCellState_Neftel_NPC2",
-    "MelState_Tirosh_MITF",
-    "MelState_Tirosh_AXL",
+    "State_Neftel_MES2",
+    "State_Neftel_MES1",
+    "State_Neftel_AC",
+    "State_Neftel_OPC",
+    "State_Neftel_NPC1",
+    "State_Neftel_NPC2",
+    "State_Barkley_Alveolar",
+    "State_Barkley_Basal",
+    "State_Barkley_Squamous",
+    "State_Barkley_Glandular",
+    "State_Barkley_Ciliated",
+    "State_Barkley_AC", 
+    "State_Barkley_OPC", 
+    "State_Barkley_NPC",
+    "State_Tirosh_MITF",
+    "State_Tirosh_AXL",
     "Combined_Thompson",
     "APM_Thompson",
     "APM_Wang",
@@ -78,13 +90,17 @@ SignatureNames <- c(
     "ADO_Sidders",
     "MITFlowPTENneg_Cabrita",
     "LRRC15CAF_Dominguez",
-    "BreastState_Wu_Basal",
-    "BreastState_Wu_Her2E",
-    "BreastState_Wu_LumA",
-    "BreastState_Wu_LumB",
     "ICBResponse_Chen_responder",
     "ICBResponse_Chen_nonresponder",
-    "COXIS_Bonavita"
+    "COXIS_Bonavita",
+    "SCSubtype_Wu_Basal",
+    "SCSubtype_Wu_Her2E",
+    "SCSubtype_Wu_LumA",
+    "SCSubtype_Wu_LumB",
+    "Stress_Barkley",
+    "Interferon_Barkley",
+    "Oxphos_Barkley",
+    "Metal_Barkley"
 )
 
 #' @importFrom viridis magma viridis
@@ -100,9 +116,12 @@ my_colors <- colorRampPalette(my_colors)(100)
     if (name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")) {
         sname <- paste0(substring(name, 10), "-like")
         g <- EMT_Miow$SYMBOL[EMT_Miow$class == sname]
+    } else if (name %in% c("EMT_Barkley_cEMT", "EMT_Barkley_pEMT")) {
+        sname <- substring(name, 13)
+        g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
     } else if (name %in% c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")) {
-        sname <- substring(name, 18)
-        g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
+      sname <- substring(name, 18)
+      g <- ECM_Chakravarthy$SYMBOL[grepl(sname, ECM_Chakravarthy$class)]
     } else if (name %in% c(
         "ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF",
         "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES"
@@ -110,17 +129,24 @@ my_colors <- colorRampPalette(my_colors)(100)
         sname <- substring(name, 18)
         g <- ConsensusOV_Chen$SYMBOL[ConsensusOV_Chen$class == sname]
     } else if (name %in% c(
-        "GlioCellState_Neftel_MES2", "GlioCellState_Neftel_MES1",
-        "GlioCellState_Neftel_AC", "GlioCellState_Neftel_OPC",
-        "GlioCellState_Neftel_NPC1", "GlioCellState_Neftel_NPC2"
+        "State_Neftel_MES2", "State_Neftel_MES1",
+        "State_Neftel_AC", "State_Neftel_OPC",
+        "State_Neftel_NPC1", "State_Neftel_NPC2"
     )) {
-        sname <- substring(name, 22)
-        g <- GlioCellState_Neftel$SYMBOL[GlioCellState_Neftel$class == sname]
+        sname <- substring(name, 14)
+        g <- State_Neftel$SYMBOL[State_Neftel$class == sname]
     } else if (name %in% c(
-      "MelState_Tirosh_MITF", "MelState_Tirosh_AXL"
+      "State_Barkley_Alveolar", "State_Barkley_Basal", "State_Barkley_Squamous",
+      "State_Barkley_Glandular", "State_Barkley_Ciliated", "State_Barkley_AC",
+      "State_Barkley_OPC", "State_Barkley_NPC"
     )) {
-      sname <- substring(name, 17)
-      g <- MelState_Tirosh$SYMBOL[MelState_Tirosh$class == sname]
+      sname <- substring(name, 15)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
+    } else if (name %in% c(
+      "State_Tirosh_MITF", "State_Tirosh_AXL"
+    )) {
+      sname <- substring(name, 14)
+      g <- State_Tirosh$SYMBOL[State_Tirosh$class == sname]
     } else if (name %in% c(
         "IPS_Charoentong_MHC", "IPS_Charoentong_CP",
         "IPS_Charoentong_EC", "IPS_Charoentong_SC"
@@ -146,18 +172,25 @@ my_colors <- colorRampPalette(my_colors)(100)
         name_inf <- .GetGenes("Tinflam_Thompson")[ , "Gene"]
         g <- union(name_emt, name_inf)
     } else if (name %in% c(
-      "BreastState_Wu_Basal", "BreastState_Wu_Her2E",
-      "BreastState_Wu_LumA", "BreastState_Wu_LumB"
+      "SCSubtype_Wu_Basal", "SCSubtype_Wu_Her2E",
+      "SCSubtype_Wu_LumA", "SCSubtype_Wu_LumB"
     )) {
-      sname <- substring(name, 16)
-      g <- BreastState_Wu$SYMBOL[BreastState_Wu$class == sname]
+      sname <- substring(name, 14)
+      g <- SCSubtype_Wu$SYMBOL[SCSubtype_Wu$class == sname]
     } else if (name %in% c("ICBResponse_Chen_responder",
                            "ICBResponse_Chen_nonresponder"
     )) {
       sname <- substring(name, 18)
       g <- ICBResponse_Chen$SYMBOL[ICBResponse_Chen$class == sname]
-    }
-      else if (name %in% c(
+    } else if (name %in% c(
+      "Hypoxia_Barkley", "Stress_Barkley", "Interferon_Barkley", 
+      "Oxphos_Barkley", "Metal_Barkley")) {
+      sname <- substring(name, 1, regexpr("_", name) - 1)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
+    } else if (name == "CellCycle_Barkley") {
+      sname <- substring(name, 5, regexpr("_", name) - 1)
+      g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
+    } else if (name %in% c(
         "EMT_Mak", "EMT_Cheng", "EMT_Thompson", "Pyroptosis_Ye",
         "Pyroptosis_Shao", "Pyroptosis_Lin", "Pyroptosis_Li",
         "Ferroptosis_Liang", "Ferroptosis_Li", "Ferroptosis_Liu",
@@ -626,3 +659,46 @@ getSignGenes <- function(whichSign) {
     }
 }
 
+#' Pancancer Cellular States Barkley Scoring Function
+#'
+#' @importFrom ggplot2 cut_number
+#' @importFrom scales rescale
+#' @export
+.barkleyFun <- function(dataset, signList, modules) {
+  
+  data.avg <- sort(rowMeans(x = dataset, na.rm = TRUE))
+  data.cut = cut_number(x = data.avg + rnorm(n = length(data.avg))/1e+30, 
+                        n = 25, labels = FALSE, right = FALSE)
+  names(x = data.cut) = names(x = data.avg)
+  binned = split(names(data.cut), data.cut)
+  mod <- signList[modules]
+  
+  rand = lapply(names(mod), function(m){
+    lapply(1:1000, function(i){
+      used = vector()
+      unused = binned
+      for (g in mod[[m]]){
+        pool = data.cut[g]
+        if (!(is.na(pool))) {
+          new = sample(unused[[pool]], 1)
+          used = c(used, new)
+          unused[[pool]] = setdiff(unused[[pool]], new)
+        }
+      }
+      used})
+  })
+  names(rand) = names(mod)
+  
+  scores = t(sapply(names(mod), function(m){
+    ra = sapply(rand[[m]], function(i){
+      colMeans(dataset[i, ], na.rm = TRUE)
+    })
+    re = colMeans(dataset[rownames(dataset) %in% mod[[m]], ], na.rm = TRUE)
+    p = -log10(rowMeans(ra >= re))
+  }))
+  scores[is.infinite(scores)] = 4
+  scores = scores/4
+  scores = rescale(scores)
+  
+  return(scores)
+}
