@@ -33,7 +33,7 @@ added in the \code{\link[SummarizedExperiment]{colData}} section.
 \description{
 This signature is computed accordingly to the reference paper,
 to have more details explore the function
- \code{\link[signifinder]{availableSignatures}}.
+\code{\link[signifinder]{availableSignatures}}.
 }
 \examples{
 data(ovse)

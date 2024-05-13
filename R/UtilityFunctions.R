@@ -76,8 +76,8 @@ SignatureNames <- c(
     "State_Barkley_Squamous",
     "State_Barkley_Glandular",
     "State_Barkley_Ciliated",
-    "State_Barkley_AC", 
-    "State_Barkley_OPC", 
+    "State_Barkley_AC",
+    "State_Barkley_OPC",
     "State_Barkley_NPC",
     "State_Tirosh_MITF",
     "State_Tirosh_AXL",
@@ -183,7 +183,7 @@ my_colors <- colorRampPalette(my_colors)(100)
       sname <- substring(name, 18)
       g <- ICBResponse_Chen$SYMBOL[ICBResponse_Chen$class == sname]
     } else if (name %in% c(
-      "Hypoxia_Barkley", "Stress_Barkley", "Interferon_Barkley", 
+      "Hypoxia_Barkley", "Stress_Barkley", "Interferon_Barkley",
       "Oxphos_Barkley", "Metal_Barkley")) {
       sname <- substring(name, 1, regexpr("_", name) - 1)
       g <- PanState_Barkley$SYMBOL[PanState_Barkley$class == sname]
@@ -659,46 +659,41 @@ getSignGenes <- function(whichSign) {
     }
 }
 
+
 #' Pancancer Cellular States Barkley Scoring Function
-#'
 #' @importFrom ggplot2 cut_number
 #' @importFrom scales rescale
-#' @export
-.barkleyFun <- function(dataset, signList, modules) {
-  
-  data.avg <- sort(rowMeans(x = dataset, na.rm = TRUE))
-  data.cut = cut_number(x = data.avg + rnorm(n = length(data.avg))/1e+30, 
-                        n = 25, labels = FALSE, right = FALSE)
-  names(x = data.cut) = names(x = data.avg)
-  binned = split(names(data.cut), data.cut)
-  mod <- signList[modules]
-  
-  rand = lapply(names(mod), function(m){
-    lapply(1:1000, function(i){
-      used = vector()
-      unused = binned
-      for (g in mod[[m]]){
-        pool = data.cut[g]
-        if (!(is.na(pool))) {
-          new = sample(unused[[pool]], 1)
-          used = c(used, new)
-          unused[[pool]] = setdiff(unused[[pool]], new)
-        }
-      }
-      used})
-  })
-  names(rand) = names(mod)
-  
-  scores = t(sapply(names(mod), function(m){
-    ra = sapply(rand[[m]], function(i){
-      colMeans(dataset[i, ], na.rm = TRUE)
-    })
-    re = colMeans(dataset[rownames(dataset) %in% mod[[m]], ], na.rm = TRUE)
-    p = -log10(rowMeans(ra >= re))
-  }))
-  scores[is.infinite(scores)] = 4
-  scores = scores/4
-  scores = rescale(scores)
-  
-  return(scores)
+.barkleyFun <- function(dataset, mod, n, isMalignant) {
+    data.avg <- sort(rowMeans(x = dataset, na.rm = TRUE))
+    data.cut <- cut_number(
+        x = data.avg + rnorm(n = length(data.avg))/1e+30,
+        n = 25, labels = FALSE, right = FALSE)
+    names(x = data.cut) <- names(x = data.avg)
+    binned <- split(names(data.cut), data.cut)
+
+    rand <- lapply(names(mod), function(m){
+        lapply(seq_len(1000), function(i){
+            used <- vector()
+            unused <- binned
+            for (g in mod[[m]]){
+                pool <- data.cut[g]
+                if (!(is.na(pool))) {
+                    new <- sample(unused[[pool]], 1)
+                    used <- c(used, new)
+                    unused[[pool]] <- setdiff(unused[[pool]], new)}}
+            used}) })
+    names(rand) <- names(mod)
+
+    scores <- t(sapply(names(mod), function(m){
+        ra <- sapply(rand[[m]], function(i){
+            colMeans(dataset[i, ], na.rm = TRUE) })
+        re <- colMeans(dataset[rownames(dataset) %in% mod[[m]], ], na.rm = TRUE)
+        p <- -log10(rowMeans(ra >= re))
+        s <- rep(NA, n)
+        s[isMalignant] <- p
+        s }))
+    scores[is.infinite(scores)] <- 4
+    scores <- scores/4
+    scores <- rescale(scores)
+    return(scores)
 }
