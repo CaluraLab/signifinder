@@ -32,6 +32,9 @@ Either one of "microarray" or "rnaseq".}
 
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
+
+\item{isMalignant}{logical vector of the same length of ncol(dataset), where
+TRUE states malignant cells and FALSE states non-malignant cells.}
 }
 \value{
 If dataset is a \linkS4class{SummarizedExperiment} object, then

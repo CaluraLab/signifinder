@@ -660,7 +660,6 @@ getSignGenes <- function(whichSign) {
 }
 
 
-#' Pancancer Cellular States Barkley Scoring Function
 #' @importFrom ggplot2 cut_number
 #' @importFrom scales rescale
 .barkleyFun <- function(dataset, mod, n, isMalignant) {

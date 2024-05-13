@@ -22,6 +22,8 @@
 #' dataset to use.
 #' @param hgReference character string saying the human reference genome.
 #' Either one of "hg19" or "hg38".
+#' @param isMalignant logical vector of the same length of ncol(dataset), where
+#' TRUE states malignant cells and FALSE states non-malignant cells.
 #' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
@@ -218,7 +220,7 @@ pyroptosisSign <- function(
 #' Ferroptosis Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -263,7 +265,7 @@ ferroptosisSign <- function(
 #' Lipid Metabolism Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -292,7 +294,7 @@ lipidMetabolismSign <- function(
 #' Hypoxia Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -350,7 +352,7 @@ hypoxiaSign <- function(
 #' Immunogenic Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -408,7 +410,7 @@ immunoScoreSign <- function(
 #' ConsensusOV Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... optional parameters to be passed to
 #' \code{\link[consensusOV]{get.subtypes}}.
 #'
@@ -459,7 +461,7 @@ consensusOVSign <- function(
 #' ImmunoPhenoScore Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -540,7 +542,7 @@ IPSSign <- function(
 #' Core Matrisome Gene signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -568,7 +570,7 @@ matrisomeSign <- function(
 #' Mitotic Index
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -596,7 +598,7 @@ mitoticIndexSign <- function(
 #' Immune Cytolytic Activity Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -641,7 +643,7 @@ immuneCytSign <- function(
 #' IFN-gamma Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -667,7 +669,7 @@ IFNSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #' ExpandedImmune Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -696,7 +698,7 @@ expandedImmuneSign <- function(
 #' TinflamSign Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -755,7 +757,7 @@ TinflamSign <- function(
 #' Tertiary Lymphoid Structures (TLS) Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -785,7 +787,7 @@ TLSSign <- function(
 #' CD49fHi Basal Stem Cell Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -815,7 +817,7 @@ stemCellCD49fSign <- function(
 #' Chromosomal instability Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -854,7 +856,7 @@ CINSign <- function(
 #' Cell-cycle Signature classifier
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -915,7 +917,7 @@ cellCycleSign <- function(
 #' Chemokine Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -956,7 +958,7 @@ chemokineSign <- function(
 #' Adult Stem Cell Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -991,7 +993,7 @@ ASCSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #' passON Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
@@ -1044,7 +1046,7 @@ PassONSign <- function(
 #' IPRES Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
@@ -1094,7 +1096,7 @@ IPRESSign <- function(
 #'  CIS (carcinoma-in situ) Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1143,7 +1145,7 @@ CISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #' Glycolysis Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1175,7 +1177,7 @@ glycolysisSign <- function(
 #' Autophagy Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1224,7 +1226,7 @@ autophagySign <- function(
 #' Extracellular Matrix Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
@@ -1271,7 +1273,7 @@ ECMSign <- function(
 #' Homologous Recombination Deficiency Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1312,7 +1314,7 @@ HRDSSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #' Adult Intestinal Stem Cell Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1360,7 +1362,7 @@ ISCSign <- function(
 #' VEGF Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1387,7 +1389,7 @@ VEGFSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr") {
 #' DNA Repair Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1433,7 +1435,7 @@ DNArepSign <- function(
 #' IPSOV Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 #' function.
 #'
@@ -1487,7 +1489,7 @@ IPSOVSign <- function(
 #' EMT-Inflammation Combined Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param weighted logical value, saying whether the score should be calculated
 #' with or without weights.
 #'
@@ -1526,7 +1528,7 @@ CombinedSign <- function(
 #' Antigen Processing Machinery Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsvaParam}}
 #' function.
 #'
@@ -1587,7 +1589,7 @@ APMSign <- function(
 #' Melanocytic Plasticity Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1623,7 +1625,7 @@ MPSSign <- function(
 #' Immune-Related Genes Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1651,7 +1653,7 @@ IRGSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #' Pan-Fibroblast TGFB Response Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1682,7 +1684,7 @@ TGFBSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #' Adenosine Signaling Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #' @param ... other arguments passed on to the \code{\link[GSVA]{gsvaParam}}
 #' function.
 #'
@@ -1720,7 +1722,7 @@ ADOSign <- function(
 #' MITFlow/PTENneg Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1754,7 +1756,7 @@ MITFlowPTENnegSign <- function(
 #' LRRC15 CAF Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1791,9 +1793,7 @@ LRRC15CAFSign <- function(
 #' Breast Cancer Subtypes Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same length of ncol(dataset), where
-#' TRUE states malignant cells and FALSE states non-malignant cells.
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1850,7 +1850,7 @@ SCSubtypeSign <- function(
 #' ICB Response Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1900,7 +1900,7 @@ ICBResponseSign <- function(
 #' COX-2-associated Inflammatory Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1938,9 +1938,7 @@ COXISSign <- function(dataset, nametype = "SYMBOL", whichAssay = "norm_expr"){
 #'Stress Response Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
-#' TRUE states malignant cells and FALSE states non-malignant cells.
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -1982,12 +1980,9 @@ stressSign <- function(
 #'Interferon Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
-#' TRUE states malignant cells and FALSE states non-malignant cells.
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
-#'
 #'
 #' @examples
 #' data(ovse)
@@ -2028,12 +2023,9 @@ interferonSign <- function(
 #'Oxidative Phosphorylation Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
-#' TRUE states malignant cells and FALSE states non-malignant cells.
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
-#'
 #'
 #' @examples
 #' data(ovse)
@@ -2075,12 +2067,9 @@ oxphosSign <- function(
 #'Metal Response Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
-#' TRUE states malignant cells and FALSE states non-malignant cells.
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
-#'
 #'
 #' @examples
 #' data(ovse)
@@ -2122,9 +2111,7 @@ metalSign <- function(
 #' Cellular States Signature
 #'
 #' @inherit EMTSign description
-#' @inheritParams pyroptosisSign
-#' @param isMalignant logical vector of the same lenght of ncol(dataset), where
-#' TRUE states malignant cells and FALSE states non-malignant cells.
+#' @inheritParams EMTSign
 #'
 #' @inherit EMTSign return
 #'
@@ -2133,8 +2120,8 @@ metalSign <- function(
 #'
 #' @export
 stateSign <- function(
-    dataset, nametype = "SYMBOL", inputType = "sc", author = "Barkley",
-    whichAssay = "norm_expr", isMalignant = NULL, hgReference = "hg38") {
+    dataset, nametype = "SYMBOL", author = "Barkley", whichAssay = "norm_expr",
+    isMalignant = NULL, hgReference = "hg38") {
 
   .consistencyCheck(nametype, "stateSign")
   .isMalignantCheck(isMalignant, dataset)

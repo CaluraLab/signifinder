@@ -38,6 +38,9 @@ dataset to use.}
 \item{hgReference}{character string saying the human reference genome.
 Either one of "hg19" or "hg38".}
 
+\item{isMalignant}{logical vector of the same length of ncol(dataset), where
+TRUE states malignant cells and FALSE states non-malignant cells.}
+
 \item{...}{other arguments passed on to the \code{\link[GSVA]{ssgseaParam}}
 function.}
 }

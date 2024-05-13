@@ -26,7 +26,7 @@ in dataset). Either one of "SYMBOL", "ENTREZID" or "ENSEMBL".}
 \item{whichAssay}{integer scalar or string indicating which assay of
 dataset to use.}
 
-\item{isMalignant}{logical vector of the same lenght of ncol(dataset), where
+\item{isMalignant}{logical vector of the same length of ncol(dataset), where
 TRUE states malignant cells and FALSE states non-malignant cells.}
 
 \item{hgReference}{character string saying the human reference genome.
