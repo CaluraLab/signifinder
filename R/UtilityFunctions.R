@@ -100,7 +100,8 @@ SignatureNames <- c(
     "Stress_Barkley",
     "Interferon_Barkley",
     "Oxphos_Barkley",
-    "Metal_Barkley"
+    "Metal_Barkley",
+    "CD39CD8Tcell_Chow"
 )
 
 #' @importFrom viridis magma viridis
@@ -205,7 +206,7 @@ my_colors <- colorRampPalette(my_colors)(100)
         "TLS_Cabrita", "IPSOV_Shen", "Tinflam_Thompson", "APM_Thompson",
         "APM_Wang", "MPS_PerezGuijarro", "IRG_Yang", "TGFB_Mariathasan",
         "ADO_Sidders", "MITFlowPTENneg_Cabrita", "LRRC15CAF_Dominguez",
-        "COXIS_Bonavita"
+        "COXIS_Bonavita", "CD39CD8Tcell_Chow"
     )) {
         g <- unique(eval(parse(text = name))[, "SYMBOL"])
     }
