@@ -2292,3 +2292,36 @@ stateSign <- function(
   }
 
 }
+
+
+#' CD39+ CD8+ T cells Signature
+#'
+#' @inherit EMTSign description
+#' @inheritParams EMTSign
+#'
+#' @inherit EMTSign return
+#'
+#' @examples
+#' data(ovse)
+#' CD39CD8TcellSign(dataset = ovse)
+#'
+#' @export
+CD39CD8TcellSign <- function(dataset, nametype = "SYMBOL", 
+                             whichAssay = "norm_expr"){
+  
+  .consistencyCheck(nametype, "CD39CD8TcellSign")
+  datasetm <- .getMatrix(dataset, whichAssay)
+  
+  sign_df <- CD39CD8Tcell_Chow
+  sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  
+  datasetm_n <- t(scale(t(datasetm)))
+  
+  score <- .statScore(genes = sign_df$SYMBOL, datasetm = datasetm_n, 
+                      nametype = nametype, typeofstat = "median", 
+                      namesignature = "CD39CD8TcellSign")
+  
+  return(.returnAsInput(
+    userdata = dataset, result = score, 
+    SignName = "CD39CD8Tcell_Chow", datasetm))
+}
