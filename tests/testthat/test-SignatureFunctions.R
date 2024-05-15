@@ -412,3 +412,13 @@ test_that("metalSign based on Barkley's work", {
   expect_type(colData(myres)[, "Metal_Barkley"], "double")
   expect_message(metalSign(rmatrix, isMalignant = malign), "100")
 })
+
+test_that("CD39CD8TcellSign work", {
+  rmatrix <- .fakeData("CD39CD8Tcell_Chow")
+  myres <- CD39CD8TcellSign(rmatrix)
+  expect_true(is(myres, "SummarizedExperiment"))
+  expect_true("CD39CD8Tcell_Chow" %in% colnames(colData(myres)))
+  expect_length(colData(myres)[, "CD39CD8Tcell_Chow"], ncol(assay(myres)))
+  expect_type(colData(myres)[, "CD39CD8Tcell_Chow"], "double")
+  expect_message(CD39CD8TcellSign(rmatrix), "100")
+})
