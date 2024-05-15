@@ -3,6 +3,7 @@
 export(ADOSign)
 export(APMSign)
 export(ASCSign)
+export(CD39CD8TcellSign)
 export(CINSign)
 export(CISSign)
 export(COXISSign)
