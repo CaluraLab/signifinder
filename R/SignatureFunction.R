@@ -1745,7 +1745,7 @@ MITFlowPTENnegSign <- function(
   sign_df <- sign_df[sign_df$SYMBOL %in% rownames(datasetm),]
   datasetm <- log2(datasetm+1)
   score <- cor(
-    datasetm[sign_df$SYMBOL,], sign_df$Coefficient, method = "pearson")
+    datasetm[sign_df$SYMBOL,], sign_df$coeff, method = "pearson")
 
   return(.returnAsInput(
     userdata = dataset, result = as.vector(score),
@@ -2306,22 +2306,22 @@ stateSign <- function(
 #' CD39CD8TcellSign(dataset = ovse)
 #'
 #' @export
-CD39CD8TcellSign <- function(dataset, nametype = "SYMBOL", 
+CD39CD8TcellSign <- function(dataset, nametype = "SYMBOL",
                              whichAssay = "norm_expr"){
-  
+
   .consistencyCheck(nametype, "CD39CD8TcellSign")
   datasetm <- .getMatrix(dataset, whichAssay)
-  
+
   sign_df <- CD39CD8Tcell_Chow
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
-  
+
   datasetm_n <- t(scale(t(datasetm)))
-  
-  score <- .statScore(genes = sign_df$SYMBOL, datasetm = datasetm_n, 
-                      nametype = nametype, typeofstat = "median", 
+
+  score <- .statScore(genes = sign_df$SYMBOL, datasetm = datasetm_n,
+                      nametype = nametype, typeofstat = "median",
                       namesignature = "CD39CD8TcellSign")
-  
+
   return(.returnAsInput(
-    userdata = dataset, result = score, 
+    userdata = dataset, result = score,
     SignName = "CD39CD8Tcell_Chow", datasetm))
 }

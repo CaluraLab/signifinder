@@ -3,6 +3,17 @@ library(testthat)
 suppressPackageStartupMessages(library(SummarizedExperiment))
 set.seed(12345)
 
+test_that("interferonSign based on Barkley's work", {
+    rmatrix <- .fakeData("Interferon_Barkley")
+    malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
+    myres <- interferonSign(rmatrix, isMalignant = malign)
+    expect_true(is(myres, "SummarizedExperiment"))
+    expect_true("Interferon_Barkley" %in% colnames(colData(myres)))
+    expect_length(colData(myres)[, "Interferon_Barkley"], ncol(assay(myres)))
+    expect_type(colData(myres)[, "Interferon_Barkley"], "double")
+    expect_message(interferonSign(rmatrix, isMalignant = malign), "100")
+})
+
 test_that("EMTSign based on Miow's work", {
     pyrnames <- c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")
     pname <- sample(pyrnames, 1)
@@ -172,13 +183,13 @@ test_that("stateSign based on Neftel's work", {
     for(i in SignatureNames){
         rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
     malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-    myres <- stateSign(rmatrix, inputType = "sc", author = "Neftel",
+    myres <- stateSign(rmatrix, author = "Neftel",
                        isMalignant = malign)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("State_Neftel_OPC" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"State_Neftel_AC"],ncol(assay(myres)))
     expect_type(colData(myres)[,"State_Neftel_MES1"], "double")
-    expect_message(stateSign(rmatrix, inputType = "sc", author = "Neftel",
+    expect_message(stateSign(rmatrix, author = "Neftel",
                              isMalignant = malign), "100")
 })
 
@@ -188,13 +199,13 @@ test_that("stateSign based on Barkley's work", {
   for(i in PanBarkley){
     rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- stateSign(rmatrix, inputType = "sc", author = "Barkley",
+  myres <- stateSign(rmatrix, author = "Barkley",
                    isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
   expect_true("State_Barkley_AC" %in% colnames(colData(myres)))
   expect_length(colData(myres)[,"State_Barkley_OPC"],ncol(assay(myres)))
   expect_type(colData(myres)[,"State_Barkley_NPC"], "double")
-  expect_message(stateSign(rmatrix, inputType = "sc", author = "Barkley",
+  expect_message(stateSign(rmatrix, author = "Barkley",
                            isMalignant = malign), "100")
 })
 
@@ -236,13 +247,13 @@ test_that("stateSign based on Tirosh's work", {
   for(i in SignatureNames){
     rmatrix <- rbind(rmatrix, as.data.frame(.fakeData(i)))}
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- stateSign(rmatrix, inputType = "sc", author = "Tirosh",
+  myres <- stateSign(rmatrix, author = "Tirosh",
                      isMalignant = malign)
   expect_true(is(myres, "SummarizedExperiment"))
   expect_true("State_Tirosh_MITF" %in% colnames(colData(myres)))
   expect_length(colData(myres)[,"State_Tirosh_AXL"],ncol(assay(myres)))
   expect_type(colData(myres)[,"State_Tirosh_AXL"], "double")
-  expect_message(stateSign(rmatrix, inputType = "sc", author = "Tirosh",
+  expect_message(stateSign(rmatrix, author = "Tirosh",
                            isMalignant = malign), "100")
 })
 
@@ -372,17 +383,6 @@ test_that("stressSign based on Barkley's work", {
   expect_length(colData(myres)[, "Stress_Barkley"], ncol(assay(myres)))
   expect_type(colData(myres)[, "Stress_Barkley"], "double")
   expect_message(stressSign(rmatrix, isMalignant = malign), "100")
-})
-
-test_that("interferonSign based on Barkley's work", {
-  rmatrix <- .fakeData("Interferon_Barkley")
-  malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- interferonSign(rmatrix, isMalignant = malign)
-  expect_true(is(myres, "SummarizedExperiment"))
-  expect_true("Interferon_Barkley" %in% colnames(colData(myres)))
-  expect_length(colData(myres)[, "Interferon_Barkley"], ncol(assay(myres)))
-  expect_type(colData(myres)[, "Interferon_Barkley"], "double")
-  expect_message(interferonSign(rmatrix, isMalignant = malign), "100")
 })
 
 test_that("oxphosSign based on Barkley's work", {
