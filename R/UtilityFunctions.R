@@ -654,7 +654,20 @@ getSignGenes <- function(whichSign) {
         "Combined_Thompson is a combination of EMT_Thompson and
         Tinflam_Thompson signatures.")
     } else {
-        signGene <- eval(parse(text = whichSign))
+        if (whichSign %in% c(
+            "EMT_Barkley", "Hypoxia_Barkley", "Stress_Barkley",
+            "Interferon_Barkley", "Oxphos_Barkley", "Metal_Barkley")){
+            whichSign <- substring(whichSign, 1, regexpr("_", whichSign) - 1)
+            signGene <- PanState_Barkley[
+                grepl(whichSign, PanState_Barkley$class),]
+        } else if (whichSign == "CellCycle_Barkley"){
+            signGene <- PanState_Barkley[
+                grepl("Cycle", PanState_Barkley$class),]
+        } else if (whichSign == "State_Barkley"){
+            signGene <- PanState_Barkley[PanState_Barkley$class %in% c(
+                "Alveolar", "Basal", "Squamous", "Glandular",
+                "Ciliated", "AC", "OPC", "NPC"),]
+        } else {signGene <- eval(parse(text = whichSign))}
         rownames(signGene) <- seq_len(nrow(signGene))
         return(signGene)
     }
