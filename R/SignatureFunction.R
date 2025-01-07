@@ -1552,12 +1552,14 @@ APMSign <- function(
   if (author == "Wang") {
     sign_df <- APM_Wang
     sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+    sign_list <- list(sign_df$SYMBOL)
+    names(sign_list) <- "APM_Wang"
 
     .percentageOfGenesUsed("APMSign", datasetm, sign_df$SYMBOL)
 
     dots <- list(...)
     args <- .matchArguments(dots, list(
-      exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Gaussian"))
+      exprData = datasetm, geneSets = sign_list, kcdf = "Gaussian"))
 
     gsvaPar <- do.call(gsvaParam, args)
     score <- gsva(gsvaPar, verbose = FALSE)
@@ -1705,12 +1707,14 @@ ADOSign <- function(
 
   sign_df <- ADO_Sidders
   sign_df$SYMBOL <- .geneIDtrans(nametype, sign_df$SYMBOL)
+  sign_list <- list(sign_df$SYMBOL)
+  names(sign_list) <- "ADO"
 
   .percentageOfGenesUsed("ADOSign", datasetm, sign_df$SYMBOL)
 
   dots <- list(...)
   args <- .matchArguments(dots, list(
-    exprData = datasetm, geneSets = list(sign_df$SYMBOL), kcdf = "Poisson"))
+    exprData = datasetm, geneSets = sign_list, kcdf = "Poisson"))
   gsvaPar <- do.call(gsvaParam, args)
   score <- as.vector(gsva(gsvaPar, verbose = FALSE))
 
