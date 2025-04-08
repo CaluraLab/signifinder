@@ -25,8 +25,8 @@ Imports: AnnotationDbi, BiocGenerics, ComplexHeatmap, consensusOV, cowplot,
     TxDb.Hsapiens.UCSC.hg38.knownGene, SpatialExperiment, stats, scales, 
     SummarizedExperiment, survival, survminer, viridis
 Encoding: UTF-8
-RoxygenNote: 7.3.1
-Depends: R (>= 4.3.0)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.4.0)
 LazyData: false
 Suggests: BiocStyle, edgeR, grid, kableExtra, knitr, limma, testthat (>= 3.0.0)
 Config/testthat/edition: 3

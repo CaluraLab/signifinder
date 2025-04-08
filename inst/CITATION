@@ -2,22 +2,22 @@ citHeader("To cite signifinder in publications use:")
 
 citEntry(
   entry    = "Article",
-  title    = "signifinder enables the identification of tumor cell states and cancer expression signatures in bulk, single-cell and spatial transcriptomic data",
-  author   = personList(as.person("Stefania Pirrotta"),
-                        as.person("Laura Masatti"),
-                        as.person("Anna Corrà"),
-                        as.person("Fabiola Pedrini"),
-                        as.person("Giovanni Esposito"),
-                        as.person("Paolo Martini"),
-                        as.person("Davide Risso"),
-                        as.person("Chiara Romualdi"),
-                        as.person("Enrica Calura")),
-  journal  = "bioRxiv",
-  year     = 2023,
-  url      = "https://doi.org/10.1101/2023.03.07.530940",
-  textVersion = paste("Pirrotta S, Masatti L et al. (2023): signifinder",
-                      "enables the identification of tumor cell states and",
-                      "cancer expression signatures in bulk, single-cell and",
-                      "spatial transcriptomic data. bioRxiv,",
-                      "https://doi.org/10.1101/2023.03.07.530940")
+  title    = "Exploring public cancer gene expression signatures across bulk, single-cell and spatial transcriptomics data with signifinder Bioconductor package",
+  author   = personList(
+  as.person("Stefania Pirrotta"), as.person("Laura Masatti"),
+  as.person("Anna Bortolato"), as.person("Anna Corrà"),
+  as.person("Fabiola Pedrini"), as.person("Martina Aere"),
+  as.person("Giovanni Esposito"), as.person("Paolo Martini"),
+  as.person("Davide Risso"), as.person("Chiara Romualdi"),
+  as.person("Enrica Calura")),
+  journal  = "NAR Genom Bioinform",
+  year     = 2024,
+  url      = "https://doi.org/10.1093/nargab/lqae138",
+  textVersion = paste(
+  "Pirrotta S, Masatti L, Bortolato A, Corrà A, Pedrini F, Aere M, Esposito G,",
+  "Martini P, Risso D, Romualdi C, Calura E. Exploring public cancer gene",
+  "expression signatures across bulk, single-cell and spatial transcriptomics",
+  "data with signifinder Bioconductor package. NAR Genom Bioinform. 2024 Oct",
+  "3;6(4):lqae138. doi: 10.1093/nargab/lqae138. PMID: 39363890;",
+  "PMCID: PMC11447528.")
 )
