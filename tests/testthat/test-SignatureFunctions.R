@@ -18,12 +18,13 @@ test_that("EMTSign based on Miow's work", {
     pyrnames <- c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")
     pname <- sample(pyrnames, 1)
     rmatrix <- .fakeData(pname)
-    myres <- EMTSign(rmatrix)
+    expect_warning(myres <- EMTSign(
+        rmatrix, normalize = FALSE), "less than 30% of its genes")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[, pname], ncol(assay(myres)))
     expect_type(colData(myres)[, pname], "double")
-    expect_message(EMTSign(rmatrix), "100")
+    expect_message(expect_warning(EMTSign(rmatrix, normalize = FALSE)), "100")
 })
 
 test_that("EMTSign based on Mak's work", {
@@ -160,22 +161,23 @@ test_that("ECM work", {
     pyrnames <- c("ECM_Chakravarthy_up", "ECM_Chakravarthy_down")
     pname <- sample(pyrnames, 1)
     rmatrix <- .fakeData(pname)
-    myres <- ECMSign(rmatrix)
+    expect_warning(myres <- ECMSign(
+        rmatrix, normalize = FALSE), "less than 30% of its genes")
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[, pname], ncol(assay(myres)))
     expect_type(colData(myres)[, pname], "double")
-    expect_message(ECMSign(rmatrix), "100")
+    expect_message(expect_warning(ECMSign(rmatrix, normalize = FALSE)), "100")
 })
 
 test_that("IPSOVSign work", {
     rmatrix  <- .fakeData("IPSOV_Shen")
-    myres <- IPSOVSign(rmatrix)
+    myres <- IPSOVSign(rmatrix, normalize = FALSE)
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true("IPSOV_Shen" %in% colnames(colData(myres)))
     expect_length(colData(myres)[,"IPSOV_Shen"], ncol(assay(myres)))
     expect_type(colData(myres)[,"IPSOV_Shen"], "double")
-    expect_message(IPSOVSign(rmatrix), "100")
+    expect_message(IPSOVSign(rmatrix, normalize = FALSE), "100")
 })
 
 test_that("stateSign based on Neftel's work", {
@@ -344,24 +346,27 @@ test_that("SCSubtypeSign work", {
   pname <- sample(pyrnames, 1)
   rmatrix <- .fakeData(pname)
   malign <- c(TRUE, TRUE, TRUE, FALSE, TRUE)
-  myres <- SCSubtypeSign(rmatrix, isMalignant = malign)
+  expect_warning(expect_warning(expect_warning(myres <- SCSubtypeSign(
+      rmatrix, isMalignant = malign), "less than 30% of its genes")))
   expect_true(is(myres, "SummarizedExperiment"))
   expect_true(pname %in% colnames(colData(myres)))
   expect_length(colData(myres)[,pname],ncol(assay(myres)))
   expect_type(colData(myres)[,pname], "double")
-  expect_message(SCSubtypeSign(rmatrix, isMalignant = malign), "100")
+  expect_message(expect_warning(expect_warning(expect_warning(
+      SCSubtypeSign(rmatrix, isMalignant = malign)))), "100")
 })
 
 test_that("ICBResponseSign work", {
   pyrnames <- c("ICBResponse_Chen_responder", "ICBResponse_Chen_nonresponder")
   pname <- sample(pyrnames, 1)
   rmatrix <- .fakeData(pname)
-  myres <- ICBResponseSign(rmatrix)
+  expect_warning(expect_warning(
+      myres <- ICBResponseSign(rmatrix), "less than 30% of its genes"))
   expect_true(is(myres, "SummarizedExperiment"))
   expect_true(pname %in% colnames(colData(myres)))
   expect_length(colData(myres)[, pname], ncol(assay(myres)))
   expect_type(colData(myres)[, pname], "double")
-  expect_message(ICBResponseSign(rmatrix), "100")
+  expect_message(expect_warning(expect_warning(ICBResponseSign(rmatrix))), "100")
 })
 
 test_that("COXISSign work", {

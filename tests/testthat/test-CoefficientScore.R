@@ -76,7 +76,10 @@ test_that("autophagySign ChenM works", {
     pnames <- c("Autophagy_ChenM_OS", "Autophagy_ChenM_DFS")
     pname <- sample(pnames, 1)
     rmatrix <- .fakeData(pname)
-    myres <- autophagySign(rmatrix, author = "ChenM")
+    if(pname=="Autophagy_ChenM_DFS"){
+        expect_warning(myres <- autophagySign(
+            rmatrix, author = "ChenM"), "less than 30% of its genes")
+    } else { myres <- autophagySign(rmatrix, author = "ChenM") }
     expect_true(is(myres, "SummarizedExperiment"))
     expect_true(pname %in% colnames(colData(myres)))
     expect_length(colData(myres)[, pname], ncol(assay(myres)))

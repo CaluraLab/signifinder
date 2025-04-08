@@ -371,6 +371,20 @@ setMethod(".returnAsInput",
     return(score)
 }
 
+#' @importFrom GSVA gsvaParam ssgseaParam gsva
+.gsvaScore <- function(dataset, dots, gene_sets, whichAssay, funct) {
+    if(is.data.frame(dataset)){dataset <- as.matrix(dataset)}
+    args <- .matchArguments(dots, list(
+        exprData = dataset, geneSets = gene_sets, assay = whichAssay))
+    if(funct == "GSVA"){ gsvaPar <- do.call(gsvaParam, args)
+    } else if(funct == "ssGSEA"){ gsvaPar <- do.call(ssgseaParam, args) }
+    score <- gsva(gsvaPar)
+    if(is(dataset)[1] %in% c(
+        "SpatialExperiment", "SummarizedExperiment", "SingleCellExperiment")){
+        score <- score@assays@data@listData[["es"]]}
+    return(score)
+}
+
 .managena <- function(datasetm, genes) {
     datasetm <- datasetm[row.names(datasetm) %in% genes, ]
     columnNA <- if(length(genes)==1){

@@ -30,9 +30,7 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
 
     if (length(whichSign) > 1) {
         stop("you must provide only one signature for this plot")}
-
     .signatureNameCheck(data, whichSign)
-
     if (!(is.null(statistics))) {
         if (!(statistics %in% c("mean", "median", "quantiles"))) {
             stop("statistics must be one of: mean, median and quantiles.")}}
@@ -42,57 +40,39 @@ oneSignPlot <- function(data, whichSign, statistics = NULL) {
     g1 <- ggplot() +
         geom_point(mapping = aes(signval, seq_along(signval)), size = 1) +
         labs(x = whichSign, y = "Sample") +
-        theme(
-            panel.background = element_blank(),
+        theme(panel.background = element_blank(),
             axis.line = element_line(colour = "grey50"))
     g2 <- ggplot() +
-        geom_histogram(
-            mapping = aes(signval, after_stat(density)),
+        geom_histogram(mapping = aes(signval, after_stat(density)),
             colour = "white", fill = "skyblue2") +
         geom_density(mapping = aes(signval), linewidth = 1.5) +
         labs(x = whichSign, y = "Density") +
-        theme(
-            panel.background = element_blank(),
+        theme(panel.background = element_blank(),
             axis.line = element_line(colour = "grey50"))
 
     if (!is.null(statistics)) {
+        vlArg <- list(col = "red", linewidth = 1.2, linetype = 2)
         if (statistics == "mean") {
-            g1 <- g1 + geom_vline(
-                mapping = aes(xintercept = mean(signval)),
-                col = "red", linewidth = 1.2, linetype = 2)
-            g2 <- g2 + geom_vline(
-                mapping = aes(xintercept = mean(signval)),
-                col = "red", linewidth = 1.2, linetype = 2)
+            vlArg$mapping <- aes(xintercept = mean(signval))
+            g1 <- g1 + do.call(geom_vline, vlArg)
+            g2 <- g2 + do.call(geom_vline, vlArg)
         } else if (statistics == "median") {
-            g1 <- g1 + geom_vline(
-                mapping = aes(xintercept = median(signval)),
-                col = "red", linewidth = 1.2, linetype = 2)
-            g2 <- g2 + geom_vline(
-                mapping = aes(xintercept = median(signval)),
-                col = "red", linewidth = 1.2, linetype = 2)
+            vlArg$mapping <- aes(xintercept = median(signval))
+            g1 <- g1 + do.call(geom_vline, vlArg)
+            g2 <- g2 + do.call(geom_vline, vlArg)
         } else if (statistics == "quantiles") {
-            g1 <- g1 +
-                geom_vline(
-                    mapping = aes(xintercept = quantile(signval, 0.25)),
-                    col = "red", linewidth = 1.2, linetype = 2) +
-                geom_vline(
-                    mapping = aes(xintercept = quantile(signval, 0.50)),
-                    col = "red", linewidth = 1.2, linetype = 2) +
-                geom_vline(
-                    mapping = aes(xintercept = quantile(signval, 0.75)),
-                    col = "red", linewidth = 1.2, linetype = 2)
-            g2 <- g2 +
-                geom_vline(
-                    mapping = aes(xintercept = quantile(signval, 0.25)),
-                    col = "red", linewidth = 1.2, linetype = 2) +
-                geom_vline(
-                    mapping = aes(xintercept = quantile(signval, 0.50)),
-                    col = "red", linewidth = 1.2, linetype = 2) +
-                geom_vline(
-                    mapping = aes(xintercept = quantile(signval, 0.75)),
-                    col = "red", linewidth = 1.2, linetype = 2)}}
+            vlArg$mapping <- aes(xintercept = quantile(signval, .25))
+            g1 <- g1 + do.call(geom_vline, vlArg)
+            g2 <- g2 + do.call(geom_vline, vlArg)
+            vlArg$mapping <- aes(xintercept = quantile(signval, .50))
+            g1 <- g1 + do.call(geom_vline, vlArg)
+            g2 <- g2 + do.call(geom_vline, vlArg)
+            vlArg$mapping <- aes(xintercept = quantile(signval, .75))
+            g1 <- g1 + do.call(geom_vline, vlArg)
+            g2 <- g2 + do.call(geom_vline, vlArg) } }
+
     g1 <- g1 + annotate(
-        "text", label = statistics, x = quantile(signval, 0.10),
+        "text", label = statistics, x = quantile(signval, .1),
         y = length(signval), size = 4, colour = "red")
 
     return(g1 + g2)
@@ -139,28 +119,22 @@ geneHeatmapSignPlot <- function(
         splitBySampleAnnot = FALSE, ...) {
 
     if (!all(whichSign %in% SignatureNames)) {
-        stop(paste(
-            "signatures must be among:",
+        stop(paste("signatures must be among:",
             paste(SignatureNames, collapse = ", ")))}
     .signatureNameCheck(data, whichSign)
-
     if (!(nametype %in% c("SYMBOL", "ENTREZID", "ENSEMBL"))) {
         stop("The name of genes must be either SYMBOL, ENTREZID or ENSEMBL")}
 
     dataset <- .getMatrix(data, whichAssay)
 
-    if (!is.null(sampleAnnot)) {
-        if (length(sampleAnnot) != ncol(dataset)) {
-            stop("sampleAnnot length is different than samples dimension")}
-    } else {
-        if (splitBySampleAnnot) {
-            stop("splitBySampleAnnot can be TRUE",
-                " only if sampleAnnot is provided")}}
+    if (!is.null(sampleAnnot)) {if (length(sampleAnnot) != ncol(dataset)) {
+        stop("sampleAnnot length is different than samples dimension")}
+    } else {if (splitBySampleAnnot) {
+        stop("splitBySampleAnnot can be TRUE only if sampleAnnot is provided")}}
 
     signval <- colData(data)[, whichSign]
     if (length(whichSign)==1) {
-        signval <- matrix(
-            signval, nrow = 1,
+        signval <- matrix(signval, nrow = 1,
             dimnames = list(whichSign, colnames(dataset)))
         legendName <- "score"
     } else {
@@ -180,9 +154,8 @@ geneHeatmapSignPlot <- function(
     geneTable <- geneTable[match(rownames(filtdataset), geneTable$Gene),]
 
     dots <- list(...)
-    htargs <- .matchArguments(
-        dots, list(
-            name = "gene\nexpression", show_column_names = FALSE, col = mycol))
+    htargs <- .matchArguments(dots, list(
+        name = "gene\nexpression", show_column_names = FALSE, col = mycol))
 
     if (logCount) {htargs$matrix <- log2(filtdataset + 1)
     } else {htargs$matrix <- filtdataset}
@@ -254,20 +227,17 @@ heatmapSignPlot <- function(
     if (!is.null(whichSign)) { .signatureNameCheck(data, whichSign) }
     if (!all(clusterBySign %in% colnames(colData(data)))) {
         stop("all signatures in clusterBySign must be in the colData of data")}
-
     if (sum(colnames(colData(data)) %in% SignatureNames) > 0) {
         data <- colData(data)[, colnames(
             colData(data)) %in% unique(c(
                 SignatureNames, whichSign, clusterBySign))]
     } else { stop("There are no signatures computed with signifinder in data")}
-
     if (!is.null(sampleAnnot)) {
         if (length(sampleAnnot) != nrow(data)) {
             stop("sampleAnnot length is different than samples dimension")}
     } else {
         if (splitBySampleAnnot) { stop(
             "splitBySampleAnnot can be TRUE only if sampleAnnot is provided")}}
-
     if (!is.null(signAnnot)) {
         if (!(signAnnot %in% c("signature", "topic", "tumor", "tissue"))) {
             stop("signAnnot must be one of: signature, topic, tumor, tissue.")}}
@@ -381,16 +351,13 @@ correlationSignPlot <- function(
             if (!(selectByAnnot %in% sampleAnnot)) { stop(
                 "selectByAnnot is not present in sampleAnnot")}
         } else { stop(
-            "sampleAnnot can be used only if",
-            " selectByAnnot is also provided")}
+            "sampleAnnot can be used only if selectByAnnot is also provided")}
     } else {
         if (!is.null(selectByAnnot)) { stop(
-            "selectByAnnot can be used only",
-            " if sampleAnnot is also provided")}}
+            "selectByAnnot can be used only if sampleAnnot is also provided")}}
 
-    if (!is.null(sampleAnnot)) {
-        if (!is.null(selectByAnnot)) {
-            tmp <- tmp[sampleAnnot == selectByAnnot, ] }}
+    if (!is.null(sampleAnnot)) { if (!is.null(selectByAnnot)) {
+        tmp <- tmp[sampleAnnot == selectByAnnot, ] }}
 
     SignMatrix <- vapply(tmp, .range01, double(nrow(tmp)))
 
@@ -465,8 +432,7 @@ survivalSignPlot <- function(
     if (!(is.numeric(cutpoint))) {
         if (!(cutpoint %in% c("mean", "median", "optimal"))) {
             stop(
-                "Cutpoint must be either a number or",
-                " one of: mean, median and optimal")}}
+    "Cutpoint must be either a number or one of: mean, median and optimal")}}
 
     tmp <- intersect(rownames(colData(data)), rownames(survData))
     tmp <- as.data.frame(cbind(colData(data)[tmp, ], survData[tmp, ]))
@@ -517,7 +483,7 @@ survivalSignPlot <- function(
         fit, data = tmp, risk.table = TRUE, legend.title = whichSign,
         palette = c("red", "blue"), ggtheme = theme_gray(15),
         font.legend = 15, font.tickslab = 15, font.x = 15, font.y = 15,
-        risk.table.fontsize = 5, pval = TRUE, surv.median.line = "hv",
+        risk.table.fontsize = 5, pval = TRUE,
         risk.table.col = "strata", tables.height = 0.4)
     return(g)
 }
