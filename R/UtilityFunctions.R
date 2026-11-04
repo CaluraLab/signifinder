@@ -109,9 +109,8 @@ mycol <- c("#FCFDD4", rev(magma(10)))
 mycol1 <- rev(viridis(10))
 
 #' @importFrom RColorBrewer brewer.pal
-my_colors <- brewer.pal(5, "Spectral")
-
-my_colors <- colorRampPalette(my_colors)(100)
+my_colors <- brewer.pal(11, "Spectral")
+my_colors <- colorRampPalette(rev(my_colors))(100)
 
 .GetGenes <- function(name) {
     if (name %in% c("EMT_Miow_Epithelial", "EMT_Miow_Mesenchymal")) {

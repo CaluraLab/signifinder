@@ -4,3 +4,5 @@ README.Rmd
 README.md
 ^doc$
 ^Meta$
+^\.positai$
+^\.claude$

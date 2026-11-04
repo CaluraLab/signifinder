@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows to compute a variety of signatures, based on gene expression values, and return single-sample scores. Currently, signifinder contains more than 60 distinct signatures collected from the literature, relating to multiple tumors and multiple cancer processes.
+signifinder is an R package for computing and exploring a compendium of tumor signatures. It allows to compute a variety of signatures coming from public literature, based on gene expression values, and return single-sample (-cell/-spot) scores. Currently, signifinder collects more than 70 distinct signatures, relating to multiple tumors and multiple cancer processes.
 }
 \seealso{
 Useful links:
@@ -23,6 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Stefania Pirrotta \email{stefania.pirrotta@phd.unipd.it} (\href{https://orcid.org/0009-0004-0030-217X}{ORCID})
   \item Enrica Calura \email{enrica.calura@unipd.it} (\href{https://orcid.org/0000-0001-8463-2432}{ORCID})
 }
 

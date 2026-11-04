@@ -60,35 +60,46 @@ export(stressSign)
 export(survivalSignPlot)
 import(SpatialExperiment)
 import(ggplot2)
+import(legendry)
 import(patchwork)
 importFrom(AnnotationDbi,mapIds)
 importFrom(BiocGenerics,width)
-importFrom(ComplexHeatmap,"%v%")
-importFrom(ComplexHeatmap,Heatmap)
-importFrom(ComplexHeatmap,HeatmapAnnotation)
-importFrom(ComplexHeatmap,rowAnnotation)
+importFrom(ComplexHeatmap,
+  "%v%",
+  Heatmap,
+  HeatmapAnnotation,
+  rowAnnotation
+)
 importFrom(DGEobj.utils,convertCounts)
-importFrom(GSVA,gsva)
-importFrom(GSVA,gsvaParam)
-importFrom(GSVA,ssgseaParam)
+importFrom(GSVA,
+  gsva,
+  gsvaParam,
+  ssgseaParam
+)
 importFrom(IRanges,reduce)
 importFrom(RColorBrewer,brewer.pal)
-importFrom(SummarizedExperiment,"assays<-")
-importFrom(SummarizedExperiment,"colData<-")
-importFrom(SummarizedExperiment,SummarizedExperiment)
-importFrom(SummarizedExperiment,assay)
-importFrom(SummarizedExperiment,assays)
-importFrom(SummarizedExperiment,colData)
+importFrom(SummarizedExperiment,
+  "assays<-",
+  "colData<-",
+  SummarizedExperiment,
+  assay,
+  assays,
+  colData
+)
 importFrom(TxDb.Hsapiens.UCSC.hg19.knownGene,TxDb.Hsapiens.UCSC.hg19.knownGene)
 importFrom(TxDb.Hsapiens.UCSC.hg38.knownGene,TxDb.Hsapiens.UCSC.hg38.knownGene)
 importFrom(consensusOV,get.subtypes)
 importFrom(cowplot,plot_grid)
-importFrom(dplyr,group_by)
-importFrom(dplyr,summarise_all)
+importFrom(dplyr,
+  group_by,
+  summarise_all
+)
 importFrom(ensembldb,exonsBy)
 importFrom(ggplot2,cut_number)
-importFrom(ggridges,geom_density_ridges)
-importFrom(ggridges,geom_density_ridges_gradient)
+importFrom(ggridges,
+  geom_density_ridges,
+  geom_density_ridges_gradient
+)
 importFrom(grid,gpar)
 importFrom(magrittr,"%>%")
 importFrom(matrixStats,rowMedians)
@@ -97,18 +108,24 @@ importFrom(methods,is)
 importFrom(openair,corPlot)
 importFrom(org.Hs.eg.db,org.Hs.eg.db)
 importFrom(scales,rescale)
-importFrom(stats,cor)
-importFrom(stats,median)
-importFrom(stats,prcomp)
-importFrom(stats,quantile)
-importFrom(stats,rnorm)
-importFrom(stats,rpois)
-importFrom(stats,sd)
-importFrom(stats,t.test)
-importFrom(stats,var)
-importFrom(stats,weighted.mean)
-importFrom(survival,Surv)
-importFrom(survival,survfit)
+importFrom(stats,
+  cor,
+  median,
+  prcomp,
+  quantile,
+  rnorm,
+  rpois,
+  sd,
+  t.test,
+  var,
+  weighted.mean
+)
+importFrom(survival,
+  Surv,
+  survfit
+)
 importFrom(survminer,ggsurvplot)
-importFrom(viridis,magma)
-importFrom(viridis,viridis)
+importFrom(viridis,
+  magma,
+  viridis
+)

@@ -323,6 +323,7 @@ heatmapSignPlot <- function(
 #'
 #' @importFrom openair corPlot
 #' @importFrom SummarizedExperiment colData
+#' @import legendry
 #'
 #' @examples
 #' data(ovse)
@@ -362,8 +363,8 @@ correlationSignPlot <- function(
     SignMatrix <- vapply(tmp, .range01, double(nrow(tmp)))
 
     g <- corPlot(
-        as.data.frame(SignMatrix), cluster = TRUE,
-        dendrogram = TRUE, lower = TRUE, fontsize = 6)
+        as.data.frame(SignMatrix), cluster = TRUE, triangle = "upper",
+        dendrogram = TRUE, fontsize = 4, annotate = "none")
 
     return(g)
 }

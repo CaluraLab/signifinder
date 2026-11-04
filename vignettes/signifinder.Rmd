@@ -202,16 +202,16 @@ We can compare scores across different signatures with the `hetmapSignPlot` func
 heatmapSignPlot(data = ovse)
 ```
 
-```{r fig.height=2.5, fig.wide=FALSE}
+```{r fig.height=4, fig.wide=FALSE}
 heatmapSignPlot(data = ovse, whichSign = highest_correlated)
 ```
 
 Users may also be interested in seeing how signatures are sorted in relation to only one or few of them. In this case, we can pass one or few signatures to the `clusterBySign` argument that will be used to cluster samples.
 Furthermore, users can add to the plot external sample annotations or plot the internal signature annotations ("signature", "topic", "tumor" or "tissue").
 
-```{r fig.height=3.5}
-set.seed(21)
-heatmapSignPlot(data = ovse, whichSign = highest_correlated, 
+```{r fig.height=5}
+set.seed(41)
+heatmapSignPlot(data = ovse, whichSign = unfactor(highest_correlated), 
                 clusterBySign = paste0("ConsensusOV_Chen_", c("IMR","DIF","PRO","MES")),
                 sampleAnnot = ovse$OV_subtype, signAnnot = "topic")
 ```
@@ -233,7 +233,7 @@ survivalSignPlot(data = ovse, survData = mysurvData,
 ### Score ridgeline plot
 Finally, we can plot ridge lines with one or multiple signatures, also grouping samples by external annotations if needed. Since each signature has its own method to compute the score then to plot several signatures together the scores are transformed into z-score, individually for each signature.
 
-```{r}
+```{r, warning=FALSE}
 ridgelineSignPlot(data = ovse, whichSign = highest_correlated)
 ridgelineSignPlot(data = ovse, whichSign = highest_correlated, 
                   groupByAnnot = ovse$OV_subtype)
