@@ -211,7 +211,7 @@ Furthermore, users can add to the plot external sample annotations or plot the i
 
 ```{r fig.height=5}
 set.seed(41)
-heatmapSignPlot(data = ovse, whichSign = unfactor(highest_correlated), 
+heatmapSignPlot(data = ovse, whichSign = highest_correlated, 
                 clusterBySign = paste0("ConsensusOV_Chen_", c("IMR","DIF","PRO","MES")),
                 sampleAnnot = ovse$OV_subtype, signAnnot = "topic")
 ```
