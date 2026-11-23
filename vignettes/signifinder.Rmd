@@ -209,7 +209,7 @@ heatmapSignPlot(data = ovse, whichSign = highest_correlated)
 Users may also be interested in seeing how signatures are sorted in relation to only one or few of them. In this case, we can pass one or few signatures to the `clusterBySign` argument that will be used to cluster samples.
 Furthermore, users can add to the plot external sample annotations or plot the internal signature annotations ("signature", "topic", "tumor" or "tissue").
 
-```{r fig.height=5}
+```{r fig.height=5, eval=FALSE}
 set.seed(41)
 heatmapSignPlot(data = ovse, whichSign = highest_correlated, 
                 clusterBySign = paste0("ConsensusOV_Chen_", c("IMR","DIF","PRO","MES")),
